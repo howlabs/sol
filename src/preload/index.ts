@@ -16,7 +16,6 @@ import type {
   BaseRefSearchResult,
   BaseRefDefaultResult,
   BrowserViewportOverride,
-  CustomPet,
   FsChangedPayload,
   GetRateLimitResult,
   GitHubPRRefreshCandidate,
@@ -2019,15 +2018,6 @@ const api = {
   skills: {
     discover: (target?: SkillDiscoveryTarget): Promise<SkillDiscoveryResult> =>
       ipcRenderer.invoke('skills:discover', target)
-  },
-
-  pet: {
-    import: (): Promise<CustomPet | null> => ipcRenderer.invoke('pet:import'),
-    importPetBundle: (): Promise<CustomPet | null> => ipcRenderer.invoke('pet:importPetBundle'),
-    read: (id: string, fileName: string, kind?: 'image' | 'bundle'): Promise<ArrayBuffer | null> =>
-      ipcRenderer.invoke('pet:read', id, fileName, kind),
-    delete: (id: string, fileName: string, kind?: 'image' | 'bundle'): Promise<void> =>
-      ipcRenderer.invoke('pet:delete', id, fileName, kind)
   },
 
   browser: {

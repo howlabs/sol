@@ -8,7 +8,6 @@ import {
 } from './worktree-nav-history'
 import type {
   ChangelogData,
-  CustomPet,
   GitHubWorkItem,
   JiraIssue,
   LinearIssue,
@@ -32,7 +31,7 @@ import type {
 import type { GitLabWorkItem } from '../../../../shared/gitlab-types'
 import type { LaunchSource } from '../../../../shared/telemetry-events'
 import type { TaskSourceContext } from '../../../../shared/task-source-context'
-import { PET_SIZE_DEFAULT, PET_SIZE_MAX, PET_SIZE_MIN } from '../../../../shared/types'
+
 import {
   WORKSPACE_CLEANUP_CLASSIFIER_VERSION,
   type WorkspaceCleanupDismissal
@@ -92,8 +91,7 @@ import {
   getSetupScriptPromptDismissalKey,
   sanitizeSetupScriptPromptDismissals
 } from '../../lib/setup-script-prompt'
-import { DEFAULT_PET_ID, isBundledPetId } from '../../components/pet/pet-models'
-import { revokeCustomPetBlobUrl } from '../../components/pet/pet-blob-cache'
+
 import { isGitRepoKind } from '../../../../shared/repo-kind'
 import type { WorkspacePortScanResult } from '../../../../shared/workspace-ports'
 import {
@@ -216,13 +214,6 @@ function getContextualTourProgressionForFeatureInteraction(
     return 'reveal-sidebar-and-advance'
   }
   return 'complete'
-}
-
-function clampPetSize(size: number): number {
-  if (!Number.isFinite(size)) {
-    return PET_SIZE_DEFAULT
-  }
-  return Math.max(PET_SIZE_MIN, Math.min(PET_SIZE_MAX, Math.round(size)))
 }
 
 // Why: mirrors the preset→query mapping used by TaskPage's preset buttons.
@@ -873,25 +864,7 @@ export type UISlice = {
   setWorkspacePortScan: (scan: { key: string; result: WorkspacePortScanResult } | null) => void
   setWorkspacePortScanForKey: (key: string, result: WorkspacePortScanResult | null) => void
   setWorkspacePortScanRefreshing: (refreshing: boolean) => void
-  /** Whether the experimental pet overlay is currently visible. Persisted
-   *  so "Hide pet" from the status-bar menu survives reload. Independent
-   *  of the experimentalPet settings flag — the feature flag gates
-   *  whether the overlay can ever render; this controls whether it does now. */
-  petVisible: boolean
-  setPetVisible: (v: boolean) => void
-  /** Which pet is active — either a bundled id or a custom UUID.
-   *  Persisted alongside petVisible via the PersistedUIState pipeline. */
-  petId: string
-  setPetId: (id: string) => void
-  /** User-uploaded pet images. Metadata only — bytes live in main's userData. */
-  customPets: CustomPet[]
-  addCustomPet: (model: CustomPet) => void
-  removeCustomPet: (id: string) => void
-  /** Pet overlay size in CSS pixels (square). User-adjustable from the
-   *  status-bar menu so a too-big imported sprite isn't a stuck-on-screen
-   *  problem. */
-  petSize: number
-  setPetSize: (size: number) => void
+
   pendingRevealWorktree: PendingSidebarWorktreeReveal | null
   pendingRevealSidebarRow: PendingSidebarRowReveal | null
   revealWorktreeInSidebar: (
@@ -2136,69 +2109,6 @@ export const createUISlice: StateCreator<AppState, [], [], UISlice> = (set, get)
     }),
   setWorkspacePortScanRefreshing: (refreshing) => set({ workspacePortScanRefreshing: refreshing }),
 
-  // Why: default true so a user who enables experimentalPet sees the
-  // pet immediately. Hide pet from the status-bar menu flips this
-  // to false; the value is persisted via the standard PersistedUIState pipeline.
-  petVisible: true,
-  setPetVisible: (v) => {
-    window.api.ui.set({ petVisible: v }).catch(console.error)
-    set({ petVisible: v })
-  },
-
-  petId: DEFAULT_PET_ID,
-  setPetId: (id) => {
-    window.api.ui.set({ petId: id }).catch(console.error)
-    set({ petId: id })
-  },
-
-  petSize: PET_SIZE_DEFAULT,
-  setPetSize: (size) => {
-    const clamped = clampPetSize(size)
-    window.api.ui.set({ petSize: clamped }).catch(console.error)
-    set({ petSize: clamped })
-  },
-
-  customPets: [],
-  addCustomPet: (model) =>
-    set((s) => {
-      const next = [...s.customPets.filter((m) => m.id !== model.id), model]
-      window.api.ui.set({ customPets: next }).catch(console.error)
-      return { customPets: next }
-    }),
-  removeCustomPet: (id) =>
-    set((s) => {
-      const target = s.customPets.find((m) => m.id === id)
-      if (!target) {
-        return s
-      }
-      const next = s.customPets.filter((m) => m.id !== id)
-      // Why: if the user removes the currently-active custom pet, fall
-      // back to the bundled default so the overlay doesn't render nothing.
-      const fallback = s.petId === id ? DEFAULT_PET_ID : s.petId
-      // Why: send a single combined IPC update so customPets and
-      // petId persist atomically when both change.
-      const ipcPayload: { customPets: CustomPet[]; petId?: string } = {
-        customPets: next
-      }
-      if (fallback !== s.petId) {
-        ipcPayload.petId = fallback
-      }
-      window.api.ui.set(ipcPayload).catch(console.error)
-      // Why: revoke the cached blob: URL so the underlying Blob is released;
-      // otherwise it stays in memory for the rest of the session.
-      revokeCustomPetBlobUrl(id)
-      // Why: best-effort — the bytes are owned by main. If the disk delete
-      // fails, the orphaned image stays in userData; each import uses a fresh
-      // UUID so the file won't be hit again, and the renderer's metadata
-      // index no longer references it.
-      window.api.pet.delete(id, target.fileName, target.kind).catch(console.error)
-      const partial: Partial<UISlice> = { customPets: next }
-      if (fallback !== s.petId) {
-        partial.petId = fallback
-      }
-      return partial
-    }),
-
   pendingRevealWorktree: null,
   pendingRevealSidebarRow: null,
   revealWorktreeInSidebar: (worktreeId, options) =>
@@ -2232,14 +2142,7 @@ export const createUISlice: StateCreator<AppState, [], [], UISlice> = (set, get)
     set((s) => {
       const validRepoIds = new Set(s.repos.map((repo) => repo.id))
       const persistedFilterRepoIds = sanitizePersistedRepoIds(ui.filterRepoIds)
-      // Why: persisted UI from pre-rename builds used sidekick* keys. Read
-      // those only as fallbacks so new pet* writes win immediately after upgrade.
-      const customPets = Array.isArray(ui.customPets)
-        ? ui.customPets
-        : Array.isArray(ui.customSidekicks)
-          ? ui.customSidekicks
-          : []
-      const petId = ui.petId ?? ui.sidekickId
+
       // Migration history:
       // v1: sort was called 'smart' internally
       // v2: renamed 'smart' → 'recent' (same weighted-score behavior)
@@ -2341,28 +2244,7 @@ export const createUISlice: StateCreator<AppState, [], [], UISlice> = (set, get)
         syncTaskStatusFromWorkspaceBoard: ui.syncTaskStatusFromWorkspaceBoard === true,
         statusBarItems: statusBarItemsWithMiniMax,
         statusBarVisible: ui.statusBarVisible ?? true,
-        // Why: absent → true so existing users see the pet the first time
-        // they enable the experimental flag. Only an explicit Hide pet
-        // dismissal persists a `false` value.
-        petVisible: ui.petVisible ?? ui.sidekickVisible ?? true,
-        petSize: clampPetSize(ui.petSize ?? ui.sidekickSize ?? PET_SIZE_DEFAULT),
-        customPets,
-        // Why: accept the persisted id if it matches a bundled pet or a
-        // known custom one; otherwise fall back so the overlay never renders
-        // nothing (e.g. custom pet was removed by another session).
-        petId: ((): string => {
-          const id = petId
-          if (typeof id !== 'string') {
-            return DEFAULT_PET_ID
-          }
-          if (isBundledPetId(id)) {
-            return id
-          }
-          if (customPets.some((m) => m.id === id)) {
-            return id
-          }
-          return DEFAULT_PET_ID
-        })(),
+
         dismissedUpdateVersion: ui.dismissedUpdateVersion ?? null,
         updateReassuranceSeen: ui.updateReassuranceSeen ?? false,
         browserDefaultUrl: ui.browserDefaultUrl ?? null,

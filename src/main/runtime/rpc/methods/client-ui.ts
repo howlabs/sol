@@ -21,8 +21,7 @@ const TaskProviderParam = z.custom<TaskProvider>(isTaskProvider, {
   message: 'Unknown task provider'
 })
 const FeatureTipIds = z.array(z.custom(isFeatureTipId, { message: 'Unknown feature tip id' }))
-const UnknownRecord = z.record(z.string(), z.unknown())
-const UnknownRecordArray = z.array(UnknownRecord)
+
 const LegacyWorktreeCardProperty = z.enum([
   'status',
   'unread',
@@ -235,14 +234,7 @@ const UiUpdate = z
     setupScriptPromptDismissedRepoIds: StringArray.optional(),
     projectOrderManualDefaultNoticeDismissed: z.boolean().optional(),
     usageEmptyStateDismissed: z.boolean().optional(),
-    petVisible: z.boolean().optional(),
-    petId: z.string().optional(),
-    customPets: UnknownRecordArray.optional(),
-    petSize: z.number().finite().optional(),
-    sidekickVisible: z.boolean().optional(),
-    sidekickId: z.string().optional(),
-    customSidekicks: UnknownRecordArray.optional(),
-    sidekickSize: z.number().finite().optional(),
+
     taskResumeState: TaskResumeState.optional(),
     workspaceCleanup: WorkspaceCleanup.optional(),
     featureTipsSeenIds: FeatureTipIds.optional(),

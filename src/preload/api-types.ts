@@ -38,7 +38,6 @@ import type {
   CodexRateLimitAccountsState,
   CreateWorktreeArgs,
   CreateWorktreeResult,
-  CustomPet,
   DetectedWorktreeListResult,
   DirEntry,
   ForceDeleteWorktreeBranchResult,
@@ -2039,12 +2038,7 @@ export type PreloadApi = {
   skills: {
     discover: (target?: SkillDiscoveryTarget) => Promise<SkillDiscoveryResult>
   }
-  pet: {
-    import: () => Promise<CustomPet | null>
-    importPetBundle: () => Promise<CustomPet | null>
-    read: (id: string, fileName: string, kind?: 'image' | 'bundle') => Promise<ArrayBuffer | null>
-    delete: (id: string, fileName: string, kind?: 'image' | 'bundle') => Promise<void>
-  }
+
   browser: BrowserApi
   emulator: EmulatorApi
   hooks: {

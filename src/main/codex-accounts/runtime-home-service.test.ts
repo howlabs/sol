@@ -138,7 +138,7 @@ function createSettings(overrides: Partial<GlobalSettings> = {}): GlobalSettings
     terminalJISYenToBackslash: false,
     experimentalMobile: false,
     mobileAutoRestoreFitMs: null,
-    experimentalPet: false,
+
     experimentalActivity: true,
     experimentalTerminalAttention: false,
     compactWorktreeCards: false,

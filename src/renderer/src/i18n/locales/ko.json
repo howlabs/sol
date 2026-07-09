@@ -109,7 +109,7 @@
       "c9d6f98459": "최대화",
       "66f0a552e5": "복원",
       "bbb7f90669": "최소화",
-      "d54e66004c": "터미널",
+      "d54e66004c": "terminal",
       "9f0152563e": "모바일",
       "62ca9895a7": "스페이스",
       "844eb0f4f4": "활동",
@@ -231,9 +231,9 @@
           "670864ab52": "로컬 {{value0}}을 최신 상태로 유지",
           "5366d13eec": "워크스페이스가 삭제되었고 브랜치는 유지되었습니다",
           "2e17f825d4": "워크트리가 삭제되었고 브랜치는 유지되었습니다",
-          "78e08cd877": "Git이 \"{{value0}}\" 브랜치를 안전하게 삭제할 수 없어 Orca가 로컬 커밋 손실을 방지하기 위해 유지했습니다.",
-          "3b57982bf6": "\"{{value1}}\" 워크스페이스를 삭제한 후 Git이 \"{{value0}}\" 브랜치를 안전하게 삭제할 수 없어 Orca가 로컬 커밋 손실을 방지하기 위해 유지했습니다.",
-          "81f13f48d2": "\"{{value1}}\" 워크트리를 삭제한 후 Git이 \"{{value0}}\" 브랜치를 안전하게 삭제할 수 없어 Orca가 로컬 커밋 손실을 방지하기 위해 유지했습니다.",
+          "78e08cd877": "Git이 \"{{value0}}\" 브랜치를 안전하게 삭제할 수 없어 Orca가 로컬 commits 손실을 방지하기 위해 유지했습니다.",
+          "3b57982bf6": "\"{{value1}}\" 워크스페이스를 삭제한 후 Git이 \"{{value0}}\" 브랜치를 안전하게 삭제할 수 없어 Orca가 로컬 commits 손실을 방지하기 위해 유지했습니다.",
+          "81f13f48d2": "\"{{value1}}\" 워크트리를 삭제한 후 Git이 \"{{value0}}\" 브랜치를 안전하게 삭제할 수 없어 Orca가 로컬 commits 손실을 방지하기 위해 유지했습니다.",
           "runtimeScopeForbiddenTitle": "이 연결은 제한된(모바일) 액세스입니다",
           "runtimeScopeForbiddenDescription": "모바일 범위 페어링에서는 워크스페이스를 사용할 수 없습니다. 설정 → 원격 Orca 서버 → 이 Orca 서버 공유에서 브라우저 액세스 링크로 다시 연결하세요."
         },
@@ -626,7 +626,7 @@
         "42ae40842f": "전역적으로 또는 프로젝트별로 범위가 지정된 저장된 terminal 명령입니다.",
         "3fc3db144f": "빠른 명령어",
         "c33bfd664c": "셸, 렌더러, 세션 및 terminal 동작.",
-        "a9fb10afca": "터미널",
+        "a9fb10afca": "Terminal",
         "5235c215ca": "작업 페이지와 사이드바에 표시할 작업 제공자를 선택합니다.",
         "85f4fd7710": "작업 소스",
         "ab4b21b58e": "브랜치 이름 지정, 기본 참조, 속성 및 Git AI Author.",
@@ -651,7 +651,7 @@
         "b1c2f8b0ac": "Claude, Codex, Gemini 및 OpenCode Go에 대한 선택적 계정 전환.",
         "f70ac54d38": "AI 제공업체 계정",
         "4121f7a0a2": "AI agents를 관리하고, 기본값을 설정하고, 명령을 사용자 정의하세요.",
-        "b49abbd2f7": "에이전트",
+        "b49abbd2f7": "Agents",
         "dev": "Dev Tools",
         "devDescription": "Dev-only tools for exercising UI states.",
         "devBadge": "Dev",
@@ -1118,7 +1118,7 @@
         "f0470c7383": "고급",
         "ba64270bdb": "agents 구성",
         "ab63f25397": "agent 설정 열기",
-        "01d1e8f601": "에이전트",
+        "01d1e8f601": "Agent",
         "0c5d6a479c": "[선택 사항]",
         "b5a0796911": "연결",
         "dccd26d4e4": "프로젝트 선택",
@@ -2018,7 +2018,7 @@
           "13b3ac0a84": "상태",
           "79c54552f7": "필터",
           "8a2ffbf9b3": "{{value0}} 필터 제거",
-          "19bb6f115f": "리뷰 완료"
+          "19bb6f115f": "reviewed-by"
         },
         "PRFilterPickers": {
           "fdf387297c": "지우기 (",
@@ -2239,7 +2239,7 @@
           "WorkspaceSpacePage": {
             "8d0048e1cb": "워크스페이스 디스크 사용량과 회수 가능한 워크트리 저장 공간.",
             "e8d6ba11ab": "베타",
-            "45f6302dbc": "공간",
+            "45f6302dbc": "Space",
             "ecf72fdc3b": "뒤로"
           }
         },
@@ -2371,7 +2371,7 @@
               "577a342c7d": "agent에게 이 워크스페이스를 조사하도록 요청하세요.",
               "026cfb232a": "프롬프트 명령을 지원하지 않습니다",
               "346d409ab2": "agent 선택",
-              "0adba8fa0c": "에이전트",
+              "0adba8fa0c": "Agent",
               "ec8f081919": "작업",
               "ed04233b3e": "빠른 액세스를 위해 terminal 명령이나 agent 프롬프트를 저장하세요.",
               "ca414324ee": "명령 텍스트",
@@ -2441,7 +2441,7 @@
           "TerminalContextMenu": {
             "b4cdd9314e": "화면 지우기",
             "8c17d6786d": "창 닫기",
-            "copyTerminalId": "터미널 ID 복사",
+            "copyTerminalId": "Terminal ID 복사",
             "2cf85a6a55": "창 ID 복사",
             "39809d152f": "제목 설정…",
             "clearPaneTitle": "창 제목 지우기",
@@ -2522,11 +2522,11 @@
                 "29c031b49a": "{{value0}} 파일{{value1}}을 런타임에 업로드하는 중…",
                 "0c77693641": "Worktree가 준비되지 않았습니다. 잠시 후에 다시 시도하세요.",
                 "ce8248b835": "작업 트리 경로를 사용할 수 없습니다.",
-                "internalTooManyPaths": "터미널에 안전하게 붙여넣기에는 드롭된 경로가 너무 많습니다.",
-                "internalPathsTooLarge": "터미널에 안전하게 붙여넣기에는 경로 목록이 너무 큽니다.",
+                "internalTooManyPaths": "terminal에 안전하게 붙여넣기에는 드롭된 경로가 너무 많습니다.",
+                "internalPathsTooLarge": "terminal에 안전하게 붙여넣기에는 경로 목록이 너무 큽니다.",
                 "b4cf68e889": "{{value0}} {{value1}}을(를) 건너뛰었습니다.",
-                "writeTimeout": "파일 드롭이 취소되었습니다. 안전 시간 제한 전에 터미널이 경로를 받지 않았습니다.",
-                "writeRejected": "파일 드롭이 취소되었습니다. 터미널이 경로를 받을 수 없습니다."
+                "writeTimeout": "파일 드롭이 취소되었습니다. 안전 시간 제한 전에 terminal이 경로를 받지 않았습니다.",
+                "writeRejected": "파일 드롭이 취소되었습니다. terminal이 경로를 받을 수 없습니다."
               }
             }
           },
@@ -2538,9 +2538,9 @@
                     "a29b9faa01": "창 ID가 복사되었습니다.",
                     "terminal": {
                       "id": {
-                        "copied": "터미널 ID를 복사했습니다",
+                        "copied": "Terminal ID를 복사했습니다",
                         "copy": {
-                          "failed": "터미널 ID를 복사할 수 없습니다"
+                          "failed": "terminal ID를 복사할 수 없습니다"
                         }
                       }
                     }
@@ -2557,11 +2557,11 @@
             "c337c9d75c": "닫기"
           },
           "TerminalSshReconnectOverlay": {
-            "authFailed": "{{value0}} 인증에 실패했습니다. 이 터미널 세션을 계속하려면 다시 연결하세요.",
-            "reconnectFailed": "{{value0}}에 대한 SSH 연결에 실패했습니다. 이 터미널 세션을 계속하려면 다시 연결하세요.",
-            "connecting": "{{value0}}에 연결 중입니다. 호스트를 사용할 수 있게 되면 이 터미널이 재개됩니다.",
+            "authFailed": "{{value0}} 인증에 실패했습니다. 이 terminal 세션을 계속하려면 다시 연결하세요.",
+            "reconnectFailed": "{{value0}}에 대한 SSH 연결에 실패했습니다. 이 terminal 세션을 계속하려면 다시 연결하세요.",
+            "connecting": "{{value0}}에 연결 중입니다. 호스트를 사용할 수 있게 되면 이 terminal이 재개됩니다.",
             "connected": "SSH가 연결되었습니다.",
-            "disconnected": "이 터미널은 {{value0}} 연결을 기다리고 있습니다. 이 SSH 세션을 계속하려면 연결하세요.",
+            "disconnected": "이 terminal은 {{value0}} 연결을 기다리고 있습니다. 이 SSH 세션을 계속하려면 연결하세요.",
             "connectFailed": "SSH 연결 실패",
             "title": "SSH 연결 필요",
             "connectingButton": "연결 중...",
@@ -2584,7 +2584,7 @@
             "9acaf92093": "창 작업",
             "1bce81dba6": "시뮬레이터",
             "1ff1c77616": "브라우저",
-            "586d2ac445": "터미널",
+            "586d2ac445": "terminal",
             "addSplitPane": "분할 창 추가",
             "closePaneColumn": "분할 창 닫기"
           },
@@ -2672,8 +2672,8 @@
             "20baa43c05": "없음",
             "60f958ec75": "탭 고정",
             "417722e9c2": "탭 고정 해제",
-            "splitTerminalRight": "터미널을 오른쪽으로 분할",
-            "splitTerminalDown": "터미널을 아래로 분할"
+            "splitTerminalRight": "terminal을 오른쪽으로 분할",
+            "splitTerminalDown": "terminal을 아래로 분할"
           },
           "TabBar": {
             "b1a132357f": "새 탭",
@@ -2740,7 +2740,7 @@
               },
               "menu": {
                 "options": {
-                  "5501c2fb7a": "터미널",
+                  "5501c2fb7a": "terminal",
                   "9630dd5494": "shell",
                   "a094576900": "새 terminal",
                   "4f23f4d01d": "새 shell",
@@ -2972,7 +2972,7 @@
             "f4d2651498": "스캔됨",
             "6a5dc3c61a": "리뷰",
             "c361440dc0": "베타",
-            "8ff597593d": "공간",
+            "8ff597593d": "Space",
             "0582df6d2e": "스캔",
             "f5e1a84d79": "새로고침",
             "2af2174d6d": "취소",
@@ -3023,8 +3023,8 @@
             "b9b4a3a25d": "브랜치",
             "c432278ec7": "편집기 버퍼",
             "0bc756efaf": "Git 변경사항",
-            "e9528a89b3": "터미널",
-            "a8d9e0de79": "에이전트",
+            "e9528a89b3": "Terminals",
+            "a8d9e0de79": "Agents",
             "d384a4ce9f": "삭제 판단",
             "7d7745bb8f": "삭제할 수 있음",
             "720870a18e": "유지: 연결됨",
@@ -3097,12 +3097,12 @@
             "6cf9eaed10": "다음 항목이 {{value0}} 후 만료됨",
             "20ad66aed1": "{{value0}} 후 만료됨",
             "0d8d7cfe15": "Claude 세션 대기 중",
-            "1804cd8c3f": "로그인 새로 고치는 중",
+            "1804cd8c3f": "로그인 새로고침 중",
             "f8f0f9d8cc": "네트워크 문제",
             "bf2e739f18": "로그인 사용할 수 없음",
             "f8b8dbed85": "사용량 사용할 수 없음",
-            "3d3c9c0c1f": "실시간 Claude 터미널이 자격 증명을 교체한 후 Claude 사용량이 새로 고쳐집니다.",
-            "42fdd4da1d": "Claude 로그인을 새로 고치는 중입니다. 에이전트 세션은 여전히 로그인되어 있을 수 있습니다.",
+            "3d3c9c0c1f": "실시간 Claude terminal이 자격 증명을 교체한 후 Claude 사용량이 새로 고쳐집니다.",
+            "42fdd4da1d": "Claude 로그인을 새로고침 중입니다. Agent 세션은 여전히 로그인되어 있을 수 있습니다.",
             "c06c1d215d": "네트워크 요청 실패로 Claude 사용량을 새로 고칠 수 없습니다.",
             "cabdc2a9e0": "Claude 로그인 자격 증명을 읽을 수 없습니다.",
             "a7517cccb6": "현재 Claude 사용량을 사용할 수 없습니다."
@@ -3341,7 +3341,7 @@
             "8efeae0b22": "추적",
             "5acbe1fdf2": "시간",
             "ef8bbf7739": "PR",
-            "ce8533f02e": "에이전트",
+            "ce8533f02e": "agents",
             "0bba8ca244": "통계",
             "0e2a0b6431": "사용량",
             "372debfac0": "통계",
@@ -3493,7 +3493,7 @@
           "cf9d382ca1": "가져오기",
           "220dd32d83": "스캔 중...",
           "fb33359f69": "이 저장소들을 그룹으로 묶을까요?",
-          "d75170194e": "이 프로젝트들이 함께 속한 경우(모노레포이거나 단순히 관련된 저장소 모음) 이 옵션을 선택하세요. Orca가 그룹으로 묶고 상위 폴더에서 작업할 수 있게 합니다.",
+          "d75170194e": "이 프로젝트들이 함께 속한 경우(모노 repos 이거나 단순히 관련된 repos 모음) 이 옵션을 선택하세요. Orca가 그룹으로 묶고 상위 폴더에서 작업할 수 있게 합니다.",
           "39d51212cc": "그룹 이름",
           "aa0247680d": "아니요, 별도로 가져오기",
           "a0bc4d1f8e": "예, 그룹으로 가져오기",
@@ -3777,7 +3777,7 @@
           "0c3395fd32": "작업 트리 및 브라우저 탭 검색",
           "c86d83b5c3": "새로 만들기",
           "1b5c41caee": "Orca 모바일",
-          "9c95e1ce91": "에이전트",
+          "9c95e1ce91": "Agents",
           "f323383e9a": "자동화",
           "e7ad3c540d": "Jira 작업 열기",
           "c39ab10000": "Linear 작업 열기",
@@ -3961,7 +3961,7 @@
           "branchFolderPathIdentity": "브랜치 또는 폴더 경로"
         },
         "WorktreeCardAgents": {
-          "1b0a156717": "에이전트"
+          "1b0a156717": "Agents"
         },
         "WorktreeCardReviewDetailSection": {
           "reviewHeader": "{{value0}} #{{value1}}",
@@ -4413,7 +4413,7 @@
           "hostHasWorkspacesDefault": "Removes {{value0}} and its credentials from this computer. Its {{value1}} stay in Orca — remote files are not touched.",
           "alsoDeleteRemote": "Also delete these {{value0}} on {{value1}}",
           "alsoForgetLocal": "Also remove these {{value0}} from Orca",
-          "advanced": "Advanced",
+          "advanced": "고급",
           "alsoDeleteRemoteHint": "Permanently deletes the remote Git worktrees and their branches. Cannot be undone.",
           "alsoForgetLocalHint": "Clears them from Orca only. Remote files, worktrees, and branches are left untouched."
         },
@@ -4527,7 +4527,7 @@
           "sshImportFailed": "SSH 구성을 가져오지 못했습니다.",
           "importing": "가져오는 중...",
           "importSshConfig": "~/.ssh/config 가져오기",
-          "sshPersistenceDefault": "이 호스트의 원격 터미널은 종료하거나 릴레이를 재설정할 때까지 계속 실행됩니다."
+          "sshPersistenceDefault": "이 호스트의 원격 terminals은 종료하거나 릴레이를 재설정할 때까지 계속 실행됩니다."
         },
         "ForgetSshWorkspaceDialog": {
           "reconnectFailed": "Reconnection failed",
@@ -4535,7 +4535,7 @@
           "title": "Delete “{{name}}”?",
           "disconnectedBody": "The SSH host for this workspace is not connected. Reconnect to delete it on the remote too, or remove it from Orca only.",
           "ghostBody": "{{host}} is no longer a saved SSH host, so this workspace is no longer connected to a live host. It can only be removed from Orca — files and branches on the remote are left untouched.",
-          "cancel": "Cancel",
+          "cancel": "취소",
           "forget": "Remove from Orca",
           "reconnectAndDelete": "Reconnect & Delete"
         }
@@ -4729,11 +4729,11 @@
           "copyCommandAria": "명령 복사",
           "runCommandDescription": "Enter를 눌러 명령을 실행하세요.",
           "5f818f12ab": "준비 중...",
-          "4c05b9d7cb": "설정 터미널을 준비하고 있습니다."
+          "4c05b9d7cb": "설정 terminal을 준비하고 있습니다."
         },
         "AgentsPane": {
           "d83834f5e6": "설치된 agents 감지 중…",
-          "024bd95089": "에이전트",
+          "024bd95089": "agents",
           "e8da2af684": "설치 가능",
           "ed3e110e61": "감지됨",
           "02e0143be5": "설치됨",
@@ -4832,7 +4832,7 @@
           "interfaceDefaultFont": "기본 글꼴",
           "terminalDefaultFont": "기본 글꼴",
           "interfaceTitle": "인터페이스",
-          "terminalTitle": "터미널",
+          "terminalTitle": "Terminal",
           "windowSidebarTitle": "창 및 사이드바",
           "windowSidebarSummary": "사이드바, 상태 표시줄 및 파일 탐색기",
           "statusBarCount": "{{value0}}개 표시기가 보입니다.",
@@ -5775,7 +5775,7 @@
           "3edf3deaf8": "'{{value0}}'을 삭제하시겠습니까?",
           "9fcfc29519": "삽입",
           "9b3e338d62": "입력",
-          "4ccc63da87": "에이전트",
+          "4ccc63da87": "Agent",
           "0252ddd578": "명령 텍스트 없음",
           "7784912ed6": "repo",
           "2bb9e38e93": "제목 없음",
@@ -5974,7 +5974,7 @@
           "7a3a8e431d": "CLI 인수",
           "2b2f38652b": "사용자 정의 명령",
           "0ffb081b3a": "기본 agent 사용",
-          "f4310cf63f": "에이전트",
+          "f4310cf63f": "Agent",
           "1cd88d470a": "사용자 정의",
           "403876bb48": "글로벌 사용",
           "f0aa2cfaea": "액션 레시피"
@@ -6176,7 +6176,7 @@
           "6742c7932c": "전역 또는 프로젝트별로 적용되는 저장된 terminal 명령입니다.",
           "13d4fe30ad": "빠른 명령어",
           "b79b5b31e9": "셸, 렌더러, 세션, terminal 동작.",
-          "3de4bbb841": "터미널",
+          "3de4bbb841": "Terminal",
           "dd72ed437a": "작업 페이지와 사이드바에 표시할 작업 제공자를 선택합니다.",
           "11faa2f7dd": "작업 소스",
           "cfa34f4465": "브랜치 이름 지정, 기본 참조, 속성 및 Git AI Author.",
@@ -6196,7 +6196,7 @@
           "21f09426ea": "선택 사항. Orca는 기존 공급자 로그인과 함께 작동합니다. Orca가 계정 간 전환을 돕도록 원하는 경우에만 계정을 추가하세요.",
           "ad6c529693": "AI 제공업체 계정",
           "ec1ba547f7": "AI agents를 관리하고, 기본값을 설정하고, 명령을 사용자 정의하세요.",
-          "8afa676615": "에이전트",
+          "8afa676615": "Agents",
           "add3b97ee6": "\"",
           "3c88ec55d6": "\"에 대한 설정을 찾을 수 없습니다.",
           "c7ad095d96": "설정 로드 중...",
@@ -6274,7 +6274,7 @@
           "3c0fac059a": "terminal에 키보드 포커스가 있는 동안에도 계속 실행됩니다.",
           "25b0004fbf": "Terminal 활성",
           "781cb74d22": "terminal 패널에서 실행됩니다.",
-          "cb02e00202": "터미널",
+          "cb02e00202": "Terminal",
           "d8c988dab4": "~/.orca/keybindings.json"
         },
         "SourceControlAiActionRecipeDefaults": {
@@ -6409,10 +6409,10 @@
         "SshTargetForm": {
           "fea9cb402e": "취소",
           "1b19b00e93": "제한된 시간 초과는 60초에서 7일 사이여야 합니다.",
-          "137e88ce8d": "Orca가 이 호스트에서 연결 해제된 뒤에도 원격 터미널은 계속 실행됩니다.",
-          "b574994adc": "중지하려면 원격 터미널 종료 또는 릴레이 재설정을 사용하세요.",
-          "71fc546097": "재설정할 때까지 터미널 유지",
-          "92f80edbfd": "원격 터미널 지속성",
+          "137e88ce8d": "연결 해제 후 릴레이가 terminals을 활성 상태로 유지하는 기간입니다. 기본값: 10800(3시간). 최대:",
+          "b574994adc": "중지하려면 원격 Terminals 종료 또는 릴레이 재설정을 사용하세요.",
+          "71fc546097": "재설정할 때까지 terminals 유지",
+          "92f80edbfd": "원격 Terminal 지속성",
           "feae1d1e69": "선택 사항. ProxyJump / ssh -J와 동일합니다.",
           "11bcb4507a": "bastion.example.com",
           "b2ab248ded": "점프 호스트",
@@ -6529,7 +6529,7 @@
           "4bebcc2b2c": "단어 구분 기호",
           "12e06178fa": "행",
           "907b0b9d3e": "사용자 지정",
-          "5336c096af": "{{value0}} 행",
+          "5336c096af": "{{value0}} 메가바이트",
           "81d86b2dd2": "새 패널과 열린 패널에 보관할 데스크톱 terminal 행입니다.",
           "9df53f7c14": "스크롤백 행",
           "c3810b2b42": "보관할 데스크톱 terminal 행입니다.",
@@ -6590,15 +6590,15 @@
           "ask_before_closing_running_terminals_description": "실행 중인 명령이나 agent가 있는 terminal을 닫기 전에 확인 창을 표시합니다.",
           "scrollSpeed": {
             "title": "스크롤 속도",
-            "description": "일반 터미널 스크롤백, 수정 키 빠른 스크롤, 전체 화면 TUI 휠 속도를 조정합니다.",
-            "helper": "휠 입력이 스크롤백과 마우스 인식 터미널 앱에서 느껴지는 방식을 조정합니다.",
+            "description": "일반 terminal 스크롤백, 수정 키 빠른 스크롤, 전체 화면 TUI 휠 속도를 조정합니다.",
+            "helper": "휠 입력이 스크롤백과 마우스 인식 terminal 앱에서 느껴지는 방식을 조정합니다.",
             "reset": "재설정",
             "normal": "일반",
             "normalDescription": "스크롤백 휠 배율.",
             "fast": "빠름",
             "fastDescription": "수정 키로 스크롤할 때 적용되는 추가 배율.",
             "tui": "TUI",
-            "tuiDescription": "전체 화면 터미널 앱을 위한 개별 휠 보고."
+            "tuiDescription": "전체 화면 terminal 앱을 위한 개별 휠 보고."
           }
         },
         "TerminalSettingsPreview": {
@@ -6620,17 +6620,17 @@
           "7add204bd5": "다크 모드에서 사용되는 terminal 테마를 선택하세요.",
           "9499ad1dc4": "어두운 테마",
           "f012172e21": "어두운 모드에서 terminal 패널에 사용되는 테마를 선택합니다.",
-          "catalog_title": "터미널 테마",
-          "catalog_description": "다크 및 라이트 모드의 터미널 테마와 구분선 색상을 선택합니다.",
+          "catalog_title": "Terminal 테마",
+          "catalog_description": "다크 및 라이트 모드의 terminal 테마와 구분선 색상을 선택합니다.",
           "target_title": "테마 모드",
           "target_label": "테마 모드",
-          "target_aria": "터미널 테마 모드",
+          "target_aria": "Terminal 테마 모드",
           "target_dark": "다크",
           "target_light": "라이트",
           "match_dark_mode": "다크 모드와 일치",
-          "match_dark_mode_description": "라이트 모드에서 다크 터미널 테마와 구분선 색상을 공유합니다.",
-          "light_preview_description": "적용 중인 라이트 터미널 모양을 표시합니다.",
-          "dark_preview_description": "적용 중인 다크 터미널 모양을 표시합니다."
+          "match_dark_mode_description": "라이트 모드에서 다크 terminal 테마와 구분선 색상을 공유합니다.",
+          "light_preview_description": "적용 중인 라이트 terminal 모양을 표시합니다.",
+          "dark_preview_description": "적용 중인 다크 terminal 모양을 표시합니다."
         },
         "TerminalWindowSection": {
           "1705318506": "ANSI 마젠타색",
@@ -6864,7 +6864,7 @@
             "cbdd7f3b9e": "설치된 agents가 이 장치에서 감지되는지 아니면 WSL에서 감지되는지 선택합니다.",
             "ef804b7337": "Agent 위치",
             "01926b9d8c": "AI 코딩 agents, 기본 agents 및 명령 재정의를 구성합니다.",
-            "bb9ad95777": "에이전트",
+            "bb9ad95777": "Agents",
             "d8f3a8b8a0": "기본값",
             "167daeb5e9": "명령",
             "be59907510": "재정의",
@@ -6978,7 +6978,7 @@
             "cf409b6c4d": "포트",
             "cb1cc62cf8": "스페이스",
             "90bdc043ea": "디스크",
-            "96b4fb0064": "터미널",
+            "96b4fb0064": "terminal",
             "4ddbde4999": "CPU",
             "4355f18ac6": "메모리",
             "9c4d5f0894": "관리자",
@@ -7284,7 +7284,7 @@
             "edc49480a1": "패널",
             "268e99d957": "강조 표시",
             "01567f19ca": "주목",
-            "9bb3bd5098": "터미널",
+            "9bb3bd5098": "terminal",
             "11877246fc": "terminal 벨 및 agent 완료 이벤트에 대한 지속적인 패널 강조 표시입니다.",
             "9e4ddf776d": "Terminal 주의",
             "fe5688b761": "사이드바",
@@ -7292,7 +7292,7 @@
             "d01b3882ba": "알림",
             "244a0ecd3d": "활동",
             "92a9357d1f": "agents 보기",
-            "fa72e71f05": "에이전트",
+            "fa72e71f05": "agents",
             "4d63251595": "agent 완료 및 차단 상태에 대한 스레드 왼쪽 사이드바 피드입니다.",
             "ccc5548ac5": "Agents 보기",
             "9af7a518db": "캐릭터",
@@ -7306,11 +7306,11 @@
             "87d99e634b": "애완 동물",
             "agentHibernation": {
               "agent": "agent",
-              "agents": "에이전트",
+              "agents": "agents",
               "description": "설정된 유휴 시간이 지난 백그라운드 agent terminals을 중지하고, 다시 열 때 지원되는 세션을 재개합니다. Agent 최대 절전은 Orca에서 시작한 agent의 시작 옵션을 보존합니다. 수동으로 시작한 agent는 현재 Orca 기본값으로 재개될 수 있습니다.",
               "minutes": "분",
               "sleep": "절전",
-              "terminal": "터미널",
+              "terminal": "terminal",
               "title": "Agent 최대 절전"
             },
             "newWorktreeCardStyle": {
@@ -7341,7 +7341,7 @@
               "156ffeee08": "메모",
               "884e5e6132": "markdown",
               "49db74a92d": "브라우저",
-              "6410fe83d8": "터미널",
+              "6410fe83d8": "terminal",
               "2b5efa55c9": "글로벌",
               "ebeedb2f6a": "빠른 terminal",
               "6f183fa1b9": "플로팅 terminal",
@@ -7390,13 +7390,13 @@
             "79ff46776e": "앱 업데이트를 확인하고 최신 Orca 버전을 설치하세요.",
             "e15af4eb64": "업데이트 확인",
             "6382fe9724": "npx",
-            "baa263d6d8": "에이전트",
+            "baa263d6d8": "agents",
             "bda108e66c": "스킬",
             "244e3fb4c8": "agents가 Orca CLI를 사용하도록 Orca 스킬을 설치하세요.",
             "2d9f7b42df": "Agent 스킬",
             "0a00691c06": "셸 명령",
             "dbeb1f348e": "명령",
-            "88d3df9ce9": "터미널",
+            "88d3df9ce9": "terminal",
             "fb4f338a3d": "경로",
             "924a660a78": "CLI",
             "ca529079bf": "Orca CLI 명령을 등록하거나 제거합니다.",
@@ -7696,7 +7696,7 @@
               "fadcbfdd99": "맞춤",
               "ad08035c5f": "핸드폰",
               "6cd2bfdb0e": "복원",
-              "b34ad5b3a7": "터미널",
+              "b34ad5b3a7": "terminal",
               "6db86f445f": "모바일",
               "707fc78052": "앱을 닫거나 다른 곳으로 전환한 후 모바일에서 보고 있던 terminals에 어떤 일이 발생하는지 선택하세요.",
               "1e711aca11": "모바일 앱을 나갈 때",
@@ -7776,7 +7776,7 @@
             "96562a72c6": "집중하는 동안 억제",
             "a2ab73b325": "주목",
             "ae0487f8fd": "벨",
-            "c638ae989d": "터미널",
+            "c638ae989d": "terminal",
             "d3f1c48677": "백그라운드 terminal이 벨 문자를 내보낼 때 이를 알립니다.",
             "a5edee1d99": "Terminal 벨",
             "193e1f107c": "작업",
@@ -7806,7 +7806,7 @@
             "eee028ae14": "디스패치",
             "9a5ebdca31": "메시징",
             "91fc8ab7e5": "코디네이션",
-            "13ba5c6cbd": "에이전트",
+            "13ba5c6cbd": "agents",
             "d86705ba77": "멀티 agent",
             "a7f76b4ca7": "오케스트레이션",
             "e05ff36753": "메시징, 작업 DAG, 디스패치 및 결정 게이트를 통해 여러 코딩 agents를 조정합니다.",
@@ -7859,7 +7859,7 @@
               "8bf43c2dad": "글로벌",
               "a26ecdb77b": "스니펫",
               "d07d130849": "단축키",
-              "0073cf8ce9": "터미널",
+              "0073cf8ce9": "terminal",
               "cfffa6cdb6": "명령",
               "fecb031823": "명령",
               "236d4cfac8": "빠른",
@@ -8017,7 +8017,7 @@
             "0f8cb15582": "agent",
             "f1adebbe8c": "셸",
             "7f1b38f59a": "TUI",
-            "7e3fc707aa": "터미널",
+            "7e3fc707aa": "terminal",
             "0ecba9aa5f": "키보드",
             "ebd7d81e1d": "단축키가 겹칠 때 Orca와 포커스된 terminal 중 어느 쪽이 우선할지 선택합니다.",
             "f052906167": "Terminal의 단축키"
@@ -8138,7 +8138,7 @@
             "d4daf4f612": "녹이다",
             "88561b3499": "정지됨",
             "0a05629060": "복구",
-            "f66a7cf715": "터미널",
+            "f66a7cf715": "terminal",
             "6892fb1019": "다시 시작",
             "cde233f5da": "스크롤백",
             "3982d88725": "기록",
@@ -8187,7 +8187,7 @@
             "56fff3d113": "메모리",
             "fffdff40a7": "버퍼",
             "rows": "행",
-            "f7d56b6281": "보관할 데스크톱 terminal 행입니다.",
+            "f7d56b6281": "최대 terminal 스크롤백 버퍼 크기입니다.",
             "7674e758e1": "스크롤백 행",
             "411229c636": "라이트",
             "781f49d942": "분할기",
@@ -8197,7 +8197,7 @@
             "1dee533bd9": "Orca가 라이트 모드일 때 사용되는 테마를 선택합니다.",
             "1d89457764": "라이트 테마",
             "da864e6cec": "라이트 모드",
-            "f268092ee3": "라이트 모드는 자체 터미널 테마를 사용할 수 있습니다.",
+            "f268092ee3": "라이트 모드는 자체 terminal 테마를 사용할 수 있습니다.",
             "match_dark_mode_title": "다크 모드와 일치",
             "f785374072": "다크",
             "9c32726f47": "어두운 모드에서 창 사이의 분할 구분선을 제어합니다.",
@@ -8260,7 +8260,7 @@
             "0fe0073f0c": "새 창 및 라이브 업데이트의 기본 terminal 글꼴 크기입니다.",
             "5930244899": "글꼴 크기",
             "warp_import": {
-              "title": "Warp에서 가져오기",
+              "title": "Warp에서 테마 가져오기",
               "description": "Warp 테마를 Orca terminal 테마로 가져옵니다.",
               "keyword_warp": "warp",
               "keyword_themes": "themes",
@@ -8277,7 +8277,7 @@
             "ask_before_closing_running_terminals_description": "실행 중인 명령이나 agent가 있는 terminal을 닫기 전에 확인을 표시합니다.",
             "scrollSpeed": {
               "title": "스크롤 속도",
-              "description": "일반 터미널 스크롤백, 수정 키 빠른 스크롤, 전체 화면 TUI 휠 속도를 조정합니다."
+              "description": "일반 terminal 스크롤백, 수정 키 빠른 스크롤, 전체 화면 TUI 휠 속도를 조정합니다."
             },
             "theme_target": {
               "title": "테마 모드",
@@ -8291,7 +8291,7 @@
               "fcfa53920b": "붙여넣기",
               "e55186fe2b": "오른쪽 클릭",
               "28ff08ed35": "창",
-              "e7d2793b03": "터미널",
+              "e7d2793b03": "terminal",
               "8ba875c132": "Windows에서는 마우스 오른쪽 버튼을 클릭하여 클립보드를 terminal에 붙여넣습니다. 컨텍스트 메뉴를 열려면 Ctrl+오른쪽 클릭을 사용하세요.",
               "f0b8448570": "붙여넣으려면 마우스 오른쪽 버튼을 클릭하세요.",
               "04994f6929": "기본값",
@@ -8401,7 +8401,7 @@
           }
         },
         "WarpThemeImportModal": {
-          "title": "Warp에서 가져오기",
+          "title": "Warp에서 테마 가져오기",
           "description": "Warp 테마를 Orca terminal 테마로 가져옵니다.",
           "yaml_title": "테마 YAML 가져오기",
           "yaml_description": "YAML 파일(Warp 형식)을 Orca terminal 테마로 가져옵니다.",
@@ -8654,7 +8654,7 @@
           "eb72c52c28": "Press a shortcut, or double-tap a modifier (e.g. {{value0}}). Esc cancels.",
           "70b5d25583": "{{value0}} shortcut",
           "287e07ddde": "Modified",
-          "3c83cd7d1c": "Disabled",
+          "3c83cd7d1c": "비활성",
           "07939d084e": "Reset {{value0}} to default",
           "9b02917027": "Reset to default",
           "a799f90f82": "Disable {{value0}}",
@@ -8671,7 +8671,7 @@
           "3732775d74": "Add shortcut for {{value0}}",
           "88764af2c1": "Change shortcut for {{value0}}",
           "30feb099d6": "Change shortcut {{value0}} of {{value1}} for {{value2}}",
-          "5d982a2a1f": "단축키 대기 중",
+          "5d982a2a1f": "단축키 입력 대기 중",
           "152e0bcd64": "단축키 추가",
           "5bd56445da": "단축키 변경",
           "f5ed5dcbf6": "키를 누르세요…"
@@ -8802,7 +8802,7 @@
           "more": "+{{count}} more",
           "plural": "Global saves won't change {{count}} repositories with their own recipes.",
           "recipe": "Recipe",
-          "review": "Review",
+          "review": "리뷰",
           "reviewFirst": "Review first",
           "singular": "Global saves won't change 1 repository with its own recipe.",
           "tooltipTitle": "Repository overrides"
@@ -8925,7 +8925,7 @@
             "b234ab25b4": "파일을 클립보드에 복사하지 못했습니다",
             "f9d7ca753d": "경로 복사",
             "3161c4e425": "폴더",
-            "e887fa4b2e": "터미널에서 열기",
+            "e887fa4b2e": "Terminal에서 열기",
             "1d8e182c32": "파일 보기"
           },
           "FileExplorerToolbar": {
@@ -9289,7 +9289,7 @@
               "03d238218c": "Details",
               "a9bf7c171a": "Push Failed",
               "834cb3f23d": "Fix with AI",
-              "783a808870": "Close"
+              "783a808870": "닫기"
             }
           },
           "SourceControlAgentActionDialog": {
@@ -9306,7 +9306,7 @@
             "fe119187bb": "--model sonnet",
             "bc8dc39f4b": "CLI 인수",
             "b99c33cec5": "설정",
-            "15c5d85706": "에이전트",
+            "15c5d85706": "Agent",
             "3e8f21954f": "오류",
             "74168d7ada": "idle",
             "1d47db9bf0": "활성화된 agents가 없습니다.",
@@ -9338,7 +9338,7 @@
             "4eab815004": "CLI 인수",
             "914c8f6ac2": "사용자 정의 명령",
             "cce2cbd01d": "agent 선택",
-            "9c14186dd2": "에이전트"
+            "9c14186dd2": "Agent"
           },
           "activity": {
             "bar": {
@@ -9504,7 +9504,7 @@
             "6306b48afd": "소스 제어",
             "ef182dcb12": "검색",
             "fc3095d2ed": "탐색기",
-            "aiVaultSessionHistory": "에이전트",
+            "aiVaultSessionHistory": "Agents",
             "folderWorkspaces": "연결된 워크트리",
             "parentPrChecks": "PR 검사"
           },
@@ -9646,7 +9646,7 @@
                   "d8a4c0e369": "{{value0}}을(를) 만들기 전에 인증하세요.",
                   "e9b5d1f470": "{{value0}}을(를) 만들기 전에 브랜치를 체크아웃하세요.",
                   "f0c6e2a581": "이 브랜치는 아직 {{value0}}을(를) 만들 준비가 되지 않았습니다.",
-                  "8f9a0b1c2d": "커밋할 항목이 없습니다. 브랜치가 최신 상태입니다.",
+                  "8f9a0b1c2d": "commit 할 항목이 없습니다. 브랜치가 최신 상태입니다.",
                   "h3i4j5k607": "이 브랜치에서 {{value0}}을(를) 만들 수 있는지 확인 중…"
                 }
               }
@@ -9714,7 +9714,7 @@
             "noSessionsMatchFilters": "현재 필터와 일치하는 세션이 없습니다",
             "sessionId": "세션 ID",
             "logPath": "로그 경로",
-            "agents": "에이전트",
+            "agents": "Agents",
             "sessionsShownCompact": "{{value0}} 표시됨",
             "originalPaneUnavailable": "원래 창은 더 이상 사용할 수 없습니다.",
             "worktreeUnavailable": "워크트리는 더 이상 사용할 수 없습니다.",
@@ -9735,13 +9735,13 @@
             "allSessions": "모든 세션",
             "viewOptionsAriaLabel": "세션 기록 보기 옵션",
             "viewOptions": "보기 옵션",
-            "agents": "에이전트",
+            "agents": "Agents",
             "sort": "정렬",
             "lastUpdated": "마지막 업데이트",
             "created": "생성됨",
             "group": "그룹",
             "folder": "폴더",
-            "agent": "에이전트",
+            "agent": "Agent",
             "resetView": "보기 재설정",
             "hideEmptySessions": "빈 세션 숨기기",
             "workspaceScope": "워크스페이스",
@@ -9797,7 +9797,7 @@
             "noPreviewAvailable": "대화 미리보기를 사용할 수 없습니다",
             "messageCount": "메시지 {{value0}}개",
             "userRole": "나",
-            "agentRole": "에이전트",
+            "agentRole": "Agent",
             "toolRole": "도구",
             "systemRole": "시스템",
             "sessionRole": "세션",
@@ -9824,7 +9824,7 @@
             "noPreviewAvailable": "대화 미리보기를 사용할 수 없습니다",
             "dragToResume": "새 탭에서 재개하려면 드래그",
             "userRole": "나",
-            "agentRole": "에이전트",
+            "agentRole": "Agent",
             "toolRole": "도구",
             "systemRole": "시스템",
             "sessionRole": "세션",
@@ -9925,8 +9925,8 @@
             "3c5a593bc8": "웹",
             "477b28c948": "데이터베이스",
             "787490e9bd": "패키지",
-            "07012dc113": "에이전트",
-            "3eba7387ab": "터미널",
+            "07012dc113": "Agent",
+            "3eba7387ab": "Terminal",
             "65b437c381": "코드",
             "bed2674f9d": "폴더"
           }
@@ -10425,7 +10425,7 @@
             "8b14ba6c17": "새 브라우저 탭",
             "b085fb58b5": "이 파일에는 저장되지 않은 변경사항이 있습니다.",
             "5ddc688c52": "'{{value0}}'에 저장되지 않은 변경사항이 있습니다. 닫기 전에 저장하시겠습니까?",
-            "25d7817f79": "터미널"
+            "25d7817f79": "terminal"
           },
           "FloatingTerminalToggleButton": {
             "3b04b065b5": "플로팅 워크스페이스 표시",
@@ -10468,7 +10468,7 @@
             "be8917699e": "모델",
             "4d9b6d84df": "지원되지 않습니다. Claude, Codex 또는 Custom을 선택하세요.",
             "560d4feb00": "사용자 정의",
-            "29d119fe95": "에이전트",
+            "29d119fe95": "Agent",
             "f9382b48a1": "AI author 활성화",
             "1c0cb4fabb": "AI 작성자",
             "bd14e9c42a": "구성되지 않음",
@@ -10675,7 +10675,7 @@
             "ca2cfbf188": "Terminal을 아래로 분할",
             "e370fa8c2b": "Terminal을 오른쪽으로 분할",
             "b85eab49dd": "src/auth/session.ts",
-            "99f5224f1e": "편집",
+            "99f5224f1e": "Edit",
             "0d93c298a7": "src/auth 던지기",
             "17cfdc3344": "Grep",
             "9923847785": "Read",
@@ -11797,7 +11797,7 @@
             "f2d0c22d67": "주석 {{value0}} 삭제",
             "11c5084aa2": "주석 지우기",
             "734e4343ec": "브라우저 주석 지우기",
-            "95af781091": "agent에게 피드백 보내기",
+            "95af781091": "새 agent에게 피드백 보내기",
             "ac39b9366b": "보내기",
             "a3508d7e6e": "{{value0}} 주석{{value1}}이 준비되었습니다. 다른 요소를 선택하거나 모든 피드백을 복사하세요.",
             "f796c774a4": "탐색을 시작하려면 위에 URL을 입력하세요.",
@@ -11940,7 +11940,7 @@
           "449fc83bf7": "토큰",
           "401f40ae79": "예상 경비",
           "a7c312430d": "마지막 실행",
-          "2df8970cd5": "에이전트",
+          "2df8970cd5": "Agent",
           "e353ab9516": "사전 확인",
           "620b22145e": "유예 시간",
           "15ea446b93": "세션",
@@ -11963,7 +11963,7 @@
         },
         "AutomationEditorDialog": {
           "fb1896a5e7": "취소",
-          "57b722cbba": "에이전트",
+          "57b722cbba": "Agent",
           "6ff66f9012": "새로운 실행",
           "a2e688226d": "워크트리",
           "6f9610e667": "작업 트리는 선택한 워크스페이스에서 실행됩니다. 새로 실행하면 매번 선택한 브랜치에서 새 워크스페이스가 생성됩니다.",
@@ -12244,7 +12244,7 @@
         },
         "AgentSettingsDialog": {
           "50cdb57c03": "AI agents를 관리하고, 기본값을 설정하고, 명령을 사용자 정의하세요.",
-          "fc0268e4ed": "에이전트"
+          "fc0268e4ed": "Agents"
         }
       },
       "activity": {
@@ -12262,7 +12262,7 @@
           "a472a14700": "추가 옵션",
           "db8a1878b5": "스레드 목록 옵션",
           "d1a88df9a8": "읽지 않은 스레드만 표시",
-          "f6396e1f85": "에이전트",
+          "f6396e1f85": "Agent",
           "b29191b3e0": "워크트리",
           "8c3b621ddf": "프로젝트",
           "4a3986b200": "상태",
@@ -12277,7 +12277,7 @@
         },
         "ActivityTitlebarControls": {
           "f915168c8e": "읽지 않음",
-          "d6a8de3934": "에이전트",
+          "d6a8de3934": "agents",
           "dc708f3eff": "agents 닫기"
         }
       },
@@ -12478,7 +12478,7 @@
   "components": {
     "native-chat": {
       "composer": {
-        "imageUnsupported": "이 에이전트는 이미지 붙여넣기를 지원하지 않습니다.",
+        "imageUnsupported": "이 agent는 이미지 붙여넣기를 지원하지 않습니다.",
         "send": "보내기",
         "noPty": "라이브 terminal이 없습니다. 다시 연결하려면 다시 전환하세요.",
         "locked": "입력이 다른 장치에 의해 보류됩니다.",
@@ -12525,7 +12525,7 @@
           "subtitle": "{{value0}}에게 코드 검사, 출력 설명 또는 변경을 요청하세요."
         }
       },
-      "stop": "에이전트 중지",
+      "stop": "agent 중지",
       "copyMessage": {
         "copied": "복사됨",
         "copy": "메시지 복사"

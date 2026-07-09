@@ -2855,14 +2855,7 @@ export type GlobalSettings = {
    *  on read into [5_000ms, 60min] to defend against bad config.
    *  See docs/mobile-fit-hold.md. */
   mobileAutoRestoreFitMs: number | null
-  /** Experimental: floating animated pet (claude.webp) in the bottom-right
-   *  corner. Opt-in because it's a cosmetic joke feature; users who leave it
-   *  off never mount the overlay. Toggling takes effect immediately in the
-   *  current session (no relaunch) because it is purely renderer-side. */
-  experimentalPet: boolean
-  /** Legacy persisted key from before the sidekick -> pet rename. Read only
-   *  during migration; new writes use experimentalPet. */
-  experimentalSidekick?: boolean
+
   /** Experimental: left-sidebar Agents view with a threaded feed for agent
    *  completions, blocking states, unread state, and worktree creation events. */
   experimentalActivity: boolean
@@ -3367,30 +3360,7 @@ export type PersistedUIState = {
   starNagAgentValueMomentAppVersion?: string | null
   trustedOrcaHooks?: PersistedTrustedOrcaHooks
   setupScriptPromptDismissedRepoIds?: string[]
-  /** Whether the experimental pet overlay is currently visible. Separate
-   *  from the experimentalPet settings flag so "Hide pet" from the
-   *  status-bar menu is a reversible dismiss (re-show without re-enabling the
-   *  feature). Absent = treated as true so existing users see the pet
-   *  the first time they enable the experimental flag. */
-  petVisible?: boolean
-  /** Active pet id: one of the bundled ids or a custom UUID from
-   *  customPets. Unknown ids fall back to the default at read time so
-   *  removing a custom pet the user had selected doesn't leave the
-   *  overlay rendering nothing. */
-  petId?: string
-  /** User-uploaded pet images. Bytes live under the legacy
-   *  userData/sidekicks/custom/ folder; this field is the metadata index so
-   *  custom pets ride the existing PersistedUIState save pipeline. */
-  customPets?: CustomPet[]
-  /** On-screen size of the pet overlay in CSS pixels (square box).
-   *  Clamped to [PET_SIZE_MIN, PET_SIZE_MAX] when read. */
-  petSize?: number
-  /** Legacy persisted keys from before the sidekick -> pet rename. Read only
-   *  during migration; new writes use the pet* names above. */
-  sidekickVisible?: boolean
-  sidekickId?: string
-  customSidekicks?: CustomPet[]
-  sidekickSize?: number
+
   /** Page-position state for Tasks. Source/repo/team/project selections keep
    *  using their existing settings paths; this only restores transient tabs
    *  and applied searches. */
@@ -3408,54 +3378,6 @@ export type PersistedUIState = {
   /** Whether this profile may receive automatic contextual tours from this
    *  rollout. Missing means the renderer has not classified the profile yet. */
   contextualToursAutoEligible?: boolean
-}
-
-export const PET_SIZE_MIN = 60
-export const PET_SIZE_MAX = 360
-export const PET_SIZE_DEFAULT = 180
-
-/** Metadata for a user-uploaded pet image. `id` is the stable identifier;
- *  the on-disk filename (preserving the original extension) lives in `fileName`.
- *  The renderer never learns the absolute path — it asks main for the bytes
- *  via pet:read using (id, fileName). */
-export type CustomPet = {
-  id: string
-  label: string
-  fileName: string
-  /** MIME type needed so the renderer builds a Blob with the correct
-   *  Content-Type — especially image/svg+xml, which browsers won't render
-   *  from a misdeclared blob URL. */
-  mimeType: string
-  /** Storage layout. `image` = legacy flat file at `custom/<id>.<ext>`.
-   *  `bundle` = `.codex-pet` import expanded into `custom/<id>/`. Absent =
-   *  legacy `image` for backwards compatibility with persisted state. */
-  kind?: 'image' | 'bundle'
-  /** Sprite-sheet metadata captured at import time. Present iff this entry
-   *  came from a `.codex-pet` bundle and the manifest declared frame layout.
-   *  `columns`/`rows`/`sheetWidth`/`sheetHeight` are derived in main from
-   *  the decoded sheet so the renderer doesn't need to probe the image. */
-  sprite?: {
-    frameWidth: number
-    frameHeight: number
-    columns: number
-    rows: number
-    sheetWidth: number
-    sheetHeight: number
-    fps: number
-    defaultAnimation?: string
-    animations?: Record<string, SpriteAnimation>
-  }
-  /** Manifest-declared fps captured even when the manifest omits `frame` and
-   *  the renderer falls back to auto-detected frames. Lets DetectedSpriteFrame
-   *  honor the bundle's intended playback speed instead of a hardcoded 8 fps. */
-  spriteFps?: number
-}
-
-/** One animation strip within a sprite sheet: `row` is the y-index (0-based)
- *  and `frames` is the number of consecutive cells played left-to-right. */
-export type SpriteAnimation = {
-  row: number
-  frames: number
 }
 
 export type PersistedTrustedOrcaHookEntry = {
