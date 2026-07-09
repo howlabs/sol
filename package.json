@@ -104,7 +104,6 @@
     "posthog-node": "^5.33.3",
     "qrcode": "^1.5.4",
     "react-i18next": "^17.0.8",
-    "sherpa-onnx": "1.12.37",
     "ssh2": "^1.17.0",
     "tweetnacl": "^1.0.3",
     "ws": "^8.21.0",
@@ -206,13 +205,6 @@
     "vscode-textmate": "^9.3.2",
     "zustand": "^5.0.13"
   },
-  "optionalDependencies": {
-    "sherpa-onnx-darwin-arm64": "1.12.37",
-    "sherpa-onnx-darwin-x64": "1.12.37",
-    "sherpa-onnx-linux-arm64": "1.12.37",
-    "sherpa-onnx-linux-x64": "1.12.37",
-    "sherpa-onnx-win-x64": "1.12.37"
-  },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,mts,cts}": [
       "oxlint",
@@ -245,8 +237,7 @@
       "@parcel/watcher",
       "cpu-features",
       "esbuild",
-      "node-pty",
-      "sherpa-onnx"
+      "node-pty"
     ],
     "patchedDependencies": {
       "node-pty@1.1.0": "config/patches/node-pty@1.1.0.patch",
