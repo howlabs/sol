@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 import {
   isLocalWindowsConptyPaneForCtrlArrow,
   type TerminalCtrlArrowConptyState
@@ -44,25 +43,6 @@ function remoteRuntimeTransport(): Pick<
 }
 
 describe('isLocalWindowsConptyPaneForCtrlArrow', () => {
-  it('uses live local session metadata for synthetic floating terminals with no repo record', () => {
-    expect(
-      isLocalWindowsConptyPaneForCtrlArrow({
-        isWindows: true,
-        userAgent: WINDOWS_UA,
-        state: state({
-          tabsByWorktree: {
-            [FLOATING_TERMINAL_WORKTREE_ID]: [{ id: 'tab-1', shellOverride: 'powershell.exe' }]
-          }
-        }),
-        worktreeId: FLOATING_TERMINAL_WORKTREE_ID,
-        tabId: 'tab-1',
-        paneId: 1,
-        paneCwd: new Map(),
-        fallbackCwd: 'C:\\Users\\me',
-        transport: localTransport({ cwd: 'C:\\Users\\me', shellOverride: 'powershell.exe' })
-      })
-    ).toBe(true)
-  })
 
   it('keeps an already-launched local PowerShell pane local after store ownership changes', () => {
     const worktreeId = 'repo-1::C:\\repo'

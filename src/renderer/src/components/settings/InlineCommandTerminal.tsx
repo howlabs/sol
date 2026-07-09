@@ -33,7 +33,7 @@ type InlineCommandTerminalProps = {
 
 /**
  * Inline pane that runs a one-off setup command (skill install, feature tip) in an
- * ephemeral floating-scoped terminal, auto-inserting the command once the PTY is ready.
+ * ephemeral setup terminal, auto-inserting the command once the PTY is ready.
  */
 export function InlineCommandTerminal({
   command,
@@ -50,8 +50,8 @@ export function InlineCommandTerminal({
   onInteracted,
   onTerminalExit
 }: InlineCommandTerminalProps): React.JSX.Element {
-  // Why: brand the id so a remote runtime scopes this ephemeral terminal to the
-  // floating terminal instead of rejecting the synthetic id.
+  // Why: brand the id so the runtime resolves this ephemeral terminal to a
+  // home-dir launch scope instead of rejecting the synthetic id.
   const worktreeId = useMemo(
     () => brandEphemeralSetupTerminalWorktreeId(worktreeIdProp),
     [worktreeIdProp]
@@ -67,7 +67,6 @@ export function InlineCommandTerminal({
       window.matchMedia('(prefers-reduced-motion: reduce)').matches,
     []
   )
-  const [cwd, setCwd] = useState<string | null>(null)
   const [tabId, setTabId] = useState<string | null>(null)
   // Why: starts at `prefersReducedMotion` so users opted out of motion never
   // see the slide-in frame; otherwise we flip to true after first paint so the
@@ -79,18 +78,6 @@ export function InlineCommandTerminal({
   useEffect(() => {
     onOpened?.()
   }, [onOpened])
-
-  useEffect(() => {
-    let cancelled = false
-    void window.api.app.getFloatingTerminalCwd({ path: '~' }).then((nextCwd) => {
-      if (!cancelled) {
-        setCwd(nextCwd)
-      }
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [])
 
   useEffect(() => {
     const tab = createTab(worktreeId, undefined, shellOverride, {
@@ -197,7 +184,7 @@ export function InlineCommandTerminal({
   }, [autoScrollIntoView, command, tabId])
 
   useEffect(() => {
-    if (!tabId || !cwd || autoInsertedRef.current === command) {
+    if (!tabId || autoInsertedRef.current === command) {
       return
     }
     let canceled = false
@@ -255,7 +242,7 @@ export function InlineCommandTerminal({
         window.clearTimeout(insertionTimer)
       }
     }
-  }, [command, cwd, insertCommand, tabId])
+  }, [command, insertCommand, tabId])
 
   // Why: grid 0fr → 1fr animates to the child's natural height without a
   // hardcoded max-height, so we don't leave dead space if the terminal
@@ -287,11 +274,10 @@ export function InlineCommandTerminal({
           onKeyDownCapture={(event) => onInteracted?.('keyboard', event)}
           onPointerDownCapture={() => onInteracted?.('pointer')}
         >
-          {cwd && tabId ? (
+          {tabId ? (
             <TerminalPane
               tabId={tabId}
               worktreeId={worktreeId}
-              cwd={cwd}
               isActive
               isVisible
               onPtyExit={() => {

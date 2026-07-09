@@ -17,7 +17,6 @@ import type { PaneCwdMap } from './resolve-split-cwd'
 import { keyboardEventBelongsToScope } from './terminal-keyboard-scope'
 import { normalizeSelectedTextForFileSearch } from '@/lib/file-search-selection'
 import { isFindQueryTooLarge } from '@/lib/find-query-bounds'
-import { handleEmptyFloatingWorkspacePanelCloseShortcut } from '@/lib/floating-workspace-terminal-actions'
 import { recordCreatedTerminalPaneSplit } from './terminal-pane-split-completion'
 import { splitTerminalPaneWithInheritedCwd } from './terminal-pane-split-with-inherited-cwd'
 import { useAppStore } from '@/store'
@@ -267,9 +266,6 @@ export function useTerminalKeyboardShortcuts({
         return
       }
 
-      if (handleEmptyFloatingWorkspacePanelCloseShortcut(e, shortcutPlatform, keybindings)) {
-        return
-      }
 
       // Why: the active pane's live PTY session decides whether Ctrl+Arrow should
       // pass through as native \e[1;5C/\e[1;5D or be translated to \eb/\ef.

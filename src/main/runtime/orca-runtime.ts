@@ -616,10 +616,8 @@ import {
   shouldRunSetupForCreate,
   writeIssueCommand
 } from '../hooks'
-import {
-  DEFAULT_REPO_BADGE_COLOR,
-  FLOATING_TERMINAL_WORKTREE_ID
-} from '../../shared/constants'
+import { DEFAULT_REPO_BADGE_COLOR } from '../../shared/constants'
+import { isEphemeralSetupTerminalWorktreeId } from '../../shared/ephemeral-setup-terminal-worktree-id'
 import { listRepoWorktrees } from '../repo-worktrees'
 import { createWorktreeLinkedPaths, removeWorktreeLinkedPaths } from '../ipc/worktree-symlinks'
 import { deleteWorktreeHistoryDir } from '../terminal-history'
@@ -17250,14 +17248,12 @@ export class OrcaRuntimeService {
   private async resolveTerminalWorkspaceLaunchScope(
     selector: string
   ): Promise<TerminalWorkspaceLaunchScope> {
-    const floatingTerminalSelector =
-      selector === FLOATING_TERMINAL_WORKTREE_ID ||
-      selector === `id:${FLOATING_TERMINAL_WORKTREE_ID}`
-    if (floatingTerminalSelector) {
-      // Why: the floating sentinel is terminal-only; other workspace APIs must
-      // keep rejecting it because there is no backing repo/worktree record.
+    const workspaceSelector = selector.startsWith('id:') ? selector.slice(3) : selector
+    if (isEphemeralSetupTerminalWorktreeId(workspaceSelector)) {
+      // Why: setup/onboarding terminals have no backing worktree; launch them
+      // in the user home directory under their branded synthetic id.
       return {
-        id: FLOATING_TERMINAL_WORKTREE_ID,
+        id: workspaceSelector,
         path: homedir(),
         connectionId: null,
         repo: null,
@@ -17270,7 +17266,6 @@ export class OrcaRuntimeService {
       return folderScope
     }
 
-    const workspaceSelector = selector.startsWith('id:') ? selector.slice(3) : selector
     const parsed = parseWorkspaceKey(workspaceSelector)
     const worktreeSelector = parsed?.type === 'worktree' ? `id:${parsed.worktreeId}` : selector
     const worktree = await this.resolveWorktreeSelector(worktreeSelector)

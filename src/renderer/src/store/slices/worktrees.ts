@@ -58,7 +58,6 @@ import {
   toSshExecutionHostId,
   type ExecutionHostId
 } from '../../../../shared/execution-host'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 import {
   folderWorkspaceKey,
   isWorkspaceKey,
@@ -2558,9 +2557,6 @@ export const createWorktreeSlice: StateCreator<AppState, [], [], WorktreeSlice> 
       return
     }
     const validIds = new Set<string>()
-    // Why: floating is persisted renderer state, but not a repo worktree that
-    // authoritative runtime scans can return.
-    validIds.add(FLOATING_TERMINAL_WORKTREE_ID)
     // Why: folder workspaces persist terminal tabs under `folder:<id>` keys,
     // but authoritative repo scans can never return those synthetic ids.
     for (const workspace of get().folderWorkspaces ?? []) {
@@ -4698,7 +4694,7 @@ export const createWorktreeSlice: StateCreator<AppState, [], [], WorktreeSlice> 
   getKnownWorktreeById: (worktreeId) => findKnownWorktreeById(get(), worktreeId),
 
   purgeWorktreeTerminalState: (worktreeIds: string[]) => {
-    const purgeableWorktreeIds = worktreeIds.filter((id) => id !== FLOATING_TERMINAL_WORKTREE_ID)
+    const purgeableWorktreeIds = worktreeIds
     if (purgeableWorktreeIds.length === 0) {
       return
     }

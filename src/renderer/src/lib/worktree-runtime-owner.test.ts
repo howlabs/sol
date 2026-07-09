@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../shared/constants'
 import {
   getExplicitRuntimeEnvironmentIdForWorktree,
   getExecutionHostIdForWorktree,
@@ -48,12 +47,6 @@ describe('getSettingsForWorktreeRuntimeOwner', () => {
     })
   })
 
-  it('keeps the synthetic floating workspace local while a runtime is focused', () => {
-    expect(getSettingsForWorktreeRuntimeOwner(state, FLOATING_TERMINAL_WORKTREE_ID)).toEqual({
-      activeRuntimeEnvironmentId: null
-    })
-    expect(getExecutionHostIdForWorktree(state, FLOATING_TERMINAL_WORKTREE_ID)).toBe('local')
-  })
 
   it('routes folder workspaces to their project group runtime owner', () => {
     expect(getSettingsForWorktreeRuntimeOwner(state, 'folder:runtime-folder')).toEqual({

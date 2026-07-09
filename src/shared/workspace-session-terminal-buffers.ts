@@ -1,5 +1,4 @@
 import type { Repo, WorkspaceSessionState } from './types'
-import { FLOATING_TERMINAL_WORKTREE_ID } from './constants'
 import { getRepoIdFromWorktreeId } from './worktree-id'
 import { TERMINAL_SCROLLBACK_SESSION_BUFFER_BYTE_LIMIT } from './terminal-scrollback-limits'
 import { clampUtf8TextTail, measureUtf8ByteLength } from './utf8-byte-limits'
@@ -21,7 +20,7 @@ function shouldPreserveTerminalScrollbackBuffersForRepoMap(
   worktreeId: string | undefined,
   repoById: ReadonlyMap<string, RepoTerminalScrollbackOwner>
 ): boolean {
-  if (worktreeId === undefined || worktreeId === FLOATING_TERMINAL_WORKTREE_ID) {
+  if (worktreeId === undefined) {
     return false
   }
   const repoId = getRepoIdFromWorktreeId(worktreeId)

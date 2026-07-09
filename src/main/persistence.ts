@@ -10,11 +10,10 @@ import {
   renameSync,
   unlinkSync,
   copyFileSync,
-  statSync,
-  realpathSync
+  statSync
 } from 'node:fs'
 import { writeFile, rename, mkdir, rm, copyFile } from 'node:fs/promises'
-import { join, dirname, isAbsolute, resolve, sep } from 'node:path'
+import { join, dirname, isAbsolute, resolve } from 'node:path'
 import { homedir } from 'node:os'
 import { createHash, randomUUID } from 'node:crypto'
 import type {
@@ -1477,76 +1476,6 @@ function sanitizeRepoUpdatesForPersistence<
   return sanitized
 }
 
-function expandFloatingWorkspaceHomePath(input: string, home: string): string {
-  if (input === '~') {
-    return home
-  }
-  if (input.startsWith(`~${sep}`) || (process.platform === 'win32' && input.startsWith('~/'))) {
-    return join(home, input.slice(2))
-  }
-  return input
-}
-
-function resolveFloatingWorkspacePath(input: string, home: string): string {
-  const expanded = expandFloatingWorkspaceHomePath(input, home)
-  return isAbsolute(expanded) ? resolve(expanded) : resolve(home, expanded)
-}
-
-function canonicalizePersistedFloatingWorkspaceDirectory(
-  input: string,
-  home: string
-): string | null {
-  const trimmed = input.trim()
-  if (!trimmed) {
-    return null
-  }
-  try {
-    const canonicalPath = resolve(realpathSync(resolveFloatingWorkspacePath(trimmed, home)))
-    return statSync(canonicalPath).isDirectory() ? canonicalPath : null
-  } catch {
-    return null
-  }
-}
-
-function normalizeFloatingWorkspaceTrustedCwds(
-  input: unknown,
-  home: string
-): { trustedCwds: string[]; changed: boolean } {
-  const rawTrustedCwds = Array.isArray(input) ? input : []
-  const trustedCwds: string[] = []
-  const seen = new Set<string>()
-  let changed = input !== undefined && !Array.isArray(input)
-
-  for (const rawTrustedCwd of rawTrustedCwds) {
-    if (typeof rawTrustedCwd !== 'string') {
-      changed = true
-      continue
-    }
-    const trimmedTrustedCwd = rawTrustedCwd.trim()
-    if (!trimmedTrustedCwd) {
-      changed = true
-      continue
-    }
-    const canonicalPath = canonicalizePersistedFloatingWorkspaceDirectory(trimmedTrustedCwd, home)
-    const normalizedPath = canonicalPath ?? resolveFloatingWorkspacePath(trimmedTrustedCwd, home)
-    if (!normalizedPath) {
-      changed = true
-      continue
-    }
-    if (seen.has(normalizedPath)) {
-      changed = true
-      continue
-    }
-    seen.add(normalizedPath)
-    trustedCwds.push(normalizedPath)
-    if (rawTrustedCwd !== normalizedPath) {
-      changed = true
-    }
-  }
-
-  return { trustedCwds, changed }
-}
-
 function normalizeSshRemotePtyLease(value: unknown): SshRemotePtyLease | null {
   if (!value || typeof value !== 'object') {
     return null
@@ -2894,60 +2823,6 @@ export class Store {
           : rawOptionAsAlt === undefined || rawOptionAsAlt === 'true'
             ? 'auto'
             : rawOptionAsAlt
-        const floatingTerminalDefaultedForAllUsers =
-          parsed.settings?.floatingTerminalDefaultedForAllUsers === true
-        // Why: early floating-terminal builds persisted the old off-by-default
-        // value into user profiles. Flip only unmigrated profiles so a later
-        // deliberate opt-out still survives reload.
-        const migratedFloatingTerminalEnabled = floatingTerminalDefaultedForAllUsers
-          ? (parsed.settings?.floatingTerminalEnabled ?? true)
-          : true
-        const floatingTerminalCwdMigrated =
-          parsed.settings?.floatingTerminalCwdMigratedToAppWorkspace === true
-        // Why: an earlier migration wrote '' for the default app-owned notes
-        // directory. Floating terminals should still open at home by default;
-        // markdown notes resolve their app-owned directory through a separate IPC.
-        const migratedFloatingTerminalCwd = floatingTerminalCwdMigrated
-          ? !parsed.settings?.floatingTerminalCwd
-            ? defaults.settings.floatingTerminalCwd
-            : parsed.settings.floatingTerminalCwd
-          : parsed.settings?.floatingTerminalCwd === undefined
-            ? defaults.settings.floatingTerminalCwd
-            : parsed.settings.floatingTerminalCwd
-        const normalizedFloatingTerminalTrustedCwds = normalizeFloatingWorkspaceTrustedCwds(
-          parsed.settings?.floatingTerminalTrustedCwds,
-          homeDir
-        )
-        const migratedFloatingTerminalTrustedCwds = [
-          ...normalizedFloatingTerminalTrustedCwds.trustedCwds
-        ]
-        const rawLegacyFloatingTerminalCwd = parsed.settings?.floatingTerminalCwd
-        const shouldTrustLegacyFloatingTerminalCwd =
-          !floatingTerminalCwdMigrated &&
-          typeof rawLegacyFloatingTerminalCwd === 'string' &&
-          rawLegacyFloatingTerminalCwd.trim().length > 0 &&
-          rawLegacyFloatingTerminalCwd.trim() !== '~'
-        if (!floatingTerminalCwdMigrated) {
-          this.loadNeedsSave = true
-        }
-        if (shouldTrustLegacyFloatingTerminalCwd && rawLegacyFloatingTerminalCwd) {
-          const canonicalLegacyCwd = canonicalizePersistedFloatingWorkspaceDirectory(
-            rawLegacyFloatingTerminalCwd,
-            homeDir
-          )
-          if (
-            canonicalLegacyCwd &&
-            !migratedFloatingTerminalTrustedCwds.includes(canonicalLegacyCwd)
-          ) {
-            // Why: pre-grant profiles with an explicit Floating Workspace cwd
-            // already represented user intent; migrate only that legacy value.
-            migratedFloatingTerminalTrustedCwds.push(canonicalLegacyCwd)
-            normalizedFloatingTerminalTrustedCwds.changed = true
-          }
-        }
-        if (normalizedFloatingTerminalTrustedCwds.changed) {
-          this.loadNeedsSave = true
-        }
         const experimentalActivityDefaultedOffForAllUsers =
           parsed.settings?.experimentalActivityDefaultedOffForAllUsers === true
         // Why: the Agents view moved back behind Experimental. Flip every
@@ -3109,11 +2984,6 @@ export class Store {
             terminalMacOptionAsAlt: migratedOptionAsAlt,
             terminalMacOptionAsAltMigrated: true,
             localWindowsRuntimeDefault: migratedWindowsRuntimeDefault,
-            floatingTerminalEnabled: migratedFloatingTerminalEnabled,
-            floatingTerminalDefaultedForAllUsers: true,
-            floatingTerminalCwd: migratedFloatingTerminalCwd,
-            floatingTerminalTrustedCwds: migratedFloatingTerminalTrustedCwds,
-            floatingTerminalCwdMigratedToAppWorkspace: true,
             terminalScrollbackRows: migratedTerminalScrollback.rows,
             terminalQuickCommands: normalizeTerminalQuickCommands(
               parsed.settings?.terminalQuickCommands

@@ -9,7 +9,6 @@ import {
   ChevronDown,
   ChevronRight,
   Loader2,
-  PanelsTopLeft,
   RefreshCw,
   Server
 } from 'lucide-react'
@@ -36,7 +35,6 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { useAppStore } from '../../store'
-import { selectFloatingWorkspaceHasUnread } from '../../store/selectors'
 import type {
   ClaudeRateLimitAccountsState,
   CodexRateLimitAccountsState,
@@ -63,9 +61,6 @@ import { isStatusBarItemAvailable } from './status-bar-agent-gating'
 import { getVisibleUsageProvider, isUsageEmptyState } from './status-bar-provider-visibility'
 import { StatusBarUsageEmptyCta } from './StatusBarUsageEmptyCta'
 import { shouldOpenStatusBarContextMenu } from './status-bar-context-menu-policy'
-import { TOGGLE_FLOATING_TERMINAL_EVENT } from '@/lib/floating-terminal'
-import { useShortcutLabel } from '@/hooks/useShortcutLabel'
-import { FloatingTerminalIconContextMenu } from '@/components/floating-terminal/FloatingTerminalIconContextMenu'
 import { summarizeCodexRestartStatus } from './codex-restart-status-summary'
 import {
   getWindowsTerminalCapabilityOwnerKey,
@@ -73,10 +68,6 @@ import {
 } from '@/lib/windows-terminal-capabilities'
 import { getActiveRuntimeTarget } from '@/runtime/runtime-rpc-client'
 import { translate } from '@/i18n/i18n'
-
-type StatusBarProps = {
-  floatingTerminalOpen: boolean
-}
 
 const ResourceUsageStatusSegment = lazyWithRetry(() =>
   import('./ResourceUsageStatusSegment').then((module) => ({
@@ -1737,21 +1728,13 @@ export function ProviderDetailsMenu({
 
 const CLOSE_ALL_CONTEXT_MENUS_EVENT = 'orca-close-all-context-menus'
 
-function StatusBarInner({ floatingTerminalOpen }: StatusBarProps): React.JSX.Element | null {
-  const floatingTerminalShortcut = useShortcutLabel('floatingTerminal.toggle')
+function StatusBarInner(): React.JSX.Element | null {
   const rateLimits = useAppStore((s) => s.rateLimits)
   const settings = useAppStore((s) => s.settings)
   const refreshRateLimits = useAppStore((s) => s.refreshRateLimits)
   const statusBarVisible = useAppStore((s) => s.statusBarVisible)
   const statusBarItems = useAppStore((s) => s.statusBarItems)
   const recordFeatureInteraction = useAppStore((s) => s.recordFeatureInteraction)
-  // Why: same launcher attention dot as the floating-button trigger, so an
-  // unacknowledged bell/agent-completion in the floating workspace is visible
-  // whichever trigger location the user picked (see FloatingTerminalToggleButton).
-  const hasFloatingUnread = useAppStore(selectFloatingWorkspaceHasUnread)
-  const floatingTerminalEnabled = settings?.floatingTerminalEnabled === true
-  const floatingTerminalTriggerLocation =
-    settings?.floatingTerminalTriggerLocation ?? 'floating-button'
   // Why: usage bars exist to surface CLI rate limits — showing one for an
   // agent that isn't on the user's PATH is just noise (e.g. a fresh Ubuntu
   // install showing "Gemini Usage" with no Gemini CLI installed). We gate
@@ -1872,8 +1855,6 @@ function StatusBarInner({ floatingTerminalOpen }: StatusBarProps): React.JSX.Ele
   const showSsh = statusBarItems.includes('ssh')
   const showResourceUsage = statusBarItems.includes('resource-usage')
   const showPorts = statusBarItems.includes('ports')
-  const showFloatingTerminalToggle =
-    floatingTerminalEnabled && floatingTerminalTriggerLocation === 'status-bar'
   const anyVisible =
     showClaude ||
     showCodex ||
@@ -1903,13 +1884,6 @@ function StatusBarInner({ floatingTerminalOpen }: StatusBarProps): React.JSX.Ele
 
   const compact = containerWidth < 900
   const iconOnly = containerWidth < 500
-  const floatingTerminalActionLabel = floatingTerminalOpen
-    ? 'Minimize Floating Workspace'
-    : 'Show Floating Workspace'
-  // Why: only while the panel is closed; the dot reflects unacknowledged
-  // floating-workspace activity and clears via the shared unread paths.
-  const showFloatingWorkspaceAttentionDot = !floatingTerminalOpen && hasFloatingUnread
-
   return (
     <div
       ref={containerRefCallback}
@@ -2026,40 +2000,6 @@ function StatusBarInner({ floatingTerminalOpen }: StatusBarProps): React.JSX.Ele
           {showPorts ? <PortsStatusSegment compact={compact} iconOnly={iconOnly} /> : null}
           {showSsh ? <SshStatusSegment compact={compact} iconOnly={iconOnly} /> : null}
         </React.Suspense>
-        {showFloatingTerminalToggle && (
-          <FloatingTerminalIconContextMenu currentLocation="status-bar" className="relative">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  className="relative inline-flex size-5 cursor-pointer items-center justify-center rounded border border-border bg-secondary text-secondary-foreground shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
-                  aria-label={
-                    showFloatingWorkspaceAttentionDot
-                      ? `${floatingTerminalActionLabel}, new activity`
-                      : floatingTerminalActionLabel
-                  }
-                  onClick={() => {
-                    window.dispatchEvent(new CustomEvent(TOGGLE_FLOATING_TERMINAL_EVENT))
-                  }}
-                >
-                  <PanelsTopLeft className="size-3.5" />
-                  {showFloatingWorkspaceAttentionDot ? (
-                    // Why: amber = Orca's "needs attention" convention; ring
-                    // matches the button fill so the dot reads on the icon.
-                    <span
-                      aria-hidden
-                      data-floating-terminal-attention
-                      className="pointer-events-none absolute right-0.5 top-0.5 size-1.5 rounded-full bg-amber-500 ring-1 ring-secondary"
-                    />
-                  ) : null}
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="top" sideOffset={6}>
-                {floatingTerminalActionLabel} ({floatingTerminalShortcut})
-              </TooltipContent>
-            </Tooltip>
-          </FloatingTerminalIconContextMenu>
-        )}
       </div>
 
       <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen} modal={false}>

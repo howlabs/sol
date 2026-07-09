@@ -35,7 +35,6 @@ import { AppearancePane } from './AppearancePane'
 import { InputPane } from './InputPane'
 import { ShortcutsPane } from './ShortcutsPane'
 import { TerminalPane } from './TerminalPane'
-import { FloatingWorkspacePane } from './FloatingWorkspacePane'
 import { useGhosttyImport } from './useGhosttyImport'
 import { useWarpThemeImport } from './useWarpThemeImport'
 import { RepositoryPane } from './RepositoryPane'
@@ -1267,22 +1266,6 @@ function Settings(): React.JSX.Element {
                   </SettingsSection>
                 ) : null}
 
-                <SettingsSection
-                  id="floating-workspace"
-                  title={translate(
-                    'auto.components.settings.Settings.3eb22a3ada',
-                    'Floating Workspace'
-                  )}
-                  description={translate(
-                    'auto.components.settings.Settings.3d9adfe6a5',
-                    'Global terminal, browser, and markdown tabs.'
-                  )}
-                  searchEntries={getSectionSearchEntries('floating-workspace')}
-                >
-                  {isSectionMounted('floating-workspace') ? (
-                    <FloatingWorkspacePane settings={settings} updateSettings={updateSettings} />
-                  ) : null}
-                </SettingsSection>
 
                 <SettingsSection
                   id="appearance"

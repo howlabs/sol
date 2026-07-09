@@ -11,7 +11,6 @@ import {
   isTerminalQuickCommandComplete
 } from '../../../../shared/terminal-quick-commands'
 import { getRepoIdFromWorktreeId } from '../../../../shared/worktree-id'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 import { runQuickCommandInNewTab } from '@/lib/run-quick-command-in-new-tab'
 import type { TerminalQuickCommand } from '../../../../shared/types'
 import { useConfirmationDialog } from '@/components/confirmation-dialog'
@@ -32,14 +31,9 @@ export function TabBarQuickCommandsButton({
   const updateSettings = useAppStore((s) => s.updateSettings)
   const repos = useAppStore((s) => s.repos)
   const confirm = useConfirmationDialog()
-  // Why: floating terminals share a synthetic worktree id (`global-floating-terminal`)
-  // that has no separator, so naive `getRepoIdFromWorktreeId` would return that
-  // sentinel as a "repo id" and the button would point at a repo that doesn't
-  // exist. Resolve to a real repo from the workspace; otherwise hide the button.
+  // Why: synthetic workspace ids (folder keys, legacy sentinels) must not be
+  // treated as repo ids. Only show the button when the candidate matches a real repo.
   const repoId = useMemo(() => {
-    if (worktreeId === FLOATING_TERMINAL_WORKTREE_ID) {
-      return null
-    }
     const candidate = getRepoIdFromWorktreeId(worktreeId)
     return repos.some((r) => r.id === candidate) ? candidate : null
   }, [worktreeId, repos])

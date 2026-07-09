@@ -9,7 +9,6 @@ import {
 } from '../../runtime/runtime-compatibility-test-fixture'
 import { GRAB_BUDGET, type BrowserPageAnnotation } from '../../../../shared/browser-grab-types'
 import { clearRuntimeCompatibilityCacheForTests } from '../../runtime/runtime-rpc-client'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 
 const createWebRuntimeSessionBrowserTabMock = vi.hoisted(() => vi.fn())
 const runtimeEnvironmentCall = vi.fn()
@@ -411,26 +410,6 @@ describe('createBrowserSlice annotations', () => {
   })
 })
 
-describe('createBrowserSlice floating tabs', () => {
-  it('tracks new floating browser tabs without changing the main browser surface', () => {
-    const store = createTestStore()
-    store.setState({ activeWorktreeId: 'wt-1', activeTabType: 'terminal' } as Partial<AppState>)
-    const mainTab = store.getState().createBrowserTab('wt-1', 'https://example.com')
-    const activeTabTypeBeforeFloating = store.getState().activeTabType
-
-    const tab = store.getState().createBrowserTab(FLOATING_TERMINAL_WORKTREE_ID, 'about:blank', {
-      focusAddressBar: true
-    })
-
-    expect(store.getState().activeBrowserTabId).toBe(mainTab.id)
-    expect(store.getState().activeBrowserTabIdByWorktree['wt-1']).toBe(mainTab.id)
-    expect(store.getState().activeBrowserTabIdByWorktree[FLOATING_TERMINAL_WORKTREE_ID]).toBe(
-      tab.id
-    )
-    expect(store.getState().pendingAddressBarFocusByTabId[tab.id]).toBe(true)
-    expect(store.getState().activeTabType).toBe(activeTabTypeBeforeFloating)
-  })
-})
 
 describe('createBrowserSlice closed browser workspaces', () => {
   it('reopens duplicate-URL browser pages on the originally active page', () => {

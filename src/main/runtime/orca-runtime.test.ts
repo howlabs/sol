@@ -73,11 +73,7 @@ import {
   unregisterSshFilesystemProvider
 } from '../providers/ssh-filesystem-dispatch'
 import { registerSshGitProvider, unregisterSshGitProvider } from '../providers/ssh-git-dispatch'
-import {
-  DEFAULT_REPO_BADGE_COLOR,
-  FLOATING_TERMINAL_WORKTREE_ID,
-  getDefaultWorkspaceSession
-} from '../../shared/constants'
+import { DEFAULT_REPO_BADGE_COLOR, getDefaultWorkspaceSession } from '../../shared/constants'
 import { advertisedUrlWatcher } from '../ports/advertised-url-watcher'
 import { makePaneKey } from '../../shared/stable-pane-id'
 import { SETUP_AGENT_SEQUENCE_STARTUP_COMMAND_ENV } from '../../shared/setup-agent-sequencing'
@@ -2128,17 +2124,6 @@ describe('OrcaRuntimeService', () => {
     const runtime = new OrcaRuntimeService(store)
 
     await expect(runtime.showManagedWorktree('active')).rejects.toThrow('selector_not_found')
-  })
-
-  it('does not resolve the floating-terminal sentinel as a managed worktree', async () => {
-    const runtime = new OrcaRuntimeService(store)
-
-    await expect(runtime.showManagedWorktree(FLOATING_TERMINAL_WORKTREE_ID)).rejects.toThrow(
-      'selector_not_found'
-    )
-    await expect(
-      runtime.showManagedWorktree(`id:${FLOATING_TERMINAL_WORKTREE_ID}`)
-    ).rejects.toThrow('selector_not_found')
   })
 
   it('still throws selector_not_found for an unknown id selector', async () => {
@@ -8011,52 +7996,6 @@ describe('OrcaRuntimeService', () => {
     expect(spawnedEnv.ORCA_PROJECT_GROUP_ID).toBe(TEST_FOLDER_PROJECT_GROUP_ID)
     expect(spawnedEnv.ORCA_WORKSPACE_ROOT).toBe(folderPath)
     expect(spawnedEnv.ORCA_WORKTREE_ID).toBe(TEST_FOLDER_WORKSPACE_KEY)
-  })
-
-  it.each([
-    { label: 'bare floating terminal sentinel', selector: FLOATING_TERMINAL_WORKTREE_ID },
-    {
-      label: 'id-prefixed floating terminal sentinel',
-      selector: `id:${FLOATING_TERMINAL_WORKTREE_ID}`
-    }
-  ])('creates background terminal sessions for a $label', async ({ selector }) => {
-    const spawn = vi.fn().mockResolvedValue({ id: 'pty-floating' })
-    const runtime = new OrcaRuntimeService(store)
-    runtime.setPtyController({
-      spawn,
-      write: () => true,
-      kill: () => true,
-      getForegroundProcess: async () => null
-    })
-
-    await expect(
-      runtime.createTerminal(selector, {
-        command: 'codex',
-        title: 'floating worker'
-      })
-    ).resolves.toMatchObject({
-      worktreeId: FLOATING_TERMINAL_WORKTREE_ID,
-      title: 'floating worker',
-      surface: 'background'
-    })
-
-    const spawnCall = spawn.mock.calls[0]?.[0] as
-      | {
-          cwd?: string
-          connectionId?: string | null
-          env?: Record<string, string>
-          worktreeId?: string
-        }
-      | undefined
-    expect(spawnCall).toMatchObject({
-      cwd: homedir(),
-      connectionId: null,
-      worktreeId: FLOATING_TERMINAL_WORKTREE_ID
-    })
-    expect(spawnCall?.env?.ORCA_WORKTREE_ID).toBe(FLOATING_TERMINAL_WORKTREE_ID)
-    expect(spawnCall?.env?.ORCA_WORKSPACE_ID).toBeUndefined()
-    expect(spawnCall?.env?.ORCA_PROJECT_GROUP_ID).toBeUndefined()
-    expect(spawnCall?.env?.ORCA_WORKSPACE_ROOT).toBeUndefined()
   })
 
   it('rejects folder workspace terminal creation when the backing path is missing', async () => {

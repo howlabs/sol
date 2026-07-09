@@ -1,11 +1,11 @@
 // Inline setup/onboarding terminals have no backing worktree. Branding their
-// per-panel id lets the terminal RPC layer scope them to the floating terminal,
-// instead of leaking an unresolvable selector to a remote runtime (#6789).
+// per-panel id lets the terminal RPC layer resolve them to a home-dir launch
+// scope instead of leaking an unresolvable selector to a remote runtime (#6789).
 export const EPHEMERAL_SETUP_TERMINAL_WORKTREE_ID_PREFIX = 'ephemeral-setup-terminal:'
 
 /**
- * Brand a per-panel setup-terminal id so the terminal RPC layer routes it to the
- * floating-terminal scope on a runtime. Idempotent for already-branded ids.
+ * Brand a per-panel setup-terminal id so the terminal RPC layer can resolve it
+ * to a home-dir launch scope on a runtime. Idempotent for already-branded ids.
  */
 export function brandEphemeralSetupTerminalWorktreeId(panelId: string): string {
   return isEphemeralSetupTerminalWorktreeId(panelId)

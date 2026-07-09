@@ -116,7 +116,6 @@ import type {
   LinearProjectSummary,
   LinearTeam,
   MarkdownDocument,
-  FloatingTerminalCwdRequest,
   GitHubIssueUpdate,
   GitHubPRRefreshCandidate,
   GitHubPRRefreshEnqueueResult,
@@ -774,19 +773,10 @@ export type AppApi = {
    *  (issue #1205).
    *  Returns null on non-Darwin platforms or when the defaults read fails. */
   getKeyboardInputSourceId: () => Promise<string | null>
+  /** Absolute path to the user home directory on the host. */
+  getHomeDirectory: () => Promise<string>
   /** Updates the macOS Dock unread badge. No-op on Windows/Linux. */
   setUnreadDockBadgeCount: (count: number) => Promise<void>
-  /** Resolves the launch directory for global Floating Terminal tabs. */
-  getFloatingTerminalCwd: (args?: FloatingTerminalCwdRequest) => Promise<string>
-  /** Resolves Orca's app-owned directory for auto-created Floating Workspace
-   *  markdown notes. */
-  getFloatingMarkdownDirectory: () => Promise<string>
-  /** Opens a native picker for markdown documents, rooted in the floating
-   *  workspace, and authorizes the selected file for editor reads/writes. */
-  pickFloatingMarkdownDocument: () => Promise<MarkdownDocument | null>
-  /** Opens a native directory picker and authorizes the selected directory
-   *  for Floating Workspace markdown file creation. */
-  pickFloatingWorkspaceDirectory: () => Promise<string | null>
 }
 
 export type PreloadApi = {
@@ -2461,7 +2451,6 @@ export type PreloadApi = {
     onToggleLeftSidebar: (callback: () => void) => () => void
     onToggleRightSidebar: (callback: () => void) => () => void
     onToggleWorktreePalette: (callback: () => void) => () => void
-    onToggleFloatingTerminal: (callback: () => void) => () => void
     onTerminalShortcutCaptured: (
       callback: (data: { actionId: KeybindingActionId }) => void
     ) => () => void
@@ -2639,7 +2628,6 @@ export type PreloadApi = {
     syncTrafficLights: (zoomFactor: number) => void
     setMarkdownEditorFocused: (focused: boolean) => void
     setTerminalInputFocused: (focused: boolean) => void
-    setFloatingTerminalInputFocused: (focused: boolean) => void
     setShortcutRecorderFocused: (focused: boolean) => void
     onRichMarkdownContextCommand: (
       callback: (payload: RichMarkdownContextMenuCommandPayload) => void

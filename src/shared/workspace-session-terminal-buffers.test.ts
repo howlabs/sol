@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { FLOATING_TERMINAL_WORKTREE_ID } from './constants'
 import type { WorkspaceSessionState } from './types'
 import { TERMINAL_SCROLLBACK_SESSION_BUFFER_BYTE_LIMIT } from './terminal-scrollback-limits'
 import { getUtf8ByteLength } from './utf8-byte-limits'
@@ -113,9 +112,6 @@ describe('pruneLocalTerminalScrollbackBuffers', () => {
     )
     expect(shouldPreserveTerminalScrollbackBuffers('remote-repo::/remote/worktree', repos)).toBe(
       true
-    )
-    expect(shouldPreserveTerminalScrollbackBuffers(FLOATING_TERMINAL_WORKTREE_ID, repos)).toBe(
-      false
     )
     expect(
       shouldPreserveTerminalScrollbackBuffers('unknown-repo::/maybe-remote/worktree', repos)
@@ -232,43 +228,6 @@ describe('pruneLocalTerminalScrollbackBuffers', () => {
     expect(buffer).toHaveLength(TERMINAL_SCROLLBACK_SESSION_BUFFER_BYTE_LIMIT / 2)
   })
 
-  it('drops floating terminal buffers even though the synthetic worktree has no repo', () => {
-    const result = pruneLocalTerminalScrollbackBuffers(
-      makeSession({
-        tabsByWorktree: {
-          [FLOATING_TERMINAL_WORKTREE_ID]: [
-            {
-              id: 'floating-tab',
-              title: 'floating',
-              customTitle: null,
-              color: null,
-              sortOrder: 0,
-              createdAt: 1,
-              ptyId: 'floating-pty',
-              worktreeId: FLOATING_TERMINAL_WORKTREE_ID
-            }
-          ]
-        },
-        terminalLayoutsByTabId: {
-          'floating-tab': {
-            root: null,
-            activeLeafId: null,
-            expandedLeafId: null,
-            buffersByLeafId: { 'pane:1': 'floating-scrollback' },
-            ptyIdsByLeafId: { 'pane:1': 'floating-pty' }
-          }
-        }
-      }),
-      []
-    )
-
-    expect(result.terminalLayoutsByTabId['floating-tab']).toEqual({
-      root: null,
-      activeLeafId: null,
-      expandedLeafId: null,
-      ptyIdsByLeafId: { 'pane:1': 'floating-pty' }
-    })
-  })
 
   it('treats orphaned layouts as local and prunes their buffers', () => {
     const result = pruneLocalTerminalScrollbackBuffers(
