@@ -63,8 +63,6 @@ describe('feature interactions', () => {
       'ai-commit-generation',
       'ai-pr-generation',
       'claude-account-switching',
-      'computer-use-setup',
-      'computer-use',
       'codex-account-switching',
       'cookie-import',
       'notifications',

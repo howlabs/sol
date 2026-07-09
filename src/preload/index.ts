@@ -1921,13 +1921,6 @@ const api = {
       ipcRenderer.invoke('developerPermissions:openSettings', args)
   },
 
-  computerUsePermissions: {
-    getStatus: (): Promise<unknown> => ipcRenderer.invoke('computerUsePermissions:getStatus'),
-    openSetup: (args?: { id?: string }): Promise<unknown> =>
-      ipcRenderer.invoke('computerUsePermissions:openSetup', args),
-    reset: (): Promise<unknown> => ipcRenderer.invoke('computerUsePermissions:reset')
-  },
-
   shell: {
     openPath: (path: string): Promise<void> => ipcRenderer.invoke('shell:openPath', path),
 
@@ -3922,8 +3915,7 @@ const api = {
     dropByTabPrefix: (tabId: string): void => {
       ipcRenderer.send('agentStatus:dropByTabPrefix', tabId)
     }
-  },
-
+  }
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

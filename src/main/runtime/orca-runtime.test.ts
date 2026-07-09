@@ -7,7 +7,7 @@ import { randomUUID } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { mkdirSync } from 'node:fs'
 import { lstat, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
-import { homedir, tmpdir } from 'node:os'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { ipcMain } from 'electron'
 import type {
@@ -9266,12 +9266,12 @@ describe('OrcaRuntimeService', () => {
     runtime.onPtyData(
       'pty-bg',
       [
-        'Booting MCP server: computer-use(0s  esc to interrupt)\n',
+        'Booting MCP server: orchestration(0s  esc to interrupt)\n',
         ' >_ OpenAI Codex (v0.132.0)\n',
         ' model:       gpt-5.5 high   /model to change\n',
         ' directory:   ~/orca/workspaces/orca/cli-debug\n',
         [
-          'Starting MCP servers (0/2): codex_apps, computer-use (2s  esc to interrupt)',
+          'Starting MCP servers (0/2): codex_apps, orchestration (2s  esc to interrupt)',
           'Run /review on my current changes gpt-5.5 high ~/orca/workspaces/orca/cli-debug',
           'Run /review on my current changes gpt-5.5 high ~/orca/workspaces/orca/cli-debug',
           'Run /review on my current changes gpt-5.5 high ~/orca/workspaces/orca/cli-debug',

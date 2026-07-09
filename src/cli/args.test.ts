@@ -10,10 +10,10 @@ import {
 
 describe('parseArgs', () => {
   it('keeps an empty string as a flag value', () => {
-    const parsed = parseArgs(['computer', 'set-value', '--value', '', '--json'])
+    const parsed = parseArgs(['terminal', 'send', '--text', '', '--json'])
 
-    expect(parsed.commandPath).toEqual(['computer', 'set-value'])
-    expect(parsed.flags.get('value')).toBe('')
+    expect(parsed.commandPath).toEqual(['terminal', 'send'])
+    expect(parsed.flags.get('text')).toBe('')
     expect(parsed.flags.get('json')).toBe(true)
   })
 
@@ -48,19 +48,19 @@ describe('parseArgs', () => {
     const parsed = normalizeCommandPositionals(
       [
         {
-          path: ['computer', 'click'],
-          summary: 'Click',
-          usage: 'orca computer click <x> <y>',
-          allowedFlags: ['x', 'y'],
-          positionalArgs: ['x', 'y']
+          path: ['tab', 'create'],
+          summary: 'Create tab',
+          usage: 'orca tab create <url>',
+          allowedFlags: ['url'],
+          positionalArgs: ['url']
         }
       ],
-      parseArgs(['computer', 'click', '10', '--y', '20'])
+      parseArgs(['tab', 'create', 'https://example.com', '--json'])
     )
 
-    expect(parsed.commandPath).toEqual(['computer', 'click'])
-    expect(parsed.flags.get('x')).toBe('10')
-    expect(parsed.flags.get('y')).toBe('20')
+    expect(parsed.commandPath).toEqual(['tab', 'create'])
+    expect(parsed.flags.get('url')).toBe('https://example.com')
+    expect(parsed.flags.get('json')).toBe(true)
     expect(parsed.positionalFlagConflicts).toEqual([])
   })
 

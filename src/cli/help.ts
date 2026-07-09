@@ -93,22 +93,6 @@ Orchestration:
   orchestration gate-list   List decision gates
   orchestration reset       Reset orchestration state
 
-Computer Use:
-  computer capabilities     Show computer-use provider capabilities
-  computer permissions      Show or open computer-use permission setup
-  computer list-apps        List running apps available to computer-use
-  computer list-windows     List visible windows for a target app
-  computer get-app-state    Capture a compact accessibility snapshot of an app
-  computer click            Click an app element or window coordinate
-  computer perform-secondary-action Run an advertised accessibility action
-  computer scroll           Scroll an app element
-  computer drag             Drag between app elements or window coordinates
-  computer type-text        Type literal text at the current app focus
-  computer press-key        Press a single key such as Return or Escape
-  computer hotkey           Press a shortcut combination such as CmdOrCtrl+A
-  computer paste-text       Paste text through the native clipboard path
-  computer set-value        Set the value of a settable app element
-
 Linear:
   linear                    Read Linear ticket context for agents
 
@@ -433,12 +417,6 @@ function formatCommandFlagHelp(flag: string, commandPath: string[]): string {
   if (command === 'orchestration task-create' && flag === 'display-name') {
     return '--display-name <text> UI label shown for dispatched worker rows'
   }
-  if (flag === 'key' && command === 'computer hotkey') {
-    return '--key <key-combo>      Modifier chord with one key, e.g. CmdOrCtrl+A'
-  }
-  if (flag === 'key' && command === 'computer press-key') {
-    return '--key <key>            Single key, e.g. Return, Escape, Tab, Left, or PageUp'
-  }
   return formatFlagHelp(flag)
 }
 
@@ -486,9 +464,7 @@ export function formatFlagHelp(flag: string): string {
     query: '--query <text>        Search text for matching refs',
     ref: '--ref <ref>            Base ref to persist for the repo',
     repo: '--repo <selector>      Repo selector such as id:<id>, name:<name>, or path:<path>',
-    'restore-window':
-      '--restore-window     Bring the target app/window forward before the operation',
-    session: '--session <id>        Snapshot namespace for a related computer-use workflow',
+    session: '--session <id>        Snapshot namespace for a related workflow',
     setup: '--setup run|skip|inherit Setup policy for repo-defined setup hooks',
     terminal: '--terminal <handle>  Runtime-issued terminal handle',
     text: '--text <text>          Text payload to send or type',

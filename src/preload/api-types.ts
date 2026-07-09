@@ -304,12 +304,6 @@ import type {
   DeveloperPermissionState
 } from '../shared/developer-permissions-types'
 import type {
-  ComputerUsePermissionId,
-  ComputerUsePermissionResetResult,
-  ComputerUsePermissionSetupResult,
-  ComputerUsePermissionStatusResult
-} from '../shared/computer-use-permissions-types'
-import type {
   ClaudeUsageBreakdownKind,
   ClaudeUsageBreakdownRow,
   ClaudeUsageDailyPoint,
@@ -1935,13 +1929,6 @@ export type PreloadApi = {
     getStatus: () => Promise<DeveloperPermissionState[]>
     request: (args: { id: DeveloperPermissionId }) => Promise<DeveloperPermissionRequestResult>
     openSettings: (args: { id: DeveloperPermissionId }) => Promise<void>
-  }
-  computerUsePermissions: {
-    getStatus: () => Promise<ComputerUsePermissionStatusResult>
-    openSetup: (args?: {
-      id?: ComputerUsePermissionId
-    }) => Promise<ComputerUsePermissionSetupResult>
-    reset: () => Promise<ComputerUsePermissionResetResult>
   }
   shell: {
     openPath: (path: string) => Promise<void>

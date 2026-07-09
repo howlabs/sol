@@ -28,11 +28,10 @@ describe('settings navigation metadata', () => {
   it('puts AI capability panes at the top on desktop', () => {
     // Why: voice dictation settings were removed for Sol; top order is
     // capabilities then setup panes without a Voice entry.
-    expect(ids().slice(0, 8)).toEqual([
+    expect(ids().slice(0, 7)).toEqual([
       'agents',
       'accounts',
       'orchestration',
-      'computer-use',
       'general',
       'integrations',
       'git',
@@ -71,7 +70,6 @@ describe('settings navigation metadata', () => {
     expect(webIds).not.toContain('browser')
     expect(webIds).not.toContain('ssh')
     expect(webIds).not.toContain('mobile')
-    expect(webIds).not.toContain('computer-use')
     expect(webIds).not.toContain('advanced')
     expect(webIds).toContain('servers')
     expect(webIds).toContain('repo-repo-1')
@@ -85,7 +83,7 @@ describe('settings navigation metadata', () => {
       repos: [repo]
     })
 
-    expect(sections.find((section) => section.id === 'computer-use')?.badge).toBeUndefined()
+    expect(sections.find((section) => section.id === 'orchestration')?.badge).toBeUndefined()
   })
 
   it('places per-workspace environments under Experimental instead of as a beta sidebar item', () => {

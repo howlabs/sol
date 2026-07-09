@@ -17,7 +17,6 @@ import {
   Keyboard,
   ListChecks,
   Lock,
-  MousePointerClick,
   Network,
   Palette,
   Play,
@@ -54,7 +53,6 @@ import {
   getWebRuntimeEnvironmentsSearchEntry
 } from '@/components/settings/runtime-environments-search'
 import { getSshPaneSearchEntries } from '@/components/settings/ssh-search'
-import { getComputerUsePaneSearchEntries } from '@/components/settings/computer-use-search'
 import { getDeveloperPermissionsPaneSearchEntries } from '@/components/settings/developer-permissions-search'
 import { getPrivacyPaneSearchEntries } from '@/components/settings/privacy-search'
 import { getAdvancedPaneSearchEntries } from '@/components/settings/advanced-search'
@@ -163,21 +161,6 @@ export function buildSettingsNavigationMetadata({
       searchEntries: getOrchestrationPaneSearchEntries(),
       group: 'capabilities'
     },
-    ...(showDesktopOnlySettings
-      ? [
-          {
-            id: 'computer-use',
-            title: translate('auto.hooks.useSettingsNavigationMetadata.b35e92364b', 'Computer Use'),
-            description: translate(
-              'auto.hooks.useSettingsNavigationMetadata.0059bd17f3',
-              'Enable agents to control any app on your computer.'
-            ),
-            icon: MousePointerClick,
-            searchEntries: getComputerUsePaneSearchEntries(),
-            group: 'capabilities'
-          }
-        ]
-      : []),
     {
       id: 'general',
       title: translate('auto.hooks.useSettingsNavigationMetadata.13241992bd', 'General'),

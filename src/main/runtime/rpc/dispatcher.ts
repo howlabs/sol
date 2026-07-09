@@ -17,13 +17,7 @@ import {
 import type { TerminalStreamFrame } from '../../../shared/terminal-stream-protocol'
 import type { FeatureInteractionId } from '../../../shared/feature-interactions'
 import { isBrowserPaneUiRuntimeRpcParams } from '../../../shared/runtime-rpc-feature-interaction-source'
-import {
-  computerErrorData,
-  errorResponse,
-  mapBrowserError,
-  mapRuntimeError,
-  successResponse
-} from './errors'
+import { errorResponse, mapBrowserError, mapRuntimeError, successResponse } from './errors'
 import { ALL_RPC_METHODS } from './methods'
 import type { OrcaRuntimeService } from '../orca-runtime'
 
@@ -217,13 +211,7 @@ export class RpcDispatcher {
     meta: RpcEnvelopeMeta,
     message: string
   ): RpcResponse {
-    return errorResponse(
-      request.id,
-      meta,
-      'invalid_argument',
-      message,
-      request.method.startsWith('computer.') ? computerErrorData('invalid_argument') : undefined
-    )
+    return errorResponse(request.id, meta, 'invalid_argument', message)
   }
 
   private meta(): RpcEnvelopeMeta {
@@ -271,16 +259,6 @@ function getRuntimeFeatureInteractionId(
   }
   if (method.startsWith('browser.') && !method.startsWith('browser.profile')) {
     return 'agent-browser-use'
-  }
-  if (method === 'computer.permissions') {
-    return 'computer-use-setup'
-  }
-  if (
-    method.startsWith('computer.') &&
-    method !== 'computer.capabilities' &&
-    method !== 'computer.permissionsStatus'
-  ) {
-    return 'computer-use'
   }
   if (method.startsWith('orchestration.')) {
     return 'agent-orchestration'

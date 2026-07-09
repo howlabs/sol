@@ -17,7 +17,6 @@ export type SettingsNavTarget =
   | 'terminal'
   | 'quick-commands'
   | 'notifications'
-  | 'computer-use'
   | 'developer-permissions'
   | 'privacy'
   | 'advanced'
