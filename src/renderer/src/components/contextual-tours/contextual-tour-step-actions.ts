@@ -10,7 +10,6 @@ export function performContextualTourStepAction(args: {
   detachContextualTourSource: () => void
   setSidebarOpen: (open: boolean) => void
   openTaskPage: () => void
-  openModal: (modal: 'setup-guide', data?: Record<string, unknown>) => void
   canCreateWorkspace: boolean
   openWorkspaceComposer: () => void
   dispatchTerminalPaneSplit: (detail: RequestActiveTerminalPaneSplitDetail) => void
@@ -58,9 +57,7 @@ export function performContextualTourStepAction(args: {
       advanceOrFinish()
       return
     case 'open-getting-started':
+      // Why: Sol removed the setup-guide/onboarding funnel; finish the tour only.
       args.finishTour()
-      args.schedule(() => {
-        args.openModal('setup-guide', { telemetrySource: 'contextual_tour' })
-      })
   }
 }

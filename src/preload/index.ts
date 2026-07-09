@@ -137,7 +137,6 @@ import type {
 import type { TelemetryConsentState } from '../shared/telemetry-consent-types'
 import type { PreflightRuntimeContext, RefreshAgentsResult } from './api-types'
 import type { AgentKind, LaunchSource, RequestKind } from '../shared/telemetry-events'
-import type { AppStarSource } from '../shared/gh-star-source'
 import type {
   Automation,
   AutomationCreateInput,
@@ -440,8 +439,6 @@ const startupDiagnosticsEnabled = process.env.ORCA_STARTUP_DIAGNOSTICS === '1'
 const api = {
   app: {
     getIdentity: (): Promise<AppIdentity> => ipcRenderer.invoke('app:getIdentity'),
-    getFeatureWallAssetBaseUrl: (): Promise<string> =>
-      ipcRenderer.invoke('app:getFeatureWallAssetBaseUrl'),
     relaunch: (): Promise<void> => ipcRenderer.invoke('app:relaunch'),
     restart: async (): Promise<void> => {
       await prepareRendererForAppRestart({
@@ -1336,10 +1333,6 @@ const api = {
       return () => ipcRenderer.removeListener('gh:workItemMutated', listener)
     },
 
-    checkOrcaStarred: (): Promise<boolean | null> => ipcRenderer.invoke('gh:checkOrcaStarred'),
-    starOrca: (source: AppStarSource): Promise<boolean> =>
-      ipcRenderer.invoke('gh:starOrca', source),
-
     // Why: rate_limit is exempt from rate-limit accounting, but we still pass
     // `force` through so callers can bust the 30s in-process cache after a
     // known-expensive op (e.g. after ProjectPicker discovery).
@@ -1636,36 +1629,6 @@ const api = {
 
     listTransitions: (args: { key: string; siteId?: string }): Promise<unknown[]> =>
       ipcRenderer.invoke('jira:listTransitions', args)
-  },
-
-  starNag: {
-    onShow: (
-      callback: (payload?: { mode?: 'gh' | 'web'; surface?: 'card' | 'toast' }) => void
-    ): (() => void) => {
-      const listener = (
-        _event: Electron.IpcRendererEvent,
-        payload?: { mode?: 'gh' | 'web'; surface?: 'card' | 'toast' }
-      ): void => callback(payload)
-      ipcRenderer.on('star-nag:show', listener)
-      return () => ipcRenderer.removeListener('star-nag:show', listener)
-    },
-    onHide: (callback: () => void): (() => void) => {
-      const listener = (): void => callback()
-      ipcRenderer.on('star-nag:hide', listener)
-      return () => ipcRenderer.removeListener('star-nag:hide', listener)
-    },
-    dismiss: (): Promise<void> => ipcRenderer.invoke('star-nag:dismiss'),
-    later: (): Promise<void> => ipcRenderer.invoke('star-nag:later'),
-    complete: (): Promise<void> => ipcRenderer.invoke('star-nag:complete'),
-    disable: (): Promise<void> => ipcRenderer.invoke('star-nag:disable'),
-    openWeb: (): Promise<void> => ipcRenderer.invoke('star-nag:openWeb'),
-    starOrca: (): Promise<boolean> => ipcRenderer.invoke('star-nag:starOrca'),
-    forceShow: (): Promise<void> => ipcRenderer.invoke('star-nag:forceShow'),
-    agentValueMoment: (): Promise<
-      { status: 'ready'; mode: 'gh' | 'web' } | { status: 'skipped' }
-    > => ipcRenderer.invoke('star-nag:agentValueMoment'),
-    showAgentValueMoment: (): Promise<void> => ipcRenderer.invoke('star-nag:showAgentValueMoment'),
-    onboardingCompleted: (): Promise<void> => ipcRenderer.invoke('star-nag:onboardingCompleted')
   },
 
   // Why: telemetry uses a loose untyped surface at the preload boundary on
@@ -2332,105 +2295,6 @@ const api = {
       ipcRenderer.invoke('browser:activeTabChanged', args)
   },
 
-  emulator: {
-    startFrameStream: (args: {
-      streamUrl: string
-      streamKey?: string
-    }): Promise<{
-      streamId: string
-    }> => ipcRenderer.invoke('emulator:frameStreamStart', args),
-    stopFrameStream: (args: { streamId: string }): Promise<void> =>
-      ipcRenderer.invoke('emulator:frameStreamStop', args),
-    onFrameStreamFrame: (
-      callback: (data: { streamId: string; bytes: ArrayBuffer }) => void
-    ): (() => void) => {
-      const listener = (
-        _event: Electron.IpcRendererEvent,
-        data: { streamId: string; bytes: ArrayBuffer }
-      ) => callback(data)
-      ipcRenderer.on('emulator:frameStreamFrame', listener)
-      return () => ipcRenderer.removeListener('emulator:frameStreamFrame', listener)
-    },
-    onFrameStreamError: (
-      callback: (data: { streamId: string; message: string }) => void
-    ): (() => void) => {
-      const listener = (
-        _event: Electron.IpcRendererEvent,
-        data: { streamId: string; message: string }
-      ) => callback(data)
-      ipcRenderer.on('emulator:frameStreamError', listener)
-      return () => ipcRenderer.removeListener('emulator:frameStreamError', listener)
-    },
-    startVideoStream: (args: {
-      deviceId: string
-      streamId: string
-    }): Promise<{ streamId: string }> => ipcRenderer.invoke('emulator:videoStreamStart', args),
-    stopVideoStream: (args: { streamId: string }): Promise<void> =>
-      ipcRenderer.invoke('emulator:videoStreamStop', args),
-    onVideoStreamMeta: (
-      callback: (data: {
-        streamId: string
-        deviceId: string
-        meta: { codecId: string; width: number; height: number }
-      }) => void
-    ): (() => void) => {
-      const listener = (
-        _event: Electron.IpcRendererEvent,
-        data: {
-          streamId: string
-          deviceId: string
-          meta: { codecId: string; width: number; height: number }
-        }
-      ) => callback(data)
-      ipcRenderer.on('emulator:videoStreamMeta', listener)
-      return () => ipcRenderer.removeListener('emulator:videoStreamMeta', listener)
-    },
-    onVideoStreamFrame: (
-      callback: (data: {
-        streamId: string
-        deviceId: string
-        config: boolean
-        keyFrame: boolean
-        bytes: ArrayBuffer
-      }) => void
-    ): (() => void) => {
-      const listener = (
-        _event: Electron.IpcRendererEvent,
-        data: {
-          streamId: string
-          deviceId: string
-          config: boolean
-          keyFrame: boolean
-          bytes: ArrayBuffer
-        }
-      ) => callback(data)
-      ipcRenderer.on('emulator:videoStreamFrame', listener)
-      return () => ipcRenderer.removeListener('emulator:videoStreamFrame', listener)
-    },
-    onPaneFocus: (callback: (data: { worktreeId: string }) => void): (() => void) => {
-      const listener = (_event: Electron.IpcRendererEvent, data: { worktreeId: string }) =>
-        callback(data)
-      ipcRenderer.on('emulator:pane-focus', listener)
-      return () => ipcRenderer.removeListener('emulator:pane-focus', listener)
-    },
-    onAutoAttach: (
-      callback: (data: {
-        worktreeId: string
-        info: { deviceUdid: string; streamUrl: string; wsUrl: string; axUrl?: string }
-      }) => void
-    ): (() => void) => {
-      const listener = (
-        _event: Electron.IpcRendererEvent,
-        data: {
-          worktreeId: string
-          info: { deviceUdid: string; streamUrl: string; wsUrl: string; axUrl?: string }
-        }
-      ) => callback(data)
-      ipcRenderer.on('ui:emulatorAutoAttach', listener)
-      return () => ipcRenderer.removeListener('ui:emulatorAutoAttach', listener)
-    }
-  },
-
   hooks: {
     check: (args: {
       repoId: string
@@ -3031,11 +2895,6 @@ const api = {
       const listener = (_event: Electron.IpcRendererEvent) => callback()
       ipcRenderer.on('ui:newMarkdownTab', listener)
       return () => ipcRenderer.removeListener('ui:newMarkdownTab', listener)
-    },
-    onNewSimulatorTab: (callback: () => void): (() => void) => {
-      const listener = (_event: Electron.IpcRendererEvent) => callback()
-      ipcRenderer.on('ui:newSimulatorTab', listener)
-      return () => ipcRenderer.removeListener('ui:newSimulatorTab', listener)
     },
     onRequestTabCreate: (
       callback: (data: {
@@ -4015,24 +3874,10 @@ const api = {
     getConfig: () => preloadE2EConfig
   },
 
-  mobile: {
+  runtimePairing: {
     listNetworkInterfaces: (): Promise<{
       interfaces: { name: string; address: string }[]
-    }> => ipcRenderer.invoke('mobile:listNetworkInterfaces'),
-
-    getPairingQR: (args?: {
-      address?: string
-      rotate?: boolean
-    }): Promise<
-      | { available: false }
-      | {
-          available: true
-          qrDataUrl: string
-          pairingUrl: string
-          endpoint: string
-          deviceId: string
-        }
-    > => ipcRenderer.invoke('mobile:getPairingQR', args),
+    }> => ipcRenderer.invoke('runtimePairing:listNetworkInterfaces'),
 
     getRuntimePairingUrl: (args?: {
       address?: string
@@ -4046,22 +3891,15 @@ const api = {
           endpoint: string
           deviceId: string
         }
-    > => ipcRenderer.invoke('mobile:getRuntimePairingUrl', args),
+    > => ipcRenderer.invoke('runtimePairing:getRuntimePairingUrl', args),
 
-    listDevices: (): Promise<{
-      devices: { deviceId: string; name: string; pairedAt: number; lastSeenAt: number }[]
-    }> => ipcRenderer.invoke('mobile:listDevices'),
-
-    revokeDevice: (args: { deviceId: string }): Promise<{ revoked: boolean }> =>
-      ipcRenderer.invoke('mobile:revokeDevice', args),
-
-    listRuntimeAccessGrants: () => ipcRenderer.invoke('mobile:listRuntimeAccessGrants'),
+    listRuntimeAccessGrants: () => ipcRenderer.invoke('runtimePairing:listRuntimeAccessGrants'),
 
     revokeRuntimeAccess: (args: { deviceId: string }): Promise<{ revoked: boolean }> =>
-      ipcRenderer.invoke('mobile:revokeRuntimeAccess', args),
+      ipcRenderer.invoke('runtimePairing:revokeRuntimeAccess', args),
 
     isWebSocketReady: (): Promise<{ ready: boolean; endpoint: string | null }> =>
-      ipcRenderer.invoke('mobile:isWebSocketReady')
+      ipcRenderer.invoke('runtimePairing:isWebSocketReady')
   },
 
   agentStatus: {

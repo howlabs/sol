@@ -11,12 +11,10 @@ const mocks = vi.hoisted(() => ({
   openTaskPage: vi.fn(),
   openAutomationsPage: vi.fn(),
   openActivityPage: vi.fn(),
-  openMobilePage: vi.fn(),
   openModal: vi.fn(),
   updateSettings: vi.fn(),
   refreshPreflightStatus: vi.fn(),
   checkLinearConnection: vi.fn(),
-  dismissMobileOnboardingBadge: vi.fn(),
   setSetupGuideSidebarDismissed: vi.fn()
 }))
 
@@ -39,22 +37,6 @@ vi.mock('@/hooks/useShortcutLabel', () => ({
   useShortcutKeyComboDetails: () => [{ keys: ['⌘', 'J'], doubleTap: false }]
 }))
 
-vi.mock('./mobile-sidebar-onboarding-badge', () => ({
-  useMobileSidebarOnboardingBadge: () => ({
-    visible: false,
-    dismiss: mocks.dismissMobileOnboardingBadge
-  })
-}))
-
-vi.mock('../setup-guide/use-setup-guide-progress', () => ({
-  useSetupGuideProgress: () => ({
-    ready: true,
-    coreDoneCount: 0,
-    coreTotal: 1,
-    stepDone: {}
-  })
-}))
-
 vi.mock('@/components/ui/context-menu', () => ({
   ContextMenu: ({ children }: { children: ReactNode }) => (
     <div data-testid="context-menu">{children}</div>
@@ -70,13 +52,7 @@ vi.mock('@/components/ui/context-menu', () => ({
   )
 }))
 
-import {
-  getSetupGuideSidebarEntryReady,
-  shouldShowAgentsButton,
-  shouldShowAutomationsButton,
-  shouldShowMobileButton,
-  shouldShowSetupGuideEntry
-} from './SidebarNav'
+import { shouldShowAgentsButton, shouldShowAutomationsButton } from './SidebarNav'
 import SidebarNav from './SidebarNav'
 
 function gitRepo(): Repo {
@@ -115,7 +91,6 @@ function setSidebarState({
     openTaskPage: mocks.openTaskPage,
     openAutomationsPage: mocks.openAutomationsPage,
     openActivityPage: mocks.openActivityPage,
-    openMobilePage: mocks.openMobilePage,
     openModal: mocks.openModal,
     updateSettings: mocks.updateSettings,
     preflightStatus: { glab: { installed: false } },
@@ -216,15 +191,6 @@ describe('SidebarNav', () => {
     ).toBe(true)
   })
 
-  it('shows the Mobile entry by default for older settings', () => {
-    expect(shouldShowMobileButton(null)).toBe(true)
-    expect(shouldShowMobileButton({})).toBe(true)
-  })
-
-  it('hides the Mobile entry when the sidebar setting is off', () => {
-    expect(shouldShowMobileButton({ showMobileButton: false })).toBe(false)
-  })
-
   it('shows the Automations entry by default for older settings', () => {
     expect(shouldShowAutomationsButton(null)).toBe(true)
     expect(shouldShowAutomationsButton({})).toBe(true)
@@ -258,19 +224,6 @@ describe('SidebarNav', () => {
     await clickButton(getHideButton(automationsMenu as HTMLElement))
 
     expect(mocks.updateSettings).toHaveBeenCalledWith({ showAutomationsButton: false })
-  })
-
-  it('hides Mobile from its sidebar context menu', async () => {
-    const container = await renderSidebarNav()
-
-    const mobileMenu = getButtonByText(container, 'Orca Mobile').closest(
-      '[data-testid="context-menu"]'
-    )
-    expect(mobileMenu).not.toBeNull()
-
-    await clickButton(getHideButton(mobileMenu as HTMLElement))
-
-    expect(mocks.updateSettings).toHaveBeenCalledWith({ showMobileButton: false })
   })
 
   it('hides the worktree palette shortcut until the search field is hovered or focused', async () => {
@@ -332,26 +285,5 @@ describe('SidebarNav', () => {
     await clickButton(getHideButton(tasksMenu as HTMLElement))
 
     expect(mocks.updateSettings).toHaveBeenCalledWith({ showTasksButton: false })
-  })
-
-  it('shows the setup guide entry only after readiness, before completion, and before explicit hide', () => {
-    expect(
-      shouldShowSetupGuideEntry({ ready: false, setupComplete: false, dismissed: false })
-    ).toBe(false)
-    expect(shouldShowSetupGuideEntry({ ready: true, setupComplete: false, dismissed: false })).toBe(
-      true
-    )
-    expect(shouldShowSetupGuideEntry({ ready: true, setupComplete: true, dismissed: false })).toBe(
-      false
-    )
-    expect(shouldShowSetupGuideEntry({ ready: true, setupComplete: false, dismissed: true })).toBe(
-      false
-    )
-  })
-
-  it('requires both persisted UI and setup progress readiness before showing setup guide entry', () => {
-    expect(getSetupGuideSidebarEntryReady(false, true)).toBe(false)
-    expect(getSetupGuideSidebarEntryReady(true, false)).toBe(false)
-    expect(getSetupGuideSidebarEntryReady(true, true)).toBe(true)
   })
 })

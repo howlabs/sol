@@ -36,7 +36,6 @@ export const BOOLEAN_FLAGS = new Set([
   'messages',
   'me',
   'mobile',
-  'mobile-pairing',
   'no-pairing',
   'parent-current',
   'provision',
@@ -138,7 +137,6 @@ export function supportsBrowserPageFlag(commandPath: string[]): boolean {
       'file',
       'orchestration',
       'computer',
-      'emulator',
       'note',
       'diagnostics',
       'linear'
@@ -177,7 +175,6 @@ export function isCommandGroup(commandPath: string[]): boolean {
         'storage',
         'orchestration',
         'computer',
-        'emulator',
         'agent',
         'environment',
         'diagnostics',

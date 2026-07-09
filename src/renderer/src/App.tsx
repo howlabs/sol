@@ -55,13 +55,8 @@ import {
   useSystemPrefersDark
 } from './components/terminal-pane/use-system-prefers-dark'
 import RightSidebar from './components/right-sidebar'
-import { StarNagCard } from './components/StarNagCard'
-import { StarNagAgentValueMomentObserver } from './components/star-nag/StarNagAgentValueMomentObserver'
-import { StarNagToastHost } from './components/star-nag/StarNagToastHost'
 import { TelemetryFirstLaunchSurface } from './components/TelemetryFirstLaunchSurface'
 import { ZoomOverlay } from './components/ZoomOverlay'
-import { onOnboardingReopened } from './components/onboarding/show-onboarding-event'
-import { shouldShowOnboarding } from './components/onboarding/should-show-onboarding'
 import { MarkdownTemplatePicker } from './components/editor/MarkdownTemplatePicker'
 import { FloatingTerminalToggleButton } from './components/floating-terminal/FloatingTerminalToggleButton'
 import {
@@ -145,14 +140,6 @@ import { selectActiveTerminalChromeState } from './store/active-terminal-chrome-
 import type { VirtualizedScrollAnchor } from './hooks/useVirtualizedScrollAnchor'
 import type { RemoteWorkspacePatchResult } from '../../shared/remote-workspace-types'
 import type { OnboardingState, UpdateStatus } from '../../shared/types'
-import {
-  getFeatureTipsAppOpenDecision,
-  isCliFeatureTipCompleted
-} from './components/feature-tips/feature-tip-startup-gate'
-import {
-  trackCmdJPaletteFeatureTipShown,
-  trackOrcaCliFeatureTipShown
-} from './components/feature-tips/feature-tip-telemetry'
 import {
   keybindingMatchesAction,
   type KeybindingActionId,
@@ -296,7 +283,6 @@ const ActivityPrototypePage = lazy(() => import('./components/activity/ActivityP
 const Settings = lazy(() => import('./components/settings/Settings'))
 const SkillsPage = lazy(() => import('./components/skills/SkillsPage'))
 const WorkspaceSpacePage = lazy(() => import('./components/workspace-space/WorkspaceSpacePage'))
-const MobilePage = lazy(() => import('./components/mobile/MobilePage'))
 const QuickOpen = lazy(() => import('./components/QuickOpen'))
 const WorktreeJumpPalette = lazy(() => import('./components/WorktreeJumpPalette'))
 const WorkspaceCleanupDialog = lazy(
@@ -306,9 +292,6 @@ const Terminal = lazy(() => import('./components/Terminal'))
 const StatusBar = lazy(() =>
   import('./components/status-bar/StatusBar').then((module) => ({ default: module.StatusBar }))
 )
-const SetupGuideModal = lazy(() => import('./components/setup-guide/SetupGuideModal'))
-const FeatureWallModal = lazy(() => import('./components/feature-wall/FeatureWallModal'))
-const FeatureTipsModal = lazy(() => import('./components/feature-tips/FeatureTipsModal'))
 const AddRepoDialog = lazy(() => import('./components/sidebar/AddRepoDialog'))
 const NonGitFolderDialog = lazy(() => import('./components/sidebar/NonGitFolderDialog'))
 const AddProjectFromFolderDialog = lazy(
@@ -334,21 +317,11 @@ const ContextualTourOverlay = lazy(() =>
     default: module.ContextualTourOverlay
   }))
 )
-const SetupGuideTelemetryObserver = lazy(() =>
-  import('./components/setup-guide/SetupGuideTelemetryObserver').then((module) => ({
-    default: module.SetupGuideTelemetryObserver
-  }))
-)
 const FloatingTerminalPanel = lazy(() =>
   import('./components/floating-terminal/FloatingTerminalPanel').then((module) => ({
     default: module.FloatingTerminalPanel
   }))
 )
-
-// Why: lazy so onboarding's step modules + assets aren't fetched for users
-// past first-launch. The gate `shouldShowOnboarding` lives in its own tiny
-// module so no eager import path pulls OnboardingFlow into the main chunk.
-const OnboardingFlow = lazy(() => import('./components/onboarding/OnboardingFlow'))
 
 function applyRemoteWorkspacePatchStatus(
   targetId: string,
@@ -434,7 +407,6 @@ function App(): React.JSX.Element {
       setHydrationSucceeded: s.setHydrationSucceeded,
       openModal: s.openModal,
       closeModal: s.closeModal,
-      markFeatureTipsSeen: s.markFeatureTipsSeen,
       setContextualToursAutoEligible: s.setContextualToursAutoEligible,
       setContextualToursOnboardingVisible: s.setContextualToursOnboardingVisible,
       cancelContextualTour: s.cancelContextualTour,
@@ -452,8 +424,6 @@ function App(): React.JSX.Element {
 
   const activeView = useAppStore((s) => s.activeView)
   const activeModal = useAppStore((s) => s.activeModal)
-  const featureTipsSeenIds = useAppStore((s) => s.featureTipsSeenIds)
-  const featureInteractions = useAppStore((s) => s.featureInteractions)
   const contextualToursAutoEligible = useAppStore((s) => s.contextualToursAutoEligible)
   const {
     activeWorktreeId,
@@ -621,7 +591,6 @@ function App(): React.JSX.Element {
   const acknowledgedAgentsByPaneKey = useAppStore((s) => s.acknowledgedAgentsByPaneKey)
   const persistedUIReady = useAppStore((s) => s.persistedUIReady)
   const shouldMountContextualTourOverlay = activeContextualTourId !== null
-  const shouldMountSetupGuideTelemetryObserver = persistedUIReady
   const shouldMountUpdateCard = shouldMountUpdateCardForStatus(updateStatus)
   const rightSidebarWidth = useAppStore((s) => s.rightSidebarWidth)
   const markdownTocPanelWidth = useAppStore((s) => s.markdownTocPanelWidth)
@@ -654,19 +623,7 @@ function App(): React.JSX.Element {
   const [shouldMountAddRepoDialog, setShouldMountAddRepoDialog] = useState(false)
   const [onboarding, setOnboarding] = useState<OnboardingState | null>(null)
   const [onboardingLoaded, setOnboardingLoaded] = useState(false)
-  const featureTipsPromptedThisSessionRef = useRef(false)
-  const featureTipsSuppressedByOnboardingThisSessionRef = useRef(false)
   const unmountAddRepoDialogTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [featureTipCliInstalled, setFeatureTipCliInstalled] = useState<boolean | null>(null)
-  const [onboardingSettingsDetour, setOnboardingSettingsDetour] = useState(false)
-  const shouldRenderOnboarding = onboarding !== null && shouldShowOnboarding(onboarding)
-  const onboardingSettingsDetourActive =
-    onboardingSettingsDetour && activeView === 'settings' && shouldRenderOnboarding
-  if (onboardingSettingsDetour && !onboardingSettingsDetourActive) {
-    // Why: the settings detour is valid only while Settings is onscreen; clear
-    // it during render so onboarding can resume without a follow-up Effect pass.
-    setOnboardingSettingsDetour(false)
-  }
 
   useEffect(() => {
     if (activeModal === 'add-repo') {
@@ -723,14 +680,10 @@ function App(): React.JSX.Element {
   useAutoAckViewedAgent()
 
   useEffect(() => {
-    return onOnboardingReopened(setOnboarding)
-  }, [])
-
-  useEffect(() => {
     // Why: `onboarding === null` is the startup loading state. Suppress
     // contextual tours until the persisted onboarding state is known so a
     // first-run user cannot have a tour marked seen before onboarding appears.
-    const suppressTours = !onboardingLoaded || shouldShowOnboarding(onboarding)
+    const suppressTours = !onboardingLoaded
     actions.setContextualToursOnboardingVisible(suppressTours)
   }, [actions, onboarding, onboardingLoaded])
 
@@ -740,82 +693,8 @@ function App(): React.JSX.Element {
     }
     // Why: this rollout is for users who are still in first-run onboarding.
     // Existing profiles are locally classified once and never auto-toured.
-    actions.setContextualToursAutoEligible(shouldShowOnboarding(onboarding))
+    actions.setContextualToursAutoEligible(false)
   }, [actions, contextualToursAutoEligible, onboarding, onboardingLoaded, persistedUIReady])
-
-  useEffect(() => {
-    if (!persistedUIReady) {
-      return
-    }
-
-    let cancelled = false
-    void window.api.cli
-      .getInstallStatus()
-      .then((status) => {
-        if (cancelled) {
-          return
-        }
-        setFeatureTipCliInstalled(isCliFeatureTipCompleted(status))
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setFeatureTipCliInstalled(true)
-        }
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [persistedUIReady])
-
-  useEffect(() => {
-    const featureTipsDecision = getFeatureTipsAppOpenDecision({
-      activeModal,
-      cliInstalled: featureTipCliInstalled,
-      featureTipsSeenIds,
-      featureInteractions,
-      onboarding,
-      persistedUIReady,
-      promptedThisSession: featureTipsPromptedThisSessionRef.current,
-      settings,
-      suppressedByOnboardingThisSession: featureTipsSuppressedByOnboardingThisSessionRef.current
-    })
-
-    if (featureTipsDecision.kind === 'suppress-for-onboarding') {
-      // Why: first-download users should finish onboarding without a second
-      // education modal appearing later in the same first-run session.
-      featureTipsSuppressedByOnboardingThisSessionRef.current = true
-      return
-    }
-
-    if (featureTipsDecision.kind !== 'open') {
-      return
-    }
-
-    featureTipsPromptedThisSessionRef.current = true
-    if (featureTipsDecision.tipId === 'orca-cli') {
-      trackOrcaCliFeatureTipShown('app_open')
-    } else if (featureTipsDecision.tipId === 'cmd-j-palette') {
-      trackCmdJPaletteFeatureTipShown('app_open')
-    }
-    // Why: once a tip is visible, app quit/crash should not make it reappear
-    // on the next launch just because the user never clicked a dismiss button.
-    actions.markFeatureTipsSeen([featureTipsDecision.tipId])
-    actions.openModal('feature-tips', { source: 'app_open', tipId: featureTipsDecision.tipId })
-  }, [
-    activeModal,
-    actions,
-    featureTipCliInstalled,
-    featureInteractions,
-    featureTipsSeenIds,
-    onboarding,
-    persistedUIReady,
-    settings
-  ])
-
-  const beginOnboardingSettingsDetour = useCallback(() => {
-    setOnboardingSettingsDetour(true)
-  }, [])
 
   // Why: sidebar open/close flips width instantaneously. useLayoutEffect
   // runs synchronously after React commits the DOM but before paint, so
@@ -2358,7 +2237,6 @@ function App(): React.JSX.Element {
                               {activeView === 'automations' ? <AutomationsPage /> : null}
                               {activeView === 'activity' ? <ActivityPrototypePage /> : null}
                               {activeView === 'space' ? <WorkspaceSpacePage /> : null}
-                              {activeView === 'mobile' ? <MobilePage /> : null}
                               {activeView === 'terminal' &&
                               creationLayoutActive &&
                               activePendingCreationId ? (
@@ -2544,42 +2422,7 @@ function App(): React.JSX.Element {
                   <WorktreeJumpPalette />
                 </RecoverableRenderErrorBoundary>
               ) : null}
-              {resolvedMountedLazyModalIds.has('setup-guide') ? (
-                <RecoverableRenderErrorBoundary
-                  boundaryId="modal.setup-guide"
-                  surface="modal"
-                  resetKey={activeModal === 'setup-guide'}
-                  compact
-                >
-                  <SetupGuideModal />
-                </RecoverableRenderErrorBoundary>
-              ) : null}
-              {resolvedMountedLazyModalIds.has('feature-wall') ? (
-                <RecoverableRenderErrorBoundary
-                  boundaryId="modal.feature-wall"
-                  surface="modal"
-                  resetKey={activeModal === 'feature-wall'}
-                  compact
-                >
-                  <FeatureWallModal />
-                </RecoverableRenderErrorBoundary>
-              ) : null}
-              {resolvedMountedLazyModalIds.has('feature-tips') ? (
-                <RecoverableRenderErrorBoundary
-                  boundaryId="modal.feature-tips"
-                  surface="modal"
-                  resetKey={activeModal === 'feature-tips'}
-                  compact
-                >
-                  <FeatureTipsModal />
-                </RecoverableRenderErrorBoundary>
-              ) : null}
             </Suspense>
-            {shouldMountSetupGuideTelemetryObserver ? (
-              <Suspense fallback={null}>
-                <SetupGuideTelemetryObserver />
-              </Suspense>
-            ) : null}
             {shouldMountContextualTourOverlay ? (
               <Suspense fallback={null}>
                 <ContextualTourOverlay />
@@ -2598,23 +2441,6 @@ function App(): React.JSX.Element {
                 </RecoverableRenderErrorBoundary>
               </Suspense>
             ) : null}
-            <RecoverableRenderErrorBoundary
-              boundaryId="overlay.star-nag"
-              surface="overlay"
-              resetKey={activeView}
-              compact
-            >
-              <StarNagCard />
-            </RecoverableRenderErrorBoundary>
-            <RecoverableRenderErrorBoundary
-              boundaryId="overlay.star-nag-toast"
-              surface="overlay"
-              resetKey={activeView}
-              compact
-            >
-              <StarNagToastHost />
-            </RecoverableRenderErrorBoundary>
-            <StarNagAgentValueMomentObserver />
             {/* Why: the existing-user opt-in banner mounts at App root so it
           renders once per renderer session, not per view. It gates
           internally on the cohort markers populated by the migration,
@@ -2684,26 +2510,6 @@ function App(): React.JSX.Element {
             >
               <CrashReportDialog />
             </RecoverableRenderErrorBoundary>
-            {onboarding && shouldRenderOnboarding && !onboardingSettingsDetourActive ? (
-              <Suspense fallback={null}>
-                <RecoverableRenderErrorBoundary
-                  boundaryId="modal.onboarding"
-                  surface="modal"
-                  resetKey={onboardingSettingsDetourActive}
-                  title={translate('auto.App.f02d37278a', 'Onboarding hit an error.')}
-                  description={translate(
-                    'auto.App.221a95ba38',
-                    'Retry onboarding or close it and continue in the app.'
-                  )}
-                >
-                  <OnboardingFlow
-                    onboarding={onboarding}
-                    onOnboardingChange={setOnboarding}
-                    onSettingsDetourStart={beginOnboardingSettingsDetour}
-                  />
-                </RecoverableRenderErrorBoundary>
-              </Suspense>
-            ) : null}
             {shouldMountDictationController ? (
               <Suspense fallback={null}>
                 <RecoverableRenderErrorBoundary

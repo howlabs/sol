@@ -11,7 +11,6 @@ import { translateMain } from '../i18n/main-i18n'
 export type AppearanceMenuState = {
   showTasksButton: boolean
   showAutomationsButton: boolean
-  showMobileButton: boolean
   showTitlebarAppName: boolean
   statusBarVisible: boolean
 }
@@ -24,8 +23,6 @@ export function getNextDefaultOnAppearanceSettingValue(current: boolean | undefi
 
 type RegisterAppMenuOptions = {
   onOpenSettings: () => void
-  onOpenSetupGuide: (window?: Electron.BaseWindow | null) => void
-  onOpenFeatureTour: (window?: Electron.BaseWindow | null) => void
   onOpenCrashReport: (window?: Electron.BaseWindow | null) => void
   onCheckForUpdates: (options: UpdateCheckOptions) => void
   onBeforeReload?: (options: { ignoreCache: boolean; webContentsId: number }) => void
@@ -42,8 +39,6 @@ type RegisterAppMenuOptions = {
 function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
   const {
     onOpenSettings,
-    onOpenSetupGuide,
-    onOpenFeatureTour,
     onOpenCrashReport,
     onCheckForUpdates,
     onBeforeReload,
@@ -107,16 +102,6 @@ function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
   const settingsItem: Electron.MenuItemConstructorOptions = {
     label: `${translateMain('menu.settings', 'Settings')}\t${shortcutLabel('app.settings')}`,
     click: () => onOpenSettings()
-  }
-
-  const featureTourItem: Electron.MenuItemConstructorOptions = {
-    label: translateMain('menu.exploreOrca', 'Explore Orca'),
-    click: (_menuItem, window) => onOpenFeatureTour(window)
-  }
-
-  const setupGuideItem: Electron.MenuItemConstructorOptions = {
-    label: translateMain('menu.gettingStarted', 'Getting Started with Orca'),
-    click: (_menuItem, window) => onOpenSetupGuide(window)
   }
 
   const crashReportItem: Electron.MenuItemConstructorOptions = {
@@ -224,12 +209,6 @@ function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
         click: () => onToggleAppearance('showAutomationsButton')
       },
       {
-        label: translateMain('menu.showMobileButton', 'Show Orca Mobile Button'),
-        type: 'checkbox',
-        checked: appearance.showMobileButton,
-        click: () => onToggleAppearance('showMobileButton')
-      },
-      {
         label: translateMain('menu.showTitlebarAppName', 'Show Titlebar App Name'),
         type: 'checkbox',
         checked: appearance.showTitlebarAppName,
@@ -288,9 +267,6 @@ function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
     label: translateMain('menu.help', 'Help'),
     submenu: [
       crashReportItem,
-      { type: 'separator' },
-      featureTourItem,
-      setupGuideItem,
       ...(isMac
         ? []
         : ([

@@ -7,13 +7,14 @@ import { isAbsolute, join } from 'node:path'
 import os from 'node:os'
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme } from 'electron'
 import { electronApp, is } from '@electron-toolkit/utils'
-import * as QRCode from 'qrcode'
 import {
   Store,
   initDataPath,
   getCanonicalUserDataPath,
   migrateMobilePairingDataToCanonicalUserDataPath
 } from './persistence'
+// Why: pairing userdata filenames are still migrated under the historical
+// "mobile pairing" helper name; runtime device tokens + E2EE keys live there.
 import { applyAppIcon } from './app-icon'
 import { StatsCollector, initStatsPath } from './stats/collector'
 import { ClaudeUsageStore, initClaudeUsagePath } from './claude-usage/store'
@@ -26,7 +27,7 @@ import { disposeWorktreeBaseDirectoryWatchers } from './ipc/worktree-base-direct
 import { registerCoreHandlers } from './ipc/register-core-handlers'
 import { initObservability, shutdownObservability } from './observability'
 import { startSpan } from './observability/tracer'
-import { registerMobileHandlers } from './ipc/mobile'
+import { registerRuntimePairingHandlers } from './ipc/runtime-pairing'
 import { initTelemetry, shutdownTelemetry, trackAppOpenedOnce, track } from './telemetry/client'
 import { classifyError } from './telemetry/classify-error'
 import { runManagedHookInstallers } from './agent-hooks/install-telemetry'
@@ -127,7 +128,6 @@ import {
   attachClaudeLivePtyPersistence,
   seedLiveClaudePtysFromPersistence
 } from './claude-accounts/live-pty-gate'
-import { StarNagService } from './star-nag/service'
 import { agentHookServer } from './agent-hooks/server'
 import { maybeAutoRenameBranchOnFirstWork } from './agent-hooks/first-work-branch-rename'
 import { renameWorktreeFolderOnFirstWork } from './agent-hooks/first-work-folder-rename'
@@ -143,8 +143,6 @@ import {
   registerHeadlessPtyRuntime
 } from './ipc/pty'
 import { AgentBrowserBridge } from './browser/agent-browser-bridge'
-import { EmulatorBridge } from './emulator/emulator-bridge'
-import { serveSimStateWatcher } from './emulator/serve-sim-state-watcher'
 import { browserManager } from './browser/browser-manager'
 import { OffscreenBrowserBackend } from './browser/offscreen-browser-backend'
 import { initializeBrowserSessionsForApp } from './browser/browser-session-startup'
@@ -211,7 +209,6 @@ let runtimeRpc: OrcaRuntimeRpcServer | null = null
 // offscreen browser backend (and thus advertises browser pane support).
 let headlessBrowserDisplayAvailable = false
 
-let starNag: StarNagService | null = null
 let agentAwakeService: AgentAwakeService | null = null
 let crashReports: CrashReportStore | null = null
 let unsubscribeAgentAwakeStatusChanges: (() => void) | null = null
@@ -1083,18 +1080,6 @@ function openMainWindow(): BrowserWindow {
   return window
 }
 
-function sendOpenFeatureTour(targetWindow?: BrowserWindow | null): void {
-  const webContents =
-    targetWindow && !targetWindow.isDestroyed() ? targetWindow.webContents : mainWindow?.webContents
-  webContents?.send('ui:openFeatureTour')
-}
-
-function sendOpenSetupGuide(targetWindow?: BrowserWindow | null): void {
-  const webContents =
-    targetWindow && !targetWindow.isDestroyed() ? targetWindow.webContents : mainWindow?.webContents
-  webContents?.send('ui:openSetupGuide')
-}
-
 function sendOpenCrashReport(targetWindow?: BrowserWindow | null): void {
   const webContents =
     targetWindow && !targetWindow.isDestroyed() ? targetWindow.webContents : mainWindow?.webContents
@@ -1334,7 +1319,6 @@ type ServeOptions = {
   wsPort?: number
   pairingAddress: string | null
   noPairing: boolean
-  mobilePairing: boolean
   recipeJson: boolean
   projectRoot: string | null
 }
@@ -1362,7 +1346,6 @@ function getServeOptions(argv = process.argv): ServeOptions {
     ...(wsPort !== undefined ? { wsPort } : {}),
     pairingAddress: valueAfter('--serve-pairing-address'),
     noPairing: argv.includes('--serve-no-pairing'),
-    mobilePairing: argv.includes('--serve-mobile-pairing'),
     recipeJson: argv.includes('--serve-recipe-json'),
     projectRoot: valueAfter('--serve-project-root')
   }
@@ -1371,18 +1354,6 @@ function getServeOptions(argv = process.argv): ServeOptions {
 function getBundledWebClientRoot(): string | undefined {
   const root = join(app.getAppPath(), 'out', 'web')
   return existsSync(join(root, 'web-index.html')) ? root : undefined
-}
-
-async function renderTerminalPairingQr(pairingUrl: string): Promise<string | null> {
-  try {
-    return await QRCode.toString(pairingUrl, { type: 'terminal', small: true })
-  } catch {
-    try {
-      return await QRCode.toString(pairingUrl, { type: 'utf8' })
-    } catch {
-      return null
-    }
-  }
 }
 
 async function printServeReady(options: ServeOptions): Promise<void> {
@@ -1406,13 +1377,9 @@ async function printServeReady(options: ServeOptions): Promise<void> {
     ? ({ available: false } as const)
     : runtimeRpc.createPairingOffer({
         address: options.pairingAddress,
-        name: `${options.mobilePairing ? 'Mobile' : 'CLI'} ${new Date().toLocaleDateString()}`,
-        scope: options.mobilePairing ? 'mobile' : 'runtime'
+        name: `CLI ${new Date().toLocaleDateString()}`,
+        scope: 'runtime'
       })
-  const pairingQr =
-    pairing.available && options.mobilePairing
-      ? await renderTerminalPairingQr(pairing.pairingUrl)
-      : null
   if (options.recipeJson) {
     if (!pairing.available) {
       throw new Error('Recipe JSON output requires runtime pairing to be available')
@@ -1438,8 +1405,7 @@ async function printServeReady(options: ServeOptions): Promise<void> {
               endpoint: pairing.endpoint,
               deviceId: pairing.deviceId,
               webClientUrl: pairing.webClientUrl,
-              scope: options.mobilePairing ? 'mobile' : 'runtime',
-              qr: pairingQr
+              scope: 'runtime' as const
             }
           : null
       })
@@ -1450,9 +1416,6 @@ async function printServeReady(options: ServeOptions): Promise<void> {
   if (pairing.available) {
     if (pairing.webClientUrl) {
       console.log(`Web client URL: ${pairing.webClientUrl}`)
-    }
-    if (options.mobilePairing && pairingQr) {
-      console.log(`Mobile pairing QR:\n${pairingQr}`)
     }
     console.log(`Pairing URL: ${pairing.pairingUrl}`)
   }
@@ -1896,26 +1859,12 @@ app.whenReady().then(async () => {
     prepareForCodexLaunch: prepareCodexRuntimeHomeForLaunch,
     prepareForClaudeLaunch: (target) => claudeRuntimeAuth!.prepareForClaudeLaunch(target)
   })
-  starNag = new StarNagService(store, stats)
-  starNag.start()
-  starNag.registerIpcHandlers()
   runtimeService.setAgentBrowserBridge(
     new AgentBrowserBridge(browserManager, {
       onTabsChanged: (worktreeId) => runtimeService.notifyMobileSessionTabsChanged(worktreeId)
     })
   )
 
-  // Emulator bridge (serve-sim). macOS-only feature (gated in CLI/runtime); always ship like agent-browser.
-  const emulatorBridge = new EmulatorBridge()
-  runtimeService.setEmulatorBridge(emulatorBridge)
-  serveSimStateWatcher.start()
-  serveSimStateWatcher.onDetected(({ worktreeId, info }) => {
-    runtimeService.getEmulatorBridge()?.registerActiveEmulator(worktreeId, info, {
-      managed: false
-    })
-    serveSimStateWatcher.markOrcaManaged(info)
-    runtimeService.notifyEmulatorAutoAttachFromWatcher(worktreeId, info)
-  })
   nativeTheme.themeSource = store.getSettings().theme ?? 'system'
   if (shouldInstallManagedHooks(is.dev)) {
     // Why: the persisted off switch must run before any auto-install path so
@@ -1966,23 +1915,10 @@ app.whenReady().then(async () => {
       recordCrashBreadcrumb('settings_opened')
       mainWindow?.webContents.send('ui:openSettings')
     },
-    onOpenSetupGuide: (targetWindow) => {
-      recordCrashBreadcrumb('setup_guide_opened')
-      const targetBrowserWindow = targetWindow instanceof BrowserWindow ? targetWindow : null
-      sendOpenSetupGuide(targetBrowserWindow)
-    },
     onOpenCrashReport: (targetWindow) => {
       recordCrashBreadcrumb('crash_report_opened')
       const targetBrowserWindow = targetWindow instanceof BrowserWindow ? targetWindow : null
       sendOpenCrashReport(targetBrowserWindow)
-    },
-    onOpenFeatureTour: (targetWindow) => {
-      recordCrashBreadcrumb('feature_tour_opened')
-      // Why: menu clicks provide the BrowserWindow that invoked the item. Use it
-      // first so hidden/headless E2E windows and future multi-window flows route
-      // the tour to the correct renderer instead of relying on global focus.
-      const targetBrowserWindow = targetWindow instanceof BrowserWindow ? targetWindow : null
-      sendOpenFeatureTour(targetBrowserWindow)
     },
     onZoomIn: () => {
       mainWindow?.webContents.send('terminal:zoom', 'in')
@@ -2024,7 +1960,6 @@ app.whenReady().then(async () => {
       return {
         showTasksButton: settings?.showTasksButton !== false,
         showAutomationsButton: settings?.showAutomationsButton !== false,
-        showMobileButton: settings?.showMobileButton !== false,
         showTitlebarAppName: settings?.showTitlebarAppName !== false,
         statusBarVisible: ui?.statusBarVisible !== false
       }
@@ -2038,7 +1973,7 @@ app.whenReady().then(async () => {
   const isE2E = Boolean(process.env.ORCA_E2E_USER_DATA_DIR)
   // Why: a developer running `pnpm dev` while the packaged Orca is also open
   // would otherwise race the packaged app for 6768 and silently fall back to
-  // a random OS-assigned port — breaking deterministic mobile pairing/repro
+  // a random OS-assigned port — breaking deterministic runtime pairing/repro
   // scripts against the dev instance. Pin the first dev instance to 6769 so
   // ws://127.0.0.1:6769 is stable; a second dev instance still falls back via
   // ws-transport's EADDRINUSE handler.
@@ -2051,13 +1986,13 @@ app.whenReady().then(async () => {
     app.exit(1)
     return
   }
-  // Why: existing installs may have already written mobile pairing credentials
-  // under the late app.getPath('userData') directory. Copy any missing files
-  // forward before the runtime switches exclusively to the canonical path.
+  // Why: existing installs may have already written pairing credentials under
+  // the late app.getPath('userData') directory. Copy any missing files forward
+  // before the runtime switches exclusively to the canonical path.
   migrateMobilePairingDataToCanonicalUserDataPath(app.getPath('userData'))
   runtimeRpc = new OrcaRuntimeRpcServer({
     runtime,
-    // Why: mobile pairing (DeviceRegistry + E2EE keypair + runtime metadata)
+    // Why: runtime pairing (DeviceRegistry + E2EE keypair + runtime metadata)
     // must share the stable path captured before app.setName(), not a late
     // app.getPath('userData') that resolves elsewhere and drops paired devices
     // across restarts/updates. See persistence.ts:getCanonicalUserDataPath.
@@ -2068,7 +2003,7 @@ app.whenReady().then(async () => {
     ...(serveOptions?.wsPort !== undefined ? { wsPort: serveOptions.wsPort } : {}),
     webClientRoot: getBundledWebClientRoot()
   })
-  registerMobileHandlers(runtimeRpc)
+  registerRuntimePairingHandlers(runtimeRpc)
 
   if (!isServeMode) {
     startDesktopFirstWindowStartupServices()
@@ -2221,7 +2156,6 @@ app.on('will-quit', (e) => {
   // are still running. killAllPty() does not call runtime.onPtyExit(),
   // so without this ordering, running agents would produce orphaned
   // agent_start events with no matching stops.
-  starNag?.stop()
   automations?.stop()
   setUnreadDockBadgeCount(0)
   agentHookServer.stop()
@@ -2232,8 +2166,6 @@ app.on('will-quit', (e) => {
   // Why: headless offscreen browser windows are main-process owned; tear them
   // down explicitly on quit alongside the other browser/session shutdowns.
   runtime?.getOffscreenBrowserBackend()?.destroyAll?.()
-  const emulatorShutdown = runtime?.getEmulatorBridge()?.destroyAllSessions() ?? Promise.resolve()
-  serveSimStateWatcher.stop()
   killAllPty()
   const watcherShutdown = shutdownWatchersOnce()
   store?.flush()
@@ -2284,7 +2216,7 @@ app.on('will-quit', (e) => {
     // Why: normal quits preserve the detached daemon for warm reattach, but a
     // dev parent dying means the temp/dev profile has no owner left to reattach.
     const daemonTeardown = isDevParentShutdownRequested() ? shutdownDaemon() : disconnectDaemon()
-    Promise.allSettled([daemonTeardown, rpcStopAndClear, watcherShutdown, emulatorShutdown])
+    Promise.allSettled([daemonTeardown, rpcStopAndClear, watcherShutdown])
       .then(() => shutdownTelemetry())
       .then(() => shutdownObservability())
       .catch(() => {

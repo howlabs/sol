@@ -112,12 +112,6 @@ export const DEFAULT_EDITOR_AUTO_SAVE_DELAY_MS = 1000
 export const MIN_EDITOR_AUTO_SAVE_DELAY_MS = 250
 export const MAX_EDITOR_AUTO_SAVE_DELAY_MS = 10_000
 
-// Why: initial threshold of agents spawned (since last update) before we show
-// the star-on-GitHub notification. Doubles each time the user dismisses
-// without starring — e.g. 35 → 70 → 140 → 280. Past dismissals are encoded
-// in starNagNextThreshold, so this constant is only the first-time seed.
-export const STAR_NAG_INITIAL_THRESHOLD = 35
-
 /** Synthetic worktree id used by the memory collector to bucket PTYs that
  *  are not associated with any worktree. Shared across main and renderer so
  *  the collector and the status-bar popover agree on the sentinel. */
@@ -153,11 +147,13 @@ export function getDefaultNotificationSettings(): NotificationSettings {
 }
 
 export function getDefaultOnboardingState(): OnboardingState {
+  // Why: Sol ships without the first-run onboarding funnel; persist a closed
+  // profile so legacy open onboarding state and first launch both skip the UI.
   return {
     flowVersion: ONBOARDING_FLOW_VERSION,
-    closedAt: null,
-    outcome: null,
-    lastCompletedStep: -1,
+    closedAt: 1,
+    outcome: 'completed',
+    lastCompletedStep: ONBOARDING_FINAL_STEP,
     checklist: {
       addedRepo: false,
       choseAgent: false,
@@ -282,7 +278,6 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     showTitlebarAppName: true,
     showTasksButton: true,
     showAutomationsButton: true,
-    showMobileButton: true,
     ctrlTabOrderMode: 'mru',
     // Why: switching worktrees and opening command surfaces from a focused
     // terminal is a core Orca workflow; users who prefer TUI ownership opt in.
@@ -340,13 +335,10 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     terminalMacOptionAsAlt: 'auto',
     terminalMacOptionAsAltMigrated: false,
     terminalJISYenToBackslash: false,
-    experimentalMobile: false,
-    mobileEmulatorEnabled: true,
-    mobileEmulatorDefaultDeviceUdid: null,
     androidSdkPath: null,
     // Why: indefinite hold by default — the desktop "Restore" banner is the
-    // explicit return-to-desktop-size action, no wall-clock guess.
-    // See docs/mobile-fit-hold.md.
+    // explicit return-to-desktop-size action, no wall-clock guess. Kept for
+    // inert presence-lock server paths even without phone clients.
     mobileAutoRestoreFitMs: null,
 
     experimentalActivity: false,
@@ -495,8 +487,6 @@ export function getDefaultUIState(): PersistedUIState {
     setupGuideBrowserMilestoneLegacyComplete: false,
     browserImportHintHidden: false,
     trayMinimizeNoticeShown: false,
-    mobileEmulatorTabIntroDismissed: false,
-    mobileEmulatorAgentSetupDismissed: false,
     // Why: brand-new profiles never saw recent project ordering; only upgraded
     // profiles get the one-time sidebar notice on first launch.
     projectOrderManualDefaultNoticeDismissed: true,

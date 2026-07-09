@@ -24,8 +24,8 @@ vi.mock('sonner', () => ({
   }
 }))
 
-vi.mock('../onboarding/OnboardingInlineCommandTerminal', () => ({
-  OnboardingInlineCommandTerminal: (props: { command: string; description: string }) => {
+vi.mock('./InlineCommandTerminal', () => ({
+  InlineCommandTerminal: (props: { command: string; description: string }) => {
     mocks.terminalProps.push(props)
     return (
       <div

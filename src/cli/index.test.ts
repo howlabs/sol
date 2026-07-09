@@ -1843,26 +1843,6 @@ describe('orca cli worktree awareness', () => {
       port: '6768',
       pairingAddress: '100.64.1.20',
       noPairing: true,
-      mobilePairing: false,
-      recipeJson: false,
-      projectRoot: null
-    })
-  })
-
-  it('starts a foreground headless server with mobile pairing enabled', async () => {
-    serveOrcaAppMock.mockResolvedValue(0)
-
-    await main(
-      ['serve', '--pairing-address', '100.64.1.20', '--mobile-pairing', '--json'],
-      '/tmp/repo'
-    )
-
-    expect(serveOrcaAppMock).toHaveBeenCalledWith({
-      json: true,
-      port: null,
-      pairingAddress: '100.64.1.20',
-      noPairing: false,
-      mobilePairing: true,
       recipeJson: false,
       projectRoot: null
     })
@@ -1888,7 +1868,6 @@ describe('orca cli worktree awareness', () => {
       port: null,
       pairingAddress: 'wss://sandbox.example.com',
       noPairing: false,
-      mobilePairing: false,
       recipeJson: true,
       projectRoot: '/workspace/repo'
     })
@@ -2185,41 +2164,6 @@ describe('orca cli worktree awareness', () => {
     expect(serveOrcaAppMock).not.toHaveBeenCalled()
     expect([...logSpy.mock.calls, ...errSpy.mock.calls].flat().join('\n')).toContain(
       'Recipe JSON output requires --project-root.'
-    )
-    expect(process.exitCode).toBe(1)
-
-    process.exitCode = priorExitCode
-  })
-
-  it('rejects recipe JSON output with mobile pairing', async () => {
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
-    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    const priorExitCode = process.exitCode
-
-    await main(
-      ['serve', '--recipe-json', '--project-root', '/workspace/repo', '--mobile-pairing'],
-      '/tmp/repo'
-    )
-
-    expect(serveOrcaAppMock).not.toHaveBeenCalled()
-    expect([...logSpy.mock.calls, ...errSpy.mock.calls].flat().join('\n')).toContain(
-      'Recipe JSON output requires runtime pairing; remove --mobile-pairing.'
-    )
-    expect(process.exitCode).toBe(1)
-
-    process.exitCode = priorExitCode
-  })
-
-  it('rejects contradictory serve pairing flags', async () => {
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
-    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    const priorExitCode = process.exitCode
-
-    await main(['serve', '--mobile-pairing', '--no-pairing', '--json'], '/tmp/repo')
-
-    expect(serveOrcaAppMock).not.toHaveBeenCalled()
-    expect([...logSpy.mock.calls, ...errSpy.mock.calls].flat().join('\n')).toContain(
-      'Use either --mobile-pairing or --no-pairing, not both.'
     )
     expect(process.exitCode).toBe(1)
 
@@ -3618,91 +3562,6 @@ describe('orca cli worktree awareness', () => {
     expect(callMock).toHaveBeenCalledWith('browser.tabCurrent', {
       worktree: undefined
     })
-  })
-
-  it('passes emulator gesture points through to the runtime', async () => {
-    const points = [
-      { type: 'begin', x: 0.5, y: 0.98, edge: 3 },
-      { type: 'move', x: 0.5, y: 0.4, edge: 3 },
-      { type: 'end', x: 0.5, y: 0.2, edge: 3 }
-    ]
-    queueFixtures(callMock, okFixture('req_emulator_gesture', { ok: true }))
-    vi.spyOn(console, 'log').mockImplementation(() => {})
-
-    await main(
-      ['emulator', 'gesture', JSON.stringify(points), '--worktree', 'id:wt-1', '--json'],
-      '/tmp/repo'
-    )
-
-    expect(callMock).toHaveBeenCalledWith('emulator.gesture', {
-      points,
-      device: undefined,
-      emulator: undefined,
-      worktree: 'id:wt-1'
-    })
-  })
-
-  it('rejects emulator gesture points outside normalized coordinates', async () => {
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
-    const priorExitCode = process.exitCode
-
-    await main(
-      [
-        'emulator',
-        'gesture',
-        JSON.stringify([
-          { type: 'begin', x: 1.2, y: 0.8 },
-          { type: 'end', x: 0.5, y: 0.2 }
-        ]),
-        '--worktree',
-        'id:wt-1',
-        '--json'
-      ],
-      '/tmp/repo'
-    )
-
-    expect(callMock).not.toHaveBeenCalled()
-    expect(JSON.parse(String(logSpy.mock.calls[0]?.[0]))).toMatchObject({
-      ok: false,
-      error: {
-        code: 'invalid_argument',
-        message: '--points[0].x must be between 0 and 1'
-      }
-    })
-    expect(process.exitCode).toBe(1)
-
-    process.exitCode = priorExitCode
-  })
-
-  it('rejects emulator gesture points with invalid edge markers', async () => {
-    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
-    const priorExitCode = process.exitCode
-
-    await main(
-      [
-        'emulator',
-        'gesture',
-        JSON.stringify([
-          { type: 'begin', x: 0.5, y: 0.98, edge: 8 },
-          { type: 'end', x: 0.5, y: 0.2, edge: 8 }
-        ]),
-        '--worktree',
-        'id:wt-1',
-        '--json'
-      ],
-      '/tmp/repo'
-    )
-
-    expect(callMock).not.toHaveBeenCalled()
-    expect(JSON.parse(String(logSpy.mock.calls[0]?.[0]))).toMatchObject({
-      ok: false,
-      error: {
-        code: 'invalid_argument',
-        message: 'gesture point 0 edge must be an integer between 0 and 4'
-      }
-    })
-
-    process.exitCode = priorExitCode
   })
 
   it('creates an automation for the enclosing worktree by default', async () => {

@@ -27,8 +27,6 @@ function buildMenuOptions() {
   return {
     onCheckForUpdates: vi.fn(),
     onOpenSettings: vi.fn(),
-    onOpenSetupGuide: vi.fn(),
-    onOpenFeatureTour: vi.fn(),
     onOpenCrashReport: vi.fn(),
     onBeforeReload: vi.fn(),
     onZoomIn: vi.fn(),
@@ -40,7 +38,6 @@ function buildMenuOptions() {
     getAppearanceState: vi.fn(() => ({
       showTasksButton: true,
       showAutomationsButton: true,
-      showMobileButton: true,
       showTitlebarAppName: true,
       statusBarVisible: true
     }))
@@ -236,14 +233,9 @@ describe('registerAppMenu', () => {
     )
 
     const helpLabels = getSubmenu(template, 'Help').map((item) => item.label)
-    expect(helpLabels).toEqual(
-      expect.arrayContaining([
-        'Report Crash...',
-        'Getting Started with Orca',
-        'Explore Orca',
-        'Check for Updates...'
-      ])
-    )
+    expect(helpLabels).toEqual(expect.arrayContaining(['Report Crash...', 'Check for Updates...']))
+    expect(helpLabels).not.toContain('Getting Started with Orca')
+    expect(helpLabels).not.toContain('Explore Orca')
   })
 
   it.runIf(isMac)('keeps the macOS app-named menu with Settings and quit roles', () => {
@@ -259,44 +251,7 @@ describe('registerAppMenu', () => {
     // the system app menu. Without global Export, there is no File item left.
     expect(template.find((item) => item.label === 'File')).toBeUndefined()
     const helpLabels = getSubmenu(template, 'Help').map((item) => item.label)
-    expect(helpLabels).toEqual([
-      'Report Crash...',
-      undefined,
-      'Explore Orca',
-      'Getting Started with Orca'
-    ])
-  })
-
-  it('routes Getting Started with Orca through its callback', () => {
-    const options = buildMenuOptions()
-    registerAppMenu(options)
-
-    const setupGuideItem = getSubmenu(getTemplate(), 'Help').find(
-      (entry) => entry.label === 'Getting Started with Orca'
-    )
-    expect(setupGuideItem?.accelerator).toBeUndefined()
-
-    const targetWindow = {} as Electron.BaseWindow
-    setupGuideItem?.click?.({} as never, targetWindow, {} as Electron.KeyboardEvent)
-
-    expect(options.onOpenSetupGuide).toHaveBeenCalledTimes(1)
-    expect(options.onOpenSetupGuide).toHaveBeenCalledWith(targetWindow)
-  })
-
-  it('routes Feature tour through its callback', () => {
-    const options = buildMenuOptions()
-    registerAppMenu(options)
-
-    const featureTourItem = getSubmenu(getTemplate(), 'Help').find(
-      (entry) => entry.label === 'Explore Orca'
-    )
-    expect(featureTourItem?.accelerator).toBeUndefined()
-
-    const targetWindow = {} as Electron.BaseWindow
-    featureTourItem?.click?.({} as never, targetWindow, {} as Electron.KeyboardEvent)
-
-    expect(options.onOpenFeatureTour).toHaveBeenCalledTimes(1)
-    expect(options.onOpenFeatureTour).toHaveBeenCalledWith(targetWindow)
+    expect(helpLabels).toEqual(['Report Crash...'])
   })
 
   it('routes Report Crash through its callback', () => {
@@ -319,7 +274,6 @@ describe('registerAppMenu', () => {
     options.getAppearanceState.mockReturnValue({
       showTasksButton: false,
       showAutomationsButton: false,
-      showMobileButton: true,
       showTitlebarAppName: true,
       statusBarVisible: true
     })
@@ -340,10 +294,6 @@ describe('registerAppMenu', () => {
     )
     expect(automationsItem?.type).toBe('checkbox')
     expect(automationsItem?.checked).toBe(false)
-
-    const mobileItem = appearanceSubmenu.find((item) => item.label === 'Show Orca Mobile Button')
-    expect(mobileItem?.type).toBe('checkbox')
-    expect(mobileItem?.checked).toBe(true)
 
     const titlebarItem = appearanceSubmenu.find((item) => item.label === 'Show Titlebar App Name')
     expect(titlebarItem?.checked).toBe(true)
@@ -367,15 +317,11 @@ describe('registerAppMenu', () => {
       .find((item) => item.label === 'Show Automations Button')
       ?.click?.({} as never, {} as never, {} as never)
     appearanceSubmenu
-      .find((item) => item.label === 'Show Orca Mobile Button')
-      ?.click?.({} as never, {} as never, {} as never)
-    appearanceSubmenu
       .find((item) => item.label === 'Show Titlebar App Name')
       ?.click?.({} as never, {} as never, {} as never)
 
     expect(options.onToggleAppearance).toHaveBeenCalledWith('showTasksButton')
     expect(options.onToggleAppearance).toHaveBeenCalledWith('showAutomationsButton')
-    expect(options.onToggleAppearance).toHaveBeenCalledWith('showMobileButton')
     expect(options.onToggleAppearance).toHaveBeenCalledWith('showTitlebarAppName')
   })
 

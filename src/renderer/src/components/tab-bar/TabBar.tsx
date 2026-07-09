@@ -13,7 +13,6 @@ import {
   FileText,
   Globe,
   Plus,
-  Smartphone,
   TerminalSquare
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -70,8 +69,6 @@ import { Button } from '@/components/ui/button'
 import type { TabCreateEntryArgs } from './tab-create-entry-action'
 import { buildTabAgentLaunchOptions, orderTabLaunchAgents } from './tab-agent-launch-options'
 import { buildTabCreateMenuOptions, type TabCreateMenuOption } from './tab-create-menu-options'
-import { MobileEmulatorTabIntroCallout } from '../emulator-pane/MobileEmulatorTabIntroCallout'
-import { shouldShowMobileEmulatorTabIntro } from '../emulator-pane/mobile-emulator-tab-intro-visibility'
 import { translate } from '@/i18n/i18n'
 import { TabStripScrollIndicator } from './TabStripScrollIndicator'
 import { getTabStripScrollMaskClassName } from './tab-strip-scroll-metrics'
@@ -83,7 +80,6 @@ import { selectTabAgentTypesByTabId } from './tab-agent-types-by-tab-id'
 import { resolveCommittedTitleAgentType } from '@/lib/pane-agent-evidence'
 
 const isWindows = navigator.userAgent.includes('Windows')
-const isMacOs = navigator.userAgent.includes('Mac')
 const NEW_TAB_MENU_TERMINAL_FOCUS_RETRY_MS = 50
 const NEW_TAB_MENU_TERMINAL_FOCUS_TIMEOUT_MS = 5000
 type GitStatusEntries = ReturnType<typeof useAppStore.getState>['gitStatusByWorktree'][string]
@@ -118,7 +114,6 @@ type TabBarProps = {
   /** On Windows, opens a new terminal with a specific shell instead of the default. */
   onNewTerminalWithShell?: (shell: string) => void
   onNewBrowserTab: () => void
-  onNewSimulatorTab?: () => void
   onOpenEntry?: (args: TabCreateEntryArgs) => Promise<void>
   terminalOnly?: boolean
   showAgentLaunchItems?: boolean
@@ -132,7 +127,6 @@ type TabBarProps = {
   browserTabs?: (BrowserTabState & { tabId?: string })[]
   activeFileId?: string | null
   activeBrowserTabId?: string | null
-  activeSimulatorTabId?: string | null
   activeTabType?: WorkspaceVisibleTabType
   onActivateFile?: (fileId: string) => void
   onCloseFile?: (fileId: string) => void
@@ -243,7 +237,6 @@ function TabBarInner({
   onNewTerminalTab,
   onNewTerminalWithShell,
   onNewBrowserTab,
-  onNewSimulatorTab,
   onOpenEntry,
   terminalOnly = false,
   showAgentLaunchItems = true,
@@ -257,7 +250,6 @@ function TabBarInner({
   browserTabs,
   activeFileId,
   activeBrowserTabId,
-  activeSimulatorTabId,
   activeTabType,
   onActivateFile,
   onCloseFile,
@@ -274,19 +266,9 @@ function TabBarInner({
   const includeTopTabBorder = tabStripChrome !== 'floating-panel'
   const newTerminalShortcut = useShortcutLabel('tab.newTerminal')
   const newBrowserShortcut = useShortcutLabel('tab.newBrowser')
-  const newSimulatorShortcut = useShortcutLabel('tab.newSimulator')
   const newFileShortcut = useShortcutLabel('tab.newMarkdown')
   const openMarkdownShortcut = useOptionalShortcutLabel('tab.openMarkdown')
   const generatedTabTitlesEnabled = useAppStore((s) => s.settings?.tabAutoGenerateTitle === true)
-  const mobileEmulatorEnabled = useAppStore((s) => s.settings?.mobileEmulatorEnabled !== false)
-  const persistedUIReady = useAppStore((s) => s.persistedUIReady)
-  const mobileEmulatorTabIntroDismissed = useAppStore((s) => s.mobileEmulatorTabIntroDismissed)
-  const showMobileEmulatorIntroCallout = shouldShowMobileEmulatorTabIntro({
-    persistedUIReady,
-    mobileEmulatorTabIntroDismissed,
-    mobileEmulatorEnabled,
-    isMacOs
-  })
   const gitStatusEntries = useAppStore(
     (s) => s.gitStatusByWorktree[worktreeId] ?? EMPTY_GIT_STATUS_ENTRIES
   )
@@ -446,11 +428,6 @@ function TabBarInner({
     () => createUnifiedTabLookup(unifiedTabs, resolvedGroupId),
     [resolvedGroupId, unifiedTabs]
   )
-  const workspaceHasSimulatorTab = useMemo(
-    () => unifiedTabs.some((tab) => tab.contentType === 'simulator'),
-    [unifiedTabs]
-  )
-
   // Why: gate the tab long-press view-mode toggle to agent terminals. A tab is
   // eligible when it launched an agent or has a live agent-status entry on any of
   // its panes (paneKey = `${unifiedTabId}:…`), mirroring the toggle button's gate.
@@ -583,19 +560,9 @@ function TabBarInner({
         windowsShellEntries,
         hasNewBrowser: !terminalOnly,
         hasNewMarkdown: !terminalOnly && Boolean(onNewFileTab),
-        hasOpenMarkdown: !terminalOnly && Boolean(onOpenFileTab),
-        hasSimulator: !terminalOnly && mobileEmulatorEnabled && Boolean(onNewSimulatorTab),
-        simulatorIsGoTo: workspaceHasSimulatorTab
+        hasOpenMarkdown: !terminalOnly && Boolean(onOpenFileTab)
       }),
-    [
-      mobileEmulatorEnabled,
-      onNewFileTab,
-      onNewSimulatorTab,
-      onOpenFileTab,
-      terminalOnly,
-      windowsShellEntries,
-      workspaceHasSimulatorTab
-    ]
+    [onNewFileTab, onOpenFileTab, terminalOnly, windowsShellEntries]
   )
   const handleSelectCreateMenuOption = (option: TabCreateMenuOption): void => {
     switch (option.kind) {
@@ -624,10 +591,6 @@ function TabBarInner({
         break
       case 'open-markdown':
         onOpenFileTab?.()
-        break
-      case 'new-simulator':
-      case 'go-to-simulator':
-        onNewSimulatorTab?.()
         break
     }
   }
@@ -741,38 +704,6 @@ function TabBarInner({
       <DropdownMenuShortcut>{newBrowserShortcut}</DropdownMenuShortcut>
     </DropdownMenuItem>
   ) : null
-  const newSimulatorMenuItem =
-    !terminalOnly && mobileEmulatorEnabled && onNewSimulatorTab ? (
-      workspaceHasSimulatorTab ? (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <DropdownMenuItem
-              onSelect={onNewSimulatorTab}
-              className="gap-2 rounded-[7px] px-2 py-1.5 text-[12px] leading-5 font-medium"
-            >
-              <Smartphone className="size-4 text-muted-foreground" />
-              {translate('auto.components.tab.bar.TabBar.b426bb2615', 'Go to Mobile Emulator')}
-              <DropdownMenuShortcut>{newSimulatorShortcut}</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </TooltipTrigger>
-          <TooltipContent side="right" sideOffset={8} className="z-[80]">
-            {translate(
-              'auto.components.tab.bar.TabBar.aea43b5748',
-              'Open the existing emulator tab.'
-            )}
-          </TooltipContent>
-        </Tooltip>
-      ) : (
-        <DropdownMenuItem
-          onSelect={onNewSimulatorTab}
-          className="gap-2 rounded-[7px] px-2 py-1.5 text-[12px] leading-5 font-medium"
-        >
-          <Smartphone className="size-4 text-muted-foreground" />
-          {translate('auto.components.tab.bar.TabBar.fd2b42aaa3', 'New Mobile Emulator')}
-          <DropdownMenuShortcut>{newSimulatorShortcut}</DropdownMenuShortcut>
-        </DropdownMenuItem>
-      )
-    ) : null
   const newMarkdownMenuItem =
     !terminalOnly && onNewFileTab ? (
       <DropdownMenuItem
@@ -797,14 +728,6 @@ function TabBarInner({
         ) : null}
       </DropdownMenuItem>
     ) : null
-  const mobileEmulatorIntroMenuBlock =
-    showMobileEmulatorIntroCallout &&
-    !terminalOnly &&
-    isMacOs &&
-    mobileEmulatorEnabled &&
-    onNewSimulatorTab ? (
-      <MobileEmulatorTabIntroCallout />
-    ) : null
   const standardCreateMenuItems =
     newTabMenuOrder === 'markdown-first' ? (
       <>
@@ -812,8 +735,6 @@ function TabBarInner({
         {openMarkdownMenuItem}
         {defaultTerminalMenuItems}
         {newBrowserMenuItem}
-        {newSimulatorMenuItem}
-        {mobileEmulatorIntroMenuBlock}
       </>
     ) : (
       <>
@@ -821,8 +742,6 @@ function TabBarInner({
         {newBrowserMenuItem}
         {newMarkdownMenuItem}
         {openMarkdownMenuItem}
-        {newSimulatorMenuItem}
-        {mobileEmulatorIntroMenuBlock}
       </>
     )
 
@@ -962,21 +881,14 @@ function TabBarInner({
         return activeTabType === 'browser' && item.id === activeBrowserTabId
       }
       if (item.type === 'simulator') {
-        return activeTabType === 'simulator' && item.id === activeSimulatorTabId
+        return activeTabType === 'simulator' && item.id === activeFileId
       }
       return (
         (activeTabType === 'editor' || activeTabType === 'simulator') && activeFileId === item.id
       )
     })
     return activeItem?.id ?? null
-  }, [
-    activeBrowserTabId,
-    activeFileId,
-    activeSimulatorTabId,
-    activeTabId,
-    activeTabType,
-    orderedItems
-  ])
+  }, [activeBrowserTabId, activeFileId, activeTabId, activeTabType, orderedItems])
   const tabStripLayoutKey = useMemo(
     () =>
       orderedItems
@@ -1195,7 +1107,7 @@ function TabBarInner({
                   <EditorFileTab
                     key={item.id}
                     file={simFile}
-                    isActive={activeTabType === 'simulator' && item.id === activeSimulatorTabId}
+                    isActive={activeTabType === 'simulator' && item.id === activeFileId}
                     isPinned={item.isPinned}
                     hasTabsToRight={index < orderedItems.length - 1}
                     statusByRelativePath={statusByRelativePath}

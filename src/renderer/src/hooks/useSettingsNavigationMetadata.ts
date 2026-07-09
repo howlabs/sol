@@ -26,14 +26,11 @@ import {
   Server,
   ShieldCheck,
   SlidersHorizontal,
-  Smartphone,
-  TabletSmartphone,
   SquareTerminal,
   TextCursorInput,
   UserCog,
   Wrench
 } from 'lucide-react'
-import { OrcaLogoSettingsIcon } from '@/components/settings/orca-logo-settings-icon'
 import type { Repo } from '../../../shared/types'
 import { getRepoKindLabel } from '../../../shared/repo-kind'
 import { useAppStore } from '@/store'
@@ -60,8 +57,6 @@ import {
   getWebRuntimeEnvironmentsSearchEntry
 } from '@/components/settings/runtime-environments-search'
 import { getSshPaneSearchEntries } from '@/components/settings/ssh-search'
-import { getMobileSettingsPaneSearchEntries } from '@/components/settings/mobile-settings-search'
-import { getMobileEmulatorSearchEntries } from '@/components/settings/mobile-emulator-search'
 import { getComputerUsePaneSearchEntries } from '@/components/settings/computer-use-search'
 import { getVoicePaneSearchEntries } from '@/components/settings/voice-pane-search'
 import { getDeveloperPermissionsPaneSearchEntries } from '@/components/settings/developer-permissions-search'
@@ -199,39 +194,6 @@ export function buildSettingsNavigationMetadata({
         ]
       : []),
     {
-      id: 'setup-guide',
-      title: translate(
-        'auto.hooks.useSettingsNavigationMetadata.ded9e9032f',
-        'Onboarding checklist'
-      ),
-      description: translate(
-        'auto.hooks.useSettingsNavigationMetadata.5f32ac08f3',
-        'Finish the onboarding checklist for core Orca workflows.'
-      ),
-      icon: OrcaLogoSettingsIcon,
-      searchEntries: [
-        {
-          title: translate(
-            'auto.hooks.useSettingsNavigationMetadata.ded9e9032f',
-            'Onboarding checklist'
-          ),
-          description: translate(
-            'auto.hooks.useSettingsNavigationMetadata.17005c73d4',
-            'Open the onboarding checklist for setup and milestone steps.'
-          ),
-          keywords: [
-            translate('auto.hooks.useSettingsNavigationMetadata.ea0b1bc7b8', 'setup guide'),
-            translate(
-              'auto.hooks.useSettingsNavigationMetadata.0505d0df29',
-              'get started with Orca'
-            ),
-            translate('auto.hooks.useSettingsNavigationMetadata.724c440e72', 'getting started')
-          ]
-        }
-      ],
-      group: 'setup'
-    },
-    {
       id: 'general',
       title: translate('auto.hooks.useSettingsNavigationMetadata.13241992bd', 'General'),
       description: translate(
@@ -253,21 +215,6 @@ export function buildSettingsNavigationMetadata({
       searchEntries: getIntegrationsPaneSearchEntries(),
       group: 'setup'
     },
-    ...(showDesktopOnlySettings
-      ? [
-          {
-            id: 'mobile',
-            title: translate('auto.hooks.useSettingsNavigationMetadata.1cd25673df', 'Mobile'),
-            description: translate(
-              'auto.hooks.useSettingsNavigationMetadata.95a1886d94',
-              'Control terminals and agents from your phone.'
-            ),
-            icon: Smartphone,
-            searchEntries: getMobileSettingsPaneSearchEntries(),
-            group: 'setup'
-          }
-        ]
-      : []),
     {
       id: 'git',
       title: translate(
@@ -332,24 +279,6 @@ export function buildSettingsNavigationMetadata({
             ),
             icon: Globe,
             searchEntries: getBrowserPaneCombinedSearchEntries(),
-            group: 'workflows'
-          }
-        ]
-      : []),
-    ...(showDesktopOnlySettings
-      ? [
-          {
-            id: 'mobile-emulator',
-            title: translate(
-              'auto.hooks.useSettingsNavigationMetadata.1e761cff2b',
-              'Mobile Emulator'
-            ),
-            description: translate(
-              'auto.hooks.useSettingsNavigationMetadata.3d65d3f1b9',
-              'Configure mobile emulator support for Orca and coding agents.'
-            ),
-            icon: TabletSmartphone,
-            searchEntries: getMobileEmulatorSearchEntries(),
             group: 'workflows'
           }
         ]

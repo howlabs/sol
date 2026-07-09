@@ -134,7 +134,7 @@ describe('buildHydratedTabState – unified format', () => {
     expect(result.layoutByWorktree.w1).toEqual({ type: 'leaf', groupId: 'g2' })
   })
 
-  it('keeps restored simulator tabs while pruning unrelated empty split groups', () => {
+  it('drops restored simulator tabs after mobile emulator removal', () => {
     const session: WorkspaceSessionState = {
       ...makeBaseSession(),
       unifiedTabs: {
@@ -192,9 +192,10 @@ describe('buildHydratedTabState – unified format', () => {
 
     const result = buildHydratedTabState(session, new Set(['w1']))
 
+    // Why: simulator content type is legacy after mobile emulator cut; hydrate
+    // must not resurrect empty emulator panes.
     expect(result.unifiedTabsByWorktree.w1).toEqual([
-      expect.objectContaining({ id: 'terminal-1', contentType: 'terminal', groupId: 'g1' }),
-      expect.objectContaining({ id: 'simulator-1', contentType: 'simulator', groupId: 'g2' })
+      expect.objectContaining({ id: 'terminal-1', contentType: 'terminal', groupId: 'g1' })
     ])
     expect(result.groupsByWorktree.w1).toEqual([
       {
@@ -203,23 +204,10 @@ describe('buildHydratedTabState – unified format', () => {
         activeTabId: 'terminal-1',
         tabOrder: ['terminal-1'],
         recentTabIds: ['terminal-1']
-      },
-      {
-        id: 'g2',
-        worktreeId: 'w1',
-        activeTabId: 'simulator-1',
-        tabOrder: ['simulator-1'],
-        recentTabIds: ['simulator-1']
       }
     ])
-    expect(result.activeGroupIdByWorktree.w1).toBe('g2')
-    expect(result.layoutByWorktree.w1).toEqual({
-      type: 'split',
-      direction: 'horizontal',
-      first: { type: 'leaf', groupId: 'g1' },
-      second: { type: 'leaf', groupId: 'g2' },
-      ratio: 0.5
-    })
+    expect(result.activeGroupIdByWorktree.w1).toBe('g1')
+    expect(result.layoutByWorktree.w1).toEqual({ type: 'leaf', groupId: 'g1' })
   })
 })
 

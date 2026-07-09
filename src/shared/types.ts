@@ -2661,9 +2661,6 @@ export type GlobalSettings = {
   /** Why: Automations can be restored from Settings or the View menu, so this
    *  only controls whether the top-level sidebar shortcut is shown. */
   showAutomationsButton?: boolean
-  /** Why: Orca Mobile remains reachable from Settings; this only controls
-   *  whether the top-level sidebar shortcut is shown. */
-  showMobileButton?: boolean
   /** Controls how Ctrl+Tab chooses the next visible tab. Optional for
    *  profiles saved before this setting existed; readers default to MRU. */
   ctrlTabOrderMode?: CtrlTabOrderMode
@@ -2838,12 +2835,6 @@ export type GlobalSettings = {
   /** Controls whether macOS terminal input translates the physical JIS Yen (¥)
    *  key to a backslash, matching the common terminal expectation for that key. */
   terminalJISYenToBackslash: boolean
-  experimentalMobile: boolean
-  /** Why: the iOS Simulator feature is default-on for capable macOS hosts, but
-   *  users need a durable off switch that hides UI affordances and blocks CLI attach. */
-  mobileEmulatorEnabled?: boolean
-  /** Preferred iOS Simulator UDID for UI auto-attach and agent CLI attach. */
-  mobileEmulatorDefaultDeviceUdid?: string | null
   /** Explicit Android SDK root, used when auto-discovery (ANDROID_HOME / the
    *  default install path) does not find it. `null` (default) auto-discovers. */
   androidSdkPath?: string | null
@@ -3284,11 +3275,6 @@ export type PersistedUIState = {
   /** Why: Windows-only. Set once after the window first hides to the system
    *  tray, so the "Orca is still running" notification shows only on first use. */
   trayMinimizeNoticeShown?: boolean
-  /** User dismissed the first-run Mobile Emulator intro (Keep, Hide, or close).
-   *  Reversible only by re-enabling the feature in Settings. */
-  mobileEmulatorTabIntroDismissed?: boolean
-  /** User deferred the in-pane Mobile Emulator CLI + skill setup guide. */
-  mobileEmulatorAgentSetupDismissed?: boolean
   /** One-shot rollout notice for manual project ordering becoming the default.
    *  Absent or true means the sidebar callout stays hidden. */
   projectOrderManualDefaultNoticeDismissed?: boolean
@@ -3336,28 +3322,6 @@ export type PersistedUIState = {
    *  the original metadata toggles shipped. Set once so later deliberate
    *  unchecks of Linear issue and Ports stick across restarts. */
   _expandedWorktreeCardPropertiesDefaulted?: boolean
-  /** Snapshot of totalAgentsSpawned captured the first time we see the current
-   *  app version. Why: the nag threshold counts agents spawned *since the
-   *  user's last update* so a fresh install or new release does not trigger
-   *  the notification immediately. Reset whenever starNagAppVersion changes. */
-  starNagBaselineAgents?: number | null
-  /** The app version that set the current baseline. When the live app version
-   *  differs from this value, the baseline is re-captured on next agent
-   *  spawn — effectively restarting the nag countdown after each update. */
-  starNagAppVersion?: string | null
-  /** Next threshold (agents spawned since baseline) at which the star-nag
-   *  notification should fire. Starts at 35 and doubles each time the user
-   *  dismisses the notification without starring. */
-  starNagNextThreshold?: number
-  /** Once the user has starred Orca (from any entry point) we permanently
-   *  suppress the nag — no further thresholds, no notifications. */
-  starNagCompleted?: boolean
-  /** Timestamp until which nonterminal dismissals suppress threshold prompts.
-   *  Force-show bypasses this for dev/testing. */
-  starNagDeferredUntil?: number | null
-  /** App version that already consumed the first successful-agent value-moment ask.
-   *  Main-owned so remote/web clients cannot spoof the once-per-version cap. */
-  starNagAgentValueMomentAppVersion?: string | null
   trustedOrcaHooks?: PersistedTrustedOrcaHooks
   setupScriptPromptDismissedRepoIds?: string[]
 

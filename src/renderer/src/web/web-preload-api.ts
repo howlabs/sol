@@ -467,7 +467,6 @@ function createWebPreloadApi(): Partial<PreloadApi> {
           devRepoRoot: null,
           dockBadgeLabel: null
         }),
-      getFeatureWallAssetBaseUrl: () => Promise.resolve('/'),
       relaunch: () => Promise.resolve(window.location.reload()),
       restart: () => Promise.resolve(window.location.reload()),
       reload: () => Promise.resolve(window.location.reload()),
@@ -479,20 +478,6 @@ function createWebPreloadApi(): Partial<PreloadApi> {
       getFloatingMarkdownDirectory: () => Promise.resolve(''),
       pickFloatingMarkdownDocument: () => Promise.resolve(null),
       pickFloatingWorkspaceDirectory: () => Promise.resolve(null)
-    },
-    starNag: {
-      onShow: () => noopUnsubscribe,
-      onHide: () => noopUnsubscribe,
-      dismiss: () => Promise.resolve(),
-      later: () => Promise.resolve(),
-      complete: () => Promise.resolve(),
-      disable: () => Promise.resolve(),
-      openWeb: () => Promise.resolve(),
-      starOrca: () => Promise.resolve(false),
-      forceShow: () => Promise.resolve(),
-      agentValueMoment: () => Promise.resolve({ status: 'skipped' }),
-      showAgentValueMoment: () => Promise.resolve(),
-      onboardingCompleted: () => Promise.resolve()
     },
     platform: {
       get: () => ({
@@ -616,7 +601,6 @@ function createWebPreloadApi(): Partial<PreloadApi> {
     fs: createFileApi(),
     git: createGitApi(),
     browser: createBrowserApi(),
-    emulator: createEmulatorApi(),
     gh: createGitHubApi(),
     gl: createGitLabApi(),
     hostedReview: createRuntimeNamespaceApi('hostedReview'),
@@ -671,12 +655,9 @@ function createWebPreloadApi(): Partial<PreloadApi> {
       drop: () => {},
       dropByTabPrefix: () => {}
     },
-    mobile: {
+    runtimePairing: {
       listNetworkInterfaces: () => Promise.resolve({ interfaces: [] }),
-      getPairingQR: () => Promise.resolve({ available: false }),
       getRuntimePairingUrl: () => Promise.resolve({ available: false }),
-      listDevices: () => Promise.resolve({ devices: [] }),
-      revokeDevice: () => Promise.resolve({ revoked: false }),
       listRuntimeAccessGrants: () => Promise.resolve({ grants: [] }),
       revokeRuntimeAccess: () => Promise.resolve({ revoked: false }),
       isWebSocketReady: () => Promise.resolve({ ready: Boolean(activeEnvironment), endpoint: null })
@@ -1830,17 +1811,6 @@ function createBrowserApi(): NonNullable<Partial<PreloadApi>['browser']> {
   } as unknown as NonNullable<Partial<PreloadApi>['browser']>
 }
 
-function createEmulatorApi(): NonNullable<Partial<PreloadApi>['emulator']> {
-  return {
-    onPaneFocus: () => noopUnsubscribe,
-    onAutoAttach: () => noopUnsubscribe,
-    startFrameStream: () => Promise.reject(new Error('Mobile emulator is unavailable on web.')),
-    stopFrameStream: () => Promise.resolve(),
-    onFrameStreamFrame: () => noopUnsubscribe,
-    onFrameStreamError: () => noopUnsubscribe
-  } as unknown as NonNullable<Partial<PreloadApi>['emulator']>
-}
-
 function createGitHubApi(): WebGitHubApi {
   const route = <Result>(method: WebGitHubRuntimeMethod, args?: unknown): Promise<Result> =>
     callRuntimeResult<Result>(method, mapRepoPathArg(args))
@@ -1936,8 +1906,6 @@ function createGitHubApi(): WebGitHubApi {
         args
       ),
     onWorkItemMutated: () => noopUnsubscribe,
-    checkOrcaStarred: () => Promise.resolve(null),
-    starOrca: () => Promise.resolve(false),
     rateLimit: (args) =>
       route<WebGitHubResult<'rateLimit'>>(GITHUB_WEB_RPC_METHODS.rateLimit, args),
     diagnoseAuth: () =>
@@ -2240,7 +2208,6 @@ function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
     onWorktreeHistoryNavigate: () => noopUnsubscribe,
     onNewBrowserTab: () => noopUnsubscribe,
     onNewMarkdownTab: () => noopUnsubscribe,
-    onNewSimulatorTab: () => noopUnsubscribe,
     onRequestTabCreate: () => noopUnsubscribe,
     replyTabCreate: () => {},
     onRequestTabSetProfile: () => noopUnsubscribe,

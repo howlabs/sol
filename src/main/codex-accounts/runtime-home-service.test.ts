@@ -136,7 +136,6 @@ function createSettings(overrides: Partial<GlobalSettings> = {}): GlobalSettings
     terminalMacOptionAsAlt: 'false',
     terminalMacOptionAsAltMigrated: true,
     terminalJISYenToBackslash: false,
-    experimentalMobile: false,
     mobileAutoRestoreFitMs: null,
 
     experimentalActivity: true,

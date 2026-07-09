@@ -14,8 +14,6 @@
 // re-check string length.
 
 import { z } from 'zod'
-import { FEATURE_WALL_MAX_DWELL_MS } from './feature-wall-telemetry'
-import { FEATURE_WALL_EXIT_ACTIONS, FEATURE_WALL_TOUR_DEPTH_STEPS } from './feature-wall-tour-depth'
 import {
   CONTEXTUAL_TOUR_OUTCOMES,
   FEATURE_EDUCATION_CONTEXTUAL_TOUR_IDS,
@@ -33,13 +31,6 @@ import {
 } from './feature-interactions'
 import { SETUP_SCRIPT_IMPORT_PROVIDERS } from './setup-script-import-providers'
 import { WORKSPACE_SOURCE_VALUES, type WorkspaceSource } from './workspace-source'
-import { appStarSourceSchema } from './gh-star-source'
-import {
-  starNagAgentBucketSchema,
-  starNagOutcomeSchema,
-  starNagPromptModeSchema,
-  starNagPromptSourceSchema
-} from './star-nag-telemetry'
 import {
   NESTED_REPO_COUNT_BUCKETS,
   NESTED_REPO_IMPORT_ACTIONS,
@@ -222,39 +213,24 @@ export type LaunchSource = z.infer<typeof launchSourceSchema>
 export const requestKindSchema = z.enum(['new', 'resume', 'followup'])
 export type RequestKind = z.infer<typeof requestKindSchema>
 
-export const featureWallTileIdSchema = z.enum([
-  'tile-01',
-  'tile-02',
-  'tile-03',
-  'tile-04',
-  'tile-05',
-  'tile-06',
-  'tile-07',
-  'tile-08',
-  'tile-09',
-  'tile-10',
-  'tile-11',
-  'tile-12'
-])
-export type FeatureWallTileIdTelemetry = z.infer<typeof featureWallTileIdSchema>
-
-export const featureWallOpenSourceSchema = z.enum(['help_menu', 'popup', 'onboarding', 'unknown'])
-export type FeatureWallOpenSourceTelemetry = z.infer<typeof featureWallOpenSourceSchema>
-
-export const featureWallWorkflowIdSchema = z.enum([
-  'tasks',
+// Why: legacy onboarding tour telemetry still keys furthest_step by the old
+// feature-wall step ids; keep the enum values even after the wall UI is gone.
+const ONBOARDING_TOUR_DEPTH_STEPS = [
   'workspaces',
-  'agents-orchestration',
-  'workbench',
-  'review'
-])
-export type FeatureWallWorkflowIdTelemetry = z.infer<typeof featureWallWorkflowIdSchema>
-
-export const featureWallTourDepthStepSchema = z.enum(FEATURE_WALL_TOUR_DEPTH_STEPS)
-export type FeatureWallTourDepthStepTelemetry = z.infer<typeof featureWallTourDepthStepSchema>
-
-export const featureWallExitActionSchema = z.enum(FEATURE_WALL_EXIT_ACTIONS)
-export type FeatureWallExitActionTelemetry = z.infer<typeof featureWallExitActionSchema>
+  'tasks',
+  'agents_statuses',
+  'agents_usage',
+  'agents_orchestration',
+  'workbench_terminal',
+  'workbench_editor',
+  'workbench_browser',
+  'review_notes',
+  'review_pr_view',
+  'review_ship'
+] as const
+const onboardingTourDepthStepSchema = z.enum(ONBOARDING_TOUR_DEPTH_STEPS)
+// Why: cap tour dwell at 24h so a stuck timer cannot inflate analytics.
+const ONBOARDING_TOUR_MAX_DWELL_MS = 86_400_000
 
 // `env_var` is deliberately absent — env-var and CI paths override consent at
 // runtime only (see consent.ts); they never mutate `optedIn` and therefore
@@ -291,7 +267,6 @@ type BooleanGlobalSettingsKey = {
 export const SETTINGS_CHANGED_WHITELIST = [
   'editorAutoSave',
   'openLinksInApp',
-  'experimentalMobile',
 
   'experimentalNativeChat',
   'experimentalActivity',
@@ -356,47 +331,6 @@ const repoAddedSchema = z
     nth_repo_added: nthRepoAddedSchema
   })
   .strict()
-
-const appStarredOrcaSchema = z
-  .object({
-    source: appStarSourceSchema,
-    nth_repo_added: nthRepoAddedSchema
-  })
-  .strict()
-
-const starNagOutcomeEventSchema = z
-  .object({
-    outcome: starNagOutcomeSchema,
-    source: starNagPromptSourceSchema,
-    mode: starNagPromptModeSchema,
-    threshold: z.number().int().positive(),
-    agents_since_baseline: z.number().int().nonnegative(),
-    agents_since_baseline_bucket: starNagAgentBucketSchema,
-    nth_repo_added: nthRepoAddedSchema,
-    next_threshold: z.number().int().positive().optional(),
-    cooldown_days: z.number().int().positive().optional()
-  })
-  .strict()
-  .refine(
-    (payload) =>
-      payload.next_threshold === undefined ||
-      payload.outcome === 'dismissed' ||
-      payload.outcome === 'later',
-    {
-      message: 'next_threshold is only valid for later or dismissed outcomes',
-      path: ['next_threshold']
-    }
-  )
-  .refine(
-    (payload) =>
-      payload.cooldown_days === undefined ||
-      payload.outcome === 'later' ||
-      payload.outcome === 'dismissed',
-    {
-      message: 'cooldown_days is only valid for later or dismissed outcomes',
-      path: ['cooldown_days']
-    }
-  )
 
 const workspaceCreatedSchema = z
   .object({
@@ -506,55 +440,6 @@ const cmdJPaletteFeatureTipAcknowledgedSchema = z
   .object({
     source: orcaCliFeatureTipSourceSchema,
     nth_repo_added: nthRepoAddedSchema
-  })
-  .strict()
-
-const featureWallOpenedSchema = z
-  .object({
-    source: featureWallOpenSourceSchema
-  })
-  .strict()
-const featureWallClosedSchema = z
-  .object({
-    dwell_ms: z.number().int().min(0).max(FEATURE_WALL_MAX_DWELL_MS),
-    source: featureWallOpenSourceSchema.optional(),
-    exit_action: featureWallExitActionSchema.optional(),
-    furthest_step: featureWallTourDepthStepSchema.optional(),
-    last_group_id: featureWallWorkflowIdSchema.optional(),
-    visited_workflow_count: z.number().int().min(0).max(5).optional(),
-    visited_substep_count: z.number().int().min(0).max(9).optional(),
-    completed_workflow_count: z.number().int().min(0).max(5).optional(),
-    completed_substep_count: z.number().int().min(0).max(9).optional()
-  })
-  .strict()
-const featureWallTileFocusedSchema = z
-  .object({
-    tile_id: featureWallTileIdSchema
-  })
-  .strict()
-const featureWallTileClickedSchema = z
-  .object({
-    tile_id: featureWallTileIdSchema
-  })
-  .strict()
-const featureWallGroupSelectedSchema = z
-  .object({
-    group_id: featureWallWorkflowIdSchema,
-    source: featureWallOpenSourceSchema
-  })
-  .strict()
-const featureWallFeatureSelectedSchema = z
-  .object({
-    group_id: featureWallWorkflowIdSchema,
-    tile_id: featureWallTileIdSchema,
-    source: featureWallOpenSourceSchema
-  })
-  .strict()
-const featureWallDocsClickedSchema = z
-  .object({
-    group_id: featureWallWorkflowIdSchema,
-    tile_id: featureWallTileIdSchema,
-    source: featureWallOpenSourceSchema
   })
   .strict()
 
@@ -1006,7 +891,7 @@ const onboardingStepSkippedSchema = z
 type OnboardingTourOutcomeTelemetry = {
   outcome: z.infer<typeof onboardingTourOutcomeSchema>
   tour_dwell_ms?: number
-  furthest_step?: z.infer<typeof featureWallTourDepthStepSchema>
+  furthest_step?: z.infer<typeof onboardingTourDepthStepSchema>
   visited_workflow_count?: number
   visited_substep_count?: number
   completed_workflow_count?: number
@@ -1041,9 +926,9 @@ function validateOnboardingTourOutcome(
 const onboardingTourOutcomeEventSchema = z
   .object({
     outcome: onboardingTourOutcomeSchema,
-    intro_duration_ms: z.number().int().min(0).max(FEATURE_WALL_MAX_DWELL_MS).optional(),
-    tour_dwell_ms: z.number().int().min(0).max(FEATURE_WALL_MAX_DWELL_MS).optional(),
-    furthest_step: featureWallTourDepthStepSchema.optional(),
+    intro_duration_ms: z.number().int().min(0).max(ONBOARDING_TOUR_MAX_DWELL_MS).optional(),
+    tour_dwell_ms: z.number().int().min(0).max(ONBOARDING_TOUR_MAX_DWELL_MS).optional(),
+    furthest_step: onboardingTourDepthStepSchema.optional(),
     visited_workflow_count: z.number().int().min(0).max(5).optional(),
     visited_substep_count: z.number().int().min(0).max(9).optional(),
     completed_workflow_count: z.number().int().min(0).max(5).optional(),
@@ -1405,8 +1290,6 @@ const editorExternalChangeConflictActionSchema = z
 // which cannot be unmixed after the fact.
 export const eventSchemas = {
   app_opened: appOpenedSchema,
-  app_starred_orca: appStarredOrcaSchema,
-  star_nag_outcome: starNagOutcomeEventSchema,
   feature_interaction_usage_bucket_reached: featureInteractionUsageBucketReachedSchema,
 
   repo_added: repoAddedSchema,
@@ -1442,14 +1325,6 @@ export const eventSchemas = {
   orca_cli_feature_tip_setup_result: orcaCliFeatureTipSetupResultSchema,
   cmd_j_palette_feature_tip_shown: cmdJPaletteFeatureTipShownSchema,
   cmd_j_palette_feature_tip_acknowledged: cmdJPaletteFeatureTipAcknowledgedSchema,
-
-  feature_wall_opened: featureWallOpenedSchema,
-  feature_wall_closed: featureWallClosedSchema,
-  feature_wall_tile_focused: featureWallTileFocusedSchema,
-  feature_wall_tile_clicked: featureWallTileClickedSchema,
-  feature_wall_group_selected: featureWallGroupSelectedSchema,
-  feature_wall_feature_selected: featureWallFeatureSelectedSchema,
-  feature_wall_docs_clicked: featureWallDocsClickedSchema,
 
   onboarding_started: onboardingStartedSchema,
   onboarding_step_viewed: onboardingStepViewedSchema,
@@ -1541,8 +1416,6 @@ export const COHORT_EXTENDED: readonly EventName[] = Array.from(COHORT_EXTENDED_
 // injection set against silent schema drift.
 type _CohortExtendedRoster =
   | 'app_opened'
-  | 'app_starred_orca'
-  | 'star_nag_outcome'
   | 'feature_interaction_usage_bucket_reached'
   | 'repo_added'
   | 'add_repo_setup_step_action'

@@ -117,7 +117,6 @@ import BrowserAddressBar from './BrowserAddressBar'
 import { BrowserImportHintButton } from './BrowserImportHintButton'
 import { BrowserToolbarMenu } from './BrowserToolbarMenu'
 import BrowserFind from './BrowserFind'
-import { BrowserMobileDriverOverlay } from './BrowserMobileDriverOverlay'
 import { getShortcutPlatform, useShortcutLabel } from '@/hooks/useShortcutLabel'
 import { getRemoteBrowserFrameStyle } from './remote-browser-frame-style'
 import {
@@ -844,13 +843,6 @@ export default function BrowserPane({
     'browser_visible'
   )
 
-  const reclaimActiveBrowserForDesktop = useCallback(async (): Promise<void> => {
-    if (!activeBrowserPageId) {
-      return
-    }
-    await window.api.runtime.reclaimBrowserForDesktop(activeBrowserPageId)
-  }, [activeBrowserPageId])
-
   if (activeBrowserRuntimeEnvironmentId) {
     return activeBrowserPage ? (
       <RemoteBrowserPagePane
@@ -887,10 +879,6 @@ export default function BrowserPane({
               onSetUrl={setBrowserPageUrl}
             />
           ))}
-          <BrowserMobileDriverOverlay
-            driver={activeBrowserDriver}
-            onTakeBack={reclaimActiveBrowserForDesktop}
-          />
         </div>
       ) : null}
     </div>

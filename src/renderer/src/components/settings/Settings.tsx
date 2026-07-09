@@ -56,13 +56,10 @@ import { TasksPane } from './TasksPane'
 import { QuickCommandsPane } from './QuickCommandsPane'
 import { DeveloperPermissionsPane } from './DeveloperPermissionsPane'
 import { ComputerUsePane } from './ComputerUsePane'
-import { MobileSettingsPane } from './MobileSettingsPane'
-import { MobileEmulatorSettingsPane } from './MobileEmulatorSettingsPane'
 import { RuntimeEnvironmentsPane } from './RuntimeEnvironmentsPane'
 import { PrivacyPane } from './PrivacyPane'
 import { AdvancedPane } from './AdvancedPane'
 import { SettingsSidebar } from './SettingsSidebar'
-import { SettingsSetupGuidePane } from './SettingsSetupGuidePane'
 import { ActiveSettingsSectionProvider, SettingsSection } from './SettingsSection'
 import { getSettingsSectionSearchEntries, rankSettingsSearchItems } from './settings-search'
 import { cn } from '@/lib/utils'
@@ -1044,8 +1041,6 @@ function Settings(): React.JSX.Element {
   const isSectionMounted = (sectionId: string): boolean => neededSectionIds.has(sectionId)
   const isFocusedShortcutsPane =
     activeSectionId === 'shortcuts' && settingsSearchQuery.trim() === ''
-  const isFocusedSetupGuidePane =
-    activeSectionId === 'setup-guide' && settingsSearchQuery.trim() === ''
 
   return (
     <div
@@ -1077,7 +1072,7 @@ function Settings(): React.JSX.Element {
             className={cn(
               'mx-auto flex w-full flex-col gap-10 px-8 pt-10',
               isFocusedShortcutsPane ? 'h-full pb-6' : 'pb-24',
-              isFocusedSetupGuidePane ? 'max-w-6xl' : 'max-w-4xl'
+              'max-w-4xl'
             )}
           >
             {visibleNavSections.length === 0 ? (
@@ -1186,22 +1181,6 @@ function Settings(): React.JSX.Element {
                 ) : null}
 
                 <SettingsSection
-                  id="setup-guide"
-                  title={translate(
-                    'auto.components.settings.Settings.6d119427ef',
-                    'Onboarding checklist'
-                  )}
-                  description={translate(
-                    'auto.components.settings.Settings.6855b0f77d',
-                    'Finish the core workflows that make Orca useful for parallel agent work.'
-                  )}
-                  searchEntries={getSectionSearchEntries('setup-guide')}
-                  bodyClassName="overflow-hidden rounded-none border-0 bg-transparent p-0 shadow-none"
-                >
-                  {isSectionMounted('setup-guide') ? <SettingsSetupGuidePane /> : null}
-                </SettingsSection>
-
-                <SettingsSection
                   id="general"
                   title={translate('auto.components.settings.Settings.7807c11c4d', 'General')}
                   description={translate(
@@ -1234,21 +1213,6 @@ function Settings(): React.JSX.Element {
                 >
                   {isSectionMounted('integrations') ? <IntegrationsPane /> : null}
                 </SettingsSection>
-
-                {showDesktopOnlySettings ? (
-                  <SettingsSection
-                    id="mobile"
-                    title={translate('auto.components.settings.Settings.c40dadaac8', 'Mobile')}
-                    badge="Beta"
-                    description={translate(
-                      'auto.components.settings.Settings.c6c01ac209',
-                      'Control terminals and agents from your phone.'
-                    )}
-                    searchEntries={getSectionSearchEntries('mobile')}
-                  >
-                    {isSectionMounted('mobile') ? <MobileSettingsPane /> : null}
-                  </SettingsSection>
-                ) : null}
 
                 <SettingsSection
                   id="git"
@@ -1363,28 +1327,6 @@ function Settings(): React.JSX.Element {
                         settings={settings}
                         updateSettings={updateSettings}
                         onOpenComputerUse={openComputerUseFromBrowser}
-                      />
-                    ) : null}
-                  </SettingsSection>
-                ) : null}
-
-                {showDesktopOnlySettings ? (
-                  <SettingsSection
-                    id="mobile-emulator"
-                    title={translate(
-                      'auto.components.settings.Settings.f75daf1002',
-                      'Mobile Emulator'
-                    )}
-                    description={translate(
-                      'auto.components.settings.Settings.01f9d36292',
-                      'Configure mobile emulator support for Orca and coding agents.'
-                    )}
-                    searchEntries={getSectionSearchEntries('mobile-emulator')}
-                  >
-                    {isSectionMounted('mobile-emulator') ? (
-                      <MobileEmulatorSettingsPane
-                        settings={settings}
-                        updateSettings={updateSettings}
                       />
                     ) : null}
                   </SettingsSection>

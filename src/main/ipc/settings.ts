@@ -44,7 +44,6 @@ function sanitizeRendererSettingsUpdate(args: Partial<GlobalSettings>): Partial<
 const APPEARANCE_MENU_KEYS: readonly (keyof GlobalSettings)[] = [
   'showTasksButton',
   'showAutomationsButton',
-  'showMobileButton',
   'showTitlebarAppName'
 ]
 

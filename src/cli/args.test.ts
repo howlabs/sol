@@ -44,40 +44,23 @@ describe('parseArgs', () => {
     expect(parsed.flags.get('url')).toBe('https://example.com')
   })
 
-  it('parses emulator reinstall as a boolean flag', () => {
-    const parsed = parseArgs(['emulator', 'install', 'app.apk', '--reinstall', '--device', 'emu'])
-
-    expect(parsed.commandPath).toEqual(['emulator', 'install', 'app.apk'])
-    expect(parsed.flags.get('reinstall')).toBe(true)
-    expect(parsed.flags.get('device')).toBe('emu')
-  })
-
   it('normalizes partial positionals without conflicting later flag-supplied args', () => {
     const parsed = normalizeCommandPositionals(
       [
         {
-          path: ['emulator', 'permissions'],
-          summary: 'Permissions',
-          usage: 'orca emulator permissions <op> <package> [permission]',
-          allowedFlags: ['op', 'package', 'permission'],
-          positionalArgs: ['op', 'package', 'permission']
+          path: ['computer', 'click'],
+          summary: 'Click',
+          usage: 'orca computer click <x> <y>',
+          allowedFlags: ['x', 'y'],
+          positionalArgs: ['x', 'y']
         }
       ],
-      parseArgs([
-        'emulator',
-        'permissions',
-        'grant',
-        '--package',
-        'com.example.app',
-        '--permission',
-        'android.permission.CAMERA'
-      ])
+      parseArgs(['computer', 'click', '10', '--y', '20'])
     )
 
-    expect(parsed.commandPath).toEqual(['emulator', 'permissions'])
-    expect(parsed.flags.get('op')).toBe('grant')
-    expect(parsed.flags.get('package')).toBe('com.example.app')
-    expect(parsed.flags.get('permission')).toBe('android.permission.CAMERA')
+    expect(parsed.commandPath).toEqual(['computer', 'click'])
+    expect(parsed.flags.get('x')).toBe('10')
+    expect(parsed.flags.get('y')).toBe('20')
     expect(parsed.positionalFlagConflicts).toEqual([])
   })
 

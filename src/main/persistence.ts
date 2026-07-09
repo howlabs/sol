@@ -1319,19 +1319,18 @@ function normalizeLoadedOnboardingState(
   const sanitized = sanitizeOnboardingUpdate(input, {
     migrateLegacyProgress: true
   })
-  // Why: a persisted completed/dismissed outcome means the user left
-  // onboarding. Recover from a bad/missing/null closedAt instead of reopening
-  // the new-user sidebar checklist.
-  const recoveredClosedAt =
-    typeof sanitized.closedAt === 'number'
-      ? sanitized.closedAt
-      : sanitized.outcome !== null && sanitized.outcome !== undefined
-        ? Date.now()
-        : sanitized.closedAt
+  // Why: Sol removed the first-run onboarding funnel. Force any open profile
+  // closed so legacy orca-data.json cannot re-open a deleted UI surface.
+  const recoveredClosedAt = typeof sanitized.closedAt === 'number' ? sanitized.closedAt : Date.now()
   return {
     ...defaults,
     ...sanitized,
-    closedAt: recoveredClosedAt ?? defaults.closedAt,
+    closedAt: recoveredClosedAt,
+    outcome: sanitized.outcome ?? 'completed',
+    lastCompletedStep:
+      typeof sanitized.lastCompletedStep === 'number'
+        ? sanitized.lastCompletedStep
+        : ONBOARDING_FINAL_STEP,
     checklist: {
       ...defaults.checklist,
       ...sanitized.checklist

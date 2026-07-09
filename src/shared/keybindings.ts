@@ -62,7 +62,6 @@ export type KeybindingActionId =
   | 'tab.newAgent'
   | AgentTabActionId
   | 'tab.newBrowser'
-  | 'tab.newSimulator'
   | 'tab.newMarkdown'
   | 'tab.openMarkdown'
   | 'tab.close'
@@ -558,18 +557,6 @@ export const KEYBINDING_DEFINITIONS: readonly KeybindingDefinition[] = [
     scope: 'tabs',
     searchKeywords: ['shortcut', 'tab', 'browser', 'new'],
     defaultBindings: platformBindings(['Mod+Shift+B'])
-  },
-  {
-    id: 'tab.newSimulator',
-    title: 'New mobile emulator tab',
-    group: 'Tabs',
-    scope: 'tabs',
-    searchKeywords: ['shortcut', 'tab', 'simulator', 'emulator', 'mobile', 'ios', 'new'],
-    defaultBindings: {
-      darwin: ['Mod+Shift+E'],
-      linux: [],
-      win32: []
-    }
   },
   {
     id: 'tab.newMarkdown',
