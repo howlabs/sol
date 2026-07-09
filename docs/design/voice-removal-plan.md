@@ -1,6 +1,6 @@
 # Voice / Dictation Removal Plan
 
-Status: **audit + implementation outline** (no code removed yet).
+Status: **implemented** (desktop dictation / speech stack removed for Sol).
 
 ## Decision summary
 

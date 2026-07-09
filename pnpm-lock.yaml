@@ -64,9 +64,6 @@ importers:
       react-i18next:
         specifier: ^17.0.8
         version: 17.0.8(i18next@26.3.1(typescript@5.9.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.9.3)
-      sherpa-onnx:
-        specifier: 1.12.37
-        version: 1.12.37
       ssh2:
         specifier: ^1.17.0
         version: 1.17.0
@@ -352,7 +349,7 @@ importers:
         version: 7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4)
       vitest:
         specifier: ^4.1.5
-        version: 4.1.5(@types/node@25.6.0)(happy-dom@20.9.0)(msw@2.14.3(@types/node@25.6.0)(typescript@5.9.3))(vite@7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4))
+        version: 4.1.5(@types/node@25.6.0)(happy-dom@20.9.0)(vite@7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4))
       vscode-oniguruma:
         specifier: ^2.0.1
         version: 2.0.1
@@ -361,23 +358,7 @@ importers:
         version: 9.3.2
       zustand:
         specifier: ^5.0.13
-        version: 5.0.13(@types/react@19.2.14)(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5))
-    optionalDependencies:
-      sherpa-onnx-darwin-arm64:
-        specifier: 1.12.37
-        version: 1.12.37
-      sherpa-onnx-darwin-x64:
-        specifier: 1.12.37
-        version: 1.12.37
-      sherpa-onnx-linux-arm64:
-        specifier: 1.12.37
-        version: 1.12.37
-      sherpa-onnx-linux-x64:
-        specifier: 1.12.37
-        version: 1.12.37
-      sherpa-onnx-win-x64:
-        specifier: 1.12.37
-        version: 1.12.37
+        version: 5.0.13(@types/react@19.2.14)(react@19.2.5)
 
 packages:
 
@@ -5934,34 +5915,6 @@ packages:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
 
-  sherpa-onnx-darwin-arm64@1.12.37:
-    resolution: {integrity: sha512-zpqbH+2TI6dvg7mxGm30Mnv17aJL3ZfRGshMiBK85dHBfhzqMbKUHNXCzsHhiKBQTzti6JqG1YoRbYrJwvdUjA==}
-    cpu: [arm64]
-    os: [darwin]
-
-  sherpa-onnx-darwin-x64@1.12.37:
-    resolution: {integrity: sha512-2mB1BhEJJLG8Ow/YGAe7c3AL5fSkk9qDk3wmZRsfDW+Gno5eBaUusXseDI0ltjh2mZcW74l9F19ez4CyhwqNQQ==}
-    cpu: [x64]
-    os: [darwin]
-
-  sherpa-onnx-linux-arm64@1.12.37:
-    resolution: {integrity: sha512-6yVnp7ucK4oJEjUfKbkyvJm+e6UdETTp7PnWFb1+Wr6nxSCN038BGSACCIKlVHEsQl+6huwrvymljkWrIro1mA==}
-    cpu: [arm64]
-    os: [linux]
-
-  sherpa-onnx-linux-x64@1.12.37:
-    resolution: {integrity: sha512-WF69clWjTlBu6NIBdL8OLEEN4NwOlYjjB/AjCMs29pB6gtSzKJEKIjmTATfaSSExTGPeXsOriCXcMdHaMH4WNg==}
-    cpu: [x64]
-    os: [linux]
-
-  sherpa-onnx-win-x64@1.12.37:
-    resolution: {integrity: sha512-1h1UrJxzA1vkOO2G8JqRQkF9SfEhM/LYW+yFki5izCY5N+eaaxYKdZLmVZI3KAhxk28pkE6dnMETYi0nj2/Cuw==}
-    cpu: [x64]
-    os: [win32]
-
-  sherpa-onnx@1.12.37:
-    resolution: {integrity: sha512-3luwSdHwR8BtJiiFwqHfb15FE2FX0KsN4aOBbfq9Ma23r3w9C3bprFc/WBusXk56nUbzcEN5YczN7t9w1JwdtQ==}
-
   side-channel-list@1.0.1:
     resolution: {integrity: sha512-mjn/0bi/oUURjc5Xl7IaWi/OJJJumuoJFQJfDDyO46+hBWsfaVM65TBHq2eoZBhzl9EchxOijpkbRC8SVBQU0w==}
     engines: {node: '>= 0.4'}
@@ -9222,13 +9175,12 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.0
 
-  '@vitest/mocker@4.1.5(msw@2.14.3(@types/node@25.6.0)(typescript@5.9.3))(vite@7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4))':
+  '@vitest/mocker@4.1.5(vite@7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4))':
     dependencies:
       '@vitest/spy': 4.1.5
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      msw: 2.14.3(@types/node@25.6.0)(typescript@5.9.3)
       vite: 7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4)
 
   '@vitest/pretty-format@4.1.5':
@@ -12628,23 +12580,6 @@ snapshots:
 
   shebang-regex@3.0.0: {}
 
-  sherpa-onnx-darwin-arm64@1.12.37:
-    optional: true
-
-  sherpa-onnx-darwin-x64@1.12.37:
-    optional: true
-
-  sherpa-onnx-linux-arm64@1.12.37:
-    optional: true
-
-  sherpa-onnx-linux-x64@1.12.37:
-    optional: true
-
-  sherpa-onnx-win-x64@1.12.37:
-    optional: true
-
-  sherpa-onnx@1.12.37: {}
-
   side-channel-list@1.0.1:
     dependencies:
       es-errors: 1.3.0
@@ -13073,10 +13008,10 @@ snapshots:
       lightningcss: 1.32.0
       yaml: 2.8.4
 
-  vitest@4.1.5(@types/node@25.6.0)(happy-dom@20.9.0)(msw@2.14.3(@types/node@25.6.0)(typescript@5.9.3))(vite@7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4)):
+  vitest@4.1.5(@types/node@25.6.0)(happy-dom@20.9.0)(vite@7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4)):
     dependencies:
       '@vitest/expect': 4.1.5
-      '@vitest/mocker': 4.1.5(msw@2.14.3(@types/node@25.6.0)(typescript@5.9.3))(vite@7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4))
+      '@vitest/mocker': 4.1.5(vite@7.3.6(@types/node@25.6.0)(jiti@2.7.0)(lightningcss@1.32.0)(yaml@2.8.4))
       '@vitest/pretty-format': 4.1.5
       '@vitest/runner': 4.1.5
       '@vitest/snapshot': 4.1.5
@@ -13231,10 +13166,9 @@ snapshots:
 
   zod@4.4.3: {}
 
-  zustand@5.0.13(@types/react@19.2.14)(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5)):
+  zustand@5.0.13(@types/react@19.2.14)(react@19.2.5):
     optionalDependencies:
       '@types/react': 19.2.14
       react: 19.2.5
-      use-sync-external-store: 1.6.0(react@19.2.5)
 
   zwitch@2.0.4: {}

@@ -47,7 +47,6 @@ import { registerBrowserHandlers } from './browser'
 import { registerShellHandlers } from './shell'
 
 import { registerUIHandlers, setTrustedUIRendererWebContentsId } from './ui'
-import { registerSpeechHandlers } from './speech'
 import { registerCodexAccountHandlers } from './codex-accounts'
 import { registerAgentHookHandlers } from './agent-hooks'
 import { registerAgentTrustHandlers } from './agent-trust'
@@ -181,5 +180,4 @@ export function registerCoreHandlers(
   registerNativeChatHandlers()
   registerClipboardHandlers(store)
   registerUpdaterHandlers(store)
-  registerSpeechHandlers(store)
 }

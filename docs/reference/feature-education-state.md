@@ -55,12 +55,12 @@ When a tip should not show after the user has already used the feature, add the 
 
 ```ts
 {
-  id: 'voice-dictation',
-  completedByFeatureInteractions: ['voice-dictation']
+  id: 'cmd-j-palette',
+  completedByFeatureInteractions: ['cmd-j-palette']
 }
 ```
 
-Then make sure the feature records its interaction at the meaningful product moment. For example, voice dictation records only after a session reaches `listening`, not when the settings pane opens.
+Then make sure the feature records its interaction at the meaningful product moment. For example, the command palette tip records only after the palette is opened, not when the settings pane opens.
 
 ## Adding A Tour
 

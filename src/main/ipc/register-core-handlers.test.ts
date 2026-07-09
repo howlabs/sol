@@ -51,7 +51,6 @@ const {
   registerHostedReviewHandlersMock,
   registerExportHandlersMock,
   registerOnboardingHandlersMock,
-  registerSpeechHandlersMock,
   registerSkillsHandlersMock,
   registerWorkspaceSpaceHandlersMock,
   registerWorkspacePortHandlersMock,
@@ -108,7 +107,6 @@ const {
   registerHostedReviewHandlersMock: vi.fn(),
   registerExportHandlersMock: vi.fn(),
   registerOnboardingHandlersMock: vi.fn(),
-  registerSpeechHandlersMock: vi.fn(),
   registerSkillsHandlersMock: vi.fn(),
   registerWorkspaceSpaceHandlersMock: vi.fn(),
   registerWorkspacePortHandlersMock: vi.fn(),
@@ -132,10 +130,6 @@ vi.mock('./runtime-environment-transport-routing', () => ({
 
 vi.mock('./onboarding', () => ({
   registerOnboardingHandlers: registerOnboardingHandlersMock
-}))
-
-vi.mock('./speech', () => ({
-  registerSpeechHandlers: registerSpeechHandlersMock
 }))
 
 vi.mock('./cli', () => ({
@@ -381,7 +375,6 @@ describe('registerCoreHandlers', () => {
     registerGitLabHandlersMock.mockReset()
     registerHostedReviewHandlersMock.mockReset()
     registerExportHandlersMock.mockReset()
-    registerSpeechHandlersMock.mockReset()
     registerSkillsHandlersMock.mockReset()
     registerWorkspaceSpaceHandlersMock.mockReset()
     registerWorkspacePortHandlersMock.mockReset()
@@ -483,7 +476,6 @@ describe('registerCoreHandlers', () => {
     expect(setTrustedUIRendererWebContentsIdMock).toHaveBeenCalledWith(null)
     expect(registerBrowserHandlersMock).toHaveBeenCalled()
     expect(registerFilesystemWatcherHandlersMock).toHaveBeenCalled()
-    expect(registerSpeechHandlersMock).toHaveBeenCalledWith(store)
 
     await expect(
       aiVaultOptions.scanRuntimeAiVaultSessions(

@@ -9,7 +9,7 @@ cask "orca@rc" do
       verified: "github.com/stablyai/orca/"
   name "Orca RC"
   desc "IDE for orchestrating AI coding agents across terminals and worktrees"
-  homepage "https://onorca.dev/"
+  homepage "https://github.com/howlabs/sol"
 
   livecheck do
     url "https://github.com/stablyai/orca"

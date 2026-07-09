@@ -17,7 +17,6 @@ import {
   Keyboard,
   ListChecks,
   Lock,
-  Mic,
   MousePointerClick,
   Network,
   Palette,
@@ -58,7 +57,6 @@ import {
 } from '@/components/settings/runtime-environments-search'
 import { getSshPaneSearchEntries } from '@/components/settings/ssh-search'
 import { getComputerUsePaneSearchEntries } from '@/components/settings/computer-use-search'
-import { getVoicePaneSearchEntries } from '@/components/settings/voice-pane-search'
 import { getDeveloperPermissionsPaneSearchEntries } from '@/components/settings/developer-permissions-search'
 import { getPrivacyPaneSearchEntries } from '@/components/settings/privacy-search'
 import { getAdvancedPaneSearchEntries } from '@/components/settings/advanced-search'
@@ -178,17 +176,6 @@ export function buildSettingsNavigationMetadata({
             ),
             icon: MousePointerClick,
             searchEntries: getComputerUsePaneSearchEntries(),
-            group: 'capabilities'
-          },
-          {
-            id: 'voice',
-            title: translate('auto.hooks.useSettingsNavigationMetadata.6a50cdcd7c', 'Voice'),
-            description: translate(
-              'auto.hooks.useSettingsNavigationMetadata.8ac3de82f5',
-              'Local speech-to-text dictation with on-device models.'
-            ),
-            icon: Mic,
-            searchEntries: getVoicePaneSearchEntries(),
             group: 'capabilities'
           }
         ]
