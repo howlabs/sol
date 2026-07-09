@@ -10,7 +10,6 @@ export function performContextualTourStepAction(args: {
   detachContextualTourSource: () => void
   setSidebarOpen: (open: boolean) => void
   openTaskPage: () => void
-  openModal: (modal: 'setup-guide', data?: Record<string, unknown>) => void
   canCreateWorkspace: boolean
   openWorkspaceComposer: () => void
   dispatchTerminalPaneSplit: (detail: RequestActiveTerminalPaneSplitDetail) => void

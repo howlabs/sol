@@ -69,7 +69,6 @@ describe('feature interactions', () => {
       'cookie-import',
       'floating-workspace',
       'floating-workspace-hidden',
-      'mobile-pairing',
       'notifications',
       'ports',
       'quick-commands',

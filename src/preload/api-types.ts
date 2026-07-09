@@ -2887,20 +2887,10 @@ export type PreloadApi = {
      *  Fire-and-forget. */
     dropByTabPrefix: (tabId: string) => void
   }
-  mobile: {
+  runtimePairing: {
     listNetworkInterfaces: () => Promise<{
       interfaces: { name: string; address: string }[]
     }>
-    getPairingQR: (args?: { address?: string; rotate?: boolean }) => Promise<
-      | { available: false }
-      | {
-          available: true
-          qrDataUrl: string
-          pairingUrl: string
-          endpoint: string
-          deviceId: string
-        }
-    >
     getRuntimePairingUrl: (args?: { address?: string; rotate?: boolean }) => Promise<
       | { available: false }
       | {
@@ -2911,10 +2901,6 @@ export type PreloadApi = {
           deviceId: string
         }
     >
-    listDevices: () => Promise<{
-      devices: { deviceId: string; name: string; pairedAt: number; lastSeenAt: number }[]
-    }>
-    revokeDevice: (args: { deviceId: string }) => Promise<{ revoked: boolean }>
     listRuntimeAccessGrants: () => Promise<{ grants: RuntimeAccessGrant[] }>
     revokeRuntimeAccess: (args: { deviceId: string }) => Promise<{ revoked: boolean }>
     isWebSocketReady: () => Promise<{ ready: boolean; endpoint: string | null }>

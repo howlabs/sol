@@ -3900,24 +3900,10 @@ const api = {
     getConfig: () => preloadE2EConfig
   },
 
-  mobile: {
+  runtimePairing: {
     listNetworkInterfaces: (): Promise<{
       interfaces: { name: string; address: string }[]
-    }> => ipcRenderer.invoke('mobile:listNetworkInterfaces'),
-
-    getPairingQR: (args?: {
-      address?: string
-      rotate?: boolean
-    }): Promise<
-      | { available: false }
-      | {
-          available: true
-          qrDataUrl: string
-          pairingUrl: string
-          endpoint: string
-          deviceId: string
-        }
-    > => ipcRenderer.invoke('mobile:getPairingQR', args),
+    }> => ipcRenderer.invoke('runtimePairing:listNetworkInterfaces'),
 
     getRuntimePairingUrl: (args?: {
       address?: string
@@ -3931,22 +3917,15 @@ const api = {
           endpoint: string
           deviceId: string
         }
-    > => ipcRenderer.invoke('mobile:getRuntimePairingUrl', args),
+    > => ipcRenderer.invoke('runtimePairing:getRuntimePairingUrl', args),
 
-    listDevices: (): Promise<{
-      devices: { deviceId: string; name: string; pairedAt: number; lastSeenAt: number }[]
-    }> => ipcRenderer.invoke('mobile:listDevices'),
-
-    revokeDevice: (args: { deviceId: string }): Promise<{ revoked: boolean }> =>
-      ipcRenderer.invoke('mobile:revokeDevice', args),
-
-    listRuntimeAccessGrants: () => ipcRenderer.invoke('mobile:listRuntimeAccessGrants'),
+    listRuntimeAccessGrants: () => ipcRenderer.invoke('runtimePairing:listRuntimeAccessGrants'),
 
     revokeRuntimeAccess: (args: { deviceId: string }): Promise<{ revoked: boolean }> =>
-      ipcRenderer.invoke('mobile:revokeRuntimeAccess', args),
+      ipcRenderer.invoke('runtimePairing:revokeRuntimeAccess', args),
 
     isWebSocketReady: (): Promise<{ ready: boolean; endpoint: string | null }> =>
-      ipcRenderer.invoke('mobile:isWebSocketReady')
+      ipcRenderer.invoke('runtimePairing:isWebSocketReady')
   },
 
   agentStatus: {

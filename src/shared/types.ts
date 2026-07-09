@@ -2661,9 +2661,6 @@ export type GlobalSettings = {
   /** Why: Automations can be restored from Settings or the View menu, so this
    *  only controls whether the top-level sidebar shortcut is shown. */
   showAutomationsButton?: boolean
-  /** Why: Orca Mobile remains reachable from Settings; this only controls
-   *  whether the top-level sidebar shortcut is shown. */
-  showMobileButton?: boolean
   /** Controls how Ctrl+Tab chooses the next visible tab. Optional for
    *  profiles saved before this setting existed; readers default to MRU. */
   ctrlTabOrderMode?: CtrlTabOrderMode
@@ -2838,7 +2835,6 @@ export type GlobalSettings = {
   /** Controls whether macOS terminal input translates the physical JIS Yen (¥)
    *  key to a backslash, matching the common terminal expectation for that key. */
   terminalJISYenToBackslash: boolean
-  experimentalMobile: boolean
   /** Explicit Android SDK root, used when auto-discovery (ANDROID_HOME / the
    *  default install path) does not find it. `null` (default) auto-discovers. */
   androidSdkPath?: string | null

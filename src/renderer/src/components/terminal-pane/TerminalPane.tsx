@@ -54,7 +54,6 @@ import type { MacOptionAsAlt } from './terminal-shortcut-policy'
 import { useEffectiveMacOptionAsAlt } from '@/lib/keyboard-layout/use-effective-mac-option-as-alt'
 import { useTerminalFontZoom } from './useTerminalFontZoom'
 import CloseTerminalDialog, { type CloseTerminalDialogCopyKind } from './CloseTerminalDialog'
-import { MobileDriverOverlay } from './MobileDriverOverlay'
 import { TerminalErrorToast } from './TerminalErrorToast'
 import { TerminalSessionStateSaveFailureDialog } from './TerminalSessionStateSaveFailureDialog'
 import TerminalContextMenu from './TerminalContextMenu'
@@ -86,18 +85,8 @@ import { useNotificationDispatch } from './use-notification-dispatch'
 import { connectPanePty } from './pty-connection'
 import { resolveTerminalLayoutActiveLeafId } from './terminal-layout-leaf-ids'
 import { shouldPreserveTerminalScrollbackBuffers } from '../../../../shared/workspace-session-terminal-buffers'
-import {
-  getAllOverrides,
-  getFitOverrideForPty,
-  onOverrideChange
-} from '@/lib/pane-manager/mobile-fit-overrides'
-import {
-  getAllDrivers,
-  getDriverForPty,
-  isPtyLocked,
-  onDriverChange
-} from '@/lib/pane-manager/mobile-driver-state'
-import { shouldChatTakeOverMobileSurface } from '../native-chat/native-chat-send-eligibility'
+import { getFitOverrideForPty, onOverrideChange } from '@/lib/pane-manager/mobile-fit-overrides'
+import { isPtyLocked, onDriverChange } from '@/lib/pane-manager/mobile-driver-state'
 import { canToggleNativeChat } from '../native-chat/native-chat-availability'
 import type { AgentType } from '../../../../shared/agent-status-types'
 import { resolvePaneKeyForManager } from '@/lib/pane-manager/pane-key-resolution'
@@ -130,7 +119,6 @@ import type { TerminalQuickCommand, TerminalQuickCommandScope } from '../../../.
 import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 import { isRuntimeOwnedSshTargetId } from '../../../../shared/execution-host'
 import { getRepoIdFromWorktreeId } from '../../../../shared/worktree-id'
-import { refitAndRefreshAllTerminalPanes } from '@/lib/pane-manager/pane-manager-registry'
 import {
   getTerminalQuickCommandScope,
   isTerminalQuickCommandComplete,
@@ -143,7 +131,7 @@ import {
 import { keybindingMatchesAction } from '../../../../shared/keybindings'
 import { pasteTerminalClipboard } from './terminal-clipboard-paste'
 import { scheduleImagePasteWebglAtlasRecovery } from './terminal-webgl-atlas-recovery'
-import { restoreTerminalFitToDesktop, restoreTerminalFitsToDesktop } from './terminal-fit-restore'
+
 import { useVisibleTerminalTabClaim } from './use-visible-terminal-tab-claim'
 import { TerminalSshReconnectOverlay } from './TerminalSshReconnectOverlay'
 
@@ -2654,61 +2642,6 @@ export default function TerminalPane({
     toggleNativeChatForLeaf(leafId)
   }, [getContextMenuLeafId, toggleNativeChatForLeaf])
 
-  const getMobileOwnedTerminalPtyIds = useCallback((): string[] => {
-    const ptyIds = new Set(getAllOverrides().keys())
-    for (const [ptyId, driver] of getAllDrivers()) {
-      if (driver.kind === 'mobile') {
-        ptyIds.add(ptyId)
-      }
-    }
-    return [...ptyIds]
-  }, [])
-
-  const scheduleRestoredTerminalRefit = useCallback((): void => {
-    // Why: desktop-fit events can clear runtime state before xterm has repainted;
-    // restore actions get one settled-frame pass that does not depend on focus.
-    requestAnimationFrame(refitAndRefreshAllTerminalPanes)
-    window.setTimeout(refitAndRefreshAllTerminalPanes, 100)
-  }, [])
-
-  const restorePaneTerminalFit = useCallback(
-    async (pane: ManagedPane, ptyId: string): Promise<void> => {
-      // Why: local and remote runtime PTYs use different transports, but the
-      // desktop reclaim button should have one visible recovery behavior.
-      // Why: the banner was rendered for this PTY; stale portals must disappear
-      // before they can reclaim a different terminal that reused this pane slot.
-      const currentPtyId = paneTransportsRef.current.get(pane.id)?.getPtyId() ?? null
-      if (currentPtyId !== ptyId) {
-        setOverrideTick((n) => n + 1)
-        return
-      }
-      const restored = await restoreTerminalFitToDesktop(ptyId, settingsRef.current ?? undefined)
-      if (restored) {
-        scheduleRestoredTerminalRefit()
-        // Why: after the overlay unmounts, focus would otherwise stay on the
-        // removed button/body instead of the terminal the user just reclaimed.
-        pane.terminal.focus()
-      }
-    },
-    [scheduleRestoredTerminalRefit]
-  )
-
-  const restoreAllTerminalFits = useCallback(
-    async (focusPane: ManagedPane): Promise<void> => {
-      // Why: a mobile session can leave multiple PTYs held at phone size; bulk
-      // restore follows the same reclaim path as the per-pane button.
-      const restored = await restoreTerminalFitsToDesktop(
-        getMobileOwnedTerminalPtyIds(),
-        settingsRef.current ?? undefined
-      )
-      if (restored) {
-        scheduleRestoredTerminalRefit()
-        focusPane.terminal.focus()
-      }
-    },
-    [getMobileOwnedTerminalPtyIds, scheduleRestoredTerminalRefit]
-  )
-
   const terminalShouldHandleMiddleClick = useCallback(
     (target: EventTarget | null): target is Node => {
       if (!(target instanceof Element)) {
@@ -3164,46 +3097,6 @@ export default function TerminalPane({
         onRenameCancel={handleRenameCancel}
         onRenameBlur={handleRenameBlur}
       />
-      {managedPanes.map((pane) => {
-        // Why: pane IDs can collide across tabs (e.g. tab 0 pane 1 and tab 1
-        // pane 1). Using the transport's actual ptyId avoids showing banners
-        // on the wrong pane when IDs overlap.
-        const ptyId = paneTransportsRef.current.get(pane.id)?.getPtyId()
-        if (!ptyId) {
-          return null
-        }
-        // Why: two-state lock UI. (1) Driver is mobile → presence-lock,
-        // input paused (docs/mobile-presence-lock.md). (2) No mobile driver
-        // but a phone-fit override is still in place → indefinite hold
-        // (docs/mobile-fit-hold.md). MobileDriverOverlay owns the visual
-        // treatment and collapse-to-chip state; both branches share the
-        // same local/remote desktop-restore route.
-        const driver = getDriverForPty(ptyId)
-        const isMobileDriving = driver.kind === 'mobile'
-        const hasFitOverride = getFitOverrideForPty(ptyId) !== null
-        if (!isMobileDriving && !hasFitOverride) {
-          return null
-        }
-        // Why: only the pane replaced by native chat should hide terminal-owned
-        // presence-lock/phone-fit chrome; sibling splits remain normal terminals.
-        const paneSurface =
-          effectiveChatViewMode && pane.leafId === chatLeafId ? 'chat' : 'terminal'
-        if (shouldChatTakeOverMobileSurface(paneSurface)) {
-          return null
-        }
-        return createPortal(
-          <MobileDriverOverlay
-            key={`mobile-driver-${pane.id}-${ptyId}`}
-            driver={driver}
-            hasFitOverride={hasFitOverride}
-            rootClassName="mobile-driver-banner"
-            onAction={() => restorePaneTerminalFit(pane, ptyId)}
-            onAllAction={() => restoreAllTerminalFits(pane)}
-          />,
-          pane.container,
-          `mobile-driver-banner-${pane.id}`
-        )
-      })}
       <CloseTerminalDialog
         open={pendingCloseConfirmation !== null}
         copyKind={pendingCloseConfirmation?.copyKind}

@@ -7,13 +7,14 @@ import { isAbsolute, join } from 'node:path'
 import os from 'node:os'
 import { app, BrowserWindow, dialog, ipcMain, nativeTheme } from 'electron'
 import { electronApp, is } from '@electron-toolkit/utils'
-import * as QRCode from 'qrcode'
 import {
   Store,
   initDataPath,
   getCanonicalUserDataPath,
   migrateMobilePairingDataToCanonicalUserDataPath
 } from './persistence'
+// Why: pairing userdata filenames are still migrated under the historical
+// "mobile pairing" helper name; runtime device tokens + E2EE keys live there.
 import { applyAppIcon } from './app-icon'
 import { StatsCollector, initStatsPath } from './stats/collector'
 import { ClaudeUsageStore, initClaudeUsagePath } from './claude-usage/store'
@@ -26,7 +27,7 @@ import { disposeWorktreeBaseDirectoryWatchers } from './ipc/worktree-base-direct
 import { registerCoreHandlers } from './ipc/register-core-handlers'
 import { initObservability, shutdownObservability } from './observability'
 import { startSpan } from './observability/tracer'
-import { registerMobileHandlers } from './ipc/mobile'
+import { registerRuntimePairingHandlers } from './ipc/runtime-pairing'
 import { initTelemetry, shutdownTelemetry, trackAppOpenedOnce, track } from './telemetry/client'
 import { classifyError } from './telemetry/classify-error'
 import { runManagedHookInstallers } from './agent-hooks/install-telemetry'
@@ -1314,7 +1315,6 @@ type ServeOptions = {
   wsPort?: number
   pairingAddress: string | null
   noPairing: boolean
-  mobilePairing: boolean
   recipeJson: boolean
   projectRoot: string | null
 }
@@ -1342,7 +1342,6 @@ function getServeOptions(argv = process.argv): ServeOptions {
     ...(wsPort !== undefined ? { wsPort } : {}),
     pairingAddress: valueAfter('--serve-pairing-address'),
     noPairing: argv.includes('--serve-no-pairing'),
-    mobilePairing: argv.includes('--serve-mobile-pairing'),
     recipeJson: argv.includes('--serve-recipe-json'),
     projectRoot: valueAfter('--serve-project-root')
   }
@@ -1351,18 +1350,6 @@ function getServeOptions(argv = process.argv): ServeOptions {
 function getBundledWebClientRoot(): string | undefined {
   const root = join(app.getAppPath(), 'out', 'web')
   return existsSync(join(root, 'web-index.html')) ? root : undefined
-}
-
-async function renderTerminalPairingQr(pairingUrl: string): Promise<string | null> {
-  try {
-    return await QRCode.toString(pairingUrl, { type: 'terminal', small: true })
-  } catch {
-    try {
-      return await QRCode.toString(pairingUrl, { type: 'utf8' })
-    } catch {
-      return null
-    }
-  }
 }
 
 async function printServeReady(options: ServeOptions): Promise<void> {
@@ -1386,13 +1373,9 @@ async function printServeReady(options: ServeOptions): Promise<void> {
     ? ({ available: false } as const)
     : runtimeRpc.createPairingOffer({
         address: options.pairingAddress,
-        name: `${options.mobilePairing ? 'Mobile' : 'CLI'} ${new Date().toLocaleDateString()}`,
-        scope: options.mobilePairing ? 'mobile' : 'runtime'
+        name: `CLI ${new Date().toLocaleDateString()}`,
+        scope: 'runtime'
       })
-  const pairingQr =
-    pairing.available && options.mobilePairing
-      ? await renderTerminalPairingQr(pairing.pairingUrl)
-      : null
   if (options.recipeJson) {
     if (!pairing.available) {
       throw new Error('Recipe JSON output requires runtime pairing to be available')
@@ -1418,8 +1401,7 @@ async function printServeReady(options: ServeOptions): Promise<void> {
               endpoint: pairing.endpoint,
               deviceId: pairing.deviceId,
               webClientUrl: pairing.webClientUrl,
-              scope: options.mobilePairing ? 'mobile' : 'runtime',
-              qr: pairingQr
+              scope: 'runtime' as const
             }
           : null
       })
@@ -1430,9 +1412,6 @@ async function printServeReady(options: ServeOptions): Promise<void> {
   if (pairing.available) {
     if (pairing.webClientUrl) {
       console.log(`Web client URL: ${pairing.webClientUrl}`)
-    }
-    if (options.mobilePairing && pairingQr) {
-      console.log(`Mobile pairing QR:\n${pairingQr}`)
     }
     console.log(`Pairing URL: ${pairing.pairingUrl}`)
   }
@@ -1977,7 +1956,6 @@ app.whenReady().then(async () => {
       return {
         showTasksButton: settings?.showTasksButton !== false,
         showAutomationsButton: settings?.showAutomationsButton !== false,
-        showMobileButton: settings?.showMobileButton !== false,
         showTitlebarAppName: settings?.showTitlebarAppName !== false,
         statusBarVisible: ui?.statusBarVisible !== false
       }
@@ -1991,7 +1969,7 @@ app.whenReady().then(async () => {
   const isE2E = Boolean(process.env.ORCA_E2E_USER_DATA_DIR)
   // Why: a developer running `pnpm dev` while the packaged Orca is also open
   // would otherwise race the packaged app for 6768 and silently fall back to
-  // a random OS-assigned port — breaking deterministic mobile pairing/repro
+  // a random OS-assigned port — breaking deterministic runtime pairing/repro
   // scripts against the dev instance. Pin the first dev instance to 6769 so
   // ws://127.0.0.1:6769 is stable; a second dev instance still falls back via
   // ws-transport's EADDRINUSE handler.
@@ -2004,13 +1982,13 @@ app.whenReady().then(async () => {
     app.exit(1)
     return
   }
-  // Why: existing installs may have already written mobile pairing credentials
-  // under the late app.getPath('userData') directory. Copy any missing files
-  // forward before the runtime switches exclusively to the canonical path.
+  // Why: existing installs may have already written pairing credentials under
+  // the late app.getPath('userData') directory. Copy any missing files forward
+  // before the runtime switches exclusively to the canonical path.
   migrateMobilePairingDataToCanonicalUserDataPath(app.getPath('userData'))
   runtimeRpc = new OrcaRuntimeRpcServer({
     runtime,
-    // Why: mobile pairing (DeviceRegistry + E2EE keypair + runtime metadata)
+    // Why: runtime pairing (DeviceRegistry + E2EE keypair + runtime metadata)
     // must share the stable path captured before app.setName(), not a late
     // app.getPath('userData') that resolves elsewhere and drops paired devices
     // across restarts/updates. See persistence.ts:getCanonicalUserDataPath.
@@ -2021,7 +1999,7 @@ app.whenReady().then(async () => {
     ...(serveOptions?.wsPort !== undefined ? { wsPort: serveOptions.wsPort } : {}),
     webClientRoot: getBundledWebClientRoot()
   })
-  registerMobileHandlers(runtimeRpc)
+  registerRuntimePairingHandlers(runtimeRpc)
 
   if (!isServeMode) {
     startDesktopFirstWindowStartupServices()

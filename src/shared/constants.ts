@@ -284,7 +284,6 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     showTitlebarAppName: true,
     showTasksButton: true,
     showAutomationsButton: true,
-    showMobileButton: true,
     ctrlTabOrderMode: 'mru',
     // Why: switching worktrees and opening command surfaces from a focused
     // terminal is a core Orca workflow; users who prefer TUI ownership opt in.
@@ -342,11 +341,10 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     terminalMacOptionAsAlt: 'auto',
     terminalMacOptionAsAltMigrated: false,
     terminalJISYenToBackslash: false,
-    experimentalMobile: false,
     androidSdkPath: null,
     // Why: indefinite hold by default — the desktop "Restore" banner is the
-    // explicit return-to-desktop-size action, no wall-clock guess.
-    // See docs/mobile-fit-hold.md.
+    // explicit return-to-desktop-size action, no wall-clock guess. Kept for
+    // inert presence-lock server paths even without phone clients.
     mobileAutoRestoreFitMs: null,
 
     experimentalActivity: false,
