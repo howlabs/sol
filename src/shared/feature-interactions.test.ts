@@ -80,7 +80,6 @@ describe('feature interactions', () => {
       'terminal-tabs',
       'tab-splits',
       'usage-tracking',
-      'voice-dictation',
       'workspace-cleanup'
     ]
 
@@ -104,8 +103,7 @@ describe('feature interactions', () => {
     ).toEqual({
       tasks: { firstInteractedAt: 100, interactionCount: 1 },
       automations: { firstInteractedAt: 200, interactionCount: 3 },
-      'browser-grab': { firstInteractedAt: 250, interactionCount: 1 },
-      'voice-dictation': { firstInteractedAt: 300, interactionCount: 1 }
+      'browser-grab': { firstInteractedAt: 250, interactionCount: 1 }
     })
   })
 
@@ -164,7 +162,6 @@ describe('feature interactions', () => {
       'terminal',
       'collaboration',
       'resource_management',
-      'voice',
       'source_control'
     ])
     expect(Object.keys(FEATURE_INTERACTION_CATEGORY_BY_ID).sort()).toEqual(
@@ -176,7 +173,6 @@ describe('feature interactions', () => {
     expect(FEATURE_INTERACTION_CATEGORY_BY_ID['markdown-file-created']).toBe('notes')
     expect(FEATURE_INTERACTION_CATEGORY_BY_ID['agent-browser-setup']).toBe('setup')
     expect(FEATURE_INTERACTION_CATEGORY_BY_ID['terminal-tabs']).toBe('terminal')
-    expect(FEATURE_INTERACTION_CATEGORY_BY_ID['voice-dictation']).toBe('voice')
     expect(FEATURE_INTERACTION_CATEGORY_BY_ID['ai-commit-generation']).toBe('source_control')
     expect(FEATURE_INTERACTION_CATEGORY_BY_ID['resource-manager']).toBe('resource_management')
   })

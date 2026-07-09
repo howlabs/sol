@@ -1,6 +1,6 @@
 # Voice / Dictation Removal Plan
 
-Status: **audit + implementation outline** (no code removed yet).
+Status: **PR1 merged in progress** on `chore/remove-voice-pr1-shared` (shared contracts + education + settings schema).
 
 ## Decision summary
 

@@ -65,3 +65,26 @@ export type VoiceSettings = {
   userModels: UserModelConfig[]
   openAiApiKeyConfigured: boolean
 }
+
+// Why: voice settings are no longer part of GlobalSettings (PR1); speech code
+// still reads legacy persisted values until the speech stack is removed in PR2.
+export function getDefaultVoiceSettings(): VoiceSettings {
+  return {
+    enabled: false,
+    sttModel: '',
+    modelsDir: '',
+    language: 'en',
+    dictationMode: 'toggle',
+    terminalConfirmBeforeInsert: false,
+    userModels: [],
+    openAiApiKeyConfigured: false
+  }
+}
+
+export type LegacyVoiceSettingsSource = {
+  voice?: VoiceSettings
+}
+
+export function resolveVoiceSettings(source: LegacyVoiceSettingsSource): VoiceSettings {
+  return source.voice ?? getDefaultVoiceSettings()
+}
