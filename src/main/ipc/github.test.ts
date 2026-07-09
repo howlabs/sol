@@ -42,10 +42,6 @@ const {
   rerunPRChecksMock,
   requestPRReviewersMock,
   removePRReviewersMock,
-  checkOrcaStarredMock,
-  starOrcaMock,
-  trackMock,
-  getCohortAtEmitMock,
   getAllWebContentsMock,
   clearVisiblePRRefreshWindowMock,
   enqueuePRRefreshMock,
@@ -83,10 +79,6 @@ const {
   rerunPRChecksMock: vi.fn(),
   requestPRReviewersMock: vi.fn(),
   removePRReviewersMock: vi.fn(),
-  checkOrcaStarredMock: vi.fn(),
-  starOrcaMock: vi.fn(),
-  trackMock: vi.fn(),
-  getCohortAtEmitMock: vi.fn(),
   getAllWebContentsMock: vi.fn(),
   clearVisiblePRRefreshWindowMock: vi.fn(),
   enqueuePRRefreshMock: vi.fn(),
@@ -131,9 +123,7 @@ vi.mock('../github/client', () => ({
   updatePRState: updatePRStateMock,
   rerunPRChecks: rerunPRChecksMock,
   requestPRReviewers: requestPRReviewersMock,
-  removePRReviewers: removePRReviewersMock,
-  checkOrcaStarred: checkOrcaStarredMock,
-  starOrca: starOrcaMock
+  removePRReviewers: removePRReviewersMock
 }))
 
 vi.mock('../github/work-item-details', () => ({
@@ -147,14 +137,6 @@ vi.mock('../github/pr-refresh-coordinator', () => ({
   refreshPRNow: refreshPRNowMock,
   reportVisiblePRRefreshCandidates: reportVisiblePRRefreshCandidatesMock,
   setPRRefreshOutcomeObserver: setPRRefreshOutcomeObserverMock
-}))
-
-vi.mock('../telemetry/client', () => ({
-  track: trackMock
-}))
-
-vi.mock('../telemetry/cohort-classifier', () => ({
-  getCohortAtEmit: getCohortAtEmitMock
 }))
 
 import { registerGitHubHandlers } from './github'
@@ -226,11 +208,6 @@ describe('registerGitHubHandlers', () => {
     rerunPRChecksMock.mockReset()
     requestPRReviewersMock.mockReset()
     removePRReviewersMock.mockReset()
-    checkOrcaStarredMock.mockReset()
-    starOrcaMock.mockReset()
-    trackMock.mockReset()
-    getCohortAtEmitMock.mockReset()
-    getCohortAtEmitMock.mockReturnValue({ nth_repo_added: undefined })
     getAllWebContentsMock.mockReset()
     getAllWebContentsMock.mockReturnValue([])
     clearVisiblePRRefreshWindowMock.mockReset()
@@ -1220,82 +1197,5 @@ describe('registerGitHubHandlers', () => {
       email: 'octocat@example.com'
     })
     expect(getAuthenticatedViewerMock).toHaveBeenCalled()
-  })
-
-  it('emits app_starred_orca once after a successful star with cohort context', async () => {
-    starOrcaMock.mockResolvedValue(true)
-    getCohortAtEmitMock.mockReturnValue({ nth_repo_added: 3 })
-
-    registerGitHubHandlers(store as never, stats as never)
-
-    await expect(handlers['gh:starOrca'](null, 'settings')).resolves.toBe(true)
-
-    expect(starOrcaMock).toHaveBeenCalledTimes(1)
-    expect(getCohortAtEmitMock).toHaveBeenCalledTimes(1)
-    expect(trackMock).toHaveBeenCalledTimes(1)
-    expect(trackMock).toHaveBeenCalledWith('app_starred_orca', {
-      source: 'settings',
-      nth_repo_added: 3
-    })
-  })
-
-  it('accepts every app star source for success telemetry', async () => {
-    starOrcaMock.mockResolvedValue(true)
-
-    registerGitHubHandlers(store as never, stats as never)
-
-    for (const source of [
-      'star_nag',
-      'agent_value_moment',
-      'onboarding_completed',
-      'settings',
-      'landing'
-    ] as const) {
-      await expect(handlers['gh:starOrca'](null, source)).resolves.toBe(true)
-    }
-
-    expect(trackMock).toHaveBeenCalledTimes(5)
-    expect(trackMock.mock.calls.map(([, props]) => props)).toEqual([
-      { source: 'star_nag', nth_repo_added: undefined },
-      { source: 'agent_value_moment', nth_repo_added: undefined },
-      { source: 'onboarding_completed', nth_repo_added: undefined },
-      { source: 'settings', nth_repo_added: undefined },
-      { source: 'landing', nth_repo_added: undefined }
-    ])
-  })
-
-  it('does not emit app_starred_orca when the star action returns false', async () => {
-    starOrcaMock.mockResolvedValue(false)
-
-    registerGitHubHandlers(store as never, stats as never)
-
-    await expect(handlers['gh:starOrca'](null, 'landing')).resolves.toBe(false)
-
-    expect(starOrcaMock).toHaveBeenCalledTimes(1)
-    expect(trackMock).not.toHaveBeenCalled()
-    expect(getCohortAtEmitMock).not.toHaveBeenCalled()
-  })
-
-  it('does not emit app_starred_orca when the star action throws', async () => {
-    starOrcaMock.mockRejectedValue(new Error('gh failed'))
-
-    registerGitHubHandlers(store as never, stats as never)
-
-    await expect(handlers['gh:starOrca'](null, 'star_nag')).rejects.toThrow('gh failed')
-
-    expect(trackMock).not.toHaveBeenCalled()
-    expect(getCohortAtEmitMock).not.toHaveBeenCalled()
-  })
-
-  it('preserves star result but skips telemetry for an invalid IPC source', async () => {
-    starOrcaMock.mockResolvedValue(true)
-
-    registerGitHubHandlers(store as never, stats as never)
-
-    await expect(handlers['gh:starOrca'](null, 'github_website')).resolves.toBe(true)
-
-    expect(starOrcaMock).toHaveBeenCalledTimes(1)
-    expect(trackMock).not.toHaveBeenCalled()
-    expect(getCohortAtEmitMock).not.toHaveBeenCalled()
   })
 })

@@ -137,7 +137,6 @@ import type {
 import type { TelemetryConsentState } from '../shared/telemetry-consent-types'
 import type { PreflightRuntimeContext, RefreshAgentsResult } from './api-types'
 import type { AgentKind, LaunchSource, RequestKind } from '../shared/telemetry-events'
-import type { AppStarSource } from '../shared/gh-star-source'
 import type {
   Automation,
   AutomationCreateInput,
@@ -440,8 +439,6 @@ const startupDiagnosticsEnabled = process.env.ORCA_STARTUP_DIAGNOSTICS === '1'
 const api = {
   app: {
     getIdentity: (): Promise<AppIdentity> => ipcRenderer.invoke('app:getIdentity'),
-    getFeatureWallAssetBaseUrl: (): Promise<string> =>
-      ipcRenderer.invoke('app:getFeatureWallAssetBaseUrl'),
     relaunch: (): Promise<void> => ipcRenderer.invoke('app:relaunch'),
     restart: async (): Promise<void> => {
       await prepareRendererForAppRestart({
@@ -1336,10 +1333,6 @@ const api = {
       return () => ipcRenderer.removeListener('gh:workItemMutated', listener)
     },
 
-    checkOrcaStarred: (): Promise<boolean | null> => ipcRenderer.invoke('gh:checkOrcaStarred'),
-    starOrca: (source: AppStarSource): Promise<boolean> =>
-      ipcRenderer.invoke('gh:starOrca', source),
-
     // Why: rate_limit is exempt from rate-limit accounting, but we still pass
     // `force` through so callers can bust the 30s in-process cache after a
     // known-expensive op (e.g. after ProjectPicker discovery).
@@ -1636,25 +1629,6 @@ const api = {
 
     listTransitions: (args: { key: string; siteId?: string }): Promise<unknown[]> =>
       ipcRenderer.invoke('jira:listTransitions', args)
-  },
-
-  // Why: star-nag community funnel removed in Sol; keep a no-op surface so
-  // residual typed callers and web preload parity do not throw at runtime.
-  starNag: {
-    onShow: (): (() => void) => () => {},
-    onHide: (): (() => void) => () => {},
-    dismiss: (): Promise<void> => Promise.resolve(),
-    later: (): Promise<void> => Promise.resolve(),
-    complete: (): Promise<void> => Promise.resolve(),
-    disable: (): Promise<void> => Promise.resolve(),
-    openWeb: (): Promise<void> => Promise.resolve(),
-    starOrca: (): Promise<boolean> => Promise.resolve(false),
-    forceShow: (): Promise<void> => Promise.resolve(),
-    agentValueMoment: (): Promise<
-      { status: 'ready'; mode: 'gh' | 'web' } | { status: 'skipped' }
-    > => Promise.resolve({ status: 'skipped' }),
-    showAgentValueMoment: (): Promise<void> => Promise.resolve(),
-    onboardingCompleted: (): Promise<void> => Promise.resolve()
   },
 
   // Why: telemetry uses a loose untyped surface at the preload boundary on
