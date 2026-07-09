@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Documentation Language
+
+All project documentation — README, design docs, comments in markdown files, CONTRIBUTING guides, and agent skills in this repo — must be written in **English**. User-facing app copy may be localized separately; repo docs do not.
+
 ## Design System
 
 All UI work — layout, color, typography, spacing, component selection, UX behavior — must follow [`docs/STYLEGUIDE.md`](./docs/STYLEGUIDE.md). Use the tokens defined in `src/renderer/src/assets/main.css` (the canonical source) and the shadcn primitives in `src/renderer/src/components/ui/`. Don't invent new color values, font sizes, or shadow tiers when a documented one already covers the role. When STYLEGUIDE.md is silent, follow the resolution order in its final section.
@@ -26,7 +30,7 @@ Always use the primary working directory (the worktree) for all file reads and e
 
 ## Cross-Platform Support
 
-Orca targets macOS, Linux, and Windows. Keep all platform-dependent behavior behind runtime checks:
+Sol targets macOS, Linux, and Windows. Keep all platform-dependent behavior behind runtime checks:
 
 - **Keyboard shortcuts**: Never hardcode `e.metaKey`. Use a platform check (`navigator.userAgent.includes('Mac')`) to pick `metaKey` on Mac and `ctrlKey` on Linux/Windows. Electron menu accelerators should use `CmdOrCtrl`.
 - **Shortcut labels in UI**: Display `⌘` / `⇧` on Mac and `Ctrl+` / `Shift+` on other platforms.
