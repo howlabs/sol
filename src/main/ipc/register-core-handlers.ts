@@ -45,7 +45,7 @@ import { registerKeybindingHandlers } from './keybindings'
 import { registerTelemetryHandlers } from './telemetry'
 import { registerBrowserHandlers } from './browser'
 import { registerShellHandlers } from './shell'
-import { registerPetHandlers } from './pet'
+
 import { registerUIHandlers, setTrustedUIRendererWebContentsId } from './ui'
 import { registerEmulatorFrameStreamHandlers } from './emulator-frame-stream'
 import { registerEmulatorVideoStreamHandlers } from './emulator-video-stream'
@@ -158,7 +158,7 @@ export function registerCoreHandlers(
   registerTelemetryHandlers(store)
   registerBrowserHandlers()
   registerShellHandlers()
-  registerPetHandlers()
+
   registerSessionHandlers(store)
   registerUIHandlers(store)
   registerEmulatorFrameStreamHandlers()

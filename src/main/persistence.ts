@@ -1361,10 +1361,6 @@ function readDeprecatedExperimentFlag(parsed: PersistedState | undefined): boole
   )
 }
 
-function readLegacySidekickFlag(parsed: PersistedState | undefined): boolean | undefined {
-  return (parsed?.settings as { experimentalSidekick?: boolean } | undefined)?.experimentalSidekick
-}
-
 function sanitizeRepoUpstream(value: unknown): Repo['upstream'] | undefined {
   if (value === undefined) {
     return undefined
@@ -3087,10 +3083,7 @@ export class Store {
           settings: {
             ...defaults.settings,
             ...stripLegacyTerminalScrollbackBytes(parsed.settings),
-            // Why: v1.3.42 renamed the cosmetic sidekick setting to pet. Carry
-            // the old persisted flag forward once so enabled users don't lose it.
-            experimentalPet:
-              parsed.settings?.experimentalPet ?? readLegacySidekickFlag(parsed) ?? false,
+
             // Why: early primary-selection builds saved the disabled default.
             // Flip Linux/macOS profiles once so terminal-style defaults match
             // platform convention; the guards preserve future opt-outs.

@@ -126,7 +126,7 @@ import {
   timeRendererStartupStep,
   timeRendererStartupSyncStep
 } from './startup/startup-diagnostics'
-import { shouldRenderPetOverlay } from './components/pet/pet-overlay-visibility'
+
 import { applyDocumentTheme } from './lib/document-theme'
 import { isEditableTarget } from './lib/editable-target'
 import { getSelectedTextForFileSearch } from './lib/file-search-selection'
@@ -344,9 +344,7 @@ const FloatingTerminalPanel = lazy(() =>
     default: module.FloatingTerminalPanel
   }))
 )
-// Why: lazy-loaded so the WebP asset + overlay module aren't fetched unless
-// the user opts into the experimental flag.
-const PetOverlay = lazy(() => import('./components/pet/PetOverlay'))
+
 // Why: lazy so onboarding's step modules + assets aren't fetched for users
 // past first-launch. The gate `shouldShowOnboarding` lives in its own tiny
 // module so no eager import path pulls OnboardingFlow into the main chunk.
@@ -647,13 +645,7 @@ function App(): React.JSX.Element {
   usePrimarySelectionPaste(primarySelectionMiddleClickPaste)
   useAppMenuPaste()
   useLargeTextControlPaste()
-  const petEnabled = useAppStore((s) => s.settings?.experimentalPet === true)
-  const petVisible = useAppStore((s) => s.petVisible)
-  const renderPetOverlay = shouldRenderPetOverlay({
-    persistedUIReady,
-    petEnabled,
-    petVisible
-  })
+
   const canGoBackWorktree = useAppStore(canGoBackWorktreeHistory)
   const canGoForwardWorktree = useAppStore(canGoForwardWorktreeHistory)
   const titlebarLeftControlsRef = useRef<HTMLDivElement | null>(null)
@@ -2593,21 +2585,7 @@ function App(): React.JSX.Element {
                 <ContextualTourOverlay />
               </Suspense>
             ) : null}
-            {/* Why: mount PetOverlay only after persisted UI hydration, with
-          both independent pet toggles allowing it; otherwise a hidden pet
-          flashes while the store still has default visibility. */}
-            {renderPetOverlay ? (
-              <Suspense fallback={null}>
-                <RecoverableRenderErrorBoundary
-                  boundaryId="overlay.pet"
-                  surface="overlay"
-                  resetKey={petVisible}
-                  compact
-                >
-                  <PetOverlay />
-                </RecoverableRenderErrorBoundary>
-              </Suspense>
-            ) : null}
+
             {shouldMountUpdateCard ? (
               <Suspense fallback={null}>
                 <RecoverableRenderErrorBoundary

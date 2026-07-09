@@ -109,7 +109,7 @@
       "c9d6f98459": "Maximizar",
       "66f0a552e5": "Restaurar",
       "bbb7f90669": "Minimizar",
-      "d54e66004c": "Terminal",
+      "d54e66004c": "terminal",
       "9f0152563e": "móvil",
       "62ca9895a7": "espacio",
       "844eb0f4f4": "actividad",
@@ -311,7 +311,7 @@
               "2db0bd7515": "El registro de Orca CLI no está disponible",
               "8d6eedf97e": "No se pudo registrar Orca CLI en PATH.",
               "0f116999f1": "Reinicia tu shell o agrega el directorio de Orca CLI a PATH antes de la configuración.",
-              "15cbedc3e3": "Instala la CLI de Orca antes de configurar skills para agentes."
+              "15cbedc3e3": "Instala la CLI de Orca antes de configurar skills para agents."
             }
           }
         }
@@ -328,13 +328,13 @@
           "agent": {
             "launch": {
               "027228a06b": "No se encontró un espacio de trabajo para estos checks.",
-              "fb6c294e85": "No se pudo generar el comando de inicio del agente.",
+              "fb6c294e85": "No se pudo generar el comando de inicio del agent.",
               "03c1d61f83": "No se puede abrir el espacio de trabajo adjunto a estos checks.",
               "822bf52295": "No se puede resolver la plataforma de inicio del espacio de trabajo.",
               "dfb4dd7c00": "No se encontró el espacio de trabajo adjunto a estos checks.",
               "9f00d7df0c": "El prompt de corrección de checks está vacío. Actualiza los ajustes de Source Control AI.",
-              "2ebf794906": "No se detectó ningún agente de IA habilitado en este host de espacio de trabajo.",
-              "4c7f783a7a": "El agente guardado para checks no está disponible en este host de espacio de trabajo."
+              "2ebf794906": "No se detectó ningún agent de IA habilitado en este host de espacio de trabajo.",
+              "4c7f783a7a": "El agent guardado para checks no está disponible en este host de espacio de trabajo."
             }
           }
         }
@@ -354,7 +354,7 @@
             "new": {
               "tab": {
                 "11cce5cc77": "No se pudo iniciar {{value0}} en una nueva terminal.",
-                "a5a1f7033f": "No se envió tu {{value0}}; pégalo cuando el agente esté listo."
+                "a5a1f7033f": "No se envió tu {{value0}}; pégalo cuando el agent esté listo."
               }
             }
           },
@@ -374,12 +374,12 @@
         "work": {
           "item": {
             "direct": {
-              "3de6371df3": "No se pudo generar el comando de inicio del agente.",
+              "3de6371df3": "No se pudo generar el comando de inicio del agent.",
               "67e103dd60": "Se creó el espacio de trabajo, pero no se pudo activar.",
-              "19c7683acf": "El agente seleccionado no está disponible en el espacio de trabajo creado.",
+              "19c7683acf": "El agent seleccionado no está disponible en el espacio de trabajo creado.",
               "8bc45efdbc": "No se pudo resolver el head del PR.",
               "agent": {
-                "ceeeb509b5": "El agente tardó demasiado en iniciar. El espacio de trabajo está listo: pega {{value0}} cuando el agente esté inactivo."
+                "ceeeb509b5": "El Agent tardó demasiado en iniciar. El espacio de trabajo está listo: pega {{value0}} cuando el Agent esté inactivo."
               }
             }
           }
@@ -441,7 +441,7 @@
         "sleeping": {
           "agent": {
             "session": {
-              "f235f604fd": "Esta sesión de agente no se puede reanudar."
+              "f235f604fd": "Esta sesión de agent no se puede reanudar."
             }
           }
         }
@@ -451,11 +451,11 @@
           "agent": {
             "action": {
               "plan": {
-                "3f0ea9aa0d": "No se pudo generar el comando de inicio del agente.",
+                "3f0ea9aa0d": "No se pudo generar el comando de inicio del agent.",
                 "46f1a2c9bd": "La entrada del comando está vacía.",
-                "8eb541cc83": "No se detectó el agente seleccionado en este host de espacio de trabajo.",
-                "b96e091fc9": "El agente seleccionado está deshabilitado en Ajustes.",
-                "a7ac8717c7": "Elige un agente antes de comenzar."
+                "8eb541cc83": "No se detectó el agent seleccionado en este host de espacio de trabajo.",
+                "b96e091fc9": "El agent seleccionado está deshabilitado en Ajustes.",
+                "a7ac8717c7": "Elige un agent antes de comenzar."
               }
             }
           },
@@ -469,7 +469,7 @@
       "sparse": {
         "preset": {
           "draft": {
-            "5915a0a1f6": "Usa directorios relativos al repositorio, no la raíz, rutas absolutas ni segmentos padre.",
+            "5915a0a1f6": "Usa directorios relativos al repo, no la raíz, rutas absolutas ni segmentos padre.",
             "efc05d1820": "Agrega al menos un directorio."
           }
         }
@@ -555,7 +555,7 @@
         "3ad7d77f57": "El espacio de trabajo de destino está en un host distinto al destino de ejecución de esta automatización."
       },
       "useComposerState": {
-        "7eb3f44ff7": "El agente seleccionado está deshabilitado. Elige un agente habilitado antes de crear.",
+        "7eb3f44ff7": "El agent seleccionado está deshabilitado. Elige un agent habilitado antes de crear.",
         "b2ead86962": "No se pudo resolver la base del PR.",
         "a9ff236145": "Algunos archivos adjuntos no se pudieron cargar.",
         "3db83fc58a": "No hay ninguna ruta de proyecto remoto disponible para los archivos adjuntos.",
@@ -601,7 +601,7 @@
         "3618579df6": "Privacidad y telemetría",
         "65ec7d1968": "Permisos de privacidad de macOS para herramientas de desarrollo lanzadas desde terminales.",
         "d91ae31fbd": "Permisos de macOS",
-        "95a1886d94": "Controla terminales y agentes desde tu teléfono.",
+        "95a1886d94": "Controla terminales y agents desde tu teléfono.",
         "1cd25673df": "Móvil",
         "31e57d1c70": "Usa máquinas existentes por SSH para archivos, terminales, Git y espacios de trabajo.",
         "94a5afe910": "Hosts SSH",
@@ -611,7 +611,7 @@
         "d72a58b5b9": "Estadísticas y uso",
         "dcd0d9b74f": "Atajos de teclado para acciones comunes.",
         "94295ebfb3": "Atajos",
-        "7682607591": "Notificaciones de escritorio nativas para eventos de agentes y terminales.",
+        "7682607591": "Notificaciones de escritorio nativas para eventos de agents y terminales.",
         "2eece16ad1": "Notificaciones",
         "1f452cbd4c": "Comportamiento de selección y edición.",
         "0c6ee88a5f": "Entrada y edición",
@@ -643,15 +643,15 @@
         "5f32ac08f3": "Completa la lista de configuración inicial para los flujos de trabajo principales de Orca.",
         "8ac3de82f5": "Dictado local de voz a texto con modelos en el dispositivo.",
         "6a50cdcd7c": "Voz",
-        "0059bd17f3": "Permite que los agentes controlen cualquier app en tu computadora.",
+        "0059bd17f3": "Permite que los agents controlen cualquier app en tu computadora.",
         "b35e92364b": "Computer Use",
         "cd50cec5d7": "Coordina múltiples coding agents a través de Orca.",
         "58a868e8e4": "Orquestación",
         "7c79d3b7bf": "Opcional",
         "b1c2f8b0ac": "Cambio de cuenta opcional para Claude, Codex, Gemini y OpenCode Go.",
         "f70ac54d38": "Cuentas de proveedores de IA",
-        "4121f7a0a2": "Administra agentes de IA, define uno predeterminado y personaliza comandos.",
-        "b49abbd2f7": "Agentes",
+        "4121f7a0a2": "Administra agents de IA, define uno predeterminado y personaliza comandos.",
+        "b49abbd2f7": "Agents",
         "dev": "Dev Tools",
         "devDescription": "Herramientas solo para dev para probar estados de UI.",
         "devBadge": "Dev",
@@ -750,10 +750,10 @@
         "71c11aff84": "Volver a ejecutar todos los checks",
         "e31651a224": "Volver a ejecutar checks fallidos",
         "1b56e28faa": "Volver a ejecutar",
-        "f4b1292569": "Iniciar el agente de IA predeterminado en estos checks",
+        "f4b1292569": "Iniciar el agent de IA predeterminado en estos checks",
         "9a1004fc76": "Actualizar checks",
-        "03e542fcfe": "No se pudo iniciar un agente de IA para los checks fallidos: {{value0}}",
-        "28986b3747": "Se inició un agente de IA para los checks fallidos.",
+        "03e542fcfe": "No se pudo iniciar un agent de IA para los checks fallidos: {{value0}}",
+        "28986b3747": "Se inició un agent de IA para los checks fallidos.",
         "1690fd7f4a": "No hay checks fallidos que arreglar.",
         "9e7c221b8d": "No se pudieron volver a ejecutar los checks",
         "e463ec935f": "Se solicitó volver a ejecutar los checks",
@@ -823,7 +823,7 @@
         "73487fb975": "No se pudo eliminar al revisor",
         "2e69540652": "Revisores eliminados",
         "69515bff81": "Revisor eliminado",
-        "b4af16bf43": "No hay contexto de repositorio disponible para este pull request.",
+        "b4af16bf43": "No hay contexto de repo disponible para este pull request.",
         "c42d942b75": "No se pudo solicitar el revisor",
         "c016e4bac3": "Revisores solicitados",
         "ea985e657f": "Revisor solicitado",
@@ -847,7 +847,7 @@
         "5752c25aff": "Publicando…",
         "ec5c4b3ab2": "Reabrir PR",
         "21860b58d0": "Cerrar pull request",
-        "5932578f51": "El merge requiere un repositorio local registrado",
+        "5932578f51": "El merge requiere un repo local registrado",
         "ce8a85d209": "por defecto",
         "924c2fe05e": "destructivo",
         "e2bf3e41a9": "comentario",
@@ -1116,9 +1116,9 @@
         "0ee17638fe": "Nombre del espacio de trabajo",
         "2688050e4b": "Nombre",
         "f0470c7383": "Avanzado",
-        "ba64270bdb": "Configurar agentes",
-        "ab63f25397": "Abrir configuración del agente",
-        "01d1e8f601": "Agente",
+        "ba64270bdb": "Configurar agents",
+        "ab63f25397": "Abrir configuración del agent",
+        "01d1e8f601": "Agent",
         "0c5d6a479c": "[Opcional]",
         "b5a0796911": "Conectar",
         "dccd26d4e4": "Elige proyecto",
@@ -1166,8 +1166,8 @@
         "reuseExistingBranch": "Reutilizar rama",
         "reuseExistingBranchHint": "Haz checkout de la rama existente en lugar de crear una nueva a partir de ella.",
         "createMultiple": "Crear más",
-        "waitForSetupBeforeAgent": "Esperar a que termine el setup antes de iniciar el agente",
-        "waitForSetupBeforeAgentHelp": "Activa esto cuando el setup instale dependencias, servidores MCP o archivos de configuración que el agente necesita al iniciar.",
+        "waitForSetupBeforeAgent": "Esperar a que termine el setup antes de iniciar el agent",
+        "waitForSetupBeforeAgentHelp": "Activa esto cuando el setup instale dependencias, servidores MCP o archivos de configuración que el agent necesita al iniciar.",
         "destroyDisabled": "destroy deshabilitado",
         "destroyConfigured": "destroy configurado",
         "noDestroyConfigured": "sin destroy",
@@ -1181,7 +1181,7 @@
       "NewWorkspaceComposerModal": {
         "createWorktree": "Crear worktree",
         "createWorkspace": "Crear espacio de trabajo",
-        "fa90f739a5": "Elija el proyecto, el nombre del espacio de trabajo y el agente antes de crear el espacio de trabajo."
+        "fa90f739a5": "Elija el proyecto, el nombre del espacio de trabajo y el agent antes de crear el espacio de trabajo."
       },
       "PullRequestPage": {
         "2560588245": "No se pudo solicitar el revisor",
@@ -1222,8 +1222,8 @@
         "a18d01cda3": "Aún no se reportaron checks",
         "3912daf310": "Este pull request aún no tiene checks reportados.",
         "45877f5089": "No se encontraron checks",
-        "85e62c5266": "Se inició un agente de IA para los checks fallidos.",
-        "ddfd42f460": "Revisa el prompt antes de iniciar un agente.",
+        "85e62c5266": "Se inició un agent de IA para los checks fallidos.",
+        "ddfd42f460": "Revisa el prompt antes de iniciar un agent.",
         "a053bdd082": "Arreglar checks fallidos con IA",
         "1b14d0a69c": "Abrir en GitHub",
         "1550675e5f": "No hay output inline disponible para este check.",
@@ -1237,9 +1237,9 @@
         "54cddd1858": "Volver a ejecutar todos los checks",
         "68605516dd": "Volver a ejecutar checks fallidos",
         "522d9353e1": "Volver a ejecutar",
-        "0fa8b8faec": "Iniciar el agente de IA predeterminado en estos checks",
+        "0fa8b8faec": "Iniciar el agent de IA predeterminado en estos checks",
         "5d0f42766d": "Actualizar checks",
-        "98583589c6": "No se pudo iniciar un agente de IA para los checks fallidos: {{value0}}",
+        "98583589c6": "No se pudo iniciar un agent de IA para los checks fallidos: {{value0}}",
         "51c65c0265": "No hay checks fallidos que arreglar.",
         "788a782bb0": "No se pudieron volver a ejecutar los checks",
         "18f2af42ac": "Se solicitó volver a ejecutar los checks",
@@ -1310,7 +1310,7 @@
         "c798fa0ec7": "No se pudo eliminar al revisor",
         "1e6d089420": "Revisores eliminados",
         "2c1d93da43": "Revisor eliminado",
-        "1ae11c905c": "No hay contexto de repositorio disponible para este pull request.",
+        "1ae11c905c": "No hay contexto de repo disponible para este pull request.",
         "102d3d177f": "Revisores solicitados",
         "03282ff3b9": "Revisor solicitado",
         "8f369a6b6b": "Puedes solicitar hasta 15 revisores",
@@ -1329,7 +1329,7 @@
         "9d5425918e": "Reabrir PR",
         "96d013ed28": "Cerrar pull request",
         "d65f70786e": "cerrado",
-        "eca289e593": "El merge requiere un repositorio local registrado",
+        "eca289e593": "El merge requiere un repo local registrado",
         "6568ae8ece": "por defecto",
         "19f19560d5": "destructivo",
         "aae99c6c04": "PR",
@@ -1383,7 +1383,7 @@
       "StarNagCard": {
         "92b0f9d921": "está autenticado y vuelve a intentarlo.",
         "cd8c34aac1": "gh",
-        "cf82170065": "No se pudo dar estrella al repositorio. Asegúrate de que",
+        "cf82170065": "No se pudo dar estrella al repo. Asegúrate de que",
         "30c36231c1": "Orca es de código abierto. Si te ayudó hoy, una estrella en GitHub ayuda a otros desarrolladores a encontrarlo.",
         "b5e685e4d9": "Descartar",
         "5f6df21046": "¿Disfrutando de Orca?",
@@ -1590,7 +1590,7 @@
         "969e26577c": "Puedes solicitar hasta 15 revisores",
         "d00571d9b1": "Ingresa un revisor",
         "edf4bc4135": "No hay usuarios asignables.",
-        "53e002d895": "El issue no tiene slug de repositorio.",
+        "53e002d895": "El issue no tiene slug de repo.",
         "7f94eb6395": "Asignar issue",
         "bb63046423": "Asignado a {{value0}}",
         "ca63694b4c": "No se pudieron actualizar los asignados.",
@@ -1721,7 +1721,7 @@
         "61ed600d29": "\"{{value0}}\" tiene cambios no guardados. ¿Quieres guardar antes de cerrar?",
         "cdc9ac4b2d": "editor",
         "e57db40c11": "No se pudo generar el comando de inicio para {{value0}}.",
-        "5b2c1a9e44": "No se detectó ninguna CLI de agente; instala una o elige un agente predeterminado en Ajustes."
+        "5b2c1a9e44": "No se detectó ninguna CLI de agent; instala una o elige un agent predeterminado en Ajustes."
       },
       "TerminalSearch": {
         "db234b7519": "Cerrar",
@@ -1786,7 +1786,7 @@
         "1628fd7dfa": "No hay worktrees activos, ajustes, acciones ni pestañas abiertas",
         "b781ae05e3": "Escribe para buscar worktrees, ajustes, pestañas y acciones.",
         "f60f8730be": "No hay otros worktrees a los que cambiar",
-        "c4afa68159": "Prueba con un worktree, ajuste, acción, título de pestaña, prompt de agente, URL, PR o puerto.",
+        "c4afa68159": "Prueba con un worktree, ajuste, acción, título de pestaña, prompt de agent, URL, PR o puerto.",
         "dbd9d87eec": "Ningún resultado coincide con tu búsqueda",
         "2c38630a01": "El espacio de trabajo ya no existe",
         "7726ce9970": "La pestaña del emulador móvil ya no existe",
@@ -1807,7 +1807,7 @@
         "workspaceTabMissing": "La pestaña ya no existe",
         "projectsGroupsHeader": "Proyectos y grupos",
         "projectBadge": "Proyecto",
-        "repoGroupBadge": "Grupo de repositorios"
+        "repoGroupBadge": "Grupo de Repos"
       },
       "github": {
         "pr": {
@@ -1867,15 +1867,15 @@
             "df636f5886": "Comprobar si está configurado (PowerShell)"
           },
           "ProjectCell": {
-            "4b5b871da8": "No hay etiquetas en este repositorio.",
+            "4b5b871da8": "No hay etiquetas en este repo.",
             "2219e945ef": "Cargando…",
-            "54cac64427": "La fila no tiene slug de repositorio.",
+            "54cac64427": "La fila no tiene slug de repo.",
             "8ae56a88a6": "Etiquetas",
             "f7cdb78efb": "Asignados",
             "ebde486e3c": "Limpiar",
             "191905e20e": "Actual y próximos",
             "e17bb96881": "Completado",
-            "943b3dadc9": "Este repositorio no tiene tipos de issue.",
+            "943b3dadc9": "Este repo no tiene tipos de issue.",
             "c7b059cf07": "Tipo de issue",
             "c5f949e489": "Issue",
             "8d669084f6": "Restringido",
@@ -1940,7 +1940,7 @@
             "2edf5e7e77": "{{value0}}: Orca aún no admite vistas de proyecto {{value1}}. Envía un feature request en {{value2}}.",
             "7245c3d7ac": "Borrar búsqueda",
             "c5bc7ec007": "Filtro de vista: {{value0}}",
-            "840c268665": "Agregar repositorio",
+            "840c268665": "Agregar repo",
             "dffa899f36": "Cancelar",
             "7037c8f5f1": "Repositorio no está en Orca",
             "512fc171d6": "Elige un proyecto para comenzar.",
@@ -2260,13 +2260,13 @@
             "a9957007eb": "Ignorar {{value0}}",
             "1bffc07ba7": "Ver {{value0}}",
             "bef0adef9b": "Rama",
-            "0b1766738a": "Repositorio",
+            "0b1766738a": "Repo",
             "bbb1ab6a6f": "Selecciona {{value0}}",
             "d1094dd529": "Necesita revisión",
             "4b93a235d8": "sugerido",
             "f68d538c63": "No hay espacios de trabajo en este conjunto de limpieza.",
             "4719327c9c": "Se ignoran todas las sugerencias de limpieza.",
-            "a19040cd67": "Ningún espacio de trabajo inactivo coincide con los repositorios seleccionados.",
+            "a19040cd67": "Ningún espacio de trabajo inactivo coincide con los repos seleccionados.",
             "97c772c4fe": "No se encontraron espacios de trabajo inactivos en los repositorios marcados.",
             "d3eef9463d": "No hay espacios de trabajo inactivos para eliminar.",
             "aaee139eab": "Restaurar sugerencias ignoradas",
@@ -2278,7 +2278,7 @@
             "b299f201b9": "seguro para eliminar",
             "2b31bf68de": "inactivo",
             "ac5ba84cc1": "seleccionado",
-            "8b74d4ea6e": "Escaneando worktrees y estado de git, luego combinando señales de pestañas abiertas, terminal, agente en vivo y disponibilidad remota antes de sugerir eliminaciones.",
+            "8b74d4ea6e": "Escaneando worktrees y estado de git, luego combinando señales de pestañas abiertas, terminal, agent en vivo y disponibilidad remota antes de sugerir eliminaciones.",
             "7eee951968": "Verificando seguridad del espacio de trabajo",
             "191f0bc98e": "Cerrar",
             "7ae2ad30f4": "Actualizar",
@@ -2355,7 +2355,7 @@
         "quick": {
           "commands": {
             "TerminalQuickCommandActionToggle": {
-              "b0d58e37ed": "Prompt de agente",
+              "b0d58e37ed": "Prompt de Agent",
               "b5ea4d64f6": "Comando de terminal"
             },
             "TerminalQuickCommandAppendEnterSwitch": {
@@ -2368,12 +2368,12 @@
               "97e96cc027": "/goal",
               "e604bd40d6": "Admite skills, rutas de archivos y comandos integrados como",
               "79af0c0841": "npm run dev",
-              "577a342c7d": "Pide al agente que investigue este espacio de trabajo",
+              "577a342c7d": "Pide al agent que investigue este espacio de trabajo",
               "026cfb232a": "No admite comandos de prompt",
-              "346d409ab2": "Elige agente",
-              "0adba8fa0c": "Agente",
+              "346d409ab2": "Elige agent",
+              "0adba8fa0c": "Agent",
               "ec8f081919": "Acción",
-              "ed04233b3e": "Guarda comandos de terminal o prompts de agente para acceso rápido.",
+              "ed04233b3e": "Guarda comandos de terminal o prompts de agent para acceso rápido.",
               "ca414324ee": "Texto de comando",
               "dc921c17ee": "Prompt",
               "5b3f634a55": "Agregar comando rápido",
@@ -2396,7 +2396,7 @@
               "3834d24243": "Proyecto",
               "b83efc79e2": "Global",
               "c25cf350ef": "Alcance",
-              "f0631e4999": "repositorio"
+              "f0631e4999": "repo"
             }
           }
         },
@@ -2406,12 +2406,12 @@
             "1d1a7a9c1f": "Cancelar",
             "6b9a6975f8": "El terminal aún tiene un proceso en ejecución. Si cierras el terminal, el proceso se terminará.",
             "78b79d854d": "¿Cerrar terminal?",
-            "stop_agent_title": "¿Detener este agente?",
+            "stop_agent_title": "¿Detener este agent?",
             "stop_command_title": "¿Detener comando en ejecución?",
-            "stop_agent_description": "Al cerrar esta terminal, se detendrá el trabajo actual del agente.",
+            "stop_agent_description": "Al cerrar esta terminal, se detendrá el trabajo actual del agent.",
             "stop_command_description": "Al cerrar esta terminal, se detendrá el comando que se está ejecutando en ella.",
             "dont_ask_again": "No volver a preguntar para terminales en ejecución",
-            "stop_agent_confirm": "Detener agente",
+            "stop_agent_confirm": "Detener Agent",
             "stop_command_confirm": "Detener y cerrar"
           },
           "MobileDriverOverlay": {
@@ -2431,10 +2431,10 @@
           },
           "TerminalAgentSessionForkDialog": {
             "17fc841e59": "Copiar contexto",
-            "0c8a8629b1": "El fork aparece como su propio espacio de trabajo, no como un hijo anidado. El nuevo agente recibe una transcripción acotada como borrador editable.",
+            "0c8a8629b1": "El fork aparece como su propio espacio de trabajo, no como un hijo anidado. El nuevo agent recibe una transcripción acotada como borrador editable.",
             "620461df22": "Fork de nivel superior",
-            "619b5a35d2": "Crea un fork de espacio de trabajo de nivel superior e inicia una nueva pestaña de agente con el contexto capturado.",
-            "64e292e8e3": "Fork de sesión de agente",
+            "619b5a35d2": "Crea un fork de espacio de trabajo de nivel superior e inicia una nueva pestaña de agent con el contexto capturado.",
+            "64e292e8e3": "Fork de sesión de Agent",
             "9d25de2920": "Crear fork",
             "2b10412cfc": "Creando..."
           },
@@ -2448,7 +2448,7 @@
             "06c2b0f043": "Igualar tamaños de paneles",
             "98bccf4fa2": "Dividir terminal hacia abajo",
             "20e565d865": "Dividir terminal a la derecha",
-            "8a7ddb8b8a": "Fork de sesión de agente...",
+            "8a7ddb8b8a": "Fork de sesión de Agent...",
             "0a82b0608c": "Agregar comando rápido…",
             "9528a65ef8": "Sin comandos rápidos",
             "3ce594a4a0": "Global",
@@ -2493,7 +2493,7 @@
           "stale": {
             "agent": {
               "row": {
-                "ad991ece5c": "El panel del agente ya no está disponible.",
+                "ad991ece5c": "El panel del Agent ya no está disponible.",
                 "090d607412": "stale-agent-row-{{value0}}"
               }
             }
@@ -2508,7 +2508,7 @@
                   "38e41edc6e": "Este espacio de trabajo no puede hacer fork hacia un worktree de git.",
                   "f867385bb5": "No se pudo encontrar el espacio de trabajo de origen para este fork.",
                   "046e8d853c": "No hay contexto de terminal para hacer fork",
-                  "c00421d320": "Se copió el contexto del fork. Inicia un agente y pégalo para iniciar el fork.",
+                  "c00421d320": "Se copió el contexto del fork. Inicia un agent y pégalo para iniciar el fork.",
                   "f62b40e2c7": "No hay contexto de terminal para copiar",
                   "373a3103e7": "Contexto copiado",
                   "3fc568a49d": "No se pudo copiar el contexto."
@@ -2637,8 +2637,8 @@
             "348a04c1ad": "Ajustes de Agents…",
             "ec2adf093e": "Iniciar {{value0}} en un nuevo terminal",
             "465e432ef1": "No se pudo generar el comando de inicio para {{value0}}.",
-            "e518f544b1": "No se detectaron agentes",
-            "8dea9b5cdf": "No hay agentes habilitados"
+            "e518f544b1": "No se detectaron agents",
+            "8dea9b5cdf": "No hay agents habilitados"
           },
           "RecentTabSwitcher": {
             "329638ff6f": "Cambiar pestaña",
@@ -2697,8 +2697,8 @@
             "d62d63b807": "Crear archivo",
             "25dc1cd653": "Abrir archivo",
             "7cdf8ee0c8": "Abrir URL",
-            "b27864279e": "Iniciar agente",
-            "39676a184c": "Abrir cualquier archivo, URL, agente, ..."
+            "b27864279e": "Iniciar agent",
+            "39676a184c": "Abrir cualquier archivo, URL, agent, ..."
           },
           "TabBarQuickCommandsButton": {
             "a2c7a33831": "Comando",
@@ -2708,7 +2708,7 @@
             "b775303755": "Ejecutar comando rápido: {{value0}}",
             "196593b6a9": "Quitar {{value0}}",
             "15529ede69": "Editar {{value0}}",
-            "1d411fb6a5": "Guarda un comando rápido para este repositorio",
+            "1d411fb6a5": "Guarda un comando rápido para este repo",
             "8f1e971966": "Agregar comando rápido",
             "3220e2da27": "Este comando rápido se eliminará de tu lista guardada.",
             "e8e1a52edb": "¿Eliminar \"{{value0}}\"?",
@@ -2732,7 +2732,7 @@
                 "classifier": {
                   "42e6262ae9": "No hay acción disponible.",
                   "097a982ee0": "Cargando archivos...",
-                  "5a9c83c04b": "Abrir cualquier archivo, URL, agente, ...",
+                  "5a9c83c04b": "Abrir cualquier archivo, URL, agent, ...",
                   "90eb94dc48": "Introduce una URL http:// o https://.",
                   "5553b283ce": "Introduce una URL o ruta de archivo.",
                   "queryTooLarge": "El texto de búsqueda es demasiado grande."
@@ -2842,8 +2842,8 @@
             "c9382662bb": "Reiniciar servicio",
             "59f178fe11": "{{value0}}, servicio inaccesible",
             "21cacb16d1": "· remoto",
-            "73a3fd68a9": "Contraer repositorio",
-            "b12e31dfcb": "Expandir repositorio",
+            "73a3fd68a9": "Contraer repo",
+            "b12e31dfcb": "Expandir repo",
             "d659d71d2d": "Reanudar el espacio de trabajo {{value0}}",
             "bbcd9b7b85": "Contraer espacio de trabajo",
             "c4a8968bdd": "Expandir espacio de trabajo",
@@ -3023,7 +3023,7 @@
             "b9b4a3a25d": "Rama",
             "c432278ec7": "Buffers del editor",
             "0bc756efaf": "Cambios de git",
-            "e9528a89b3": "Terminales",
+            "e9528a89b3": "Terminals",
             "a8d9e0de79": "Agents",
             "d384a4ce9f": "Eliminar decisión",
             "7d7745bb8f": "Se puede eliminar",
@@ -3089,7 +3089,7 @@
             "a9a318b7a3": "Error al actualizar — mostrando datos en caché",
             "7ad719c4bf": "Limitado",
             "e740f92596": "Error al actualizar",
-            "8418ec448d": "No se pudo actualizar el uso de {{value0}}. Es posible que las sesiones de agentes sigan iniciadas.",
+            "8418ec448d": "No se pudo actualizar el uso de {{value0}}. Es posible que las sesiones de Agents sigan iniciadas.",
             "45198c7d95": "1 reset de rate limit disponible",
             "bce421cba3": "{{value0}} resets de rate limit disponibles",
             "7ec6e030a0": "El siguiente vence ahora",
@@ -3102,7 +3102,7 @@
             "bf2e739f18": "Inicio de sesión no disponible",
             "f8b8dbed85": "Uso no disponible",
             "3d3c9c0c1f": "El uso de Claude se actualizará cuando el terminal Claude activo rote sus credenciales.",
-            "42fdd4da1d": "Se está actualizando el inicio de sesión de Claude. Las sesiones de agentes pueden seguir iniciadas.",
+            "42fdd4da1d": "Se está actualizando el inicio de sesión de Claude. Las sesiones de Agents pueden seguir iniciadas.",
             "c06c1d215d": "No se pudo actualizar el uso de Claude porque falló la solicitud de red.",
             "cabdc2a9e0": "No se pudieron leer las credenciales de inicio de sesión de Claude.",
             "a7517cccb6": "El uso de Claude no está disponible ahora."
@@ -3285,9 +3285,9 @@
           "42d3e0bdf7": "Proveedor de análisis de uso: {{value0}}",
           "c79f073d4c": "Análisis de uso",
           "a58aba506f": "PRs creados",
-          "1c96f433e2": "Tiempo trabajado por agentes",
+          "1c96f433e2": "Tiempo trabajado por agents",
           "9dbec9e675": "Agents iniciados",
-          "73ed07859c": "Inicia tu primer agente para empezar a rastrear",
+          "73ed07859c": "Inicia tu primer agent para empezar a rastrear",
           "1e696db2f6": "OpenCode",
           "7d26110cea": "Codex",
           "85457c02fe": "Claude",
@@ -3301,7 +3301,7 @@
           "444585cb41": "con datos",
           "ecb0cd8a4c": "habilitado -",
           "33f7b043d2": "Proveedores",
-          "60002bb22f": "Aún no se encontró uso local de Claude, Codex u OpenCode. El resumen se completará después de que la siguiente sesión de agente escriba logs de tokens.",
+          "60002bb22f": "Aún no se encontró uso local de Claude, Codex u OpenCode. El resumen se completará después de que la siguiente sesión de agent escriba logs de tokens.",
           "70f36452d4": "Porcentaje de caché",
           "327603fe8b": "Días activos",
           "0eaf937335": "Est. costo",
@@ -3309,7 +3309,7 @@
           "2d13e57f72": "Habilitar OpenCode",
           "2f1ee2878b": "Habilitar Codex",
           "0ea0cae435": "Habilitar Claude",
-          "6c00c46815": "Habilita un proveedor para escanear logs locales de agentes y crear el registro combinado de tokens.",
+          "6c00c46815": "Habilita un proveedor para escanear logs locales de agents y crear el registro combinado de tokens.",
           "49405ccc8d": "Empezar a rastrear tokens",
           "ca6bc5fded": "Actualizar",
           "e06d1baf5c": "Actualizar resumen de uso",
@@ -3512,7 +3512,7 @@
           "cf9d382ca1": "Importar",
           "220dd32d83": "Escaneando...",
           "fb33359f69": "¿Agrupar estos repositorios?",
-          "d75170194e": "Elige esto si estos proyectos van juntos: un monorepo o simplemente un conjunto de repositorios relacionados. Orca los agrupará y te permitirá trabajar desde la carpeta principal.",
+          "d75170194e": "Elige esto si estos proyectos van juntos: un monorepo o simplemente un conjunto de repos relacionados. Orca los agrupará y te permitirá trabajar desde la carpeta principal.",
           "39d51212cc": "Nombre del grupo",
           "aa0247680d": "No, importar por separado",
           "a0bc4d1f8e": "Sí, importar como grupo",
@@ -3525,7 +3525,7 @@
         },
         "AddRepoRemoteStep": {
           "5b205b5281": "Detener escaneo",
-          "6680289908": "/inicio/usuario/proyecto",
+          "6680289908": "/home/user/project",
           "ef410aa881": "Ruta del host",
           "0416bde073": "Agregar en Ajustes",
           "df6fbcf880": "No hay destinos SSH configurados.",
@@ -3545,13 +3545,13 @@
           "e1710bf831": "Abrir como carpeta",
           "8da4d1a5be": "Agregar proyecto Git",
           "ac66a3ed2d": "Explorar el sistema de archivos del host",
-          "92d25420a0": "/inicio/usuario/proyecto",
+          "92d25420a0": "/home/user/project",
           "867692f505": "Ruta del host",
           "423b5d3d31": "Agrega un repositorio Git o carpeta que ya exista en el host seleccionado.",
           "3d0c035483": "Abrir proyecto del host",
           "438493f214": "O introduce una ruta del host manualmente",
-          "6b9958492a": "¿Quieres importar muchos repositorios a la vez? Busca la carpeta padre.",
-          "d40d751517": "Nuevo repositorio o carpeta",
+          "6b9958492a": "¿Quieres importar muchos repos a la vez? Busca la carpeta padre.",
+          "d40d751517": "Nuevo repo o carpeta",
           "a81ffa0a99": "Crear en el servidor",
           "a2ea37d549": "Repositorio remoto de Git",
           "47759c9491": "Clonar desde URL",
@@ -3575,7 +3575,7 @@
         "AddRepoSteps": {
           "569326d9cc": "Elige carpeta",
           "a93ef169b5": "Explorar el sistema de archivos del host",
-          "2ce3f6edf8": "/ruta/al/destino",
+          "2ce3f6edf8": "/path/to/destination",
           "04a4c4e84a": "Ubicación del clon",
           "b698a4a29d": "https://github.com/user/repo.git",
           "3d4acbe693": "URL de Git",
@@ -3594,7 +3594,7 @@
           "eab8b45238": "Error al copiar",
           "a23b22d16f": "Copiado",
           "74fc00776f": "Detalles del error",
-          "3afcad0497": "desde el primer mensaje del agente.",
+          "3afcad0497": "desde el primer mensaje del agent.",
           "ff62a18580": "Orca no pudo generar un nombre de rama para",
           "ca3b225195": "Error en el nombre automático de rama"
         },
@@ -3738,8 +3738,8 @@
           "aef6c0a213": "Guarda el comando detectado para ejecutarlo cada vez que Orca cree un worktree.",
           "660cdc17f8": "scripts de setup. Agrega un comando local o cambia la fuente en Ajustes.",
           "8f6be51aa1": "orca.yaml",
-          "bb879db364": "Este repositorio ignora lo compartido",
-          "0155fb9ed3": "No se pudo verificar el script de configuración de este repositorio en este momento.",
+          "bb879db364": "Este repo ignora lo compartido",
+          "0155fb9ed3": "No se pudo verificar el script de configuración de este repo en este momento.",
           "eefa756190": "Configurar manualmente",
           "ca4efcbc25": "Guardar",
           "d02e6a42b1": "Detectado desde",
@@ -3796,7 +3796,7 @@
           "0c3395fd32": "Buscar worktrees y pestañas del navegador",
           "c86d83b5c3": "Nuevo",
           "1b5c41caee": "Orca Móvil",
-          "9c95e1ce91": "Agentes",
+          "9c95e1ce91": "Agents",
           "f323383e9a": "Automatizaciones",
           "e7ad3c540d": "Abrir tareas de Jira",
           "c39ab10000": "Abrir tareas de Linear",
@@ -3883,7 +3883,7 @@
           "e029a2d775": "Estado",
           "c2c7a45cda": "Ninguno",
           "680043342f": "compacto",
-          "c7591b6014": "repositorio",
+          "c7591b6014": "repo",
           "hosts": "Hosts",
           "allHostsDetail": "Mostrar todos los hosts",
           "configuredSshHost": "SSH configurado",
@@ -4094,7 +4094,7 @@
           "ebc5c7dcef": "Ocultar espacios de trabajo secundarios",
           "84a2238242": "Mostrar espacios de trabajo secundarios",
           "045a8aed48": "hijos",
-          "2ca6e29a3c": "repositorio",
+          "2ca6e29a3c": "repo",
           "bb85cd86ba": "Crear espacio de trabajo para {{value0}}",
           "ebadb7eadb": "{{value0}} {{value1}} hijo {{value2}}",
           "20bebf9c7f": "Mostrar {{value0}} espacio de trabajo secundario",
@@ -4169,7 +4169,7 @@
                   "7edb8ebe24": "Clonar desde URL",
                   "a6c20dca96": "Abrir un proyecto desde un destino SSH",
                   "3d162cc76f": "Proyecto remoto",
-                  "fb4fc5380e": "Proyecto local, repositorio de Git o carpeta con muchos repositorios",
+                  "fb4fc5380e": "Proyecto local, repo de Git o carpeta con muchos repos",
                   "2281fdc8c7": "Explorar carpeta",
                   "sshCreateUnavailable": "Aún no disponible para hosts SSH",
                   "sshBrowseTitle": "Abrir proyecto en host SSH",
@@ -4564,7 +4564,7 @@
       "setup": {
         "guide": {
           "SetupGuideModal": {
-            "3598a3ca0c": "Completa los flujos de trabajo principales que hacen útil a Orca para trabajar con agentes en paralelo.",
+            "3598a3ca0c": "Completa los flujos de trabajo principales que hacen útil a Orca para trabajar con agents en paralelo.",
             "48a9e5ef2d": "Primeros pasos",
             "28cf59fcb4": "Esto ocultará el checklist de la barra lateral.",
             "f3b5ffb2a6": "Ocultar checklist de la barra lateral"
@@ -4752,7 +4752,7 @@
           "e8da2af684": "Disponible para instalar",
           "ed3e110e61": "detectado",
           "02e0143be5": "Instalado",
-          "110b74b022": "Sin agente (terminal en blanco)",
+          "110b74b022": "Sin agent (terminal en blanco)",
           "92033495ff": "Auto",
           "9b175d0f5e": "Agent preseleccionado al abrir un nuevo espacio de trabajo.",
           "385212c7a1": "Agent predeterminado",
@@ -4869,9 +4869,9 @@
           "a869d0edd8": "Plantilla de comando para nombre de rama",
           "e784ea62dc": "Avanzado",
           "d9b65054ef": ") a un nombre corto que resuma la tarea. Solo se renombran las ramas que Orca nombró por sí misma, y nunca después de que se hayan pusheado.",
-          "12ea4a408d": "Cuando un agente empieza a trabajar en un nuevo espacio de trabajo, Orca renombra su rama generada automáticamente (p. ej.",
+          "12ea4a408d": "Cuando un agent empieza a trabajar en un nuevo espacio de trabajo, Orca renombra su rama generada automáticamente (p. ej.",
           "ef787db0e3": "Renombrar rama y worktree automáticamente",
-          "6a051586d2": "Renombra la rama generada automáticamente según el trabajo una vez que un agente empieza.",
+          "6a051586d2": "Renombra la rama generada automáticamente según el trabajo una vez que un agent empieza.",
           "ec3e0c388e": "Guardar",
           "cfd82406dd": "Guardando...",
           "40e7be7850": "Guardado",
@@ -4906,7 +4906,7 @@
           "a5c16712c1": "Se detectaron varios remotes. Escribe el nombre de un remote (p. ej.",
           "9a14ec7400": "Elige una rama base abajo",
           "086ce7f369": "Siguiendo la rama principal ({{value0}})",
-          "2f3cda96f5": "Fijada para este repositorio",
+          "2f3cda96f5": "Fijada para este repo",
           "ee110e1830": "Sin ref base predeterminada"
         },
         "BrowserDefaultZoomSetting": {
@@ -4973,7 +4973,7 @@
           "1188e56af4": "Copiar prompt de ejemplo",
           "b84807f228": "\"",
           "59722f31b4": "\"",
-          "c5325e91f6": "Pega cualquiera de estos en Claude Code, Codex u otro agente en un proyecto donde el skill esté instalado.",
+          "c5325e91f6": "Pega cualquiera de estos en Claude Code, Codex u otro agent en un proyecto donde el skill esté instalado.",
           "2a180694f7": "Pruébalo: prompts de ejemplo",
           "5ec620ccc4": "No se pudo copiar.",
           "a602d43069": "Copiado {{value0}}."
@@ -5078,7 +5078,7 @@
           "4f722a5f53": "Usado por recetas de commit-message, pull-request y nombre de rama que seleccionan Comando personalizado. Usa",
           "47e45cbd5a": "Comando personalizado",
           "1ef29f8c29": "Línea de comando que Orca ejecuta cuando una receta de texto usa Comando personalizado.",
-          "2339a89104": "Agrega botones AI que ejecutan el agente seleccionado con la plantilla de comando para esa acción.",
+          "2339a89104": "Agrega botones AI que ejecutan el agent seleccionado con la plantilla de comando para esa acción.",
           "d5b45a3628": "Mostrar acciones de Source Control AI",
           "7bcad2b200": "Agrega recetas de acción para commit, pull request, nombre de rama y arreglos de Source Control.",
           "d54c64163d": "activado",
@@ -5156,23 +5156,23 @@
           "9762364929": "Usa APFS clone-copy en macOS cuando sea posible; si no, crea symlinks de las carpetas o archivos configurados en los worktrees creados.",
           "24416f42cd": "Rutas compartidas en worktrees",
           "fb82ea1d7a": "Materializa automáticamente archivos o carpetas configurados en worktrees recién creados.",
-          "a20d5ea365": "Mantiene visible un resaltado a nivel de panel después de una campana del terminal o eventos de finalización de agente hasta que interactúes con ese panel. Experimental mientras ajustamos la señal.",
+          "a20d5ea365": "Mantiene visible un resaltado a nivel de panel después de una campana del terminal o eventos de finalización de agent hasta que interactúes con ese panel. Experimental mientras ajustamos la señal.",
           "ec897e8d89": "Atención del terminal",
-          "88b7613afb": "Resaltado persistente del panel para campanas del terminal y eventos de finalización de agentes.",
-          "0277901cf7": "Agrega una entrada Agents a la barra lateral izquierda con un feed en hilos de worktrees para agentes completados, preguntas bloqueantes, estado sin leer y eventos de creación de worktrees. Experimental: el modelo de eventos y la UI pueden cambiar.",
+          "88b7613afb": "Resaltado persistente del panel para campanas del terminal y eventos de finalización de agents.",
+          "0277901cf7": "Agrega una entrada Agents a la barra lateral izquierda con un feed en hilos de worktrees para agents completados, preguntas bloqueantes, estado sin leer y eventos de creación de worktrees. Experimental: el modelo de eventos y la UI pueden cambiar.",
           "a05bcdaf57": "Vista Agents",
-          "f63ea281e3": "Feed en hilos en la barra lateral izquierda para finalizaciones de agentes y estados bloqueantes.",
+          "f63ea281e3": "Feed en hilos en la barra lateral izquierda para finalizaciones de agents y estados bloqueantes.",
           "ca2219fe5e": "Muestra una pequeña mascota animada fijada en la esquina inferior derecha. Elige un personaje (Claudino, OpenCode, Gremlin) o carga tu propio PNG, APNG, GIF, WebP, JPG o SVG desde el menú de mascota de la barra de estado. Ocúltala cuando quieras desde el mismo menú sin desactivar este ajuste.",
           "dd6f0a1d45": "Mascota",
           "0e89a574ae": "Mascota animada flotante en la esquina inferior derecha.",
           "agentHibernation": {
-            "copy": "Detiene los terminales de agentes en segundo plano que estén inactivos después del intervalo configurado y reanuda las sesiones compatibles cuando las vuelves a abrir. La suspensión de agentes conserva las opciones de inicio de los agentes iniciados por Orca. Los agentes iniciados manualmente pueden reanudarse con tus valores predeterminados actuales de Orca. Experimental mientras ajustamos el modelo de seguridad.",
-            "description": "Detiene los terminales de agentes en segundo plano que estén inactivos después del intervalo configurado y reanuda las sesiones compatibles cuando las vuelves a abrir.",
-            "idleMinutesDescription": "Cuántos minutos debe esperar inactivo un agente en segundo plano completado antes de que Orca pueda suspenderlo.",
+            "copy": "Detiene los terminales de agents en segundo plano que estén inactivos después del intervalo configurado y reanuda las sesiones compatibles cuando las vuelves a abrir. La suspensión de agents conserva las opciones de inicio de los agents iniciados por Orca. Los agents iniciados manualmente pueden reanudarse con tus valores predeterminados actuales de Orca. Experimental mientras ajustamos el modelo de seguridad.",
+            "description": "Detiene los terminales de agents en segundo plano que estén inactivos después del intervalo configurado y reanuda las sesiones compatibles cuando las vuelves a abrir.",
+            "idleMinutesDescription": "Cuántos minutos debe esperar inactivo un agent en segundo plano completado antes de que Orca pueda suspenderlo.",
             "idleMinutesLabel": "Suspender después de",
             "idleMinutesSuffix": "minutos",
-            "title": "Suspensión de agentes",
-            "toggleLabel": "Alternar suspensión de agentes"
+            "title": "Suspensión de Agents",
+            "toggleLabel": "Alternar suspensión de agents"
           },
           "newWorktreeCardStyle": {
             "copy": "Previsualiza el diseño actualizado de tarjetas de worktree, la ubicación de metadatos, las opciones del menú de visualización de tarjetas y la presentación de estado.",
@@ -5211,14 +5211,14 @@
           "8b9e202e0a": "Haz que esto coincida con el TTL de caché de tu proveedor. El valor predeterminado es 5 minutos.",
           "a2a8962138": "Duración del temporizador",
           "b4e7302944": "Temporizador de caché",
-          "487b176240": "Muestra una cuenta regresiva en la barra lateral después de que un agente de Claude quede inactivo.",
-          "9c20253679": "Muestra una cuenta regresiva después de que un agente de Claude quede inactivo.",
+          "487b176240": "Muestra una cuenta regresiva en la barra lateral después de que un agent de Claude quede inactivo.",
+          "9c20253679": "Muestra una cuenta regresiva después de que un agent de Claude quede inactivo.",
           "fe590653c1": "Claude cachea tu conversación para reducir costos. Si queda inactiva demasiado tiempo, la caché caduca y el siguiente mensaje reenvía todo el contexto con mayor costo. Esto muestra una cuenta regresiva para que sepas cuándo reanudar.",
           "a137f8854d": "Prompt Cache Timer",
           "80c454e8a6": "Haz que esto coincida con el TTL de caché de tu proveedor."
         },
         "GeneralEditorSettingsSection": {
-          "f80603d293": "Muestra controles de notas Markdown locales en modo de editor enriquecido y acciones de handoff de agentes.",
+          "f80603d293": "Muestra controles de notas Markdown locales en modo de editor enriquecido y acciones de handoff de agents.",
           "4edc104f0f": "Notas Markdown de revisión",
           "5f02e6fb21": "Muestra controles de notas Markdown locales en modo de editor enriquecido.",
           "51161d1647": "Muestra la vista general del minimapa al editar un archivo.",
@@ -5319,7 +5319,7 @@
           "28bc3d085e": "Muestra una confirmación antes de eliminar un espacio de trabajo desde el menú contextual. Las eliminaciones fallidas aún muestran la opción Forzar eliminación.",
           "9f380934cf": "Preguntar antes de eliminar espacios de trabajo",
           "5734db82af": "Muestra un cuadro de diálogo de confirmación antes de eliminar un espacio de trabajo.",
-          "4fbf910ded": "Crea espacios de trabajo dentro de una subcarpeta con el nombre del repositorio.",
+          "4fbf910ded": "Crea espacios de trabajo dentro de una subcarpeta con el nombre del repo.",
           "ba3480642f": "Espacios de trabajo anidados",
           "a246f5ce6f": "Directorio raíz donde se crean las carpetas del espacio de trabajo.",
           "5567191a6e": "Examinar",
@@ -5535,12 +5535,12 @@
         },
         "McpConfigSection": {
           "4d16a0d9ac": "Comprobado",
-          "b900cd6282": "No se encontró ninguna configuración de MCP. Agrega una configuración vacía de workspace cuando quieras que este repositorio defina sus propios servidores MCP.",
+          "b900cd6282": "No se encontró ninguna configuración de MCP. Agrega una configuración vacía de workspace cuando quieras que este repo defina sus propios servidores MCP.",
           "3b224167ff": "server",
           "251b96564a": "detectado ·",
           "f34c152dc0": "Actualizar configuraciones de MCP",
-          "6bac9ddfc6": "Los repositorios SSH se leen a través del sistema de archivos remoto. La creación inicial se limita a la configuración raíz del espacio de trabajo.",
-          "96f5609b04": "Inspecciona las definiciones de servidores MCP que los agentes pueden usar mientras trabajan en este repositorio.",
+          "6bac9ddfc6": "Los repos SSH se leen a través del sistema de archivos remoto. La creación inicial se limita a la configuración raíz del espacio de trabajo.",
+          "96f5609b04": "Inspecciona las definiciones de servidores MCP que los agents pueden usar mientras trabajan en este repo.",
           "55eea3ef47": "Configuraciones de MCP",
           "9ee215caf6": ".mcp.json",
           "1f3665e35a": "Configuración de MCP creada",
@@ -5551,16 +5551,16 @@
           "1861982430": "No se pudo cargar el estado de CLI.",
           "8af7a8bc38": "Los comandos apuntan al emulador activo del worktree actual. Las coordenadas están normalizadas de 0 a 1.",
           "c7f3fe0a6e": "Comandos comunes del emulador",
-          "d94ca6a623": "Permite a los agentes usar comandos de la CLI de Orca, incluido el control del emulador móvil.",
+          "d94ca6a623": "Permite a los agents usar comandos de la CLI de Orca, incluido el control del emulador móvil.",
           "67e19ee03c": "Skill Orca CLI",
           "aaf62a3dd2": "Instalado en",
-          "2fef055608": "Registra el comando de la CLI de Orca para que los agentes puedan controlar el emulador activo desde su shell.",
+          "2fef055608": "Registra el comando de la CLI de Orca para que los agents puedan controlar el emulador activo desde su shell.",
           "4f2205f3b6": "Habilitar CLI de Orca",
-          "ff4b7e65d6": "Permite que los agentes de codificación controlen el emulador móvil activo con comandos de la CLI de Orca.",
-          "2a674aa810": "Control del emulador móvil para agentes",
+          "ff4b7e65d6": "Permite que los agents de codificación controlen el emulador móvil activo con comandos de la CLI de Orca.",
+          "2a674aa810": "Control del emulador móvil para Agents",
           "cdeaed9e37": "Registré Orca CLI en PATH.",
           "3d34423e88": "Registrando la CLI de Orca",
-          "3be27641c9": "para que los comandos del emulador se puedan ejecutar desde shells de agentes.",
+          "3be27641c9": "para que los comandos del emulador se puedan ejecutar desde shells de agents.",
           "3941719a56": "Comprobando la CLI de Orca antes de abrir la configuración de la skill."
         },
         "MobileEmulatorExamples": {
@@ -5568,20 +5568,20 @@
           "c12b253997": "Copiar prompt de ejemplo",
           "d151e25078": "\"",
           "b525ff2b12": "\"",
-          "4daa95f25a": "Pega cualquiera de estos en Claude Code, Codex u otro agente en un proyecto donde esté instalado el skill Orca CLI.",
+          "4daa95f25a": "Pega cualquiera de estos en Claude Code, Codex u otro agent en un proyecto donde esté instalado el skill Orca CLI.",
           "0820b3f84f": "Pruébalo: prompts de ejemplo",
           "1f608e7d60": "No se pudo copiar el prompt.",
           "2b077b5544": "Prompt copiado."
         },
         "MobileEmulatorSettingsPane": {
-          "19d39113b6": "Permite que los agentes de codificación controlen el emulador móvil activo con comandos de la CLI de Orca.",
-          "f2f8d97bb6": "Control del emulador móvil para agentes",
+          "19d39113b6": "Permite que los agents de codificación controlen el emulador móvil activo con comandos de la CLI de Orca.",
+          "f2f8d97bb6": "Control del emulador móvil para Agents",
           "143961d031": "Dispositivo predeterminado",
           "8aec2f99a0": "Actualizar la disponibilidad del emulador",
           "ae1612c58c": "Disponibilidad",
-          "f9af91ea26": "Muestra la acción Nuevo emulador móvil y permite que los agentes se conecten al emulador activo.",
+          "f9af91ea26": "Muestra la acción Nuevo emulador móvil y permite que los agents se conecten al emulador activo.",
           "700ddbf9b1": "Habilitar emulador móvil",
-          "bc39d0f115": "Configura la compatibilidad con el emulador móvil para Orca y agentes de codificación.",
+          "bc39d0f115": "Configura la compatibilidad con el emulador móvil para Orca y agents de codificación.",
           "6593c9ddd3": "Emulador móvil",
           "a4f1c82d90": "Desactivado",
           "b5e2d93e01": "Comprobando...",
@@ -5591,7 +5591,7 @@
           "6d1483d4a0": "1 dispositivo emulador detectado.",
           "0a452d4d3b": "{{value0}} dispositivos emuladores detectados.",
           "f62a1bb759": "Orca seleccionará automáticamente un dispositivo emulador después de que se detecten los dispositivos.",
-          "b2fd62ea75": "Dispositivo predeterminado para nuevas pestañas del emulador y comandos de conexión de agentes. La selección automática prefiere un dispositivo que ya esté en ejecución."
+          "b2fd62ea75": "Dispositivo predeterminado para nuevas pestañas del emulador y comandos de conexión de agents. La selección automática prefiere un dispositivo que ya esté en ejecución."
         },
         "MobileNetworkInterfaceSection": {
           "63d5e4ae1e": "Regenera el código QR y escanéalo desde la aplicación móvil de Orca.",
@@ -5638,7 +5638,7 @@
           "b5a2ed83ff": "App Store",
           "c8491c17ef": "Controla Orca desde tu teléfono escaneando un código QR. Beta/vista previa temprana: espera errores y cambios importantes. Obtén la app para iOS en",
           "e7a3ae8c4e": "Móvil",
-          "174f4a3c6d": "Controla terminales y agentes desde tu teléfono.",
+          "174f4a3c6d": "Controla terminales y agents desde tu teléfono.",
           "1de96ec8a6": "Mostrar botón de Orca Mobile",
           "682293cadf": "Mostrar el botón de Orca Mobile en la parte superior de la barra lateral izquierda.",
           "d4f2b65f30": "Mostrar el acceso directo de Orca Mobile en la barra lateral."
@@ -5654,8 +5654,8 @@
           "88686e6ca8": "Sonido de notificación",
           "b6fc369244": "Un terminal en segundo plano emite un carácter de campana.",
           "591fe605b9": "Campana del terminal",
-          "55f901a59b": "Un agente de programación termina y queda inactivo.",
-          "ca76d06fd2": "Tarea del agente completada",
+          "55f901a59b": "Un agent de programación termina y queda inactivo.",
+          "ca76d06fd2": "Tarea del Agent completada",
           "deff6d30da": "Notificaciones nativas del sistema para eventos en segundo plano.",
           "841c8c549f": "Habilitar notificaciones",
           "0fadad17ce": "No se pudo reproducir el sonido de notificación",
@@ -5718,21 +5718,21 @@
           "80c6f2feb8": "Prompt de ejemplo copiado."
         },
         "OrchestrationPane": {
-          "52e0634e2c": "Pídele a un agente coordinador que use la orquestación para handoffs, handoffs de worktree y agentes secundarios secuenciales o paralelos.",
+          "52e0634e2c": "Pídele a un agent coordinador que use la orquestación para handoffs, handoffs de worktree y agents secundarios secuenciales o paralelos.",
           "ae79504732": "Cómo usarlo",
           "7bc082f4de": "Copiar comando de instalación",
           "832f1f3ee6": "¿Prefieres tu propia terminal?",
-          "9bedd2a6e5": "Permite a los agentes transferir contexto y coordinar el trabajo a través de Orca.",
+          "9bedd2a6e5": "Permite a los agents transferir contexto y coordinar el trabajo a través de Orca.",
           "07641b9768": "Skill de orquestación",
-          "2aacdb0517": "Coordina agentes de programación en handoffs, handoffs de worktree y trabajo de agentes secundarios.",
-          "191ac34567": "Orquestación de agentes"
+          "2aacdb0517": "Coordina agents de programación en handoffs, handoffs de worktree y trabajo de agents secundarios.",
+          "191ac34567": "Orquestación de Agents"
         },
         "OrchestrationSetupCard": {
-          "e7d2a5146c": "Permite a los agentes transferir contexto y coordinar el trabajo a través de Orca.",
+          "e7d2a5146c": "Permite a los agents transferir contexto y coordinar el trabajo a través de Orca.",
           "2777ff0fdc": "Skill de orquestación"
         },
         "OrchestrationSkillAgentCoverage": {
-          "6dec5ce2d2": "Cobertura de agentes",
+          "6dec5ce2d2": "Cobertura de Agents",
           "ffe13e36fb": "Falta",
           "1e8f8d8fae": "Listo"
         },
@@ -5740,7 +5740,7 @@
           "f08d45293d": "Copiar comando",
           "35550f3b3b": "Hecho",
           "1bdce1911e": "Copiar comando de instalación del skill de orquestación",
-          "b99f375eb2": "Ejecuta este comando en una terminal para instalar el skill de orquestación para tus agentes.",
+          "b99f375eb2": "Ejecuta este comando en una terminal para instalar el skill de orquestación para tus agents.",
           "2914abcfa2": "Instalar skill de orquestación",
           "d3dc559225": "No se pudo copiar el comando de instalación.",
           "239bf9132b": "Comando de instalación copiado."
@@ -5790,9 +5790,9 @@
           "3edf3deaf8": "¿Eliminar \"{{value0}}\"?",
           "9fcfc29519": "Insertar",
           "9b3e338d62": "Enter",
-          "4ccc63da87": "Agente",
+          "4ccc63da87": "Agent",
           "0252ddd578": "Sin texto de comando",
-          "7784912ed6": "repositorio",
+          "7784912ed6": "repo",
           "2bb9e38e93": "Sin título",
           "3eb9897ab0": "No hay comandos en los ámbitos seleccionados.",
           "38d61927e6": "No hay comandos rápidos guardados.",
@@ -5815,7 +5815,7 @@
           "bbbd6e0bc4": "Origen de comandos y orca.yaml",
           "c9bc1bfd8f": "Avanzado",
           "610d90fdbd": "Origen de comandos y detalles de orca.yaml.",
-          "52aef29e69": "Déjalo en blanco para usar el valor predeterminado del repositorio desde",
+          "52aef29e69": "Déjalo en blanco para usar el valor predeterminado del repo desde",
           "4084720f47": "Completar {{artifact_url}}",
           "13394103bd": "Comando personalizado de Issue de GitHub",
           "70ad20f883": "para la URL del Issue o PR vinculado.",
@@ -5843,7 +5843,7 @@
           "b2b06c7ce8": "Variables de entorno disponibles (pasa el cursor para ver más detalles):",
           "95a0411b3e": "plantilla",
           "175daba180": "Ejemplo",
-          "b20c5df6ca": "Agrega un archivo `orca.yaml` para habilitar valores predeterminados compartidos de configuración, archivado o automatización de Issues para este repositorio. Plantilla de ejemplo:",
+          "b20c5df6ca": "Agrega un archivo `orca.yaml` para habilitar valores predeterminados compartidos de configuración, archivado o automatización de Issues para este repo. Plantilla de ejemplo:",
           "56f9a4a1d0": "Usando `orca.yaml`",
           "623e0c9f31": "No se pudo analizar `orca.yaml`",
           "5a67e4793d": "No se detectó `orca.yaml`",
@@ -5851,16 +5851,16 @@
           "787ca433ef": "Define solo las claves admitidas: `scripts`, `setup`, `archive` e `issueCommand`.",
           "ecc73d9125": "Compara tu archivo con la plantilla funcional de abajo y copia esa estructura si hace falta.",
           "925f9e0dc4": "texto-primer plano",
-          "0cc712b823": "El archivo de configuración principal existe en la raíz del repositorio, pero Orca aún no pudo analizar las definiciones de hooks admitidas.",
+          "0cc712b823": "El archivo de configuración principal existe en la raíz del repo, pero Orca aún no pudo analizar las definiciones de hooks admitidas.",
           "c90b858573": "texto-ámbar-700 oscuro:texto-ámbar-300",
           "aba825233f": "El archivo contiene claves de configuración que esta versión de Orca no reconoce. Es posible que necesites actualizar Orca o revisar el archivo en busca de errores tipográficos.",
-          "ca424ff135": "Los valores predeterminados compartidos de hooks y automatización de Issues están definidos en el repositorio y disponibles para todos los que lo usan.",
+          "ca424ff135": "Los valores predeterminados compartidos de hooks y automatización de Issues están definidos en el repo y disponibles para todos los que lo usan.",
           "32f417fe17": "texto-esmeralda-700 oscuro:texto-esmeralda-300",
           "8bfe65fc60": "Usar comandos locales",
           "8d6c56bff8": "Ejecutar ambos",
           "0fa21e19ec": "Nombre del workspace, normalmente basado en el nombre de la rama.",
           "54c73d88d0": "Ruta al worktree que se está creando. Los comandos de configuración se ejecutan desde este directorio.",
-          "30952c4aa4": "Ruta al checkout principal del repositorio. Útil para copiar archivos compartidos, como .env, a un worktree.",
+          "30952c4aa4": "Ruta al checkout principal del repo. Útil para copiar archivos compartidos, como .env, a un worktree.",
           "9b821fa19d": "# p.ej. echo \"Limpiando $ORCA_WORKSPACE_NAME\"",
           "6f90ebe3fd": "Se ejecuta antes de archivar o eliminar un worktree.",
           "a3fc966677": "# p. ej. pnpm install cp \"$ORCA_ROOT_PATH/.env\" \"$ORCA_WORKTREE_PATH/.env\"",
@@ -5868,7 +5868,7 @@
           "8561b0665f": "orca.yaml primero, luego tus comandos locales.",
           "0e8b2a520d": "Ignorar orca.yaml; ejecutar solo tus comandos locales.",
           "83dc78202a": "Solo local",
-          "29397e8bbc": "Ejecutar solo comandos confirmados en el repositorio; ignorar comandos locales.",
+          "29397e8bbc": "Ejecutar solo comandos confirmados en el repo; ignorar comandos locales.",
           "d88b6ff88f": "orca.yaml solamente",
           "99e3264a49": "Ejecutar la configuración solo cuando lo elijas.",
           "15debc1fd9": "Saltar por defecto",
@@ -5892,11 +5892,11 @@
           "81057d5f71": "Guardando...",
           "da37d6f10e": "Copiar",
           "3149964b66": "Copiado",
-          "waitForSetupBeforeAgent": "Espera a que se complete la configuración antes de iniciar el agente",
-          "waitForSetupBeforeAgentHelp": "Activa esto cuando la configuración instale dependencias, servidores MCP o archivos de configuración que el agente necesite durante el inicio."
+          "waitForSetupBeforeAgent": "Espera a que se complete la configuración antes de iniciar el agent",
+          "waitForSetupBeforeAgentHelp": "Activa esto cuando la configuración instale dependencias, servidores MCP o archivos de configuración que el agent necesite durante el inicio."
         },
         "RepositoryIconPicker": {
-          "2b7d27b93c": "Usar {{value0}} como color del repositorio",
+          "2b7d27b93c": "Usar {{value0}} como color del repo",
           "fde066a63b": "Las cargas PNG deben tener un tamaño de 256 KB o menos.",
           "cc1286e263": "Favicon",
           "03ca1a4e9b": "ejemplo.com",
@@ -5906,16 +5906,16 @@
           "c490787d24": "Emoji",
           "b2d7fd2116": "Icono",
           "2d8bd302fa": "Avatar",
-          "913c55833d": "Color de repositorio personalizado {{value0}}",
-          "0e5f0693c1": "Elige un color de repositorio personalizado",
+          "913c55833d": "Color de repo personalizado {{value0}}",
+          "0e5f0693c1": "Elige un color de repo personalizado",
           "642dc29c6d": "Color",
           "549d126081": "Restablecer",
-          "4e2a14f967": "Icono del repositorio",
-          "d71df44587": "No se pudo resolver el repositorio de GitHub.",
-          "f79972271a": "No se encontró ningún control remoto de GitHub para este repositorio.",
+          "4e2a14f967": "Icono del Repo",
+          "d71df44587": "No se pudo resolver el repo de GitHub.",
+          "f79972271a": "No se encontró ningún control remoto de GitHub para este repo.",
           "4d039317f4": "Favicon del sitio web",
           "acf31559a0": "Ingresa una URL de sitio web válida.",
-          "868c5c9b56": "No se pudo importar el icono del repositorio"
+          "868c5c9b56": "No se pudo importar el icono del repo"
         },
         "RepositoryPane": {
           "15a99d9b9f": "Las rutas relativas se resuelven desde la raíz de este proyecto.",
@@ -5988,8 +5988,8 @@
           "548a6e1281": "Plantilla de comando",
           "7a3a8e431d": "Argumentos CLI",
           "2b2f38652b": "Comando personalizado",
-          "0ffb081b3a": "Usar agente predeterminado",
-          "f4310cf63f": "Agente",
+          "0ffb081b3a": "Usar agent predeterminado",
+          "f4310cf63f": "Agent",
           "1cd88d470a": "Personalizar",
           "403876bb48": "Usar global",
           "f0aa2cfaea": "Recetas de acción"
@@ -5997,7 +5997,7 @@
         "RepositorySourceControlAiCustomCommand": {
           "0704dd55cd": "Comando de repositorio",
           "e56668c291": "Usar global",
-          "fbb77e122a": "Fallback del repositorio para acciones de texto que seleccionan Comando personalizado.",
+          "fbb77e122a": "Fallback del Repo para acciones de texto que seleccionan Comando personalizado.",
           "ebffc5a28c": "Comando personalizado",
           "f9941f0caf": "p. ej., ollama run llama3.1 {prompt}"
         },
@@ -6165,7 +6165,7 @@
           "d7e3f62d70": "Privacidad y telemetría",
           "9b83cc62c2": "Acceso a la privacidad de macOS para herramientas de desarrollo lanzadas en terminales.",
           "65660d4548": "Permisos de macOS",
-          "c6c01ac209": "Controla terminales y agentes desde tu teléfono.",
+          "c6c01ac209": "Controla terminales y agents desde tu teléfono.",
           "c40dadaac8": "Móvil",
           "c2ee313198": "Usa máquinas existentes por SSH para archivos, terminales, Git y espacios de trabajo.",
           "9b02492d1f": "Hosts SSH",
@@ -6176,7 +6176,7 @@
           "954a8f5aef": "Estadísticas y uso",
           "a737a4bb22": "Atajos de teclado para acciones comunes.",
           "23bf7a1ad4": "Atajos",
-          "7210ac09c4": "Notificaciones de escritorio nativas para la actividad de los agentes y eventos de terminal.",
+          "7210ac09c4": "Notificaciones de escritorio nativas para la actividad de los agents y eventos de terminal.",
           "9907545fa3": "Notificaciones",
           "d0b7021d64": "Comportamiento de selección y edición.",
           "d7a3e635b6": "Entrada y edición",
@@ -6184,7 +6184,7 @@
           "2b4474780a": "Apariencia",
           "3d9adfe6a5": "Pestañas globales de terminal, navegador y Markdown.",
           "3eb22a3ada": "Espacio de trabajo flotante",
-          "01f9d36292": "Configura la compatibilidad con el emulador móvil para Orca y agentes de codificación.",
+          "01f9d36292": "Configura la compatibilidad con el emulador móvil para Orca y agents de codificación.",
           "f75daf1002": "Emulador móvil",
           "ad9788036f": "Página de inicio, enrutamiento de enlaces y cookies de sesión.",
           "c46215ea03": "Navegador",
@@ -6200,18 +6200,18 @@
           "c9ca101a3b": "Integraciones",
           "f9b77539fd": "Valores predeterminados del workspace, configuración de la app y mantenimiento.",
           "7807c11c4d": "General",
-          "6855b0f77d": "Termina los flujos de trabajo principales que hacen que Orca sea útil para el trabajo de agentes en paralelo.",
+          "6855b0f77d": "Termina los flujos de trabajo principales que hacen que Orca sea útil para el trabajo de agents en paralelo.",
           "6d119427ef": "Lista de verificación de incorporación",
           "eb1176a14e": "Dictado local de voz a texto con modelos en el dispositivo.",
           "5063bb47a5": "Voz",
-          "7118953f14": "Permite que los agentes controlen cualquier app en tu computadora.",
+          "7118953f14": "Permite que los agents controlen cualquier app en tu computadora.",
           "c9841721cb": "Computer Use",
-          "475980f53d": "Coordina varios agentes de codificación a través de Orca.",
+          "475980f53d": "Coordina varios agents de codificación a través de Orca.",
           "00c3a7950d": "Orquestación",
           "21f09426ea": "Opcional. Orca funciona con tus inicios de sesión de proveedores existentes; agrega cuentas solo si quieres que Orca te ayude a cambiar entre ellas.",
           "ad6c529693": "Cuentas de proveedores de IA",
-          "ec1ba547f7": "Administra agentes de IA, define uno predeterminado y personaliza comandos.",
-          "8afa676615": "Agentes",
+          "ec1ba547f7": "Administra agents de IA, define uno predeterminado y personaliza comandos.",
+          "8afa676615": "Agents",
           "add3b97ee6": "\"",
           "3c88ec55d6": "No se encontraron configuraciones para \"",
           "c7ad095d96": "Cargando ajustes...",
@@ -6298,10 +6298,10 @@
           "fb09da4345": "Plantilla de comando",
           "2cb4bb7e5d": "Argumentos CLI",
           "0740d30915": "Comando personalizado",
-          "ee0e5c2a48": "Usar agente predeterminado",
-          "bf84dea6af": "Usa variables solo cuando quieras que Orca inyecte contexto. Deja el agente predeterminado para seguir tu preferencia normal de agente.",
+          "ee0e5c2a48": "Usar agent predeterminado",
+          "bf84dea6af": "Usa variables solo cuando quieras que Orca inyecte contexto. Deja el agent predeterminado para seguir tu preferencia normal de agent.",
           "a79c567194": "Recetas de acciones",
-          "cf01d41bce": "Agente, argumentos CLI y plantilla de comando usados por cada botón de IA de control de código fuente.",
+          "cf01d41bce": "Agent, argumentos CLI y plantilla de comando usados por cada botón de IA de control de código fuente.",
           "a9359c8aa9": "Error desconocido",
           "b5f46664d3": "No se pudo guardar el valor predeterminado de la acción de IA de control de código fuente: {{value0}}",
           "d18d665e12": "Guardar",
@@ -6317,7 +6317,7 @@
           "d74fdc776c": "comando",
           "673369fe0c": "CLI",
           "db9bd75d10": "argumentos",
-          "926d58e87f": "agente"
+          "926d58e87f": "agent"
         },
         "SparsePresetSettingsSection": {
           "6fa754d20f": "Eliminar",
@@ -6328,7 +6328,7 @@
           "388513be2d": "Presets de sparse checkout",
           "a05bc9183f": "Guardar preset",
           "2d7d45e991": "Cancelar",
-          "c240a16f25": "Usa rutas relativas al repositorio como packages/web o apps/api.",
+          "c240a16f25": "Usa rutas relativas al repo como packages/web o apps/api.",
           "fde7ff2cc3": "packages/web shared/ui",
           "caf33029cc": "Directorios",
           "3b6f1abd3e": "p. ej., web-only",
@@ -6434,8 +6434,8 @@
           "3b01ca44a0": "Opcional. Se usa para túneles (p. ej., Cloudflare Access, ProxyCommand).",
           "f42d844544": "p. ej., cloudflared access ssh --hostname %h",
           "c7d0e18ecb": "Comando proxy",
-          "cb91f6375c": "Opcional. Se usa el agente SSH de forma predeterminada.",
-          "d6a5f2ee5c": "~/.ssh/id_ed25519 (dejar vacío para el agente SSH)",
+          "cb91f6375c": "Opcional. Se usa el agent SSH de forma predeterminada.",
+          "d6a5f2ee5c": "~/.ssh/id_ed25519 (dejar vacío para el agent SSH)",
           "63c0c145c1": "Archivo de identidad",
           "c94cfa634c": "Puerto",
           "47e082bc17": "deploy",
@@ -6580,8 +6580,8 @@
           "cc8c5ca224": "Predeterminado de Windows",
           "d78fc4fdef": "Cargando distribuciones",
           "219aaa59f4": "Distribución WSL",
-          "2503f1e86b": "Se utiliza para nuevos paneles de terminal WSL y detección de agentes locales cuando el espacio de trabajo activo aún no está dentro de WSL.",
-          "5fe79a5e56": "Elija qué distribución WSL utilizarán los nuevos terminales WSL y los análisis de agentes locales.",
+          "2503f1e86b": "Se utiliza para nuevos paneles de terminal WSL y detección de agents locales cuando el espacio de trabajo activo aún no está dentro de WSL.",
+          "5fe79a5e56": "Elija qué distribución WSL utilizarán los nuevos terminales WSL y los análisis de agents locales.",
           "b637dd57a7": "WSL",
           "f61ac77f16": "Git Bash",
           "0f1b8669e6": "Símbolo del sistema",
@@ -6591,8 +6591,8 @@
           "bd68f3170d": "Elige la shell predeterminada para nuevos paneles de terminal en Windows.",
           "a55eee649f": "Shell predeterminada para nuevos paneles de terminal en Windows.",
           "87e678a8af": "Shell de Windows",
-          "05efc0bada": "verdadero",
-          "348246b06f": "FALSO",
+          "05efc0bada": "true",
+          "348246b06f": "false",
           "5936387ddd": "auto",
           "adbafefe56": "personalizado",
           "16753eea48": "En Windows, hacer clic derecho pega el portapapeles. Ctrl+clic derecho abre el menú contextual.",
@@ -6813,7 +6813,7 @@
             "7118d2f908": "credenciales",
             "933deaf732": "OAuth",
             "8630464352": "CLI",
-            "e8e1ff3887": "Gemini",
+            "e8e1ff3887": "gemini",
             "bada4a3218": "Extrae las credenciales de OAuth de tu instalación local de la CLI de Gemini para autenticarte con Google.",
             "d819755b02": "Usar credenciales de la CLI de Gemini",
             "35b461d817": "iniciar sesión",
@@ -6836,7 +6836,7 @@
             "e02c136ad0": "autenticación",
             "9f70aa706c": "proveedor",
             "488a7e9206": "Linux",
-            "0b4d948eb5": "WSL",
+            "0b4d948eb5": "wsl",
             "bdbd1e668e": "Windows",
             "593720c17f": "ubicación",
             "b84a5b0c8a": "Elija si las cuentas de proveedor se inspeccionan y agregan en este dispositivo o en WSL.",
@@ -6872,14 +6872,14 @@
             "719f53350c": "ruta",
             "839e82c81f": "detectar",
             "f622b8eb2a": "Linux",
-            "d608654c03": "WSL",
+            "d608654c03": "wsl",
             "77c02fa3c3": "Windows",
             "d2952dfd74": "ubicación",
-            "96ba2373b6": "agente",
-            "cbdd7f3b9e": "Elige si los agentes instalados se detectan en este dispositivo o en WSL.",
-            "ef804b7337": "Ubicación del agente",
-            "01926b9d8c": "Configura agentes de codificación de IA, el agente predeterminado y anulaciones de comandos.",
-            "bb9ad95777": "Agentes",
+            "96ba2373b6": "agent",
+            "cbdd7f3b9e": "Elige si los agents instalados se detectan en este dispositivo o en WSL.",
+            "ef804b7337": "Ubicación del Agent",
+            "01926b9d8c": "Configura agents de codificación de IA, el agent predeterminado y anulaciones de comandos.",
+            "bb9ad95777": "Agents",
             "d8f3a8b8a0": "predeterminado",
             "167daeb5e9": "comando",
             "be59907510": "anular",
@@ -6905,8 +6905,8 @@
             "c1317fe641": "restaurar",
             "5963143e00": "ajustes",
             "042c551bc5": "configuración",
-            "f412abbba5": "Claude",
-            "5ded38b843": "Codex",
+            "f412abbba5": "claude",
+            "5ded38b843": "codex",
             "be7ea3553b": "pestaña",
             "6956646a1e": "título",
             "32836788b0": "título generado",
@@ -6918,10 +6918,10 @@
             "8a17fd6026": "estable",
             "a79d266f71": "sesión",
             "afbf35be68": "sesión estable",
-            "agentPermissions": "Permisos de agentes",
-            "agentPermissionsDescription": "Cambia los permisos predeterminados de los agentes entre Yolo y Manual.",
-            "agentRuntime": "Runtime del agente",
-            "agentRuntimeDescription": "Elige si los agentes se detectan y ejecutan en Windows o en WSL de forma predeterminada."
+            "agentPermissions": "Permisos de Agents",
+            "agentPermissionsDescription": "Cambia los permisos predeterminados de los agents entre Yolo y Manual.",
+            "agentRuntime": "Runtime del Agent",
+            "agentRuntimeDescription": "Elige si los agents se detectan y ejecutan en Windows o en WSL de forma predeterminada."
           }
         },
         "appearance": {
@@ -6966,9 +6966,9 @@
             "bce3ac317a": "git",
             "7164edf71a": "Atenúe los archivos que coincidan con .gitignore en el explorador de archivos.",
             "f8129fb544": "Mostrar archivos ignorados por Git",
-            "2f12e1aa3a": "interfaz de usuario",
+            "2f12e1aa3a": "ui",
             "5095258df2": "interfaz",
-            "fab91464dd": "IDE",
+            "fab91464dd": "ide",
             "8b36fb3f64": "tipografía",
             "a0e09aed9c": "tipo de letra",
             "24094af355": "fuente",
@@ -7070,7 +7070,7 @@
                 "50139297e6": "prompt integrado",
                 "502aa57681": "instrucciones",
                 "40d21f2efc": "prompt",
-                "672387fb77": "Plantilla de comando del agente utilizada al generar nombres de rama.",
+                "672387fb77": "Plantilla de comando del Agent utilizada al generar nombres de rama.",
                 "722551c5b3": "Plantilla de comando para nombre de rama",
                 "f41833025e": "generar",
                 "ed677944cc": "worktree",
@@ -7079,7 +7079,7 @@
                 "7803423877": "auto",
                 "55a1860e47": "renombrar",
                 "9319bd9827": "rama",
-                "ea94b9da8a": "Renombra automáticamente la rama generada según el trabajo cuando se inicia un agente.",
+                "ea94b9da8a": "Renombra automáticamente la rama generada según el trabajo cuando se inicia un agent.",
                 "427f2cd1eb": "Renombrar rama automáticamente"
               }
             }
@@ -7156,16 +7156,16 @@
               "02837ee497": "sesión",
               "fb8178824f": "cookies",
               "ba4eb53b72": "uso del navegador",
-              "2fb24d17db": "Importa cookies de Chrome, Edge u otros navegadores para que los agentes puedan reutilizar tus inicios de sesión.",
+              "2fb24d17db": "Importa cookies de Chrome, Edge u otros navegadores para que los agents puedan reutilizar tus inicios de sesión.",
               "614c756ab1": "Importar cookies del navegador",
               "cee44fb442": "automatización",
-              "a57c2172dc": "navegador-agente",
+              "a57c2172dc": "navegador-agent",
               "6ea88e5206": "npx",
               "f5b8fdddf5": "orca-cli",
               "e5a784bc54": "instalar",
               "9d97446873": "agent",
               "a2d489263e": "skill",
-              "a7e82445fa": "Instala el skill Browser Use para que los agentes puedan controlar el navegador de Orca.",
+              "a7e82445fa": "Instala el skill Browser Use para que los agents puedan controlar el navegador de Orca.",
               "a1414dcefb": "Instalar skill Browser Use",
               "e56c7b55c9": "configuración",
               "034c5e8d7f": "habilitar",
@@ -7174,7 +7174,7 @@
               "30c74aaa1f": "PATH",
               "ff05cbc344": "orca",
               "85fab5e12c": "CLI",
-              "890ddf943d": "Registra la CLI de Orca para que los agentes puedan controlar el navegador.",
+              "890ddf943d": "Registra la CLI de Orca para que los agents puedan controlar el navegador.",
               "50f0860e18": "Habilitar CLI de Orca"
             }
           }
@@ -7204,14 +7204,14 @@
                 "57c851a68c": "CLI",
                 "61117e57f3": "argumentos",
                 "0f29331fed": "argumentos",
-                "18b6d38835": "Agente, argumentos de CLI y plantilla de comando usados por cada botón de IA de control de código fuente.",
+                "18b6d38835": "Agent, argumentos de CLI y plantilla de comando usados por cada botón de IA de control de código fuente.",
                 "3c4e5e5938": "Recetas de acción",
                 "ee14a9e9f7": "activado",
                 "82109d627d": "control de código fuente",
                 "542e1a00a7": "codex",
                 "f121bec167": "claude",
                 "93e5210da8": "mensaje",
-                "c33cb1b982": "IA",
+                "c33cb1b982": "ai",
                 "0b946b2abe": "Agrega recetas de acciones para commit, pull request, nombre de rama y correcciones de control de código fuente.",
                 "24dbdfca78": "Mostrar acciones de IA para control de código fuente"
               }
@@ -7227,7 +7227,7 @@
               "26c1290d83": "grabación de pantalla",
               "82f01c2d2c": "accesibilidad",
               "fefb452f5b": "uso de la computadora",
-              "9210db582b": "Permite que los agentes inspeccionen capturas de pantalla y controlen aplicaciones locales cuando lo pidas.",
+              "9210db582b": "Permite que los agents inspeccionen capturas de pantalla y controlen aplicaciones locales cuando lo pidas.",
               "442bec10fe": "Uso de la computadora"
             }
           }
@@ -7243,7 +7243,7 @@
               "c4a4a02ea4": "USB",
               "fa3239cd42": "red local",
               "acad3d4743": "Permitir que las herramientas del dispositivo y de la red local se utilicen desde sesiones de terminal.",
-              "3e0131e45d": "iCloud",
+              "3e0131e45d": "icloud",
               "ce07159ff5": "escritorio",
               "a0c19119fb": "descargas",
               "4438f81bfa": "documentos",
@@ -7300,16 +7300,16 @@
             "268e99d957": "resaltado",
             "01567f19ca": "atención",
             "9bb3bd5098": "terminal",
-            "11877246fc": "Resaltado persistente del panel para eventos de timbre de terminal y finalización de agentes.",
+            "11877246fc": "Resaltado persistente del panel para eventos de timbre de terminal y finalización de agents.",
             "9e4ddf776d": "Atención de terminal",
             "fe5688b761": "barra lateral",
             "ca5d1f3f46": "línea de tiempo",
             "d01b3882ba": "notificaciones",
             "244a0ecd3d": "actividad",
-            "92a9357d1f": "vista de agentes",
-            "fa72e71f05": "agentes",
-            "4d63251595": "Feed en hilos en la barra lateral izquierda para finalizaciones de agentes y estados bloqueantes.",
-            "ccc5548ac5": "Vista de agentes",
+            "92a9357d1f": "vista de agents",
+            "fa72e71f05": "agents",
+            "4d63251595": "Feed en hilos en la barra lateral izquierda para finalizaciones de agents y estados bloqueantes.",
+            "ccc5548ac5": "Vista de Agents",
             "9af7a518db": "personaje",
             "791fefc0b0": "esquina",
             "65df471ab2": "animado",
@@ -7320,13 +7320,13 @@
             "6b5a56ac35": "Mascota animada flotante en la esquina inferior derecha.",
             "87d99e634b": "Mascota",
             "agentHibernation": {
-              "agent": "agente",
-              "agents": "agentes",
-              "description": "Detiene los terminales de agentes en segundo plano que estén inactivos después del intervalo configurado y reanuda las sesiones compatibles cuando se vuelven a abrir. La suspensión de agentes conserva las opciones de inicio de los agentes iniciados por Orca; los agentes iniciados manualmente pueden reanudarse con los valores predeterminados actuales de Orca.",
+              "agent": "agent",
+              "agents": "agents",
+              "description": "Detiene los terminales de agents en segundo plano que estén inactivos después del intervalo configurado y reanuda las sesiones compatibles cuando se vuelven a abrir. La suspensión de agents conserva las opciones de inicio de los agents iniciados por Orca; los agents iniciados manualmente pueden reanudarse con los valores predeterminados actuales de Orca.",
               "minutes": "minutos",
               "sleep": "suspender",
               "terminal": "terminal",
-              "title": "Suspensión de agentes"
+              "title": "Suspensión de Agents"
             },
             "newWorktreeCardStyle": {
               "card": "tarjeta",
@@ -7388,15 +7388,15 @@
             "95b63edde7": "claude",
             "41c2f9a025": "por defecto",
             "8ea37a05bc": "agent",
-            "e2da948f59": "Preseleccione un agente de codificación de IA en el compositor del nuevo espacio de trabajo.",
-            "db11502270": "Agente predeterminado",
+            "e2da948f59": "Preseleccione un agent de codificación de IA en el compositor del nuevo espacio de trabajo.",
+            "db11502270": "Agent predeterminado",
             "3462308bd3": "tokens",
             "660528b048": "costo",
             "585beac3f8": "ttl",
             "0efc9d96ad": "prompt",
             "939b80f5fd": "temporizador",
             "b2601a778c": "caché",
-            "40c9585e43": "Temporizador de cuenta regresiva que muestra el tiempo hasta que caduque la caché de prompts (agentes Claude).",
+            "40c9585e43": "Temporizador de cuenta regresiva que muestra el tiempo hasta que caduque la caché de prompts (agents Claude).",
             "1e0f28c6f1": "Temporizador de caché de prompts",
             "e49e739a59": "descargar",
             "c9d8c1ce66": "notas de lanzamiento",
@@ -7405,10 +7405,10 @@
             "79ff46776e": "Busque actualizaciones de la aplicación e instale una versión más reciente de Orca.",
             "e15af4eb64": "Buscar actualizaciones",
             "6382fe9724": "npx",
-            "baa263d6d8": "agentes",
+            "baa263d6d8": "agents",
             "bda108e66c": "skill",
-            "244e3fb4c8": "Instala el skill de Orca para que los agentes sepan usar la CLI de Orca.",
-            "2d9f7b42df": "Skill de agente",
+            "244e3fb4c8": "Instala el skill de Orca para que los agents sepan usar la CLI de Orca.",
+            "2d9f7b42df": "Skill de Agent",
             "0a00691c06": "comando de shell",
             "dbeb1f348e": "comando",
             "88d3df9ce9": "terminal",
@@ -7496,7 +7496,7 @@
             "93f6ec5e70": "directorio",
             "9bde064915": "subcarpeta",
             "ec5049e510": "anidado",
-            "b9cffd374d": "Crea espacios de trabajo dentro de una subcarpeta con el nombre del repositorio.",
+            "b9cffd374d": "Crea espacios de trabajo dentro de una subcarpeta con el nombre del repo.",
             "141f71c69f": "Espacios de trabajo anidados",
             "7887a2c262": "carpeta",
             "7baf524b04": "espacio de trabajo",
@@ -7667,7 +7667,7 @@
               "bbe4267416": "tipo de emulador",
               "64494f03c3": "adjuntar emulador",
               "6f728f1456": "tap del emulador",
-              "f8b871d655": "CLI de agente",
+              "f8b871d655": "CLI de agent",
               "2e0b45b2ba": "Usa comandos de Orca CLI para listar, adjuntar, tocar y escribir en un emulador móvil.",
               "ea3eac39bb": "Control por CLI de Agent",
               "8ef0f08d36": "runtime",
@@ -7683,7 +7683,7 @@
               "1dc8c52ffa": "iPhone predeterminado",
               "ab4814f3c5": "simulador predeterminado",
               "54184cb9c5": "Dispositivo emulador predeterminado",
-              "b8ddd13195": "emulador de agente",
+              "b8ddd13195": "emulador de agent",
               "1ad6fb6230": "dispositivo predeterminado",
               "ac0a985873": "skill del emulador",
               "9353854ff3": "emulador de Orca",
@@ -7696,7 +7696,7 @@
               "2d67f708ce": "simulador",
               "c5eca29310": "simulador de iOS",
               "25159de808": "emulador móvil",
-              "9595354cff": "Configura la compatibilidad con el emulador móvil para Orca y agentes de codificación.",
+              "9595354cff": "Configura la compatibilidad con el emulador móvil para Orca y agents de codificación.",
               "cdd3c31918": "Emulador móvil"
             }
           },
@@ -7723,7 +7723,7 @@
               "d0c89bc4a9": "overlay",
               "87711f4b8f": "VPN",
               "16bff559a0": "tailnet",
-              "c690e3ee38": "Tailscale",
+              "c690e3ee38": "tailscale",
               "a023683767": "interfaz",
               "7b37c2e557": "red",
               "3190ef67a4": "Elija qué dirección de red usar para el emparejamiento móvil.",
@@ -7747,7 +7747,7 @@
               "b730ff7049": "experimental",
               "8d4ba0ef09": "beta",
               "6bfa001752": "APK",
-              "a7eececc1d": "Android",
+              "a7eececc1d": "android",
               "7e801801ac": "remoto",
               "0b7e585cb9": "escanear",
               "59b1d75fd1": "código",
@@ -7755,7 +7755,7 @@
               "cf2c93b479": "emparejar",
               "f4ed142753": "teléfono",
               "f213400800": "móvil",
-              "671eb4173c": "Controla terminales y agentes desde tu teléfono.",
+              "671eb4173c": "Controla terminales y agents desde tu teléfono.",
               "ffd52a96e4": "Móvil",
               "1de96ec8a6": "Mostrar botón de Orca Mobile",
               "682293cadf": "Mostrar el botón de Orca Mobile en la parte superior de la barra lateral izquierda."
@@ -7798,7 +7798,7 @@
             "dd9d3e5f0f": "idle",
             "5f7472d3fb": "completado",
             "7fa07e9600": "agent",
-            "10d83ef8dc": "Notifica cuando un agente de codificación pase de estar trabajando a estar inactivo.",
+            "10d83ef8dc": "Notifica cuando un agent de codificación pase de estar trabajando a estar inactivo.",
             "bdc1edaeb4": "Tarea de Agent completada",
             "adbc3a0fcf": "nativo",
             "72539aede4": "sistema",
@@ -7809,7 +7809,7 @@
         },
         "orchestration": {
           "search": {
-            "f5d39af41e": "agentes secundarios",
+            "f5d39af41e": "agents secundarios",
             "c766a01978": "handoff",
             "08c65b12a2": "ejemplos",
             "f278fd04db": "codex",
@@ -7821,11 +7821,11 @@
             "eee028ae14": "dispatch",
             "9a5ebdca31": "mensajería",
             "91fc8ab7e5": "coordinación",
-            "13ba5c6cbd": "agentes",
+            "13ba5c6cbd": "agents",
             "d86705ba77": "multi-agent",
             "a7f76b4ca7": "orquestación",
-            "e05ff36753": "Coordina varios agentes de codificación mediante mensajería, DAG de tareas, dispatch y controles de decisión.",
-            "c34045764e": "Orquestación de agentes"
+            "e05ff36753": "Coordina varios agents de codificación mediante mensajería, DAG de tareas, dispatch y controles de decisión.",
+            "c34045764e": "Orquestación de Agents"
           }
         },
         "privacy": {
@@ -7835,7 +7835,7 @@
             "d8191ae5ca": "variable de entorno",
             "94e04427f6": "env",
             "664f1a8984": "integración continua",
-            "5854a5c752": "CI",
+            "5854a5c752": "ci",
             "69637f4dc4": "orca_telemetry_disabled",
             "058550f6bc": "do_not_track",
             "83a6cd79b3": "no rastrear",
@@ -7869,7 +7869,7 @@
               "0b78c4a165": "iniciar",
               "2d8aff42be": "ejecutar",
               "1c5bdcd0f2": "repositorio",
-              "89d2a9ad9f": "repositorio",
+              "89d2a9ad9f": "repo",
               "f58b92a48f": "proyecto",
               "8bf43c2dad": "global",
               "a26ecdb77b": "snippet",
@@ -7945,7 +7945,7 @@
             "8068d8d0f1": "PR",
             "5ff7fe1ade": "pull request",
             "eec39b3de6": "mensaje de commit",
-            "cfad7ce5f3": "IA",
+            "cfad7ce5f3": "ai",
             "a47f51127e": "control de código fuente",
             "6cc5c65e64": "Anulaciones de generación de git específicas del proyecto.",
             "eec3995dc6": "Autor de Git AI",
@@ -8029,7 +8029,7 @@
             "4811a8264a": "terminal primero",
             "afda131738": "orca primero",
             "0ecfc47434": "conflicto",
-            "0f8cb15582": "agente",
+            "0f8cb15582": "agent",
             "f1adebbe8c": "shell",
             "7f1b38f59a": "TUI",
             "7e3fc707aa": "terminal",
@@ -8095,7 +8095,7 @@
               "62d1208b90": "osc 52",
               "459fea094a": "Permite que los programas del terminal copien al portapapeles del sistema mediante OSC 52, incluso por SSH.",
               "74db8721e4": "Permitir escrituras TUI en el portapapeles (OSC 52)",
-              "4043e294d2": "GNOME",
+              "4043e294d2": "gnome",
               "cf83ac3dbd": "Linux",
               "737cef6de1": "x11",
               "e87c6d776d": "automático",
@@ -8289,7 +8289,7 @@
               "keyword_custom": "personalizado"
             },
             "ask_before_closing_running_terminals_title": "Preguntar antes de cerrar terminales en ejecución",
-            "ask_before_closing_running_terminals_description": "Muestra una confirmación antes de cerrar un terminal que tiene un comando o agente en ejecución.",
+            "ask_before_closing_running_terminals_description": "Muestra una confirmación antes de cerrar un terminal que tiene un comando o agent en ejecución.",
             "scrollSpeed": {
               "title": "Velocidad de desplazamiento",
               "description": "Ajusta el desplazamiento normal del terminal, el desplazamiento rápido con modificador y la velocidad de rueda en TUI de pantalla completa."
@@ -8316,7 +8316,7 @@
               "2b4a340ce0": "distribución",
               "02c772582a": "Linux",
               "6e3adf4cba": "wsl",
-              "978457945b": "Elija qué distribución WSL utilizarán los nuevos terminales WSL y los análisis de agentes locales.",
+              "978457945b": "Elija qué distribución WSL utilizarán los nuevos terminales WSL y los análisis de agents locales.",
               "1f402b3651": "Distribución WSL",
               "d57f870938": "avanzado",
               "4af2f7526e": "versión",
@@ -8373,14 +8373,14 @@
                 "options": {
                   "commitMessage": "Genera el mensaje de commit a partir de cambios staged.",
                   "pullRequest": "Genera el título y la descripción de la review alojada.",
-                  "branchName": "Renombra ramas creadas por Orca a partir de la tarea inicial del agente.",
-                  "fixCommitFailure": "Inicia un agente cuando falla un hook de commit o un git commit.",
-                  "fixChecks": "Inicia un agente a partir de checks fallidos de una review alojada.",
-                  "resolveConflicts": "Inicia un agente para conflictos de merge locales o de una review alojada.",
+                  "branchName": "Renombra ramas creadas por Orca a partir de la tarea inicial del agent.",
+                  "fixCommitFailure": "Inicia un agent cuando falla un hook de commit o un git commit.",
+                  "fixChecks": "Inicia un agent a partir de checks fallidos de una review alojada.",
+                  "resolveConflicts": "Inicia un agent para conflictos de merge locales o de una review alojada.",
                   "customCommand": "Comando personalizado",
                   "supportedAgents": "Agentes compatibles con esta receta: {{value0}}.",
-                  "unsupportedSavedAgent": "{{value0}} no puede ejecutar esta acción de generación de texto. Elige uno de los agentes compatibles a continuación.",
-                  "resolveComments": "Inicia un agente a partir de comentarios de PR o MR sin resolver seleccionados.",
+                  "unsupportedSavedAgent": "{{value0}} no puede ejecutar esta acción de generación de texto. Elige uno de los agents compatibles a continuación.",
+                  "resolveComments": "Inicia un agent a partir de comentarios de PR o MR sin resolver seleccionados.",
                   "fixPushFailure": "Start an agent when a pre-push hook or git push fails."
                 }
               }
@@ -8388,17 +8388,17 @@
           }
         },
         "agent-awake-copy": {
-          "e5995ce268": "Mantener la computadora activa mientras los agentes están trabajando",
-          "95d3031db2": "Mantiene esta computadora y la pantalla activas mientras los agentes están trabajando. El comportamiento al cerrar la tapa sigue la configuración de energía de este dispositivo.",
-          "a42f6fbdd8": "Mantiene esta computadora y la pantalla activas mientras los agentes están trabajando. Orca también le pide a este dispositivo que permanezca activo cuando la tapa está cerrada, sujeto a su política de energía."
+          "e5995ce268": "Mantener la computadora activa mientras los agents están trabajando",
+          "95d3031db2": "Mantiene esta computadora y la pantalla activas mientras los agents están trabajando. El comportamiento al cerrar la tapa sigue la configuración de energía de este dispositivo.",
+          "a42f6fbdd8": "Mantiene esta computadora y la pantalla activas mientras los agents están trabajando. Orca también le pide a este dispositivo que permanezca activo cuando la tapa está cerrada, sujeto a su política de energía."
         },
         "agent-status-hooks-copy": {
-          "7707c15abb": "Hooks de estado del agente",
+          "7707c15abb": "Hooks de estado del Agent",
           "a68a642835": "Muestra los estados trabajando, esperando y completado en Orca. Desactívalo para quitar los hooks administrados por Orca y dejar de reinstalarlos."
         },
         "agent-generated-tab-title-copy": {
           "19ad21615a": "Generar títulos de pestañas automáticamente",
-          "b036c7a409": "Deriva nombres de pestañas breves y estables a partir del primer prompt conocido del agente. Los cambios de nombre manuales siempre tienen prioridad."
+          "b036c7a409": "Deriva nombres de pestañas breves y estables a partir del primer prompt conocido del agent. Los cambios de nombre manuales siempre tienen prioridad."
         },
         "WarpThemeImportModal": {
           "title": "Importar desde Warp",
@@ -8417,7 +8417,7 @@
           "colors_only": "Solo colores",
           "no_themes_found": "No se encontraron temas personalizados de Warp.",
           "builtin_themes_hint": "Los temas preinstalados de Warp forman parte de la app de Warp y no se pueden leer desde el disco. Orca ya incluye la mayoría, como Dracula, Gruvbox, Solarized y Tokyo Night.",
-          "custom_theme_yaml_hint": "Los temas personalizados y de la comunidad deben existir como archivos YAML en una carpeta de temas de Warp para que la importación automática los encuentre. Si clonaste el repositorio público de temas de Warp, usa Elegir carpeta para importar esa copia.",
+          "custom_theme_yaml_hint": "Los temas personalizados y de la comunidad deben existir como archivos YAML en una carpeta de temas de Warp para que la importación automática los encuentre. Si clonaste el repo público de temas de Warp, usa Elegir carpeta para importar esa copia.",
           "choose_manually": "Elige un archivo YAML de tema o una carpeta para importarlo manualmente.",
           "skipped_files": "Archivos omitidos",
           "more_skipped_files": "{{value0}} archivos omitidos más.",
@@ -8537,13 +8537,13 @@
           }
         },
         "computerUseSummary": {
-          "permissionsRequired": "Requiere {{value0}} permiso{{value1}} antes de que los agentes puedan operar ventanas de apps.",
+          "permissionsRequired": "Requiere {{value0}} permiso{{value1}} antes de que los agents puedan operar ventanas de apps.",
           "checkingTitle": "Comprobando el acceso a Computer Use.",
           "checkingDescription": "Orca está comprobando los permisos de privacidad de macOS para el helper de Computer Use.",
           "unavailableTitle": "Computer Use no está disponible.",
           "unavailableDescription": "Los permisos de Computer Use no están disponibles porque {{value0}}.",
           "readyTitle": "Computer Use está listo.",
-          "readyDescription": "Los agentes pueden inspeccionar y operar ventanas de apps cuando se lo pidas.",
+          "readyDescription": "Los Agents pueden inspeccionar y operar ventanas de apps cuando se lo pidas.",
           "permissionsTitle": "Completa la configuración para usar apps locales."
         },
         "computerUseSkillRuntime": {
@@ -8571,10 +8571,10 @@
         },
         "settingOwnership": {
           "clientDefault": "Predeterminado del cliente",
-          "sourceControlAiDefaults": "Las recetas, prompts y valores predeterminados de revisión alojada se comparten en este cliente; las elecciones de modelo y el descubrimiento quedan limitados al host donde se ejecuta el agente.",
+          "sourceControlAiDefaults": "Las recetas, prompts y valores predeterminados de revisión alojada se comparten en este cliente; las elecciones de modelo y el descubrimiento quedan limitados al host donde se ejecuta el agent.",
           "projectOnThisHost": "Proyecto en este host",
           "repositorySourceControlAi": "Estas anulaciones se aplican a la configuración de este proyecto y heredan los valores predeterminados de Source Control AI del cliente hasta que se personalicen.",
-          "agentLaunchDefaults": "El agente predeterminado, las anulaciones de comandos, los argumentos de CLI y el entorno de lanzamiento son preferencias del cliente. Los lanzamientos por SSH y servidor remoto siguen validando la disponibilidad del host en tiempo de ejecución.",
+          "agentLaunchDefaults": "El agent predeterminado, las anulaciones de comandos, los argumentos de CLI y el entorno de lanzamiento son preferencias del cliente. Los lanzamientos por SSH y servidor remoto siguen validando la disponibilidad del host en tiempo de ejecución.",
           "clientDefaultProjectScopes": "Predeterminado del cliente + ámbitos de proyecto",
           "terminalQuickCommands": "Los comandos se guardan en este cliente y luego se limitan globalmente o a una configuración de proyecto para que se ejecuten desde el contexto de terminal seleccionado.",
           "hostOverride": "Anulación del host",
@@ -8625,7 +8625,7 @@
           "windows": "Windows",
           "wsl": "WSL",
           "selectDistro": "Seleccionar distro",
-          "runtimeChangeHelp": "Los cambios de runtime se aplican a nuevas terminales, checks de agentes y descubrimiento de skill para este proyecto. Las terminales existentes conservan su runtime actual.",
+          "runtimeChangeHelp": "Los cambios de runtime se aplican a nuevas terminales, checks de agents y descubrimiento de skill para este proyecto. Las terminales existentes conservan su runtime actual.",
           "wslUnavailable": "WSL no está disponible. Cambia este proyecto a Windows o repara WSL.",
           "distroMissing": "{{value0}} no está instalado en WSL. Elige una distro instalada o cambia este proyecto a Windows.",
           "distroRequired": "Elige una distro de WSL o cambia este proyecto a Windows.",
@@ -8685,14 +8685,14 @@
           "1db3c8b983": "Abre los puertos del workspace como URLs localhost de Orca específicas por worktree para que las pestañas del navegador sean más fáciles de distinguir."
         },
         "AgentRuntimeSetting": {
-          "label": "Runtime de agentes",
+          "label": "Runtime de Agents",
           "wsl": "WSL",
           "loadingWsl": "Cargando WSL",
           "selectDistro": "Seleccionar distro",
-          "windowsDescription": "Detecta y lanza agentes en Windows para proyectos que no anulan su runtime.",
+          "windowsDescription": "Detecta y lanza agents en Windows para proyectos que no anulan su runtime.",
           "wslUnavailable": "WSL no está disponible en esta máquina.",
           "distroRequired": "Elige una distro de WSL antes de que los proyectos puedan heredar WSL.",
-          "wslDescription": "Detecta y lanza agentes en {{value0}} mediante WSL para proyectos que no anulan su runtime."
+          "wslDescription": "Detecta y lanza agents en {{value0}} mediante WSL para proyectos que no anulan su runtime."
         },
         "MobileEmulatorSdkStatus": {
           "536026130e": "SDK de emulador",
@@ -8770,33 +8770,33 @@
         "ephemeralVms": {
           "search": {
             "title": "Entornos por espacio de trabajo",
-            "description": "Aprende cómo las recetas del repositorio dan a cada espacio de trabajo su propio entorno desechable bajo demanda."
+            "description": "Aprende cómo las recetas del repo dan a cada espacio de trabajo su propio entorno desechable bajo demanda."
           }
         },
         "EphemeralVmsPane": {
           "loadError": "No se pudieron cargar las recetas.",
           "copyError": "No se pudo copiar el prompt.",
           "skillTitle": "Skill de entornos por espacio de trabajo",
-          "skillDescription": "Configura, construye, autentica y valida recetas de entornos del repositorio.",
+          "skillDescription": "Configura, construye, autentica y valida recetas de entornos del repo.",
           "whatTitle": "Lo que la skill hace contigo",
           "whatScaffold": "Escribe la receta y los scripts para tu proveedor, conectados mediante un servidor Orca o SSH.",
-          "whatBuild": "Crea una imagen base reutilizable e inicia sesión con tu agente.",
+          "whatBuild": "Crea una imagen base reutilizable e inicia sesión con tu agent.",
           "whatValidate": "Valida el entorno para que puedas crear un espacio de trabajo sobre él.",
-          "promptHint": "En cualquier espacio de trabajo, pídele a tu agente:",
+          "promptHint": "En cualquier espacio de trabajo, pídele a tu agent:",
           "copy": "Copiar",
           "copied": "Copiado",
           "recipes": "Recetas",
-          "recipesHelp": "Las recetas que tu agente agrega a orca.yaml aparecen aquí, listas para iniciar un espacio de trabajo.",
+          "recipesHelp": "Las recetas que tu agent agrega a orca.yaml aparecen aquí, listas para iniciar un espacio de trabajo.",
           "refresh": "Actualizar recetas de VMs efímeras",
           "checking": "Comprobando recetas…",
           "none": "Aún no se han encontrado recetas."
         },
         "ephemeralVmsExperimentalSetting": {
-          "description": "Muestra controles de configuración y destinos de ejecución de espacios de trabajo para entornos bajo demanda del repositorio.",
+          "description": "Muestra controles de configuración y destinos de ejecución de espacios de trabajo para entornos bajo demanda del repo.",
           "toggleLabel": "Activar o desactivar entornos por espacio de trabajo"
         },
         "SourceControlActionRepoOverrideNote": {
-          "agent": "Agente",
+          "agent": "Agent",
           "agentArgs": "Argumentos de la CLI",
           "commandTemplate": "Plantilla del comando",
           "more": "+{{count}} más",
@@ -8816,8 +8816,8 @@
             "60ed678138": "seleccionados"
           },
           "ChecksPanel": {
-            "2ef90c9819": "Se inició un agente de IA para los checks con errores.",
-            "a0181a8d76": "Se inició un agente de IA para los conflictos.",
+            "2ef90c9819": "Se inició un agent de IA para los checks con errores.",
+            "a0181a8d76": "Se inició un agent de IA para los conflictos.",
             "34464d00b9": "actualizado",
             "058039787c": "Cancelar",
             "2ab7fd4b6d": "Guardar",
@@ -8826,7 +8826,7 @@
             "b5dd73a105": "Selecciona un espacio de trabajo para ver los checks",
             "a4ef4e0832": "Ningún espacio de trabajo seleccionado",
             "5594400d73": "No hay checks con errores que corregir.",
-            "abf59262fb": "Revisa el prompt antes de iniciar un agente.",
+            "abf59262fb": "Revisa el prompt antes de iniciar un agent.",
             "4ede779461": "Resolver conflictos de revisión con IA",
             "3b203c62f8": "Esto eliminará permanentemente el comentario del PR.",
             "ea9b649ce3": "¿Eliminar comentario?",
@@ -8849,7 +8849,7 @@
             "653c105ecc": "Más acciones de PR",
             "f316a8ca2b": "No hay comentarios sin resolver seleccionados.",
             "d00ebdc402": "Resolver comentarios de {{value0}} con IA",
-            "ed3f79c031": "Revisa el prompt antes de iniciar un agente. Los hilos seleccionados se marcarán como resueltos después del inicio.",
+            "ed3f79c031": "Revisa el prompt antes de iniciar un agent. Los hilos seleccionados se marcarán como resueltos después del inicio.",
             "f273f2271c": "Agente iniciado. Marcados como resueltos: {{value0}}; omitidos: {{value1}}; con error: {{value2}}.",
             "aa95b81a3a": "Agente iniciado. Marcados como resueltos: {{value0}}; omitidos: {{value1}}; con error: {{value2}}.",
             "495b2f8c4b": "Agente iniciado, pero no se pudieron marcar los comentarios seleccionados como resueltos.",
@@ -9106,21 +9106,21 @@
             "37a81f29ad": "Generando mensaje de commit. Haga clic para detener.",
             "b94112eb9e": "Mensaje de commit",
             "0d0a8359d3": "Mensaje",
-            "15b7f210d7": "Revisa el prompt antes de iniciar un agente.",
+            "15b7f210d7": "Revisa el prompt antes de iniciar un agent.",
             "054ead86b1": "Solucionar error de commit con IA",
             "9e5ccd00aa": "Contexto del error de commit no disponible",
             "f0a2dc9e46": "Personalizar lanzamiento...",
-            "ec7bfced55": "Elija un agente para solucionar el error de commit",
-            "dd43c47089": "Elija un agente para este error de commit",
+            "ec7bfced55": "Elija un agent para solucionar el error de commit",
+            "dd43c47089": "Elija un agent para este error de commit",
             "30b8d4f181": "Solucionar error de commit con IA",
-            "4b37ae99b0": "Iniciar el agente de IA predeterminado para solucionar este error de commit",
+            "4b37ae99b0": "Iniciar el agent de IA predeterminado para solucionar este error de commit",
             "ae743199cd": "Elige una rama base diferente antes de crear un {{value0}}.",
             "318e2a7f88": "Espere a que termine la generación con IA.",
             "f76307c1f7": "Elige una rama base.",
             "4f76c0a9de": "La rama base debe ser distinta de la rama HEAD.",
             "c5e4175139": "Más {{value0}} y acciones remotas",
             "78ddfd0bb4": "Crear como borrador",
-            "e64a632456": "principal",
+            "e64a632456": "main",
             "6055949c50": "Rama base de {{value0}}",
             "1f7119f604": "Base",
             "9484270f45": "Generando título y descripción…",
@@ -9134,11 +9134,11 @@
             "b355e740b2": "Dejar de generar detalles de {{value0}}",
             "527e130b6f": "Dejar de generar",
             "e1970d327d": "Nuevo {{value0}}",
-            "f4c766f1ca": "Elija el agente y la plantilla de comando para esta ejecución.",
+            "f4c766f1ca": "Elija el agent y la plantilla de comando para esta ejecución.",
             "1a6a6e0bc5": "Generar detalles de reseña alojada",
             "6b122529d4": "Generar mensaje de commit",
-            "e48caaf0dd": "Inició un agente de IA para los conflictos.",
-            "901140f47d": "Revisa el prompt antes de iniciar un agente.",
+            "e48caaf0dd": "Inició un agent de IA para los conflictos.",
+            "901140f47d": "Revisa el prompt antes de iniciar un agent.",
             "19652ddd76": "Resolver conflictos con IA",
             "c9ad22888e": "Elige el destino de comparación de ramas para este repositorio.",
             "574d2f4413": "Borrar notas",
@@ -9240,7 +9240,7 @@
             "c06193ef57": "No se pudo copiar {{value0}}",
             "d172a4f068": "Hash del commit",
             "e283b50179": "Mensaje del commit",
-            "f394c6128a": "No hay ningún agente disponible para explicar este commit",
+            "f394c6128a": "No hay ningún agent disponible para explicar este commit",
             "04a5d7239b": "Este repositorio no tiene un remoto web compatible",
             "15b6e834ac": "No se pudo abrir el commit en el navegador",
             "d37e68f61d": "Preparando la rama para revisión…",
@@ -9293,7 +9293,7 @@
             }
           },
           "SourceControlAgentActionDialog": {
-            "8e856842d1": "No se pudo iniciar el agente seleccionado.",
+            "8e856842d1": "No se pudo iniciar el agent seleccionado.",
             "c075d00de1": "No se puede resolver la conexión del espacio de trabajo.",
             "38b899cc02": "Todos los repositorios",
             "808cfe0a3b": "Este repositorio",
@@ -9302,8 +9302,8 @@
           "SourceControlAgentActionDialogForm": {
             "013c9ac04a": "Guardar para",
             "1bb611240f": "Usa {basePrompt} para el prompt predeterminado de Orca.",
-            "23280cbab1": "Esta plantilla no incluye {basePrompt}, por lo que el agente no recibirá el prompt predeterminado de Orca.",
-            "5421a96acb": "Guardar e iniciar agente",
+            "23280cbab1": "Esta plantilla no incluye {basePrompt}, por lo que el agent no recibirá el prompt predeterminado de Orca.",
+            "5421a96acb": "Guardar e iniciar agent",
             "6cefcdfba1": "Puedes cambiarlo más tarde en la configuración de IA de Source Control.",
             "c29f9cf266": "Guardar este prompt y no mostrar esta revisión la próxima vez",
             "d8f40128ee": "{basePrompt} es el prompt predeterminado de Orca.",
@@ -9314,14 +9314,14 @@
             "fe119187bb": "--model sonnet",
             "bc8dc39f4b": "Argumentos CLI",
             "b99c33cec5": "Ajustes",
-            "15c5d85706": "Agente",
+            "15c5d85706": "Agent",
             "3e8f21954f": "error",
             "74168d7ada": "idle",
-            "1d47db9bf0": "No hay agentes habilitados",
-            "c7ff8cef11": "Detectando agentes...",
+            "1d47db9bf0": "No hay agents habilitados",
+            "c7ff8cef11": "Detectando agents...",
             "b0da3a4d3e": "La receta de lanzamiento ya está guardada",
-            "bff4795a6d": "Cambia el agente, los argumentos o la plantilla del prompt para actualizar la receta guardada.",
-            "5c75b24735": "Personaliza lo que recibe el agente antes de que Orca lo inicie.",
+            "bff4795a6d": "Cambia el agent, los argumentos o la plantilla del prompt para actualizar la receta guardada.",
+            "5c75b24735": "Personaliza lo que recibe el agent antes de que Orca lo inicie.",
             "repoAgentOverrideNote": "Este repositorio anula tu valor predeterminado global ({{global}}) y actualmente ejecuta {{effective}}. Guarda en este repositorio para cambiar lo que se ejecuta aquí."
           },
           "SourceControlTextGenerationDialog": {
@@ -9337,8 +9337,8 @@
             "551ffd111b": "--model sonnet",
             "4eab815004": "Argumentos CLI",
             "914c8f6ac2": "Comando personalizado",
-            "cce2cbd01d": "Elegir agente",
-            "9c14186dd2": "Agente"
+            "cce2cbd01d": "Elegir agent",
+            "9c14186dd2": "Agent"
           },
           "activity": {
             "bar": {
@@ -9430,7 +9430,7 @@
                 "49ea0937e4": "Agregar comentario a la lista de resolución",
                 "9fecebb29d": "Agregar",
                 "b8c4e2a1f7": "Ver logs completos",
-                "f8a2c91d04": "Poner en cola para el agente",
+                "f8a2c91d04": "Poner en cola para el agent",
                 "b4e8a1c902": "En cola",
                 "7c1f0a2b11": "Abrir",
                 "e8b4c1a903": "Resuelto · {{value0}}",
@@ -9504,7 +9504,7 @@
             "6306b48afd": "control de fuente",
             "ef182dcb12": "buscar",
             "fc3095d2ed": "explorador",
-            "aiVaultSessionHistory": "Agentes",
+            "aiVaultSessionHistory": "Agents",
             "folderWorkspaces": "Worktrees adjuntos",
             "parentPrChecks": "Checks de PR"
           },
@@ -9530,12 +9530,12 @@
                 "commit": {
                   "failure": {
                     "launch": {
-                      "a8b97d2318": "Se inició un agente de IA para el error de commit.",
-                      "5540ff50cc": "No se pudo generar el comando de inicio del agente.",
-                      "9bbd9077a2": "No hay agentes de IA habilitados. Configura los agentes en Configuración.",
-                      "d481ab22f9": "El agente de IA guardado no está disponible. Usa Personalizar inicio para elegir otro agente.",
+                      "a8b97d2318": "Se inició un agent de IA para el error de commit.",
+                      "5540ff50cc": "No se pudo generar el comando de inicio del agent.",
+                      "9bbd9077a2": "No hay agents de IA habilitados. Configura los agents en Configuración.",
+                      "d481ab22f9": "El agent de IA guardado no está disponible. Usa Personalizar inicio para elegir otro agent.",
                       "f2b47026e8": "El prompt de error de commit está vacío. Actualiza la configuración de IA de Source Control.",
-                      "4f4e0418a0": "No se pudo generar el prompt del agente.",
+                      "4f4e0418a0": "No se pudo generar el prompt del agent.",
                       "216f762bd7": "No se puede resolver la conexión del espacio de trabajo."
                     }
                   }
@@ -9682,7 +9682,7 @@
             "8adb953095": "Operación fallida"
           },
           "GitHistoryGraphSvg": {
-            "47eff48230": "CABEZA"
+            "47eff48230": "HEAD"
           },
           "create": {
             "pull": {
@@ -9702,7 +9702,7 @@
             "openWorkspaceBeforeResuming": "Abre un workspace antes de reanudar una sesión.",
             "localWorkspacesOnly": "Reanudar desde el historial solo está disponible en espacios de trabajo locales.",
             "agentSessionQueued": "Sesión de {{value0}} en cola",
-            "sessionHistory": "Historial de sesiones de agentes",
+            "sessionHistory": "Historial de sesiones de Agents",
             "shownRecent": "{{value0}} mostradas · {{value1}} recientes",
             "resumePastSessions": "Reanudar sesiones anteriores",
             "refreshSessionHistory": "Actualizar historial de sesiones",
@@ -9710,11 +9710,11 @@
             "clearSearch": "Limpiar búsqueda",
             "remoteBrowseLocalHistory": "Los espacios de trabajo remotos pueden explorar el historial local. Las acciones de reanudación se ejecutan desde espacios de trabajo locales.",
             "transcriptsSkipped": "{{count}} transcripciones omitidas",
-            "noAgentSessionsFound": "No se encontraron sesiones de agentes",
+            "noAgentSessionsFound": "No se encontraron sesiones de agents",
             "noSessionsMatchFilters": "Ninguna sesión coincide con los filtros actuales",
             "sessionId": "ID de sesión",
             "logPath": "Ruta del log",
-            "agents": "Agentes",
+            "agents": "Agents",
             "sessionsShownCompact": "{{value0}} mostradas",
             "originalPaneUnavailable": "El panel original ya no está disponible.",
             "worktreeUnavailable": "El worktree ya no está disponible.",
@@ -9735,13 +9735,13 @@
             "allSessions": "Todas las sesiones",
             "viewOptionsAriaLabel": "Opciones de vista del historial de sesiones",
             "viewOptions": "Opciones de vista",
-            "agents": "Agentes",
+            "agents": "Agents",
             "sort": "Ordenar",
             "lastUpdated": "Última actualización",
             "created": "Creado",
             "group": "Agrupar",
             "folder": "Carpeta",
-            "agent": "Agente",
+            "agent": "Agent",
             "resetView": "Restablecer vista",
             "hideEmptySessions": "Ocultar sesiones vacías",
             "workspaceScope": "Workspace",
@@ -9797,7 +9797,7 @@
             "noPreviewAvailable": "No hay vista previa de conversación disponible",
             "messageCount": "{{value0}} mensajes",
             "userRole": "Tú",
-            "agentRole": "Agente",
+            "agentRole": "Agent",
             "toolRole": "Herramienta",
             "systemRole": "Sistema",
             "sessionRole": "Sesión",
@@ -9824,7 +9824,7 @@
             "noPreviewAvailable": "No hay vista previa de conversación disponible",
             "dragToResume": "Arrastra para reanudar en una pestaña nueva",
             "userRole": "Tú",
-            "agentRole": "Agente",
+            "agentRole": "Agent",
             "toolRole": "Herramienta",
             "systemRole": "Sistema",
             "sessionRole": "Sesión",
@@ -9911,7 +9911,7 @@
           "icon": {
             "0ad395d475": "Caja",
             "857977b901": "Formas",
-            "b1b8d99fc4": "IA",
+            "b1b8d99fc4": "AI",
             "137bdb1856": "Métricas",
             "d202c659a3": "Diseño",
             "c4fd14299d": "Empresa",
@@ -9925,7 +9925,7 @@
             "3c5a593bc8": "Web",
             "477b28c948": "Base de datos",
             "787490e9bd": "Paquete",
-            "07012dc113": "Agente",
+            "07012dc113": "Agent",
             "3eba7387ab": "Terminal",
             "65b437c381": "Código",
             "bed2674f9d": "Carpeta"
@@ -9947,22 +9947,22 @@
           "d7b3ef168b": "Detectados en tu sistema",
           "9c163bb0e0": "Instrucciones de instalación",
           "69af7e9c1c": "aún no está en tu PATH. Orca lo configurará como predeterminado y podrás instalarlo en cualquier momento.",
-          "1eee1c7bd8": "No se detectaron agentes en tu PATH. Elige uno para instalarlo más tarde o continúa con una terminal en blanco.",
-          "hideAgents": "Ocultar agentes",
-          "showMoreAgents": "Mostrar {{value0}} agentes más→",
+          "1eee1c7bd8": "No se detectaron agents en tu PATH. Elige uno para instalarlo más tarde o continúa con una terminal en blanco.",
+          "hideAgents": "Ocultar agents",
+          "showMoreAgents": "Mostrar {{value0}} agents más→",
           "yoloPermissionsLabel": "Yolo / Omitir permisos de forma peligrosa",
-          "yoloPermissionsInfo": "Información de permisos del agente",
-          "yoloPermissionsTooltip": "Omite las comprobaciones de permisos de los agentes para reducir interrupciones"
+          "yoloPermissionsInfo": "Información de permisos del Agent",
+          "yoloPermissionsTooltip": "Omite las comprobaciones de permisos de los agents para reducir interrupciones"
         },
         "FeatureSetupChecklist": {
-          "77f74946f5": "Los agentes pueden enviarse mensajes entre sí, tomar tareas y coordinar handoffs.",
-          "399cf885c0": "Orquestación de agentes",
-          "c5292c409d": "Los agentes pueden inspeccionar ventanas de apps y operar apps locales cuando se lo pidas.",
+          "77f74946f5": "Los Agents pueden enviarse mensajes entre sí, tomar tareas y coordinar handoffs.",
+          "399cf885c0": "Orquestación de Agents",
+          "c5292c409d": "Los Agents pueden inspeccionar ventanas de apps y operar apps locales cuando se lo pidas.",
           "1ecfb490ac": "Uso de la computadora",
-          "01426f3a23": "Los agentes pueden navegar por sitios, inspeccionar páginas y trabajar en tareas del navegador.",
-          "ea85d9e628": "Uso del navegador por agentes",
-          "linearTicketsTitle": "Skill de agente de Linear",
-          "linearTicketsDescription": "Los agentes pueden usar tareas de Linear enlazadas para handoffs con más contexto de ticket.",
+          "01426f3a23": "Los Agents pueden navegar por sitios, inspeccionar páginas y trabajar en tareas del navegador.",
+          "ea85d9e628": "Uso del navegador por Agents",
+          "linearTicketsTitle": "Skill de agent de Linear",
+          "linearTicketsDescription": "Los Agents pueden usar tareas de Linear enlazadas para handoffs con más contexto de ticket.",
           "linearTicketsSetupSummary": "Recomendado para espacios de trabajo de Linear; no afecta la configuración de conexión de Linear."
         },
         "FeatureSetupInlineTerminal": {
@@ -10018,16 +10018,16 @@
           "277ba45540": "Incorporación de Orca",
           "97c42cda00": "Instale la CLI de GitHub para:",
           "ae3b00ca82": "Configurar tareas de GitHub",
-          "ff92d15436": "Orca te notificará cuando los agentes terminen o necesiten ayuda.",
+          "ff92d15436": "Orca te notificará cuando los agents terminen o necesiten ayuda.",
           "b054332836": "Configurar notificaciones",
           "04ae28d8ca": "Elige la apariencia que quieras ver durante horas.",
           "f396db9f20": "Haz que te sientas como en casa",
-          "322fc50a18": "Orca funciona con cualquier agente CLI. Elige el que más usarás. Puedes cambiarlo en cualquier momento.",
-          "198b148b3c": "Elija su agente predeterminado",
+          "322fc50a18": "Orca funciona con cualquier agent CLI. Elige el que más usarás. Puedes cambiarlo en cualquier momento.",
+          "198b148b3c": "Elija su agent predeterminado",
           "a5e5da02f7": "integraciones",
           "35bbaf5ae0": "notificaciones",
           "984338477a": "tema",
-          "c47e1bd149": "agente",
+          "c47e1bd149": "agent",
           "windowsTerminalTitle": "Configura los valores predeterminados de la terminal de Windows",
           "windowsTerminalSubtitle": "Elige la Shell predeterminada para los paneles nuevos y cómo se comporta el clic derecho en la terminal."
         },
@@ -10055,9 +10055,9 @@
           "7932e95f68": "Clonar",
           "955134915e": "git@github.com:org/repo.git",
           "288d8444b7": "Pegue una URL HTTPS o SSH.",
-          "132425a3e3": "Clonar un repositorio",
-          "6558d50c69": "¿Quieres importar muchos repositorios a la vez? Seleccione la carpeta principal.",
-          "831524961f": "Elija cualquier directorio local, repositorio git o no.",
+          "132425a3e3": "Clonar un repo",
+          "6558d50c69": "¿Quieres importar muchos repos a la vez? Seleccione la carpeta principal.",
+          "831524961f": "Elija cualquier directorio local, repo git o no.",
           "f4e9c8dcf8": "Buscar una carpeta",
           "e8214aa632": "Abrir como carpeta",
           "3863747c56": "Agregar proyecto Git",
@@ -10197,7 +10197,7 @@
       },
       "mobile": {
         "MobileHero": {
-          "a8fb43cf1c": "Continuar",
+          "a8fb43cf1c": "Continue",
           "3f90dbd274": "Hecho",
           "b622eba64d": "Atrás",
           "65b3f2e8bc": "Generando…",
@@ -10231,7 +10231,7 @@
           "10d27b4cba": "Empezar",
           "da1d5e5ed0": "Disponible en",
           "ec0607bf66": "Plataformas móviles compatibles",
-          "b4ccce5cb7": "Controla Orca desde tu teléfono. Consulta el estado de los agentes, revisa los cambios e inicia tareas cuando estés lejos de tu escritorio.",
+          "b4ccce5cb7": "Controla Orca desde tu teléfono. Consulta el estado de los agents, revisa los cambios e inicia tareas cuando estés lejos de tu escritorio.",
           "cd4e5e816f": "Tus espacios de trabajo, en tu bolsillo.",
           "a6cffbbb0b": "Generar código",
           "e59a252eca": "Regenerar código",
@@ -10305,8 +10305,8 @@
             "19c212e25e": "MacBook Pro",
             "2f1a1d10c4": "Escritorios",
             "156db8a68a": "PRs creados",
-            "4a40af029b": "Tiempo de agentes",
-            "00a6903322": "Agentes iniciados",
+            "4a40af029b": "Tiempo de Agents",
+            "00a6903322": "Agents iniciados",
             "c0e2e9dcd9": "Bienvenido de nuevo",
             "af761a0c0d": "Ajustes",
             "5d94e8ddcc": "Orca"
@@ -10348,7 +10348,7 @@
           "WorktreeListSlide": {
             "357a519567": "Activo",
             "79a24ff530": "Fijado",
-            "22971156df": "Repositorio",
+            "22971156df": "Repo",
             "17f9e0d226": "Reciente",
             "0e3e809a4b": "Filtrar",
             "b4271864bd": "MacBook Pro",
@@ -10399,9 +10399,9 @@
             "0ee79e0674": "Mover a la barra de estado"
           },
           "FloatingTerminalOrchestrationDialog": {
-            "f726054620": "Permite a los agentes transferir contexto y coordinar el trabajo a través de Orca.",
+            "f726054620": "Permite a los agents transferir contexto y coordinar el trabajo a través de Orca.",
             "1cd3f8af64": "Skill de orquestación",
-            "6f0aed26b8": "Instala la CLI de Orca y el skill de orquestación para que los agentes puedan coordinarse a través de Orca.",
+            "6f0aed26b8": "Instala la CLI de Orca y el skill de orquestación para que los agents puedan coordinarse a través de Orca.",
             "05d7aabc20": "No instalado",
             "630c0ac8c8": "Instalado",
             "dfd021ce46": "Comprobando...",
@@ -10419,7 +10419,7 @@
             "690b6fb98a": "Cambios no guardados",
             "bbc177f98f": "Habilitar",
             "adc281394d": "Descartar",
-            "8cf80db43b": "Configura la CLI de Orca y el skill de agente para que los agentes puedan coordinarse a través de Orca.",
+            "8cf80db43b": "Configura la CLI de Orca y el skill de agent para que los agents puedan coordinarse a través de Orca.",
             "2a3c5ddf5e": "Habilitar orquestación",
             "d6b563ae24": "Cargando editor...",
             "8b14ba6c17": "Nueva pestaña del navegador",
@@ -10449,12 +10449,12 @@
         "wall": {
           "AgentCapabilitiesSetupAction": {
             "b8dc9dd8a2": "Instalado",
-            "1b51644c2d": "Permite que los agentes controlen el escritorio, muevan el cursor, hagan clic y escriban en cualquier app.",
+            "1b51644c2d": "Permite que los agents controlen el escritorio, muevan el cursor, hagan clic y escriban en cualquier app.",
             "362a07517d": "Uso de computadora",
-            "5e8fe5a72d": "Da a los agentes acceso directo al navegador de Orca para que puedan probar páginas, hacer capturas de pantalla y actuar según lo que ven.",
-            "e638da007a": "Uso del navegador por agentes",
-            "c61c91e642": "Permite que los agentes se coordinen a través de Orca para mantener en marcha tareas grandes de varios pasos hasta completarlas.",
-            "ac07f8887f": "Orquestación de agentes",
+            "5e8fe5a72d": "Da a los agents acceso directo al navegador de Orca para que puedan probar páginas, hacer capturas de pantalla y actuar según lo que ven.",
+            "e638da007a": "Uso del navegador por Agents",
+            "c61c91e642": "Permite que los agents se coordinen a través de Orca para mantener en marcha tareas grandes de varios pasos hasta completarlas.",
+            "ac07f8887f": "Orquestación de Agents",
             "e9eb197e12": "Permisos de uso de computadora abiertos",
             "3a59452a67": "Comando de skill copiado e insertado abajo para revisarlo.",
             "c605f51f2b": "Configuración de capacidades lista",
@@ -10468,7 +10468,7 @@
             "be8917699e": "Modelo",
             "4d9b6d84df": "no compatible. Elige Claude, Codex o Personalizado.",
             "560d4feb00": "Personalizado",
-            "29d119fe95": "Agente",
+            "29d119fe95": "Agent",
             "f9382b48a1": "Habilitar autor de IA",
             "1c0cb4fabb": "Autor de IA",
             "bd14e9c42a": "No configurado",
@@ -10496,7 +10496,7 @@
             "f39be6ca14": "/signup"
           },
           "BrowserUseSkillSetupCard": {
-            "cbc45022d4": "Permite a los agentes navegar y verificar páginas en el navegador de Orca.",
+            "cbc45022d4": "Permite a los agents navegar y verificar páginas en el navegador de Orca.",
             "d5bb1cd4ba": "Skill Browser Use"
           },
           "ComputerUseAnimatedVisual": {
@@ -10554,9 +10554,9 @@
             "fc0cc0b267": "GH #1842",
             "0688842445": "GH #1799",
             "bee6b4088d": "Tareas de GitHub y Linear",
-            "5171768676": "orquestando 3 agentes",
+            "5171768676": "orquestando 3 agents",
             "cebc7769cd": "rediseñar el flujo de autenticación",
-            "e44269e97d": "Orquestación de agentes",
+            "e44269e97d": "Orquestación de Agents",
             "ec4a73f5e6": "PR 3/3",
             "cfdfd4d6b4": "PR 2/3",
             "b1f17bcc74": "PR 1/3",
@@ -10566,10 +10566,10 @@
             "56a0271428": "Espacios de trabajo aislados",
             "ef737dcee1": "Tareas de GitHub y Linear",
             "ac51c061e2": "codex",
-            "47f16ecf34": "Avanza en varias cosas a la vez. Cada workspace mantiene juntos su rama, terminal y actividad de agentes.",
-            "70aa182266": "Delega un objetivo y sigue con lo tuyo. Un agente coordinador se despliega y publica PRs en paralelo.",
+            "47f16ecf34": "Avanza en varias cosas a la vez. Cada workspace mantiene juntos su rama, terminal y actividad de agents.",
+            "70aa182266": "Delega un objetivo y sigue con lo tuyo. Un agent coordinador se despliega y publica PRs en paralelo.",
             "f10c14dd9d": "Evita cambiar de pestaña. Elige desde tu backlog de GitHub o Linear e inicia un workspace con un clic.",
-            "5d6ee181b6": "Abre cualquier workspace para volver a su terminal y luego divide paneles para tests, logs y agentes."
+            "5d6ee181b6": "Abre cualquier workspace para volver a su terminal y luego divide paneles para tests, logs y agents."
           },
           "FeatureWallBody": {
             "25ec5356d6": "Configuración"
@@ -10827,9 +10827,9 @@
             "list_mid": ", ",
             "code_host_tasks_summary": "issues disponibles como tareas · agrega Linear o Jira si tu equipo planifica el trabajo allí",
             "code_host_tasks_caption": "Los issues de tu proveedor de código también funcionan como tareas.",
-            "review_step_title": "Ver el estado de PR mientras trabajan los agentes",
+            "review_step_title": "Ver el estado de PR mientras trabajan los agents",
             "review_step_description": "Conecta un proveedor de revisión para que Orca pueda mostrar el estado de PR o MR, checks y revisiones.",
-            "task_step_title": "Iniciar agentes en tus tareas sin salir de Orca"
+            "task_step_title": "Iniciar agents en tus tareas sin salir de Orca"
           },
           "connect": {
             "integration": {
@@ -10859,7 +10859,7 @@
             "22e62f3bab": "Sesión de Claude Code iniciada"
           },
           "CliSkillSetupTerminal": {
-            "1953e90447": "Presiona Enter para instalar el skill de orquestación de la CLI de Orca para tus agentes.",
+            "1953e90447": "Presiona Enter para instalar el skill de orquestación de la CLI de Orca para tus agents.",
             "43b60ec5c3": "Terminal de instalación de CLI de Orca y skill de orquestación",
             "84e9576dac": "Configuración de skill",
             "5c3aee22c0": "Copiar comando",
@@ -10878,7 +10878,7 @@
             "c169298e4d": "Hecho",
             "3c6c478462": "X termina, envíale la tarea de revisión”.",
             "298301b7a0": "worktree",
-            "864e2db28f": "“Cuando el agente en",
+            "864e2db28f": "“Cuando el agent en",
             "7fc6f02099": "y crear PR para cada uno”.",
             "27c567a89c": "worktrees",
             "55846c7f95": "“Divide este PR en dos",
@@ -10963,10 +10963,10 @@
                       "c6705092ba": "Corregir PATH",
                       "7c1b6bdb1e": "Habilitar",
                       "51074ccb05": "No se pudo cargar el estado de la CLI.",
-                      "35dea1ae12": "El control de agentes está listo.",
+                      "35dea1ae12": "El control de Agents está listo.",
                       "9dff3a6338": "La skill está instalada. Habilita la CLI de Orca para completar la configuración.",
                       "15986a1080": "La CLI de Orca está lista. Instala la skill para completar la configuración.",
-                      "4c26913def": "Aún no está configurado. Completa ambos pasos para habilitar el control de agentes.",
+                      "4c26913def": "Aún no está configurado. Completa ambos pasos para habilitar el control de agents.",
                       "c94ff11e91": "No se pudo volver a verificar el estado de la configuración.",
                       "2b519eed94": "Se registró la CLI de Orca en PATH."
                     }
@@ -10983,10 +10983,10 @@
             }
           },
           "MobileEmulatorAgentSetupGuide": {
-            "2fda9ff015": "Configurar control de agentes",
-            "0ac0fef514": "El control de agentes está listo.",
-            "2bdfff8763": "Control de agentes (opcional).",
-            "72736b051f": "Configura la CLI de Orca + skill cuando quieras que los agentes controlen este simulador.",
+            "2fda9ff015": "Configurar control de agents",
+            "0ac0fef514": "El control de Agents está listo.",
+            "2bdfff8763": "Control de Agents (opcional).",
+            "72736b051f": "Configura la CLI de Orca + skill cuando quieras que los agents controlen este simulador.",
             "d10ae98046": "Listo",
             "3756cbeca7": "Ahora no",
             "6d950431d2": "Ocultar",
@@ -10995,18 +10995,18 @@
           },
           "MobileEmulatorAgentSetupGuideSteps": {
             "9b49d892e3": "Habilitar la CLI de Orca",
-            "3d8dc52c93": "Registra el comando orca para controlar el emulador en los shells de los agentes.",
+            "3d8dc52c93": "Registra el comando orca para controlar el emulador en los shells de los agents.",
             "21f5687c07": "Skill del CLI de Orca",
-            "64fb057667": "Enseña a los agentes los comandos orca del emulador para este worktree.",
+            "64fb057667": "Enseña a los agents los comandos orca del emulador para este worktree.",
             "5c59ea96ca": "Configuración de la skill de Orca CLI para Mobile Emulator",
             "bff5341ac3": "Terminal de instalación de la skill de Orca CLI para Mobile Emulator",
             "3d34423e88": "Registrando la CLI de Orca",
-            "3be27641c9": "para que los comandos del emulador se puedan ejecutar desde shells de agentes.",
+            "3be27641c9": "para que los comandos del emulador se puedan ejecutar desde shells de agents.",
             "3941719a56": "Verificando la CLI de Orca antes de abrir la configuración de la skill."
           },
           "MobileEmulatorTabIntroCallout": {
             "1924982130": "Descartar",
-            "5789936d9a": "Vista previa de simuladores de iOS mientras los agentes controlan la pantalla.",
+            "5789936d9a": "Vista previa de simuladores de iOS mientras los agents controlan la pantalla.",
             "8014b4b80b": "Mantener",
             "6e051a40b7": "Ocultar"
           },
@@ -11236,7 +11236,7 @@
           "b1bfc04034": "Texto seleccionado",
           "f37b98999e": "Esta nota",
           "2b2b31382c": "Front matter",
-          "bb629de58a": "Copiar notas para el agente",
+          "bb629de58a": "Copiar notas para el agent",
           "322afab6ff": "Notas de revisión",
           "0f9969a159": "Saltar a la primera nota de revisión",
           "12052c639c": "Cerrar búsqueda",
@@ -11244,7 +11244,7 @@
           "1febd97f5c": "Coincidencia anterior",
           "ec77985138": "Buscar en vista previa de Markdown",
           "517aea303b": "Buscar en vista previa",
-          "f961e94057": "Copiar nota para el agente",
+          "f961e94057": "Copiar nota para el agent",
           "94b520a96a": "Nota copiada",
           "13f94d760c": "Agregar nota",
           "ddf087d12e": "Todas las notas no enviadas",
@@ -11290,7 +11290,7 @@
         },
         "NotesSendMenu": {
           "44dc5e60a6": "Enviar notas",
-          "433928cd9f": "Enviar {{value0}} a un agente"
+          "433928cd9f": "Enviar {{value0}} a un agent"
         },
         "PdfFind": {
           "cd65b1d6b0": "Cerrar",
@@ -11308,12 +11308,12 @@
           "fa5d096b00": "Alejar"
         },
         "ReviewNotesSendMenuContent": {
-          "a49800405b": "Nuevo agente",
-          "e84705f223": "Sesión de agente activo",
+          "a49800405b": "Nuevo agent",
+          "e84705f223": "Sesión de agent activo",
           "03378aea75": "Enviar notas a",
-          "f5096c6e4e": "No se pudieron enviar notas al agente activo.",
-          "bb9c69a0c9": "Notas enviadas al agente activo.",
-          "50f7e753ea": "Enviando notas al agente activo..."
+          "f5096c6e4e": "No se pudieron enviar notas al agent activo.",
+          "bb9c69a0c9": "Notas enviadas al agent activo.",
+          "50f7e753ea": "Enviando notas al agent activo..."
         },
         "RichMarkdownAnnotationOverlay": {
           "069b5677b8": "Texto seleccionado",
@@ -11368,12 +11368,12 @@
         },
         "RichMarkdownReviewNoteLayer": {
           "f3ef92952b": "Esta nota",
-          "9cde7ad994": "Copiar nota para el agente",
+          "9cde7ad994": "Copiar nota para el agent",
           "117432e2c6": "Nota copiada",
           "3ababd949d": "Notas de revisión"
         },
         "RichMarkdownReviewRailActions": {
-          "636394af72": "Copiar notas para el agente",
+          "636394af72": "Copiar notas para el agent",
           "a807596997": "notas copiadas",
           "8aaf2c4c69": "Mostrar notas de revisión",
           "af02dc2456": "Ocultar notas de revisión"
@@ -11556,11 +11556,11 @@
           "07eccfa397": "No hay detalles disponibles para esta comprobación.",
           "a916648574": "Abrir detalles",
           "834cb3f23d": "Corregir con IA",
-          "c8f1a2d4e7": "Elige el agente y edita el comando completo antes de iniciarlo.",
+          "c8f1a2d4e7": "Elige el agent y edita el comando completo antes de iniciarlo.",
           "b3e7f9a1c2": "El contexto de corrección de la comprobación no está disponible",
-          "d5a8c2f1b9": "Iniciar el agente de IA predeterminado para corregir esta comprobación",
-          "e2b4d7c8a1": "Elige un agente para esta comprobación",
-          "f1c9e3a6d4": "Elige un agente para corregir la comprobación",
+          "d5a8c2f1b9": "Iniciar el agent de IA predeterminado para corregir esta comprobación",
+          "e2b4d7c8a1": "Elige un agent para esta comprobación",
+          "f1c9e3a6d4": "Elige un agent para corregir la comprobación",
           "5e2a9c3f88": "Abrir archivo en esta línea",
           "actionRequired": "Acción requerida"
         },
@@ -11574,7 +11574,7 @@
                     "4f2d9a8c17": "Selecciona un repositorio antes de lanzar una acción de IA.",
                     "7c3e1b5d42": "Abre un PR o MR antes de lanzar un fix con IA.",
                     "9b2f6d4a81": "Este check no está fallando.",
-                    "2ef90c9819": "Se inició un agente de IA para este check."
+                    "2ef90c9819": "Se inició un agent de IA para este check."
                   }
                 }
               }
@@ -11651,8 +11651,8 @@
           "a743da52ff": "Ampliar detalles",
           "a41fb5376e": "Contraer detalles",
           "5ae84475cc": "Despedir",
-          "b06e13fcf7": "Despedir agente",
-          "0272969e28": "Enviar a este agente",
+          "b06e13fcf7": "Despedir agent",
+          "0272969e28": "Enviar a este agent",
           "92a7017987": "envío",
           "019b74d93a": "elegible"
         },
@@ -11684,7 +11684,7 @@
       "contextual": {
         "tours": {
           "ContextualTourControl": {
-            "186eecc34f": "Nombre automático del espacio de trabajo desde el primer mensaje del agente",
+            "186eecc34f": "Nombre automático del espacio de trabajo desde el primer mensaje del agent",
             "02e8373219": "Genera automáticamente un nuevo nombre cuando deja este cuadro de texto vacío.",
             "731c5573df": "Nombre automático desde el primer mensaje"
           },
@@ -11754,7 +11754,7 @@
           "palette": {
             "project": {
               "results": {
-                "repoGroup": "Grupo de repositorios",
+                "repoGroup": "Grupo de Repos",
                 "project": "Proyecto"
               }
             }
@@ -11797,7 +11797,7 @@
             "f2d0c22d67": "Eliminar anotación {{value0}}",
             "11c5084aa2": "Borrar anotaciones",
             "734e4343ec": "Borrar anotaciones del navegador",
-            "95af781091": "Enviar comentarios a un agente",
+            "95af781091": "Enviar comentarios a un agent",
             "ac39b9366b": "Enviar",
             "a3508d7e6e": "{{value0}} anotación{{value1}} listo. Seleccione otro elemento o copie todos los comentarios.",
             "f796c774a4": "Escriba una URL arriba para comenzar a navegar.",
@@ -11832,7 +11832,7 @@
             "90d021f2ad": "Agregar",
             "0cb3bd6221": "Intención de anotación",
             "8f87e6c2e5": "Intención",
-            "532bac48c5": "Describe aquí lo que el agente debería cambiar...",
+            "532bac48c5": "Describe aquí lo que el agent debería cambiar...",
             "d2a7092e6e": "Comentario de anotación",
             "b472c5fe03": "Agregar anotación del navegador",
             "b5ba6085de": "Pregunta",
@@ -11847,11 +11847,11 @@
             "168350ae6a": "Haz clic o pon el cursor sobre un elemento, luego presiona C para copiar o S para hacer una captura de pantalla.",
             "e852e20cea": "Copiado — presiona S para hacer una captura de pantalla o selecciona otro elemento",
             "a5dcd0fd1d": "confirmando",
-            "777b5bc4ec": "Haz clic en un elemento para agregar comentarios para el agente.",
+            "777b5bc4ec": "Haz clic en un elemento para agregar comentarios para el agent.",
             "b733a91bd9": "Agrega comentarios para el elemento seleccionado.",
             "4328a0a062": "Captura fallida: {{value0}}",
             "26615e116b": "error",
-            "8aec5bc044": "inactivo",
+            "8aec5bc044": "idle",
             "759f32af29": "Descargando",
             "c8bc7f1f9e": "solicitado",
             "4300f38145": "Descargando desde {{value0}}{{value1}}",
@@ -11940,7 +11940,7 @@
           "449fc83bf7": "Fichas",
           "401f40ae79": "Est. gastar",
           "a7c312430d": "última ejecución",
-          "2df8970cd5": "Agente",
+          "2df8970cd5": "Agent",
           "e353ab9516": "verificación previa",
           "620b22145e": "Gracia",
           "15ea446b93": "Sesión",
@@ -11954,7 +11954,7 @@
           "91a4155e95": "Pausar la automatización",
           "4b1ea02d2e": "Editar automatización",
           "2fb1605beb": "Ejecutar ahora",
-          "221916d93c": "Cree una automatización para comenzar a programar el trabajo de los agentes.",
+          "221916d93c": "Cree una automatización para comenzar a programar el trabajo de los agents.",
           "de0fedac06": "nuevo_por_ejecución",
           "51a470b966": "ssh",
           "b09b2384fd": "En pausa",
@@ -11963,7 +11963,7 @@
         },
         "AutomationEditorDialog": {
           "fb1896a5e7": "Cancelar",
-          "57b722cbba": "Agente",
+          "57b722cbba": "Agent",
           "6ff66f9012": "Nueva ejecución",
           "a2e688226d": "Worktree",
           "6f9610e667": "Worktree se ejecuta en el workspace seleccionado. Nueva ejecución crea un workspace nuevo desde la rama seleccionada cada vez.",
@@ -11986,7 +11986,7 @@
           "7e35393632": "Hermes",
           "6f309eef8d": "Orca",
           "58f56b73d9": "Nombre de la automatización",
-          "1d9826933e": "Auditoría de repositorios entre semana",
+          "1d9826933e": "Auditoría de repos entre semana",
           "4133d33862": "Crear automatización",
           "0a75e5e2fa": "Crear automatización Hermes",
           "03142e7721": "Editar la automatización de Hermes",
@@ -12096,7 +12096,7 @@
           "08efc3ae12": "Automatización Hermes actualizada.",
           "e431bb85d4": "Elija un espacio de trabajo en el mismo host que esta automatización de Hermes.",
           "32534e7c9c": "Elija un espacio de trabajo disponible antes de guardar.",
-          "2360ffc956": "Elija un agente habilitado antes de guardar.",
+          "2360ffc956": "Elija un agent habilitado antes de guardar.",
           "6e91dab317": "Ingrese un horario avanzado válido antes de guardar.",
           "64bdb2304f": "Elija un horario admitido antes de guardar.",
           "2430fecf53": "Elija una ubicación de ejecución e ingrese un mensaje antes de guardar.",
@@ -12121,7 +12121,7 @@
           "pendingAutomationRunMissing": "El historial de ejecuciones ya no está disponible."
         },
         "CreateFromPicker": {
-          "f061f49e3f": "Buscar ramas del repositorio...",
+          "f061f49e3f": "Buscar ramas del repo...",
           "dd3841b442": "Crear desde",
           "ef6d762538": "Valor predeterminado del proyecto",
           "e53d306056": "{{value0}} (predeterminado)",
@@ -12188,10 +12188,10 @@
             "513401db93": "Prepare un resumen semanal del riesgo de liberación del estado actual del proyecto.",
             "39ed39280a": "Preparación para el lanzamiento",
             "a7fbd32ddb": "Verifique las dependencias, las pruebas fallidas y los cambios abiertos riesgosos todos los días de la semana.",
-            "b84757677d": "Auditoría de repositorios entre semana",
+            "b84757677d": "Auditoría de repos entre semana",
             "repoHealth": {
-              "category": "Salud del Repositorio",
-              "name": "Auditoría de repositorios entre semana",
+              "category": "Salud del Repo",
+              "name": "Auditoría de repos entre semana",
               "prompt": "Revisar el estado del repositorio. Verifique las actualizaciones de dependencia, las pruebas fallidas, el estado de pelusa/verificación de tipos y los cambios abiertos riesgosos. Resuma los hallazgos y sugiera la siguiente acción."
             },
             "releasePrep": {
@@ -12244,29 +12244,29 @@
         },
         "AgentSettingsDialog": {
           "50cdb57c03": "Administre agents de IA, establezca un valor predeterminado y personalice comandos.",
-          "fc0268e4ed": "Agentes"
+          "fc0268e4ed": "Agents"
         }
       },
       "activity": {
         "ActivityPrototypePage": {
-          "cf780197a1": "Selecciona un agente para ver su actividad",
+          "cf780197a1": "Selecciona un agent para ver su actividad",
           "e3db9892f6": "Aún no hay actividad.",
           "1b633f5c1e": "Terminal de conexión...",
           "8de7c5beaa": "Terminal no disponible",
           "866083500b": "Arrastra para cambiar el tamaño",
           "443690186e": "Cambiar el tamaño de la lista de hilos de actividad",
-          "7cd632006b": "Ninguna actividad de agente coincide con estos filtros.",
+          "7cd632006b": "Ninguna actividad de agent coincide con estos filtros.",
           "a2b4437bfb": "{{value0}} actividad",
           "023ff75afe": "Marcar todo como leído",
           "f70e4bec47": "Modo compacto",
           "a472a14700": "Más opciones",
           "db8a1878b5": "Opciones de lista de hilos",
           "d1a88df9a8": "Mostrar solo hilos no leídos",
-          "f6396e1f85": "Agente",
+          "f6396e1f85": "Agent",
           "b29191b3e0": "worktree",
           "8c3b621ddf": "Proyecto",
           "4a3986b200": "Estado",
-          "770d458144": "Agrupar actividad del agente por",
+          "770d458144": "Agrupar actividad del agent por",
           "795cbf26e2": "Filtrar...",
           "4616ea39fd": "Ir al workspace",
           "59b131fbd9": "Marcar hilo como no leído",
@@ -12277,7 +12277,7 @@
         },
         "ActivityTitlebarControls": {
           "f915168c8e": "no leído",
-          "d6a8de3934": "agentes",
+          "d6a8de3934": "agents",
           "dc708f3eff": "Agents cercanos"
         }
       },
@@ -12478,7 +12478,7 @@
   "components": {
     "native-chat": {
       "composer": {
-        "imageUnsupported": "Este agente no admite pegar imágenes.",
+        "imageUnsupported": "Este agent no admite pegar imágenes.",
         "send": "Enviar",
         "noPty": "No hay terminal activa: vuelva a alternar para volver a conectarse.",
         "locked": "La entrada está retenida por otro dispositivo.",
@@ -12500,7 +12500,7 @@
         "result": "Resultado"
       },
       "status": {
-        "responding": "El agente está respondiendo"
+        "responding": "El Agent está respondiendo"
       },
       "jumpToLatest": "Saltar a lo último",
       "toggle": {
@@ -12510,7 +12510,7 @@
       "state": {
         "loading": {
           "title": "Cargando conversación…",
-          "subtitle": "Leyendo la transcripción del agente."
+          "subtitle": "Leyendo la transcripción del agent."
         },
         "error": {
           "title": "No se pudo cargar la conversación",
@@ -12518,14 +12518,14 @@
         },
         "notAgent": {
           "title": "No hay conversación aquí",
-          "subtitle": "Este terminal no está ejecutando un agente de código reconocido."
+          "subtitle": "Este terminal no está ejecutando un agent de código reconocido."
         },
         "empty": {
           "title": "Iniciar un chat con {{value0}}",
           "subtitle": "Pídale a {{value0}} que inspeccione el código, explique el resultado o realice un cambio."
         }
       },
-      "stop": "Detener el agente",
+      "stop": "Detener el agent",
       "copyMessage": {
         "copied": "Copiado",
         "copy": "Copiar mensaje"

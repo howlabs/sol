@@ -22,7 +22,7 @@ const {
   registerTelemetryHandlersMock,
   registerDiagnosticsHandlersMock,
   registerShellHandlersMock,
-  registerPetHandlersMock,
+
   registerSessionHandlersMock,
   registerUIHandlersMock,
   setTrustedUIRendererWebContentsIdMock,
@@ -81,7 +81,7 @@ const {
   registerTelemetryHandlersMock: vi.fn(),
   registerDiagnosticsHandlersMock: vi.fn(),
   registerShellHandlersMock: vi.fn(),
-  registerPetHandlersMock: vi.fn(),
+
   registerSessionHandlersMock: vi.fn(),
   registerUIHandlersMock: vi.fn(),
   setTrustedUIRendererWebContentsIdMock: vi.fn(),
@@ -234,10 +234,6 @@ vi.mock('./shell', () => ({
   registerShellHandlers: registerShellHandlersMock
 }))
 
-vi.mock('./pet', () => ({
-  registerPetHandlers: registerPetHandlersMock
-}))
-
 vi.mock('./session', () => ({
   registerSessionHandlers: registerSessionHandlersMock
 }))
@@ -369,7 +365,7 @@ describe('registerCoreHandlers', () => {
     registerTelemetryHandlersMock.mockReset()
     registerDiagnosticsHandlersMock.mockReset()
     registerShellHandlersMock.mockReset()
-    registerPetHandlersMock.mockReset()
+
     registerSessionHandlersMock.mockReset()
     registerUIHandlersMock.mockReset()
     setTrustedUIRendererWebContentsIdMock.mockReset()
@@ -454,7 +450,7 @@ describe('registerCoreHandlers', () => {
     expect(registerAppHandlersMock).toHaveBeenCalledWith(store, { onBeforeRelaunch })
     expect(registerCodexAccountHandlersMock).toHaveBeenCalledWith(codexAccounts)
     expect(registerAgentHookHandlersMock).toHaveBeenCalledWith(runtime)
-    expect(registerPetHandlersMock).toHaveBeenCalled()
+
     expect(registerClaudeAccountHandlersMock).toHaveBeenCalledWith(claudeAccounts)
     expect(registerMiniMaxCredentialsHandlersMock).toHaveBeenCalledWith(rateLimits)
     expect(registerRateLimitHandlersMock).toHaveBeenCalledWith(rateLimits)

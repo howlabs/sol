@@ -77,9 +77,6 @@ type StatusBarProps = {
   floatingTerminalOpen: boolean
 }
 
-const PetStatusSegment = lazyWithRetry(() =>
-  import('./PetStatusSegment').then((module) => ({ default: module.PetStatusSegment }))
-)
 const ResourceUsageStatusSegment = lazyWithRetry(() =>
   import('./ResourceUsageStatusSegment').then((module) => ({
     default: module.ResourceUsageStatusSegment
@@ -1757,11 +1754,7 @@ function StatusBarInner({ floatingTerminalOpen }: StatusBarProps): React.JSX.Ele
   // re-show automatically once the agent appears on PATH.
   const detectedAgentIds = useAppStore((s) => s.detectedAgentIds)
   const ensureDetectedAgents = useAppStore((s) => s.ensureDetectedAgents)
-  // Why: pet segment intentionally does NOT participate in statusBarItems
-  // (see design doc — gating with both the experimental flag and a
-  // statusBarItems checkbox would double-toggle the surface). It is driven
-  // purely by the experimentalPet settings flag.
-  const petEnabled = useAppStore((s) => s.settings?.experimentalPet === true)
+
   const toggleStatusBarItem = useAppStore((s) => s.toggleStatusBarItem)
   const usageEmptyStateDismissed = useAppStore((s) => s.usageEmptyStateDismissed)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -2019,7 +2012,6 @@ function StatusBarInner({ floatingTerminalOpen }: StatusBarProps): React.JSX.Ele
       <div className="flex items-center gap-3">
         <UpdateStatusSegment compact={compact} iconOnly={iconOnly} />
         <React.Suspense fallback={null}>
-          {petEnabled ? <PetStatusSegment /> : null}
           {showResourceUsage ? (
             <ResourceUsageStatusSegment compact={compact} iconOnly={iconOnly} />
           ) : null}
