@@ -25,8 +25,6 @@ import {
 } from '../../runtime/web-runtime-session'
 import { closeTerminalTab } from '../terminal/terminal-tab-actions'
 import { openTabBarEntry, type TabCreateEntryArgs } from '../tab-bar/tab-create-entry-action'
-import { openMobileEmulatorTab } from '@/lib/open-mobile-emulator-tab'
-import { ensureSimulatorTab, getSimulatorTabForWorktree } from '@/lib/ensure-simulator-tab'
 import { buildDuplicatedBrowserTabOptions } from '@/lib/duplicate-browser-tab-options'
 import { getRuntimeEnvironmentIdForWorktree } from '@/lib/worktree-runtime-owner'
 import { browserWorkspaceHasRemoteOwner } from '@/runtime/remote-browser-tab-ownership'
@@ -72,8 +70,7 @@ export function useTabGroupWorkspaceModel({
       browserTabs: state.browserTabsByWorktree[worktreeId] ?? EMPTY_BROWSER_TABS,
       expandedPaneByTabId: state.expandedPaneByTabId,
       terminalLayoutsByTabId: state.terminalLayoutsByTabId ?? EMPTY_TERMINAL_LAYOUTS_BY_TAB_ID,
-      generatedTabTitlesEnabled: state.settings?.tabAutoGenerateTitle === true,
-      mobileEmulatorEnabled: state.settings?.mobileEmulatorEnabled !== false
+      generatedTabTitlesEnabled: state.settings?.tabAutoGenerateTitle === true
     }))
   )
 
@@ -603,19 +600,6 @@ export function useTabGroupWorkspaceModel({
       newBrowserTab: () => {
         void openNewBrowserTabInActiveWorkspace(groupId)
       },
-      newSimulatorTab: worktreeState.mobileEmulatorEnabled
-        ? () => {
-            if (getSimulatorTabForWorktree(worktreeId)) {
-              void ensureSimulatorTab(worktreeId, { surfacePane: true })
-              return
-            }
-            // Why: mobile simulators are most useful beside the current tab group.
-            void openMobileEmulatorTab(worktreeId, {
-              placement: 'rightSplit',
-              targetGroupId: groupId
-            })
-          }
-        : undefined,
       openEntry: async (args: TabCreateEntryArgs) => {
         await openTabBarEntry(args)
       },

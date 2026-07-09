@@ -16,7 +16,6 @@ export type ModalReturnFocusAction =
   | { kind: 'browser'; pageId: string; target: BrowserFocusTarget }
   | { kind: 'terminal'; tabId: string; leafId: string | null }
   | { kind: 'editor' }
-  | { kind: 'simulator' }
   | { kind: 'surface' }
   | { kind: 'none' }
 
@@ -38,9 +37,7 @@ export function resolveModalReturnFocusAction(
   if (captured.tabType === 'editor' && captured.worktreeId) {
     return { kind: 'editor' }
   }
-  if (captured.tabType === 'simulator' && captured.worktreeId) {
-    return { kind: 'simulator' }
-  }
+  // Why: mobile emulator tabs were removed; treat stale simulator captures as generic surface.
   if (captured.worktreeId) {
     return { kind: 'surface' }
   }

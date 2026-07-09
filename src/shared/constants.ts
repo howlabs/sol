@@ -343,8 +343,6 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     terminalMacOptionAsAltMigrated: false,
     terminalJISYenToBackslash: false,
     experimentalMobile: false,
-    mobileEmulatorEnabled: true,
-    mobileEmulatorDefaultDeviceUdid: null,
     androidSdkPath: null,
     // Why: indefinite hold by default — the desktop "Restore" banner is the
     // explicit return-to-desktop-size action, no wall-clock guess.
@@ -497,8 +495,6 @@ export function getDefaultUIState(): PersistedUIState {
     setupGuideBrowserMilestoneLegacyComplete: false,
     browserImportHintHidden: false,
     trayMinimizeNoticeShown: false,
-    mobileEmulatorTabIntroDismissed: false,
-    mobileEmulatorAgentSetupDismissed: false,
     // Why: brand-new profiles never saw recent project ordering; only upgraded
     // profiles get the one-time sidebar notice on first launch.
     projectOrderManualDefaultNoticeDismissed: true,

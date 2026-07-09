@@ -59,7 +59,7 @@ describe('resolveModalReturnFocusAction', () => {
     ).toEqual({ kind: 'editor' })
   })
 
-  it('restores the simulator surface without using the terminal fallback', () => {
+  it('treats removed simulator surface as generic workspace surface', () => {
     expect(
       resolveModalReturnFocusAction({
         tabType: 'simulator',
@@ -69,7 +69,7 @@ describe('resolveModalReturnFocusAction', () => {
         terminalTabId: null,
         terminalLeafId: null
       })
-    ).toEqual({ kind: 'simulator' })
+    ).toEqual({ kind: 'surface' })
   })
 
   it('returns none when there is no worktree to restore into', () => {

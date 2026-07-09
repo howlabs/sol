@@ -46,19 +46,10 @@ const updateCapableCallers = new Map<string, readonly string[]>([
   [
     'src/renderer/src/components/sidebar/LinearAgentSkillSetupDialog.tsx',
     ['installedCommand={installedCommand}']
-  ],
-  [
-    'src/renderer/src/components/settings/MobileEmulatorAgentControlRow.tsx',
-    ['ORCA_CLI_SKILL_UPDATE_COMMAND', 'installedCommand={cliSkillUpdateCommand}']
   ]
 ])
 
-const installOnlyCallers = new Map<string, readonly string[]>([
-  [
-    'src/renderer/src/components/emulator-pane/MobileEmulatorAgentSetupGuideSteps.tsx',
-    ['showInstallWhenInstalled={!setup.cliSkillInstalled}']
-  ]
-])
+const installOnlyCallers = new Map<string, readonly string[]>([])
 
 const directPanelCallers = new Set([
   // BrowserUsePane and LinearAgentSkillSetupPrompt delegate through child setup

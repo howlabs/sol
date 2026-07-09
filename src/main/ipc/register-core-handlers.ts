@@ -47,8 +47,6 @@ import { registerBrowserHandlers } from './browser'
 import { registerShellHandlers } from './shell'
 
 import { registerUIHandlers, setTrustedUIRendererWebContentsId } from './ui'
-import { registerEmulatorFrameStreamHandlers } from './emulator-frame-stream'
-import { registerEmulatorVideoStreamHandlers } from './emulator-video-stream'
 import { registerSpeechHandlers } from './speech'
 import { registerCodexAccountHandlers } from './codex-accounts'
 import { registerAgentHookHandlers } from './agent-hooks'
@@ -161,8 +159,6 @@ export function registerCoreHandlers(
 
   registerSessionHandlers(store)
   registerUIHandlers(store)
-  registerEmulatorFrameStreamHandlers()
-  registerEmulatorVideoStreamHandlers()
   registerWorkspaceSpaceHandlers(store)
   registerWorkspacePortHandlers(store)
   registerLocalhostWorktreeLabelHandlers(store)

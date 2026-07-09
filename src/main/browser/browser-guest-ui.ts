@@ -25,7 +25,6 @@ import {
 
 type ResolveRenderer = (browserTabId: string) => Electron.WebContents | null
 type ShouldForwardDictationShortcut = () => boolean
-type IsMobileEmulatorEnabled = () => boolean
 
 const CONTROL_MODIFIERS = new Set(['control', 'ctrl'])
 const MAC_COMMAND_MODIFIERS = new Set(['meta', 'command', 'cmd'])
@@ -294,17 +293,10 @@ export function setupGuestShortcutForwarding(args: {
   guest: Electron.WebContents
   resolveRenderer: ResolveRenderer
   shouldForwardDictationShortcut?: ShouldForwardDictationShortcut
-  isMobileEmulatorEnabled?: IsMobileEmulatorEnabled
   getKeybindings?: () => KeybindingOverrides | undefined
 }): () => void {
-  const {
-    browserTabId,
-    guest,
-    resolveRenderer,
-    shouldForwardDictationShortcut,
-    isMobileEmulatorEnabled,
-    getKeybindings
-  } = args
+  const { browserTabId, guest, resolveRenderer, shouldForwardDictationShortcut, getKeybindings } =
+    args
   let ctrlTabSwitching = false
   const doubleTapDetector = new ModifierDoubleTapDetector()
   const resetDoubleTapDetector = (): void => doubleTapDetector.reset()
@@ -410,12 +402,6 @@ export function setupGuestShortcutForwarding(args: {
     }
     if (keybindingMatchesAction('tab.newBrowser', input, process.platform, keybindings)) {
       renderer.send('ui:newBrowserTab')
-    } else if (
-      process.platform === 'darwin' &&
-      (isMobileEmulatorEnabled?.() ?? true) &&
-      keybindingMatchesAction('tab.newSimulator', input, process.platform, keybindings)
-    ) {
-      renderer.send('ui:newSimulatorTab')
     } else if (keybindingMatchesAction('tab.newMarkdown', input, process.platform, keybindings)) {
       renderer.send('ui:newMarkdownTab')
     } else if (keybindingMatchesAction('tab.newTerminal', input, process.platform, keybindings)) {

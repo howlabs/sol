@@ -619,6 +619,10 @@ export const createTabsSlice: StateCreator<AppState, [], [], TabsSlice> = (set, 
   layoutByWorktree: {},
 
   createUnifiedTab: (worktreeId, contentType, init) => {
+    // Why: mobile emulator removed from Sol; refuse new simulator tabs.
+    if (contentType === 'simulator') {
+      throw new Error('Simulator tabs are no longer supported')
+    }
     const id = init?.id ?? createBrowserUuid()
     let created!: Tab
     set((state) => {
@@ -702,6 +706,10 @@ export const createTabsSlice: StateCreator<AppState, [], [], TabsSlice> = (set, 
   },
 
   createUnifiedTabInSplit: (worktreeId, contentType, target, init) => {
+    // Why: mobile emulator removed from Sol; refuse new simulator tabs.
+    if (contentType === 'simulator') {
+      return null
+    }
     const id = init?.id ?? createBrowserUuid()
     const newGroupId = createBrowserUuid()
     let created: Tab | null = null
@@ -1913,8 +1921,9 @@ export const createTabsSlice: StateCreator<AppState, [], [], TabsSlice> = (set, 
       if (tab.contentType === 'browser') {
         return liveBrowserIds.has(tab.entityId)
       }
+      // Why: mobile emulator surface was removed; drop stale simulator tabs on reconcile/hydrate.
       if (tab.contentType === 'simulator') {
-        return true
+        return false
       }
       return liveEditorIds.has(tab.entityId)
     }

@@ -21,12 +21,10 @@ import {
   computerErrorData,
   errorResponse,
   mapBrowserError,
-  mapEmulatorError,
   mapRuntimeError,
   successResponse
 } from './errors'
 import { ALL_RPC_METHODS } from './methods'
-import { emulatorProbe, emulatorProbeError } from '../../emulator/emulator-probe'
 import type { OrcaRuntimeService } from '../orca-runtime'
 
 export type DispatcherOptions = {
@@ -72,10 +70,6 @@ export class RpcDispatcher {
       )
     }
 
-    const isEmulator = request.method.startsWith('emulator.')
-    if (isEmulator) {
-      emulatorProbe(`rpc ${request.method}`, request.params)
-    }
     try {
       const result = await method.handler(parsedParams.value, {
         runtime: this.runtime,
@@ -84,9 +78,6 @@ export class RpcDispatcher {
       this.recordRuntimeFeatureInteraction(request.method, result, undefined, request.params)
       return successResponse(request.id, meta, result)
     } catch (error) {
-      if (isEmulator) {
-        emulatorProbeError(`rpc ${request.method}`, error, { params: request.params })
-      }
       return this.mapError(request, meta, error)
     }
   }
@@ -218,9 +209,6 @@ export class RpcDispatcher {
     if (request.method.startsWith('browser.')) {
       return mapBrowserError(request.id, meta, error)
     }
-    if (request.method.startsWith('emulator.')) {
-      return mapEmulatorError(request.id, meta, error)
-    }
     return mapRuntimeError(request.id, meta, error)
   }
 
@@ -283,11 +271,6 @@ function getRuntimeFeatureInteractionId(
   }
   if (method.startsWith('browser.') && !method.startsWith('browser.profile')) {
     return 'agent-browser-use'
-  }
-  if (method.startsWith('emulator.')) {
-    // Emulator commands are allowed from terminal/CLI (workspace-scoped, like other automation).
-    // Return null to indicate no special feature-interaction restriction (or add 'emulator-use' later).
-    return null
   }
   if (method === 'computer.permissions') {
     return 'computer-use-setup'

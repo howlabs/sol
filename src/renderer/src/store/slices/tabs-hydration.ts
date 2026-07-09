@@ -93,6 +93,11 @@ function hydrateUnifiedFormat(
         }
       })
       .filter((tab) => {
+        // Why: mobile emulator surface removed from Sol; drop legacy simulator
+        // tabs so hydrate never remounts an empty emulator pane.
+        if (tab.contentType === 'simulator') {
+          return false
+        }
         if (tab.contentType === 'terminal') {
           // Why: old web-client sessions could persist host surface ids
           // containing "::"; those are invalid pane-key tab ids.

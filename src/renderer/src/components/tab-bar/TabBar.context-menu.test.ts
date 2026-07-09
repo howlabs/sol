@@ -474,49 +474,6 @@ describe('TabBar context menu wiring', () => {
     expect(menuLabels[3]).toContain('New Browser Tab')
   })
 
-  it('turns New Mobile Emulator into a go-to action when the workspace already has one', async () => {
-    const onNewSimulatorTab = vi.fn()
-    appStoreSnapshot.unifiedTabsByWorktree = {
-      'wt-1': [
-        {
-          id: 'sim-1',
-          entityId: 'sim-1',
-          groupId: 'group-2',
-          worktreeId: 'wt-1',
-          contentType: 'simulator',
-          label: 'Mobile Emulator',
-          customLabel: null,
-          color: null,
-          sortOrder: 1,
-          createdAt: 0
-        }
-      ]
-    }
-
-    const element = await renderTabBar({
-      tabs: [TERMINAL_TAB],
-      groupId: 'group-1',
-      onNewSimulatorTab
-    })
-
-    const emulatorItem = findChildrenByType(element, 'DropdownMenuItem').find((item) =>
-      extractText(item.props.children).includes('Go to Mobile Emulator')
-    )
-    expect(emulatorItem).toBeTruthy()
-    if (!emulatorItem) {
-      throw new Error('Go to Mobile Emulator menu item not rendered')
-    }
-    expect(emulatorItem.props.disabled).toBeUndefined()
-    expect(emulatorItem.props.onSelect).toBeTypeOf('function')
-    ;(emulatorItem.props.onSelect as () => void)()
-    expect(onNewSimulatorTab).toHaveBeenCalledTimes(1)
-
-    const tooltip = findChildrenByType(element, 'TooltipContent').find((item) =>
-      extractText(item.props.children).includes('Open the existing emulator tab.')
-    )
-    expect(tooltip).toBeTruthy()
-  })
-
   it('cancels delayed menu focus when the tab bar root unmounts', async () => {
     vi.useFakeTimers()
     Object.assign(window, { setTimeout, clearTimeout })

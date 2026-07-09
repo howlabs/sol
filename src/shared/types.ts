@@ -2839,11 +2839,6 @@ export type GlobalSettings = {
    *  key to a backslash, matching the common terminal expectation for that key. */
   terminalJISYenToBackslash: boolean
   experimentalMobile: boolean
-  /** Why: the iOS Simulator feature is default-on for capable macOS hosts, but
-   *  users need a durable off switch that hides UI affordances and blocks CLI attach. */
-  mobileEmulatorEnabled?: boolean
-  /** Preferred iOS Simulator UDID for UI auto-attach and agent CLI attach. */
-  mobileEmulatorDefaultDeviceUdid?: string | null
   /** Explicit Android SDK root, used when auto-discovery (ANDROID_HOME / the
    *  default install path) does not find it. `null` (default) auto-discovers. */
   androidSdkPath?: string | null
@@ -3284,11 +3279,6 @@ export type PersistedUIState = {
   /** Why: Windows-only. Set once after the window first hides to the system
    *  tray, so the "Orca is still running" notification shows only on first use. */
   trayMinimizeNoticeShown?: boolean
-  /** User dismissed the first-run Mobile Emulator intro (Keep, Hide, or close).
-   *  Reversible only by re-enabling the feature in Settings. */
-  mobileEmulatorTabIntroDismissed?: boolean
-  /** User deferred the in-pane Mobile Emulator CLI + skill setup guide. */
-  mobileEmulatorAgentSetupDismissed?: boolean
   /** One-shot rollout notice for manual project ordering becoming the default.
    *  Absent or true means the sidebar callout stays hidden. */
   projectOrderManualDefaultNoticeDismissed?: boolean
