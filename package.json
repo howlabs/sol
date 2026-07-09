@@ -1,9 +1,9 @@
 {
-  "name": "orca",
-  "version": "1.4.129-rc.3",
-  "description": "Next-gen IDE for parallel agentic development",
-  "homepage": "https://github.com/stablyai/orca",
-  "author": "stablyai",
+  "name": "sol",
+  "version": "0.1.0",
+  "description": "Minimal IDE for parallel AI agent development",
+  "homepage": "https://github.com/howlabs/sol",
+  "author": "howlabs",
   "bin": {
     "orca": "./out/cli/index.js",
     "orca-dev": "./config/scripts/orca-dev.mjs"
