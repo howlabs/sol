@@ -197,40 +197,6 @@ describe('sendRemoteRuntimeRequest', () => {
     })
   })
 
-  it('preserves structured failure data for remote computer-use recovery hints', async () => {
-    const server = await createOneShotServer({
-      response: (requestId) => ({
-        id: requestId,
-        ok: false,
-        error: {
-          code: 'app_not_found',
-          message: 'app not found: Gmail',
-          data: {
-            nextSteps: ['Target the desktop browser app/window that contains Gmail.']
-          }
-        },
-        _meta: { runtimeId: 'runtime-test' }
-      })
-    })
-
-    const response = await sendRemoteRuntimeRequest(
-      server.pairing,
-      'computer.getAppState',
-      { app: 'Gmail' },
-      1000
-    )
-
-    expect(response).toMatchObject({
-      ok: false,
-      error: {
-        code: 'app_not_found',
-        data: {
-          nextSteps: [expect.stringContaining('desktop browser app/window')]
-        }
-      }
-    })
-  })
-
   it('detaches one-shot socket listeners after a successful response', async () => {
     const offSpy = vi.spyOn(WebSocketClient.prototype, 'off')
     try {

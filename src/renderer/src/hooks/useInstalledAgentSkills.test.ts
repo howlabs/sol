@@ -165,9 +165,6 @@ describe('isOrchestrationSkillName', () => {
     expect(
       _installedAgentSkillDiscoveryInternalsForTests.isOrchestrationSkillName(' Orchestration ')
     ).toBe(true)
-    expect(
-      _installedAgentSkillDiscoveryInternalsForTests.isOrchestrationSkillName('computer-use')
-    ).toBe(false)
   })
 })
 

@@ -1,6 +1,4 @@
 import type { CliStatusResult } from '../shared/runtime-types'
-import { computerUseErrorRecoveryData } from '../shared/computer-use-error-recovery'
-import { prepareComputerCliJsonResult } from './computer-format'
 import type { RuntimeRpcFailure, RuntimeRpcSuccess } from './runtime-client'
 import { RuntimeClientError, RuntimeRpcFailureError } from './runtime-client'
 
@@ -15,13 +13,6 @@ export {
   formatTabShow
 } from './browser-format'
 
-export {
-  formatComputerAction,
-  formatGetAppState,
-  formatListApps,
-  formatListWindows
-} from './computer-format'
-export type { ComputerActionFollowUpTarget } from './computer-format'
 export {
   formatProjectHostSetupCreateResult,
   formatProjectHostSetupDeleteResult,
@@ -69,26 +60,16 @@ export function printResult<TResult>(
   formatter: (value: TResult) => string
 ): void {
   if (json) {
-    console.log(JSON.stringify(prepareComputerCliJsonResult(response), null, 2))
+    console.log(JSON.stringify(response, null, 2))
     return
   }
   console.log(formatter(response.result))
 }
 
-export function formatCliError(error: unknown, context: CliErrorContext = {}): string {
+export function formatCliError(error: unknown, _context: CliErrorContext = {}): string {
   const message = error instanceof Error ? error.message : String(error)
   if (error instanceof RuntimeClientError && error.code === 'runtime_unavailable') {
     return `${message}\nOrca is not running. Run 'orca open' first.`
-  }
-  if (
-    error instanceof RuntimeClientError &&
-    error.code === 'invalid_argument' &&
-    context.commandPath?.[0] === 'computer'
-  ) {
-    return formatMessageWithNextSteps(
-      message,
-      computerUseErrorRecoveryData('invalid_argument')?.nextSteps ?? []
-    )
   }
   if (
     error instanceof RuntimeRpcFailureError &&
@@ -120,7 +101,7 @@ export function reportCliError(error: unknown, json: boolean, context: CliErrorC
         error: {
           code: error instanceof RuntimeClientError ? error.code : 'runtime_error',
           message: error instanceof Error ? error.message : String(error),
-          data: localCliErrorData(error, context)
+          data: undefined
         },
         _meta: {
           runtimeId: null
@@ -138,17 +119,6 @@ function formatMessageWithNextSteps(message: string, nextSteps: readonly string[
     return message
   }
   return `${message}\n${nextSteps.map((step) => `Next step: ${step}`).join('\n')}`
-}
-
-function localCliErrorData(error: unknown, context: CliErrorContext): unknown {
-  if (
-    error instanceof RuntimeClientError &&
-    error.code === 'invalid_argument' &&
-    context.commandPath?.[0] === 'computer'
-  ) {
-    return computerUseErrorRecoveryData('invalid_argument')
-  }
-  return undefined
 }
 
 export function formatCliStatus(status: CliStatusResult): string {
