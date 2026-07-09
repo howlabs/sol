@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  getNextTerminalReadyRetryAttempt,
-  READY_MAX_ATTEMPTS
-} from './OnboardingInlineCommandTerminal'
+import { getNextTerminalReadyRetryAttempt, READY_MAX_ATTEMPTS } from './InlineCommandTerminal'
 
 describe('getNextTerminalReadyRetryAttempt', () => {
   it('stops scheduling readiness checks after the capped number of attempts', () => {

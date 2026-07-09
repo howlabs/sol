@@ -7,7 +7,7 @@ import { useAppStore } from '@/store'
 import { translate } from '@/i18n/i18n'
 import { brandEphemeralSetupTerminalWorktreeId } from '../../../../shared/ephemeral-setup-terminal-worktree-id'
 
-const ONBOARDING_INLINE_TERMINAL_WORKTREE_ID = 'onboarding-inline-terminal'
+const INLINE_COMMAND_TERMINAL_WORKTREE_ID = 'inline-command-terminal'
 const AUTO_INSERT_DELAY_MS = 250
 const READY_RETRY_MS = 100
 // Why: PTY startup can fail before [data-pty-id] appears; cap polling so the
@@ -15,7 +15,7 @@ const READY_RETRY_MS = 100
 export const READY_MAX_ATTEMPTS = 50
 const PTY_TEXT_FALLBACK_MS = 750
 
-type OnboardingInlineCommandTerminalProps = {
+type InlineCommandTerminalProps = {
   command: string
   title: string
   description?: string
@@ -35,7 +35,7 @@ type OnboardingInlineCommandTerminalProps = {
  * Inline pane that runs a one-off setup command (skill install, feature tip) in an
  * ephemeral floating-scoped terminal, auto-inserting the command once the PTY is ready.
  */
-export function OnboardingInlineCommandTerminal({
+export function InlineCommandTerminal({
   command,
   title,
   description,
@@ -44,12 +44,12 @@ export function OnboardingInlineCommandTerminal({
   terminalTopMarginPx = 20,
   descriptionPaddingClassName = 'px-4 py-3',
   autoScrollIntoView = true,
-  worktreeId: worktreeIdProp = ONBOARDING_INLINE_TERMINAL_WORKTREE_ID,
+  worktreeId: worktreeIdProp = INLINE_COMMAND_TERMINAL_WORKTREE_ID,
   shellOverride,
   onOpened,
   onInteracted,
   onTerminalExit
-}: OnboardingInlineCommandTerminalProps): React.JSX.Element {
+}: InlineCommandTerminalProps): React.JSX.Element {
   // Why: brand the id so a remote runtime scopes this ephemeral terminal to the
   // floating terminal instead of rejecting the synthetic id.
   const worktreeId = useMemo(
@@ -304,7 +304,7 @@ export function OnboardingInlineCommandTerminal({
             <div className="flex h-full items-center justify-center gap-2 text-xs text-muted-foreground">
               <Loader2 className="size-4 animate-spin" />
               {translate(
-                'auto.components.onboarding.OnboardingInlineCommandTerminal.4123609efd',
+                'auto.components.onboarding.InlineCommandTerminal.4123609efd',
                 'Starting terminal...'
               )}
             </div>

@@ -62,7 +62,6 @@ import { RuntimeEnvironmentsPane } from './RuntimeEnvironmentsPane'
 import { PrivacyPane } from './PrivacyPane'
 import { AdvancedPane } from './AdvancedPane'
 import { SettingsSidebar } from './SettingsSidebar'
-import { SettingsSetupGuidePane } from './SettingsSetupGuidePane'
 import { ActiveSettingsSectionProvider, SettingsSection } from './SettingsSection'
 import { getSettingsSectionSearchEntries, rankSettingsSearchItems } from './settings-search'
 import { cn } from '@/lib/utils'
@@ -1044,8 +1043,6 @@ function Settings(): React.JSX.Element {
   const isSectionMounted = (sectionId: string): boolean => neededSectionIds.has(sectionId)
   const isFocusedShortcutsPane =
     activeSectionId === 'shortcuts' && settingsSearchQuery.trim() === ''
-  const isFocusedSetupGuidePane =
-    activeSectionId === 'setup-guide' && settingsSearchQuery.trim() === ''
 
   return (
     <div
@@ -1077,7 +1074,7 @@ function Settings(): React.JSX.Element {
             className={cn(
               'mx-auto flex w-full flex-col gap-10 px-8 pt-10',
               isFocusedShortcutsPane ? 'h-full pb-6' : 'pb-24',
-              isFocusedSetupGuidePane ? 'max-w-6xl' : 'max-w-4xl'
+              'max-w-4xl'
             )}
           >
             {visibleNavSections.length === 0 ? (
@@ -1184,22 +1181,6 @@ function Settings(): React.JSX.Element {
                     </SettingsSection>
                   </>
                 ) : null}
-
-                <SettingsSection
-                  id="setup-guide"
-                  title={translate(
-                    'auto.components.settings.Settings.6d119427ef',
-                    'Onboarding checklist'
-                  )}
-                  description={translate(
-                    'auto.components.settings.Settings.6855b0f77d',
-                    'Finish the core workflows that make Orca useful for parallel agent work.'
-                  )}
-                  searchEntries={getSectionSearchEntries('setup-guide')}
-                  bodyClassName="overflow-hidden rounded-none border-0 bg-transparent p-0 shadow-none"
-                >
-                  {isSectionMounted('setup-guide') ? <SettingsSetupGuidePane /> : null}
-                </SettingsSection>
 
                 <SettingsSection
                   id="general"

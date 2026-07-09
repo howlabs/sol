@@ -1180,18 +1180,6 @@ export function useIpcEvents(): void {
       })
     )
 
-    unsubs.push(
-      window.api.ui.onOpenSetupGuide?.(() => {
-        useAppStore.getState().openModal('setup-guide', { telemetrySource: 'help_menu' })
-      }) ?? (() => {})
-    )
-
-    unsubs.push(
-      window.api.ui.onOpenFeatureTour(() => {
-        useAppStore.getState().openModal('feature-wall', { source: 'help_menu' })
-      })
-    )
-
     // Why: the View > Appearance menu toggles settings directly in main (so
     // checkbox state reflects the persisted value without a round-trip) and
     // broadcasts the change. Merge it into the store so the sidebar and

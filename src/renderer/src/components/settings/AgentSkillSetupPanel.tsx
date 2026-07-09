@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { Copy, Loader2, RefreshCw, Terminal } from 'lucide-react'
 import { toast } from 'sonner'
 import { IntegrationStatusPill } from '../integration-status-pill'
-import { OnboardingInlineCommandTerminal } from '../onboarding/OnboardingInlineCommandTerminal'
+import { InlineCommandTerminal } from './InlineCommandTerminal'
 import { Button } from '../ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { notifyInstalledAgentSkillsChanged } from '@/hooks/useInstalledAgentSkills'
@@ -336,7 +336,7 @@ export function AgentSkillSetupPanel({
               </TooltipContent>
             </Tooltip>
           </div>
-          <OnboardingInlineCommandTerminal
+          <InlineCommandTerminal
             worktreeId={terminalWorktreeId}
             command={openTerminalCommand}
             title={terminalTitle}

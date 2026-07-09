@@ -40,10 +40,6 @@ const updateCapableCallers = new Map<string, readonly string[]>([
     ['installedCommand={installedCommand}']
   ],
   [
-    'src/renderer/src/components/feature-wall/BrowserUseSkillSetupCard.tsx',
-    ['ORCA_CLI_SKILL_UPDATE_COMMAND', 'installedCommand={updateCommand}']
-  ],
-  [
     'src/renderer/src/components/sidebar/LinearAgentSkillSetupPrompt.tsx',
     ['ORCA_LINEAR_SKILL_UPDATE_COMMAND', 'installedCommand={installedCommand}']
   ],

@@ -33,7 +33,6 @@ import {
   UserCog,
   Wrench
 } from 'lucide-react'
-import { OrcaLogoSettingsIcon } from '@/components/settings/orca-logo-settings-icon'
 import type { Repo } from '../../../shared/types'
 import { getRepoKindLabel } from '../../../shared/repo-kind'
 import { useAppStore } from '@/store'
@@ -198,39 +197,6 @@ export function buildSettingsNavigationMetadata({
           }
         ]
       : []),
-    {
-      id: 'setup-guide',
-      title: translate(
-        'auto.hooks.useSettingsNavigationMetadata.ded9e9032f',
-        'Onboarding checklist'
-      ),
-      description: translate(
-        'auto.hooks.useSettingsNavigationMetadata.5f32ac08f3',
-        'Finish the onboarding checklist for core Orca workflows.'
-      ),
-      icon: OrcaLogoSettingsIcon,
-      searchEntries: [
-        {
-          title: translate(
-            'auto.hooks.useSettingsNavigationMetadata.ded9e9032f',
-            'Onboarding checklist'
-          ),
-          description: translate(
-            'auto.hooks.useSettingsNavigationMetadata.17005c73d4',
-            'Open the onboarding checklist for setup and milestone steps.'
-          ),
-          keywords: [
-            translate('auto.hooks.useSettingsNavigationMetadata.ea0b1bc7b8', 'setup guide'),
-            translate(
-              'auto.hooks.useSettingsNavigationMetadata.0505d0df29',
-              'get started with Orca'
-            ),
-            translate('auto.hooks.useSettingsNavigationMetadata.724c440e72', 'getting started')
-          ]
-        }
-      ],
-      group: 'setup'
-    },
     {
       id: 'general',
       title: translate('auto.hooks.useSettingsNavigationMetadata.13241992bd', 'General'),

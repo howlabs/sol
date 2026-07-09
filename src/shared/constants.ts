@@ -153,11 +153,13 @@ export function getDefaultNotificationSettings(): NotificationSettings {
 }
 
 export function getDefaultOnboardingState(): OnboardingState {
+  // Why: Sol ships without the first-run onboarding funnel; persist a closed
+  // profile so legacy open onboarding state and first launch both skip the UI.
   return {
     flowVersion: ONBOARDING_FLOW_VERSION,
-    closedAt: null,
-    outcome: null,
-    lastCompletedStep: -1,
+    closedAt: 1,
+    outcome: 'completed',
+    lastCompletedStep: ONBOARDING_FINAL_STEP,
     checklist: {
       addedRepo: false,
       choseAgent: false,

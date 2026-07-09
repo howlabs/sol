@@ -58,9 +58,7 @@ export function performContextualTourStepAction(args: {
       advanceOrFinish()
       return
     case 'open-getting-started':
+      // Why: Sol removed the setup-guide/onboarding funnel; finish the tour only.
       args.finishTour()
-      args.schedule(() => {
-        args.openModal('setup-guide', { telemetrySource: 'contextual_tour' })
-      })
   }
 }

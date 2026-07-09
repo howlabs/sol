@@ -746,9 +746,6 @@ export type UISlice = {
     | 'workspace-cleanup'
     | 'project-added'
     | 'worktree-visibility'
-    | 'setup-guide'
-    | 'feature-wall'
-    | 'feature-tips'
     | 'new-workspace-composer'
     | 'confirm-orca-yaml-hooks'
   modalData: Record<string, unknown>

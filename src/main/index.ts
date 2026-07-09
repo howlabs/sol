@@ -127,7 +127,6 @@ import {
   attachClaudeLivePtyPersistence,
   seedLiveClaudePtysFromPersistence
 } from './claude-accounts/live-pty-gate'
-import { StarNagService } from './star-nag/service'
 import { agentHookServer } from './agent-hooks/server'
 import { maybeAutoRenameBranchOnFirstWork } from './agent-hooks/first-work-branch-rename'
 import { renameWorktreeFolderOnFirstWork } from './agent-hooks/first-work-folder-rename'
@@ -211,7 +210,6 @@ let runtimeRpc: OrcaRuntimeRpcServer | null = null
 // offscreen browser backend (and thus advertises browser pane support).
 let headlessBrowserDisplayAvailable = false
 
-let starNag: StarNagService | null = null
 let agentAwakeService: AgentAwakeService | null = null
 let crashReports: CrashReportStore | null = null
 let unsubscribeAgentAwakeStatusChanges: (() => void) | null = null
@@ -1079,18 +1077,6 @@ function openMainWindow(): BrowserWindow {
   return window
 }
 
-function sendOpenFeatureTour(targetWindow?: BrowserWindow | null): void {
-  const webContents =
-    targetWindow && !targetWindow.isDestroyed() ? targetWindow.webContents : mainWindow?.webContents
-  webContents?.send('ui:openFeatureTour')
-}
-
-function sendOpenSetupGuide(targetWindow?: BrowserWindow | null): void {
-  const webContents =
-    targetWindow && !targetWindow.isDestroyed() ? targetWindow.webContents : mainWindow?.webContents
-  webContents?.send('ui:openSetupGuide')
-}
-
 function sendOpenCrashReport(targetWindow?: BrowserWindow | null): void {
   const webContents =
     targetWindow && !targetWindow.isDestroyed() ? targetWindow.webContents : mainWindow?.webContents
@@ -1892,9 +1878,6 @@ app.whenReady().then(async () => {
     prepareForCodexLaunch: prepareCodexRuntimeHomeForLaunch,
     prepareForClaudeLaunch: (target) => claudeRuntimeAuth!.prepareForClaudeLaunch(target)
   })
-  starNag = new StarNagService(store, stats)
-  starNag.start()
-  starNag.registerIpcHandlers()
   runtimeService.setAgentBrowserBridge(
     new AgentBrowserBridge(browserManager, {
       onTabsChanged: (worktreeId) => runtimeService.notifyMobileSessionTabsChanged(worktreeId)
@@ -1962,23 +1945,10 @@ app.whenReady().then(async () => {
       recordCrashBreadcrumb('settings_opened')
       mainWindow?.webContents.send('ui:openSettings')
     },
-    onOpenSetupGuide: (targetWindow) => {
-      recordCrashBreadcrumb('setup_guide_opened')
-      const targetBrowserWindow = targetWindow instanceof BrowserWindow ? targetWindow : null
-      sendOpenSetupGuide(targetBrowserWindow)
-    },
     onOpenCrashReport: (targetWindow) => {
       recordCrashBreadcrumb('crash_report_opened')
       const targetBrowserWindow = targetWindow instanceof BrowserWindow ? targetWindow : null
       sendOpenCrashReport(targetBrowserWindow)
-    },
-    onOpenFeatureTour: (targetWindow) => {
-      recordCrashBreadcrumb('feature_tour_opened')
-      // Why: menu clicks provide the BrowserWindow that invoked the item. Use it
-      // first so hidden/headless E2E windows and future multi-window flows route
-      // the tour to the correct renderer instead of relying on global focus.
-      const targetBrowserWindow = targetWindow instanceof BrowserWindow ? targetWindow : null
-      sendOpenFeatureTour(targetBrowserWindow)
     },
     onZoomIn: () => {
       mainWindow?.webContents.send('terminal:zoom', 'in')
@@ -2217,7 +2187,6 @@ app.on('will-quit', (e) => {
   // are still running. killAllPty() does not call runtime.onPtyExit(),
   // so without this ordering, running agents would produce orphaned
   // agent_start events with no matching stops.
-  starNag?.stop()
   automations?.stop()
   setUnreadDockBadgeCount(0)
   agentHookServer.stop()
