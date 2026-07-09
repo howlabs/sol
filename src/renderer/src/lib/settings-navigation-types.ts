@@ -23,7 +23,6 @@ export type SettingsNavTarget =
   | 'privacy'
   | 'advanced'
   | 'dev'
-  | 'voice'
   | 'shortcuts'
   | 'stats'
   | 'ssh'

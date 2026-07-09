@@ -7,7 +7,6 @@ import {
   useRef,
   useState
 } from 'react'
-import { useAppStore } from '../../store'
 import type { AgentType } from '../../../../shared/agent-status-types'
 import { NATIVE_FILE_DROP_TARGET } from '../../../../shared/native-file-drop'
 import { sendRuntimePtyInput } from '@/runtime/runtime-terminal-inspection'
@@ -42,8 +41,6 @@ import { useNativeChatSkills } from './use-native-chat-skills'
 import { useNativeChatComposerAttachments } from './use-native-chat-composer-attachments'
 import { useNativeChatComposerPaste } from './use-native-chat-composer-paste'
 import { useNativeChatExternalAttachments } from './use-native-chat-external-attachments'
-import { resolveVoiceSettings } from '../../../../shared/speech-types'
-import { dispatchDictationControl } from '../dictation/dictation-control-events'
 import { useNativeChatComposerKeyDown } from './use-native-chat-composer-keydown'
 
 // Why: a plain ESC byte is what the agent TUIs read as the interrupt key over a
@@ -124,18 +121,8 @@ export const NativeChatComposer = forwardRef<NativeChatComposerHandle, NativeCha
     const [history, setHistory] = useState<HistoryState>(EMPTY_HISTORY)
     const [activeSuggestion, setActiveSuggestion] = useState(0)
     const [notice, setNotice] = useState<string | null>(null)
-    const [dictationPressed, setDictationPressed] = useState(false)
     const skills = useNativeChatSkills(agent, terminalTabId)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
-    const dictationState = useAppStore((store) => store.dictationState)
-    const voiceSettings = resolveVoiceSettings(useAppStore((store) => store.settings) ?? {})
-    const isDictationHoldMode = voiceSettings?.dictationMode === 'hold'
-    const dictationDisabled = voiceSettings?.enabled !== true || !voiceSettings.sttModel
-    const isDictating =
-      dictationPressed ||
-      dictationState === 'starting' ||
-      dictationState === 'listening' ||
-      dictationState === 'stopping'
 
     // Place the caret at the end of the (possibly restored) draft when the
     // composer is reused for a different pane. Adjusted during render (matching
@@ -257,26 +244,6 @@ export const NativeChatComposer = forwardRef<NativeChatComposerHandle, NativeCha
         attachExternalPaths([filePath])
       })()
     }, [attachExternalPaths])
-
-    const focusForDictation = useCallback(() => {
-      textareaRef.current?.focus()
-    }, [])
-
-    const toggleDictation = useCallback(() => {
-      focusForDictation()
-      dispatchDictationControl('toggle')
-    }, [focusForDictation])
-
-    const startHoldDictation = useCallback(() => {
-      setDictationPressed(true)
-      focusForDictation()
-      dispatchDictationControl('start')
-    }, [focusForDictation])
-
-    const stopHoldDictation = useCallback(() => {
-      setDictationPressed(false)
-      dispatchDictationControl('stop')
-    }, [])
 
     const send = useCallback(() => {
       const text = draft
@@ -410,9 +377,6 @@ export const NativeChatComposer = forwardRef<NativeChatComposerHandle, NativeCha
         sendButtonDisabled={sendButtonDisabled}
         isWorking={isWorking}
         attachDisabled={disabled}
-        dictationDisabled={dictationDisabled}
-        isDictating={isDictating}
-        isDictationHoldMode={isDictationHoldMode}
         onDraftChange={(value, element) => {
           setDraft(value)
           setHistory((prev) => ({ entries: prev.entries, index: null }))
@@ -441,9 +405,6 @@ export const NativeChatComposer = forwardRef<NativeChatComposerHandle, NativeCha
         }}
         onRemoveImageAttachment={(id) => removeImageAttachment(id)}
         onAttach={pickAttachment}
-        onDictationToggle={toggleDictation}
-        onDictationHoldStart={startHoldDictation}
-        onDictationHoldEnd={stopHoldDictation}
         onSend={send}
         onStop={onStop}
       />

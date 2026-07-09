@@ -11,7 +11,6 @@ import {
 } from 'react'
 import { toast } from 'sonner'
 import type { GlobalSettings, OrcaHooks } from '../../../../shared/types'
-import type { SpeechModelState } from '../../../../shared/speech-types'
 import type {
   SourceControlAiSettings,
   SourceControlAiSettingsPatch
@@ -29,7 +28,6 @@ import {
   mergeFontSuggestions
 } from './SettingsConstants'
 import { DEFAULT_APP_FONT_FAMILY } from '../../../../shared/constants'
-import { getDefaultVoiceSettings } from '../../../../shared/speech-types'
 import { getRepoExecutionHostId, LOCAL_EXECUTION_HOST_ID } from '../../../../shared/execution-host'
 import { GeneralPane } from './GeneralPane'
 import { BrowserPane } from './BrowserPane'
@@ -45,7 +43,6 @@ import { GitPane } from './GitPane'
 import { CommitMessageAiPane } from './CommitMessageAiPane'
 import { GitProviderApiBudgetPane } from './GitProviderApiBudgetPane'
 import { NotificationsPane } from './NotificationsPane'
-import { VoicePane } from './VoicePane'
 import { SshPane } from './SshPane'
 import { ExperimentalPane } from './ExperimentalPane'
 import { AgentsPane } from './AgentsPane'
@@ -196,20 +193,6 @@ function getSkillNavInstallStatus(skill: {
   return skill.installed ? 'installed' : 'install'
 }
 
-function hasReadyVoiceModel(
-  settings: GlobalSettings,
-  modelStates: readonly SpeechModelState[]
-): boolean {
-  const voiceSettings = getDefaultVoiceSettings()
-  if (
-    voiceSettings.sttModel !== '' &&
-    modelStates.some((state) => state.id === voiceSettings.sttModel && state.status === 'ready')
-  ) {
-    return true
-  }
-  return modelStates.some((state) => state.status === 'ready')
-}
-
 function getSettingsScrollTarget(
   sectionId: string,
   container?: HTMLElement | null
@@ -283,9 +266,6 @@ function Settings(): React.JSX.Element {
   const settingsSearchInputQuery = useAppStore((s) => s.settingsSearchInputQuery)
   const settingsSearchQuery = useAppStore((s) => s.settingsSearchQuery)
   const setSettingsSearchQuery = useAppStore((s) => s.setSettingsSearchQuery)
-  const modelStates = useAppStore((s) => s.modelStates)
-  const refreshModelStates = useAppStore((s) => s.refreshModelStates)
-
   const [repoHooksMap, setRepoHooksMap] = useState<
     Record<string, { hasHooks: boolean; hooks: OrcaHooks | null; mayNeedUpdate: boolean }>
   >({})
@@ -304,7 +284,6 @@ function Settings(): React.JSX.Element {
     discoveryTarget: activeSkillRuntime.discoveryTarget,
     sourceKinds: GLOBAL_AGENT_SKILL_SOURCE_KINDS
   })
-  const [voiceModelStatesLoading, setVoiceModelStatesLoading] = useState(showDesktopOnlySettings)
   // Why: the Terminal settings section shares one search index with the
   // sidebar. We trim platform-only entries on other platforms so search never
   // reveals controls that the renderer will intentionally hide.
@@ -476,25 +455,6 @@ function Settings(): React.JSX.Element {
     fetchSettings()
     fetchKeybindings()
   }, [fetchKeybindings, fetchSettings])
-
-  useEffect(() => {
-    if (!showDesktopOnlySettings) {
-      setVoiceModelStatesLoading(false)
-      return
-    }
-    let canceled = false
-    // Why: modelStates starts empty, so Voice should not briefly look missing
-    // before the first speech-model scan reports the real installed state.
-    setVoiceModelStatesLoading(true)
-    void refreshModelStates().finally(() => {
-      if (!canceled) {
-        setVoiceModelStatesLoading(false)
-      }
-    })
-    return () => {
-      canceled = true
-    }
-  }, [refreshModelStates, showDesktopOnlySettings])
 
   const runtimeTargetIdentity = getRuntimeTargetIdentity(settings)
 
@@ -674,27 +634,14 @@ function Settings(): React.JSX.Element {
           loading: computerUseSkillLoading
         })
       )
-      if (settings) {
-        next.set(
-          'voice',
-          voiceModelStatesLoading
-            ? 'checking'
-            : hasReadyVoiceModel(settings, modelStates)
-              ? 'installed'
-              : 'install'
-        )
-      }
     }
     return next
   }, [
     computerUseSkillInstalled,
     computerUseSkillLoading,
-    modelStates,
     orchestrationSkillInstalled,
     orchestrationSkillLoading,
-    settings,
-    showDesktopOnlySettings,
-    voiceModelStatesLoading
+    showDesktopOnlySettings
   ])
   const navSections = useMemo(
     () =>
@@ -1149,36 +1096,20 @@ function Settings(): React.JSX.Element {
                 </SettingsSection>
 
                 {showDesktopOnlySettings ? (
-                  <>
-                    <SettingsSection
-                      id="computer-use"
-                      title={translate(
-                        'auto.components.settings.Settings.c9841721cb',
-                        'Computer Use'
-                      )}
-                      description={translate(
-                        'auto.components.settings.Settings.7118953f14',
-                        'Enable agents to control any app on your computer.'
-                      )}
-                      searchEntries={getSectionSearchEntries('computer-use')}
-                    >
-                      {isSectionMounted('computer-use') ? <ComputerUsePane /> : null}
-                    </SettingsSection>
-
-                    <SettingsSection
-                      id="voice"
-                      title={translate('auto.components.settings.Settings.5063bb47a5', 'Voice')}
-                      description={translate(
-                        'auto.components.settings.Settings.eb1176a14e',
-                        'Local speech-to-text dictation with on-device models.'
-                      )}
-                      searchEntries={getSectionSearchEntries('voice')}
-                    >
-                      {isSectionMounted('voice') ? (
-                        <VoicePane settings={settings} updateSettings={updateSettings} />
-                      ) : null}
-                    </SettingsSection>
-                  </>
+                  <SettingsSection
+                    id="computer-use"
+                    title={translate(
+                      'auto.components.settings.Settings.c9841721cb',
+                      'Computer Use'
+                    )}
+                    description={translate(
+                      'auto.components.settings.Settings.7118953f14',
+                      'Enable agents to control any app on your computer.'
+                    )}
+                    searchEntries={getSectionSearchEntries('computer-use')}
+                  >
+                    {isSectionMounted('computer-use') ? <ComputerUsePane /> : null}
+                  </SettingsSection>
                 ) : null}
 
                 <SettingsSection

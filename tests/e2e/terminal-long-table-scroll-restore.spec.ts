@@ -281,7 +281,7 @@ async function readTerminalBoxTableWrapDiagnostics(page: Page): Promise<{
 async function closeFeatureTips(page: Page): Promise<void> {
   await page.evaluate(() => {
     const store = window.__store
-    store?.getState().markFeatureTipsSeen(['orca-cli', 'cmd-j-palette', 'voice-dictation'])
+    store?.getState().markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
     if (store?.getState().activeModal === 'feature-tips') {
       store.getState().closeModal()
     }
@@ -356,9 +356,7 @@ test.describe('Terminal long table scroll restore repro', () => {
   }, testInfo: TestInfo) => {
     await waitForSessionReady(orcaPage)
     await orcaPage.evaluate(() => {
-      window.__store
-        ?.getState()
-        .markFeatureTipsSeen(['orca-cli', 'cmd-j-palette', 'voice-dictation'])
+      window.__store?.getState().markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
       ;(window as LongTableDebugWindow).__terminalPtyOutputDebug?.reset()
     })
     const firstWorktreeId = await waitForActiveWorktree(orcaPage)
@@ -423,9 +421,7 @@ test.describe('Terminal long table scroll restore repro', () => {
   }, testInfo: TestInfo) => {
     await waitForSessionReady(orcaPage)
     await orcaPage.evaluate(() => {
-      window.__store
-        ?.getState()
-        .markFeatureTipsSeen(['orca-cli', 'cmd-j-palette', 'voice-dictation'])
+      window.__store?.getState().markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
       ;(window as LongTableDebugWindow).__terminalPtyOutputDebug?.reset()
     })
     const firstWorktreeId = await waitForActiveWorktree(orcaPage)
@@ -501,9 +497,7 @@ test.describe('Terminal long table scroll restore repro', () => {
     await waitForSessionReady(orcaPage)
     await closeFeatureTips(orcaPage)
     await orcaPage.evaluate(() => {
-      window.__store
-        ?.getState()
-        .markFeatureTipsSeen(['orca-cli', 'cmd-j-palette', 'voice-dictation'])
+      window.__store?.getState().markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
       ;(window as LongTableDebugWindow).__terminalPtyOutputDebug?.reset()
     })
     const firstWorktreeId = await waitForActiveWorktree(orcaPage)
