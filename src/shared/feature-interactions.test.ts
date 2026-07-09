@@ -67,8 +67,6 @@ describe('feature interactions', () => {
       'computer-use',
       'codex-account-switching',
       'cookie-import',
-      'floating-workspace',
-      'floating-workspace-hidden',
       'notifications',
       'ports',
       'quick-commands',

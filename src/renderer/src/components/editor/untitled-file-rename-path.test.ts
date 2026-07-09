@@ -11,21 +11,21 @@ describe('getUntitledFileRoot', () => {
     ).toBe('/repo/worktree')
   })
 
-  it('falls back to the file root for floating markdown files', () => {
+  it('falls back to the file root when no worktree path exists', () => {
     expect(
       getUntitledFileRoot({
-        filePath: '/Users/alice/Library/Application Support/Orca/floating-workspace/untitled.md',
+        filePath: '/Users/alice/Library/Application Support/Orca/notes/untitled.md',
         relativePath: 'untitled.md'
       })
-    ).toBe('/Users/alice/Library/Application Support/Orca/floating-workspace')
+    ).toBe('/Users/alice/Library/Application Support/Orca/notes')
   })
 
   it('handles nested untitled relative paths', () => {
     expect(
       getUntitledFileRoot({
-        filePath: '/tmp/orca/floating-workspace/notes/untitled.md',
-        relativePath: 'notes/untitled.md'
+        filePath: '/tmp/orca/notes/drafts/untitled.md',
+        relativePath: 'notes/drafts/untitled.md'
       })
-    ).toBe('/tmp/orca/floating-workspace')
+    ).toBe('/tmp/orca')
   })
 })

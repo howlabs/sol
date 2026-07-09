@@ -1,10 +1,7 @@
 import React from 'react'
 import { ChevronDown, Code2, ExternalLink, FileText, FolderOpen, RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 import { useAppStore } from '../../store'
-import { TOGGLE_FLOATING_TERMINAL_EVENT } from '../../lib/floating-terminal'
-import { isFloatingWorkspacePanelVisible } from '../../lib/floating-workspace-terminal-actions'
 import { detectLanguage } from '../../lib/language-detect'
 import { Button } from '../ui/button'
 import {
@@ -38,29 +35,7 @@ export function KeybindingsFileActions(): React.JSX.Element {
   const openFiles = useAppStore((state) => state.openFiles)
   const openFile = useAppStore((state) => state.openFile)
   const closeFile = useAppStore((state) => state.closeFile)
-  const updateSettings = useAppStore((state) => state.updateSettings)
-  const floatingTerminalEnabled = useAppStore(
-    (state) => state.settings?.floatingTerminalEnabled === true
-  )
-  const floatingTerminalToggleFrameRef = React.useRef<number | null>(null)
-
-  const cancelFloatingTerminalToggleFrame = React.useCallback((): void => {
-    if (floatingTerminalToggleFrameRef.current === null) {
-      return
-    }
-    cancelAnimationFrame(floatingTerminalToggleFrameRef.current)
-    floatingTerminalToggleFrameRef.current = null
-  }, [])
-
-  const setActionsRootNode = React.useCallback(
-    (node: HTMLDivElement | null): void => {
-      // Why: the deferred floating-terminal toggle belongs to this settings control.
-      if (!node) {
-        cancelFloatingTerminalToggleFrame()
-      }
-    },
-    [cancelFloatingTerminalToggleFrame]
-  )
+  const activeWorktreeId = useAppStore((state) => state.activeWorktreeId)
 
   const prepareKeybindingsPath = async (): Promise<string | null> => {
     const snapshot = await ensureKeybindingsFile()
@@ -79,8 +54,19 @@ export function KeybindingsFileActions(): React.JSX.Element {
         )
         return
       }
+      // Why: keybindings live outside any repo; open them against the active
+      // worktree so the editor surface still has a session owner.
+      if (!activeWorktreeId) {
+        toast.error(
+          translate(
+            'auto.components.settings.KeybindingsFileActions.need-workspace',
+            'Open a workspace to edit keybindings in the app.'
+          )
+        )
+        return
+      }
       const existingFile = openFiles.find(
-        (file) => file.filePath === filePath && file.worktreeId === FLOATING_TERMINAL_WORKTREE_ID
+        (file) => file.filePath === filePath && file.worktreeId === activeWorktreeId
       )
       if (existingFile && !existingFile.isDirty) {
         // Why: a prior denied read can leave a focused error tab. Reopen a
@@ -91,23 +77,13 @@ export function KeybindingsFileActions(): React.JSX.Element {
         {
           filePath,
           relativePath: 'keybindings.json',
-          worktreeId: FLOATING_TERMINAL_WORKTREE_ID,
+          worktreeId: activeWorktreeId,
           language: detectLanguage('keybindings.json'),
           mode: 'edit',
           runtimeEnvironmentId: null
         },
         { preview: false, suppressActiveRuntimeFallback: true }
       )
-      if (!floatingTerminalEnabled) {
-        await updateSettings({ floatingTerminalEnabled: true })
-      }
-      cancelFloatingTerminalToggleFrame()
-      floatingTerminalToggleFrameRef.current = requestAnimationFrame(() => {
-        floatingTerminalToggleFrameRef.current = null
-        if (!isFloatingWorkspacePanelVisible()) {
-          window.dispatchEvent(new CustomEvent(TOGGLE_FLOATING_TERMINAL_EVENT))
-        }
-      })
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -149,10 +125,7 @@ export function KeybindingsFileActions(): React.JSX.Element {
   }
 
   return (
-    <div
-      ref={setActionsRootNode}
-      className="inline-flex shrink-0 overflow-hidden rounded-md border border-border bg-background shadow-xs"
-    >
+    <div className="inline-flex shrink-0 overflow-hidden rounded-md border border-border bg-background shadow-xs">
       <Button
         type="button"
         variant="ghost"

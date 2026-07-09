@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { useAppStore } from '@/store'
 import { remapOpenEditorTabsForPathChange } from './remap-open-editor-tabs-for-path-change'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../shared/constants'
 
 function ownedEditorFileId(
   filePath: string,
@@ -117,52 +116,6 @@ describe('remapOpenEditorTabsForPathChange', () => {
     })
   })
 
-  it('retargets preview-only markdown source ids to the moved owner path', () => {
-    const state = useAppStore.getState()
-    const worktreePath = '/repo'
-    const oldPath = '/repo/docs/readme.md'
-    const newPath = '/repo/notes/readme.md'
-    const floatingOldSourceId = ownedEditorFileId(oldPath, FLOATING_TERMINAL_WORKTREE_ID, null)
-    const floatingNewSourceId = ownedEditorFileId(newPath, FLOATING_TERMINAL_WORKTREE_ID, null)
-
-    state.openMarkdownPreview({
-      filePath: oldPath,
-      relativePath: 'docs/readme.md',
-      worktreeId: 'wt-1',
-      language: 'markdown'
-    })
-    state.openMarkdownPreview({
-      filePath: oldPath,
-      relativePath: 'readme.md',
-      worktreeId: FLOATING_TERMINAL_WORKTREE_ID,
-      runtimeEnvironmentId: null,
-      language: 'markdown'
-    })
-    expect(
-      useAppStore
-        .getState()
-        .openFiles.find((file) => file.worktreeId === FLOATING_TERMINAL_WORKTREE_ID)
-        ?.markdownPreviewSourceFileId
-    ).toBe(floatingOldSourceId)
-
-    remapOpenEditorTabsForPathChange({
-      fromPath: '/repo/docs',
-      toPath: '/repo/notes',
-      worktreePath,
-      worktreeId: 'wt-1'
-    })
-
-    const floatingPreview = useAppStore
-      .getState()
-      .openFiles.find((file) => file.worktreeId === FLOATING_TERMINAL_WORKTREE_ID)
-
-    expect(floatingPreview).toMatchObject({
-      id: `markdown-preview::${floatingNewSourceId}`,
-      filePath: newPath,
-      relativePath: '../notes/readme.md',
-      markdownPreviewSourceFileId: floatingNewSourceId
-    })
-  })
 
   it('clears the untitled marker when remapping a renamed new markdown file', () => {
     const state = useAppStore.getState()

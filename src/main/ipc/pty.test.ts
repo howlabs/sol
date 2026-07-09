@@ -9,8 +9,6 @@ import {
   TERMINAL_INPUT_MAX_BYTES
 } from '../../shared/terminal-input'
 import { CLIPBOARD_TEXT_MEASURE_YIELD_CODE_UNITS } from '../../shared/clipboard-text'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../shared/constants'
-
 const isWindowsHost = process.platform === 'win32'
 const posixOnlyIt = isWindowsHost ? it.skip : it
 const expectedOmpStatusExtension = posix.join(
@@ -6300,20 +6298,21 @@ describe('registerPtyHandlers', () => {
     })
   })
 
-  it('passes floating terminal cwds through to the spawned shell', async () => {
-    // Why: the floating sentinel has no worktree root; its cwd is validated
-    // against trusted-directory grants before it reaches pty:spawn.
+  it('passes an explicit worktree cwd through to the spawned shell', async () => {
     registerPtyHandlers(mainWindow as never)
+    const worktreePath = '/tmp/notes'
+    const cwd = `${worktreePath}/subdir`
+    statSyncMock.mockImplementation(() => ({ isDirectory: () => true, mode: 0o755 }))
 
     await handlers.get('pty:spawn')!(null, {
       cols: 80,
       rows: 24,
-      cwd: '/tmp/floating-notes',
-      worktreeId: FLOATING_TERMINAL_WORKTREE_ID
+      cwd,
+      worktreeId: `repo-1::${worktreePath}`
     })
 
     const [, , options] = spawnMock.mock.calls.at(-1) as [string, string[], { cwd: string }]
-    expect(options.cwd).toBe('/tmp/floating-notes')
+    expect(options.cwd).toBe(cwd)
   })
 
   it('falls back to the worktree root when a saved local cwd no longer exists', async () => {

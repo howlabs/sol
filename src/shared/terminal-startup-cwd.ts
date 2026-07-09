@@ -1,4 +1,3 @@
-import { FLOATING_TERMINAL_WORKTREE_ID } from './constants'
 import { resolveRuntimePath } from './cross-platform-path'
 import { parseWorkspaceKey } from './workspace-scope'
 import { splitWorktreeIdForFilesystem } from './worktree-id'
@@ -48,11 +47,6 @@ export function resolveTerminalStartupCwdForWorkspace(args: {
 }): string | undefined {
   if (!args.requestedCwd || args.requestedCwd.trim().length === 0) {
     return undefined
-  }
-  if (args.workspaceId === FLOATING_TERMINAL_WORKTREE_ID) {
-    // Why: floating terminals have no worktree root; their cwd was already
-    // resolved against the trusted-directory grants in resolveFloatingTerminalCwd.
-    return args.requestedCwd
   }
   const workspacePath = resolveTerminalWorkspacePath(
     args.workspaceId,

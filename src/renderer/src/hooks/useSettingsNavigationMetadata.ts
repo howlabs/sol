@@ -20,7 +20,6 @@ import {
   MousePointerClick,
   Network,
   Palette,
-  PanelsTopLeft,
   Play,
   Server,
   ShieldCheck,
@@ -43,7 +42,6 @@ import { getGitPaneSearchEntries } from '@/components/settings/git-search'
 import { getGitProviderApiBudgetSearchEntries } from '@/components/settings/git-provider-api-budget-search'
 import { getCommitMessageAiPaneSearchEntries } from '@/components/settings/commit-message-ai-search'
 import { getTasksPaneSearchEntries } from '@/components/settings/tasks-search'
-import { getFloatingWorkspaceSearchEntries } from '@/components/settings/floating-workspace-search'
 import { getAppearancePaneSearchEntries } from '@/components/settings/appearance-search'
 import { getInputPaneSearchEntries } from '@/components/settings/input-search'
 import { getTerminalPaneSearchEntries } from '@/components/settings/terminal-search'
@@ -270,17 +268,6 @@ export function buildSettingsNavigationMetadata({
           }
         ]
       : []),
-    {
-      id: 'floating-workspace',
-      title: translate('auto.hooks.useSettingsNavigationMetadata.65b19f5bde', 'Floating Workspace'),
-      description: translate(
-        'auto.hooks.useSettingsNavigationMetadata.2d0659f6f0',
-        'Global terminal, browser, and markdown tabs.'
-      ),
-      icon: PanelsTopLeft,
-      searchEntries: getFloatingWorkspaceSearchEntries(),
-      group: 'workflows'
-    },
     {
       id: 'appearance',
       title: translate('auto.hooks.useSettingsNavigationMetadata.93d88d20bf', 'Appearance'),

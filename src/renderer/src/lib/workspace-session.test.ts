@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { buildWorkspaceSessionPayload } from './workspace-session'
 import type { AppState } from '../store'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../shared/constants'
 
 function createSnapshot(overrides: Partial<AppState> = {}): AppState {
   return {
@@ -119,45 +118,6 @@ describe('buildWorkspaceSessionPayload', () => {
     expect(payload.defaultTerminalTabsAppliedByWorktreeId).toEqual({ 'wt-1': true })
   })
 
-  it('persists floating terminal tabs for daemon reattach after restart', () => {
-    const payload = buildWorkspaceSessionPayload(
-      createSnapshot({
-        tabsByWorktree: {
-          [FLOATING_TERMINAL_WORKTREE_ID]: [
-            {
-              id: 'floating-tab-1',
-              title: 'Terminal 1',
-              ptyId: 'floating-pty-1',
-              worktreeId: FLOATING_TERMINAL_WORKTREE_ID
-            } as never
-          ]
-        },
-        terminalLayoutsByTabId: {
-          'floating-tab-1': {
-            root: null,
-            activeLeafId: null,
-            expandedLeafId: null,
-            buffersByLeafId: { 'pane:1': 'floating-scrollback' },
-            ptyIdsByLeafId: { 'pane:1': 'floating-pty-1' }
-          }
-        },
-        activeTabIdByWorktree: {
-          [FLOATING_TERMINAL_WORKTREE_ID]: 'floating-tab-1'
-        },
-        ptyIdsByTabId: {
-          'floating-tab-1': ['floating-pty-1']
-        }
-      })
-    )
-
-    expect(payload.tabsByWorktree[FLOATING_TERMINAL_WORKTREE_ID]).toHaveLength(1)
-    expect(payload.activeTabIdByWorktree?.[FLOATING_TERMINAL_WORKTREE_ID]).toBe('floating-tab-1')
-    expect(payload.terminalLayoutsByTabId['floating-tab-1'].buffersByLeafId).toBeUndefined()
-    expect(payload.terminalLayoutsByTabId['floating-tab-1'].ptyIdsByLeafId).toEqual({
-      'pane:1': 'floating-pty-1'
-    })
-    expect(payload.activeWorktreeIdsOnShutdown).toEqual([FLOATING_TERMINAL_WORKTREE_ID])
-  })
 
   it('persists only edit-mode files and resets browser loading state', () => {
     const payload = buildWorkspaceSessionPayload(createSnapshot())

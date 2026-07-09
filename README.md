@@ -29,6 +29,7 @@ Sol is an independent fork, split from [Orca](https://github.com/stablyai/orca).
 - Design Mode, Computer Use, automation wall
 - Orca CLI orchestration, telemetry, community funnel (Discord / marketing site)
 - Voice dictation / local STT
+- Floating Workspace (global overlay terminal/browser/notes outside worktrees)
 
 The lists above describe direction, not the exact state of every feature in the current build.
 

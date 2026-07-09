@@ -35,7 +35,6 @@ import type {
   WorkspaceSessionState,
   WorkspaceVisibleTabType
 } from '../../../../shared/types'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 import { clampMarkdownTocPanelWidth } from '../../../../shared/markdown-toc-panel-width'
 import { folderWorkspaceKey } from '../../../../shared/workspace-scope'
 import type { RemoteOpKind } from '@/components/right-sidebar/source-control-primary-action'
@@ -983,12 +982,8 @@ function buildEditorActiveResult(
   activeTabTypeByWorktree: Record<string, WorkspaceVisibleTabType>
 } {
   return {
-    // Why: floating markdown tabs use the editor surface without becoming the
-    // main worktree's active editor. Updating only the per-worktree maps keeps
-    // the workspace behind the floating panel from switching surfaces.
-    ...(worktreeId === FLOATING_TERMINAL_WORKTREE_ID
-      ? {}
-      : { activeFileId: fileId, activeTabType: 'editor' as const }),
+    activeFileId: fileId,
+    activeTabType: 'editor' as const,
     activeFileIdByWorktree: { ...state.activeFileIdByWorktree, [worktreeId]: fileId },
     activeTabTypeByWorktree: { ...state.activeTabTypeByWorktree, [worktreeId]: 'editor' }
   }
@@ -1131,9 +1126,7 @@ function shouldHydrateWithOwnedEditorFileId(
   worktreeId: string,
   runtimeEnvironmentId: string | null | undefined
 ): boolean {
-  return (
-    worktreeId === FLOATING_TERMINAL_WORKTREE_ID || runtimeOwnerKey(runtimeEnvironmentId) !== null
-  )
+  return runtimeOwnerKey(runtimeEnvironmentId) !== null
 }
 
 function addEditorFileIdMigration(
@@ -4296,7 +4289,6 @@ export const createEditorSlice: StateCreator<AppState, [], [], EditorSlice> = (s
           .flat()
           .map((w) => w.id)
       )
-      validWorktreeIds.add(FLOATING_TERMINAL_WORKTREE_ID)
       for (const workspace of s.folderWorkspaces) {
         validWorktreeIds.add(folderWorkspaceKey(workspace.id))
       }

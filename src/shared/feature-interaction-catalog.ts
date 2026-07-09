@@ -35,8 +35,6 @@ export type FeatureInteractionId =
   | 'computer-use'
   | 'codex-account-switching'
   | 'cookie-import'
-  | 'floating-workspace'
-  | 'floating-workspace-hidden'
   | 'notifications'
   | 'ports'
   | 'quick-commands'
@@ -119,11 +117,6 @@ export const FEATURE_INTERACTIONS = [
     interaction: 'Codex managed account added, selected, reauthenticated, or removed'
   },
   { id: 'cookie-import', interaction: 'browser cookies imported or cleared' },
-  { id: 'floating-workspace', interaction: 'Floating Workspace opened or configured' },
-  {
-    id: 'floating-workspace-hidden',
-    interaction: 'Floating Workspace explicitly hidden or disabled'
-  },
   { id: 'notifications', interaction: 'desktop notifications enabled or tested' },
   { id: 'ports', interaction: 'Ports popover opened, configured, or port action used' },
   { id: 'quick-commands', interaction: 'terminal quick command created or edited' },

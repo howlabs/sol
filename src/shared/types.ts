@@ -2448,11 +2448,6 @@ export type SourceControlGroupOrder = 'changes-first' | 'staged-first' | 'untrac
 
 export type LeftSidebarAppearanceMode = 'default' | 'match-terminal' | 'tinted'
 
-export type FloatingTerminalCwdRequest = {
-  path?: string
-  requireTrusted?: boolean
-}
-
 /** Per-host overrides for client preferences that genuinely vary by execution
  *  host. NARROW by design: only settings whose value is meaningless to share
  *  across hosts belong here.
@@ -2666,25 +2661,6 @@ export type GlobalSettings = {
   /** Why: Orca-first preserves fast workspace/app control from agent TUIs.
    *  Terminal-first is opt-in for users who want shell/TUI bindings to win. */
   terminalShortcutPolicy?: TerminalShortcutPolicy
-  /** Why: Floating Workspace is the default global surface so users can
-   *  reach terminal, browser, and markdown tabs outside repo/worktree context. */
-  floatingTerminalEnabled: boolean
-  /** One-shot migration flag for the default-on rollout. Before this field
-   *  landed, the floating workspace defaulted off and many profiles persisted
-   *  that inherited false. Once migrated, an explicit off choice sticks. */
-  floatingTerminalDefaultedForAllUsers?: boolean
-  /** Where new Floating Workspace terminal tabs start. Empty or '~' means
-   *  the user's home directory; markdown notes use Orca's app-owned
-   *  floating workspace under Electron userData. */
-  floatingTerminalCwd: string
-  /** Picker-approved Floating Workspace directories that may be reauthorized
-   *  across restarts. Renderer-provided text alone must not populate this. */
-  floatingTerminalTrustedCwds?: string[]
-  /** One-shot migration marker for legacy floating workspace cwd trust grants. */
-  floatingTerminalCwdMigratedToAppWorkspace?: boolean
-  /** Where the Floating Workspace toggle is shown. Defaults to the floating
-   *  button for discoverability. */
-  floatingTerminalTriggerLocation: FloatingTerminalTriggerLocation
   /** Legacy pre-file-backed keyboard shortcut overrides. New writes go to
    *  ~/.orca/keybindings.json; main migrates this once when present. */
   keybindings?: KeybindingOverrides
@@ -3118,7 +3094,6 @@ export type StatusBarItem =
   | 'ssh'
   | 'resource-usage'
   | 'ports'
-export type FloatingTerminalTriggerLocation = 'floating-button' | 'status-bar'
 
 export type TaskResumeState = {
   githubMode?: 'items' | 'project'

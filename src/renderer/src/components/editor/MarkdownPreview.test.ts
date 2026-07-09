@@ -9,7 +9,6 @@ import {
   getMarkdownPreviewAnchorScrollTop,
   resolveMarkdownPreviewSourceWorktree
 } from './MarkdownPreview'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 
 function makeWorktree(id: string, path: string): Worktree {
   return {
@@ -51,29 +50,6 @@ describe('MarkdownPreview source link routing', () => {
     ).toBe(source)
   })
 
-  it('falls back to path-based repo ownership for repo-contained floating files', () => {
-    const repoWorktree = makeWorktree('wt-repo', '/repo')
-
-    expect(
-      resolveMarkdownPreviewSourceWorktree(
-        { repo: [repoWorktree] },
-        FLOATING_TERMINAL_WORKTREE_ID,
-        '/repo/docs/note.md'
-      )
-    ).toBe(repoWorktree)
-  })
-
-  it('matches Windows worktree ownership case-insensitively for floating previews', () => {
-    const repoWorktree = makeWorktree('wt-repo', 'C:\\Repo')
-
-    expect(
-      resolveMarkdownPreviewSourceWorktree(
-        { repo: [repoWorktree] },
-        FLOATING_TERMINAL_WORKTREE_ID,
-        'c:\\repo\\docs\\note.md'
-      )
-    ).toBe(repoWorktree)
-  })
 
   it('derives Windows preview source relative paths case-insensitively', () => {
     expect(getMarkdownPreviewSourceRelativePath('c:\\repo\\docs\\note.md', 'C:\\Repo')).toBe(
@@ -97,36 +73,6 @@ describe('MarkdownPreview source link routing', () => {
     )
   })
 
-  it('falls back to the matching preview tab for preview-only source metadata', () => {
-    const otherOwnerEdit = {
-      id: '/tmp/orca/docs/note.md',
-      filePath: '/tmp/orca/docs/note.md',
-      relativePath: 'docs/note.md',
-      worktreeId: 'wt-1',
-      mode: 'edit'
-    }
-    const preview = {
-      id: 'markdown-preview::/tmp/orca/docs/note.md',
-      filePath: '/tmp/orca/docs/note.md',
-      relativePath: 'docs/note.md',
-      worktreeId: FLOATING_TERMINAL_WORKTREE_ID,
-      runtimeEnvironmentId: null,
-      mode: 'markdown-preview',
-      markdownPreviewSourceFileId: '/tmp/orca/docs/note.md'
-    }
-
-    expect(
-      findMarkdownPreviewSourceOpenFile([otherOwnerEdit, preview], {
-        sourceFileId: '/tmp/orca/docs/note.md',
-        filePath: '/tmp/orca/docs/note.md',
-        sourceWorktreeId: FLOATING_TERMINAL_WORKTREE_ID,
-        sourceRuntimeEnvironmentId: null
-      })
-    ).toBe(preview)
-    expect(deriveMarkdownPreviewSourceRoot(preview.filePath, preview.relativePath)).toBe(
-      '/tmp/orca'
-    )
-  })
 
   it('uses the edit tab that openFile actually activated for line reveals', () => {
     const localEdit = {

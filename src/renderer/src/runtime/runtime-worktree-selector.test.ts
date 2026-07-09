@@ -20,12 +20,12 @@ describe('toRuntimeWorktreeSelector', () => {
 })
 
 describe('toRuntimeTerminalWorktreeSelector', () => {
-  it('resolves ephemeral setup terminals to the floating-terminal scope', () => {
+  it('keeps branded ephemeral setup terminal ids as runtime selectors', () => {
     expect(
       toRuntimeTerminalWorktreeSelector(
         brandEphemeralSetupTerminalWorktreeId('feature-wall-orchestration-skill-terminal')
       )
-    ).toBe('id:global-floating-terminal')
+    ).toBe('id:ephemeral-setup-terminal:feature-wall-orchestration-skill-terminal')
   })
 
   it('addresses real worktree ids like the base selector', () => {

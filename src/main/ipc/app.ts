@@ -1,8 +1,7 @@
 import { spawn } from 'node:child_process'
-import { app, BrowserWindow, dialog, ipcMain, type IpcMainInvokeEvent } from 'electron'
+import { app, ipcMain } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import type { AppIdentity } from '../../shared/app-identity'
-import type { FloatingTerminalCwdRequest, MarkdownDocument } from '../../shared/types'
 import type { Store } from '../persistence'
 import { getDevInstanceIdentity } from '../startup/dev-instance-identity'
 import { isPwshAvailable } from '../pwsh'
@@ -10,13 +9,6 @@ import { isWslAvailable, listWslDistros } from '../wsl'
 import { isGitBashAvailable } from '../git-bash'
 import { setUnreadDockBadgeCount } from '../dock/unread-badge'
 import { destroySystemTray } from '../tray/system-tray'
-import { authorizeExternalPath } from './filesystem-auth'
-import {
-  ensureDefaultFloatingWorkspacePath,
-  grantFloatingWorkspaceDirectory,
-  resolveFloatingTerminalCwd
-} from './floating-workspace-directory'
-import { isMarkdownDocumentName, markdownDocumentFromFilePath } from './markdown-documents'
 
 const KEYBOARD_INPUT_SOURCE_TIMEOUT_MS = 500
 const MAC_HITOOLBOX_DOMAIN = 'com.apple.HIToolbox'
@@ -32,53 +24,6 @@ const MAC_SELECTED_INPUT_SOURCES_JSON_COMMAND = [
 
 type RegisterAppHandlersOptions = {
   onBeforeRelaunch?: () => void | Promise<void>
-}
-
-async function pickFloatingMarkdownDocument(
-  event: IpcMainInvokeEvent
-): Promise<MarkdownDocument | null> {
-  const cwd = await ensureDefaultFloatingWorkspacePath()
-  const options = {
-    defaultPath: cwd,
-    properties: ['openFile'],
-    filters: [{ name: 'Markdown', extensions: ['md', 'mdx', 'markdown'] }]
-  } satisfies Electron.OpenDialogOptions
-  const parentWindow = BrowserWindow.fromWebContents(event.sender)
-  const result = parentWindow
-    ? await dialog.showOpenDialog(parentWindow, options)
-    : await dialog.showOpenDialog(options)
-  if (result.canceled || result.filePaths.length === 0) {
-    return null
-  }
-  const filePath = result.filePaths[0]
-  if (!isMarkdownDocumentName(filePath)) {
-    throw new Error('Selected file is not a markdown document.')
-  }
-  authorizeExternalPath(filePath)
-  return markdownDocumentFromFilePath(cwd, filePath, { outsideRootRelativePath: 'basename' })
-}
-
-async function pickFloatingWorkspaceDirectory(
-  event: IpcMainInvokeEvent,
-  store: Store
-): Promise<string | null> {
-  const parentWindow = BrowserWindow.fromWebContents(event.sender)
-  const options = {
-    // Why: this picker grants access to an existing workspace directory.
-    // Creation belongs to explicit file/write actions, not typeahead input.
-    properties: ['openDirectory']
-  } satisfies Electron.OpenDialogOptions
-  const result = parentWindow
-    ? await dialog.showOpenDialog(parentWindow, options)
-    : await dialog.showOpenDialog(options)
-  if (result.canceled || result.filePaths.length === 0) {
-    return null
-  }
-  const selectedDir = result.filePaths[0]
-  // Why: a user-approved picker selection is a trust grant for later Floating
-  // Workspace markdown creation, unlike arbitrary typed settings text.
-  await grantFloatingWorkspaceDirectory(store, selectedDir)
-  return selectedDir
 }
 
 function readCommandStdout(
@@ -219,7 +164,7 @@ async function readKeyboardInputSourceId(): Promise<string | null> {
   return readKeyboardLayoutInputSourceId()
 }
 
-export function registerAppHandlers(store: Store, options: RegisterAppHandlersOptions = {}): void {
+export function registerAppHandlers(_store: Store, options: RegisterAppHandlersOptions = {}): void {
   ipcMain.handle('app:getIdentity', (): AppIdentity => {
     const identity = getDevInstanceIdentity(is.dev)
     return {
@@ -232,6 +177,10 @@ export function registerAppHandlers(store: Store, options: RegisterAppHandlersOp
       dockBadgeLabel: identity.dockBadgeLabel
     }
   })
+
+  // Why: setup/inline terminals need a host home directory without the
+  // removed Floating Workspace cwd/trust surface.
+  ipcMain.handle('app:getHomeDirectory', (): string => app.getPath('home'))
 
   ipcMain.handle('wsl:isAvailable', (): boolean => isWslAvailable())
   ipcMain.handle('wsl:listDistros', (): string[] => listWslDistros())
@@ -299,18 +248,6 @@ export function registerAppHandlers(store: Store, options: RegisterAppHandlersOp
   ipcMain.handle('app:setUnreadDockBadgeCount', (_event, count: number) => {
     setUnreadDockBadgeCount(Number.isFinite(count) ? count : 0)
   })
-
-  ipcMain.handle('app:getFloatingTerminalCwd', (_event, args?: FloatingTerminalCwdRequest) =>
-    resolveFloatingTerminalCwd(store, args)
-  )
-
-  ipcMain.handle('app:getFloatingMarkdownDirectory', () => ensureDefaultFloatingWorkspacePath())
-
-  ipcMain.handle('app:pickFloatingMarkdownDocument', (event) => pickFloatingMarkdownDocument(event))
-
-  ipcMain.handle('app:pickFloatingWorkspaceDirectory', (event) =>
-    pickFloatingWorkspaceDirectory(event, store)
-  )
 }
 
 async function runBeforeRelaunchCleanup(

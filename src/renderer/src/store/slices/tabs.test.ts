@@ -2,7 +2,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { Tab, TabGroup } from '../../../../shared/types'
 import type * as AgentStatusModule from '@/lib/agent-status'
-import { FLOATING_TERMINAL_WORKTREE_ID, getDefaultUIState } from '../../../../shared/constants'
 import { buildMobileSessionTabSnapshots } from '../../runtime/sync-runtime-graph'
 import { closeMobileSessionTabInStore } from '../../runtime/mobile-session-tab-close'
 
@@ -1585,43 +1584,6 @@ describe('TabsSlice', () => {
       expect(groups[0].tabOrder).toEqual(['term-1', 'term-2', '/tmp/feature/src/main.ts'])
     })
 
-    it('hydrates floating workspace unified tabs without a repo worktree', () => {
-      store.getState().hydrateTabsSession({
-        activeRepoId: null,
-        activeWorktreeId: FLOATING_TERMINAL_WORKTREE_ID,
-        activeTabId: null,
-        tabsByWorktree: {},
-        terminalLayoutsByTabId: {},
-        unifiedTabs: {
-          [FLOATING_TERMINAL_WORKTREE_ID]: [
-            {
-              id: 'floating-browser-1',
-              entityId: 'floating-browser-1',
-              groupId: 'floating-group-1',
-              worktreeId: FLOATING_TERMINAL_WORKTREE_ID,
-              contentType: 'browser',
-              label: 'Browser',
-              customLabel: null,
-              color: null,
-              sortOrder: 0,
-              createdAt: 1
-            }
-          ]
-        },
-        tabGroups: {
-          [FLOATING_TERMINAL_WORKTREE_ID]: [
-            {
-              id: 'floating-group-1',
-              worktreeId: FLOATING_TERMINAL_WORKTREE_ID,
-              activeTabId: 'floating-browser-1',
-              tabOrder: ['floating-browser-1']
-            }
-          ]
-        }
-      })
-
-      expect(store.getState().unifiedTabsByWorktree[FLOATING_TERMINAL_WORKTREE_ID]).toHaveLength(1)
-    })
 
     it('hydrates from unified format', () => {
       store.setState({

@@ -9,7 +9,6 @@ import { rebuildAppMenu } from '../menu/register-app-menu'
 import { track } from '../telemetry/client'
 import { SETTINGS_CHANGED_WHITELIST, type SettingsChangedKey } from '../../shared/telemetry-events'
 import type { AgentAwakeService } from '../agent-awake-service'
-import { sanitizeFloatingWorkspaceDirectorySetting } from './floating-workspace-directory'
 import { applyAgentStatusHooksEnabled } from '../agent-hooks/managed-agent-hook-controls'
 import { applyElectronProxySettings } from '../network/proxy-settings'
 import { normalizeProxyBypassRules, normalizeProxyUrl } from '../../shared/network-proxy'
@@ -67,15 +66,6 @@ export function registerSettingsHandlers(
 
   ipcMain.handle('settings:set', async (event, args: Partial<GlobalSettings>) => {
     const sanitizedArgs = sanitizeRendererSettingsUpdate(args)
-    // Why: Floating Workspace grants are trusted only when written by the
-    // main-process directory picker, never by renderer-provided settings IPC.
-    delete sanitizedArgs.floatingTerminalTrustedCwds
-    if (typeof args.floatingTerminalCwd === 'string') {
-      sanitizedArgs.floatingTerminalCwd = await sanitizeFloatingWorkspaceDirectorySetting(
-        store,
-        args.floatingTerminalCwd
-      )
-    }
     if ('httpProxyUrl' in args) {
       const proxyUrl = normalizeProxyUrl(args.httpProxyUrl)
       sanitizedArgs.httpProxyUrl = proxyUrl.ok ? proxyUrl.value : ''

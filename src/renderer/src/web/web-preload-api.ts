@@ -473,11 +473,8 @@ function createWebPreloadApi(): Partial<PreloadApi> {
       awaitFirstWindowStartupServices: () => Promise.resolve(),
       startupDiagnostic: () => Promise.resolve(),
       getKeyboardInputSourceId: () => Promise.resolve(null),
-      setUnreadDockBadgeCount: () => Promise.resolve(),
-      getFloatingTerminalCwd: () => Promise.resolve(''),
-      getFloatingMarkdownDirectory: () => Promise.resolve(''),
-      pickFloatingMarkdownDocument: () => Promise.resolve(null),
-      pickFloatingWorkspaceDirectory: () => Promise.resolve(null)
+      getHomeDirectory: () => Promise.resolve('/'),
+      setUnreadDockBadgeCount: () => Promise.resolve()
     },
     platform: {
       get: () => ({
@@ -2195,7 +2192,6 @@ function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
     onToggleLeftSidebar: () => noopUnsubscribe,
     onToggleRightSidebar: () => noopUnsubscribe,
     onToggleWorktreePalette: () => noopUnsubscribe,
-    onToggleFloatingTerminal: () => noopUnsubscribe,
     onTerminalShortcutCaptured: () => noopUnsubscribe,
     onOpenQuickOpen: () => noopUnsubscribe,
     onToggleQuickCommandsMenu: () => noopUnsubscribe,
@@ -2253,7 +2249,6 @@ function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
     syncTrafficLights: () => {},
     setMarkdownEditorFocused: () => {},
     setTerminalInputFocused: () => {},
-    setFloatingTerminalInputFocused: () => {},
     setShortcutRecorderFocused: () => {},
     onRichMarkdownContextCommand: () => noopUnsubscribe,
     onFullscreenChanged: () => noopUnsubscribe,
@@ -2896,7 +2891,6 @@ function getStoredSettings(): GlobalSettings {
   return mergeSettings(
     {
       ...defaults,
-      floatingTerminalEnabled: false,
       rightSidebarOpenByDefault: false,
       activeRuntimeEnvironmentId: environment?.id ?? null
     },

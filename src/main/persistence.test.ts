@@ -9,9 +9,7 @@ import {
   mkdtempSync,
   mkdirSync,
   existsSync,
-  realpathSync,
-  statSync,
-  symlinkSync
+  statSync
 } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
@@ -160,10 +158,6 @@ function writeDataFile(data: unknown): void {
 
 function readDataFile(): unknown {
   return JSON.parse(readFileSync(dataFile(), 'utf-8'))
-}
-
-function symlinkDirectorySync(target: string, linkPath: string): void {
-  symlinkSync(target, linkPath, process.platform === 'win32' ? 'junction' : 'dir')
 }
 
 function collectPropertyPaths(value: unknown, property: string, prefix = ''): string[] {
@@ -503,8 +497,6 @@ describe('Store', () => {
     expect(settings.experimentalActivityDefaultedOffForAllUsers).toBe(true)
     expect(settings.experimentalTerminalAttention).toBe(false)
     expect(settings.experimentalNewWorktreeCardStyle).toBe(true)
-    expect(settings.floatingTerminalEnabled).toBe(true)
-    expect(settings.floatingTerminalDefaultedForAllUsers).toBe(true)
     expect(settings.notifications.customSoundPath).toBeNull()
     expect(settings.notifications.customSoundVolume).toBe(100)
     expect(settings.notifications.suppressWhenFocused).toBe(true)
@@ -2371,41 +2363,6 @@ describe('Store', () => {
     ])
   })
 
-  it('migrates the legacy floating terminal disabled default to enabled', async () => {
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: { floatingTerminalEnabled: false },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-    expect(store.getSettings().floatingTerminalEnabled).toBe(true)
-    expect(store.getSettings().floatingTerminalDefaultedForAllUsers).toBe(true)
-  })
-
-  it('preserves a post-migration floating terminal opt-out', async () => {
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: {
-        floatingTerminalEnabled: false,
-        floatingTerminalDefaultedForAllUsers: true
-      },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-    expect(store.getSettings().floatingTerminalEnabled).toBe(false)
-    expect(store.getSettings().floatingTerminalDefaultedForAllUsers).toBe(true)
-  })
-
   it('migrates the legacy Linux primary-selection default to enabled', async () => {
     await withPlatform('linux', async () => {
       writeDataFile({
@@ -2515,67 +2472,16 @@ describe('Store', () => {
     })
   })
 
-  it('seeds trusted floating workspace directories from legacy explicit cwd values', async () => {
-    const legacyFloatingCwd = join(testState.dir, 'legacy-floating-cwd')
-    mkdirSync(legacyFloatingCwd)
-    const canonicalLegacyFloatingCwd = realpathSync(legacyFloatingCwd)
+  it('ignores legacy floating terminal settings keys on load', async () => {
     writeDataFile({
       schemaVersion: 1,
       repos: [],
       worktreeMeta: {},
       settings: {
-        floatingTerminalCwd: legacyFloatingCwd
-      },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().floatingTerminalCwd).toBe(legacyFloatingCwd)
-    expect(store.getSettings().floatingTerminalTrustedCwds).toEqual([canonicalLegacyFloatingCwd])
-    store.flush()
-    expect(
-      (readDataFile() as { settings?: { floatingTerminalTrustedCwds?: string[] } }).settings
-        ?.floatingTerminalTrustedCwds
-    ).toEqual([canonicalLegacyFloatingCwd])
-  })
-
-  it('persists the floating cwd migration marker when a legacy explicit cwd is unavailable', async () => {
-    const unavailableLegacyFloatingCwd = join(testState.dir, 'missing-floating-cwd')
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: {
-        floatingTerminalCwd: unavailableLegacyFloatingCwd
-      },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().floatingTerminalCwd).toBe(unavailableLegacyFloatingCwd)
-    expect(store.getSettings().floatingTerminalTrustedCwds).toEqual([])
-    store.flush()
-    expect(
-      (readDataFile() as { settings?: { floatingTerminalCwdMigratedToAppWorkspace?: boolean } })
-        .settings?.floatingTerminalCwdMigratedToAppWorkspace
-    ).toBe(true)
-  })
-
-  it('does not seed trusted floating workspace directories after the cwd migration has run', async () => {
-    const postMigrationCwd = join(testState.dir, 'post-migration-cwd')
-    mkdirSync(postMigrationCwd)
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: {
-        floatingTerminalCwd: postMigrationCwd,
+        floatingTerminalEnabled: false,
+        floatingTerminalDefaultedForAllUsers: true,
+        floatingTerminalCwd: '/tmp/notes',
+        floatingTerminalTrustedCwds: ['/tmp/notes'],
         floatingTerminalCwdMigratedToAppWorkspace: true
       },
       ui: {},
@@ -2584,122 +2490,15 @@ describe('Store', () => {
     })
 
     const store = await createStore()
+    const settings = store.getSettings() as Record<string, unknown>
 
-    expect(store.getSettings().floatingTerminalCwd).toBe(postMigrationCwd)
-    expect(store.getSettings().floatingTerminalTrustedCwds).toEqual([])
-  })
-
-  it('restores migrated blank floating terminal cwd settings to home shorthand', async () => {
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: {
-        floatingTerminalCwd: '',
-        floatingTerminalCwdMigratedToAppWorkspace: true
-      },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().floatingTerminalCwd).toBe('~')
-  })
-
-  it('preserves legacy home shorthand as the floating terminal cwd', async () => {
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: {
-        floatingTerminalCwd: '~'
-      },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().floatingTerminalCwd).toBe('~')
-    expect(store.getSettings().floatingTerminalTrustedCwds).toEqual([])
-  })
-
-  it('canonicalizes persisted floating workspace trust paths on load', async () => {
-    const trustedTarget = join(testState.dir, 'trusted-target')
-    const trustedLink = join(testState.dir, 'trusted-link')
-    mkdirSync(trustedTarget)
-    symlinkDirectorySync(trustedTarget, trustedLink)
-    const canonicalTrustedTarget = realpathSync(trustedTarget)
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: {
-        floatingTerminalTrustedCwds: [trustedLink]
-      },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().floatingTerminalTrustedCwds).toEqual([canonicalTrustedTarget])
-    store.flush()
-    expect(
-      (readDataFile() as { settings?: { floatingTerminalTrustedCwds?: string[] } }).settings
-        ?.floatingTerminalTrustedCwds
-    ).toEqual([canonicalTrustedTarget])
-  })
-
-  it('preserves temporarily unavailable floating workspace trust paths on load', async () => {
-    const unavailableTrustedPath = join(testState.dir, 'offline-drive', 'notes')
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: {
-        floatingTerminalTrustedCwds: [unavailableTrustedPath]
-      },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().floatingTerminalTrustedCwds).toEqual([unavailableTrustedPath])
-    store.flush()
-    expect(
-      (readDataFile() as { settings?: { floatingTerminalTrustedCwds?: string[] } }).settings
-        ?.floatingTerminalTrustedCwds
-    ).toEqual([unavailableTrustedPath])
-  })
-
-  it('drops blank floating workspace trust paths on load', async () => {
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: {
-        floatingTerminalTrustedCwds: ['', '   ']
-      },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().floatingTerminalTrustedCwds).toEqual([])
-    store.flush()
-    expect(
-      (readDataFile() as { settings?: { floatingTerminalTrustedCwds?: string[] } }).settings
-        ?.floatingTerminalTrustedCwds
-    ).toEqual([])
+    // Why: Floating Workspace was removed; legacy keys must not re-enter
+    // GlobalSettings when old profiles are loaded.
+    expect(settings.floatingTerminalEnabled).toBeUndefined()
+    expect(settings.floatingTerminalDefaultedForAllUsers).toBeUndefined()
+    expect(settings.floatingTerminalCwd).toBeUndefined()
+    expect(settings.floatingTerminalTrustedCwds).toBeUndefined()
+    expect(settings.floatingTerminalCwdMigratedToAppWorkspace).toBeUndefined()
   })
 
   it('preserves custom notification sound paths from persisted settings', async () => {

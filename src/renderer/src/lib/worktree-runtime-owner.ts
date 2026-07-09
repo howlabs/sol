@@ -12,7 +12,6 @@ import type {
   Worktree
 } from '../../../shared/types'
 import { folderWorkspaceKey, parseWorkspaceKey } from '../../../shared/workspace-scope'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../shared/constants'
 import { getRepoIdFromWorktreeId } from '@/store/slices/worktree-helpers'
 
 type RuntimeExecutionHost = Extract<ParsedExecutionHost, { kind: 'runtime' }>
@@ -162,9 +161,6 @@ export function getRuntimeEnvironmentIdForWorktree(
   if (!worktreeId) {
     return null
   }
-  if (worktreeId === FLOATING_TERMINAL_WORKTREE_ID) {
-    return null
-  }
   const workspaceScope = parseWorkspaceKey(worktreeId)
   if (workspaceScope?.type === 'folder') {
     return getRuntimeEnvironmentIdForFolderWorkspace(state, workspaceScope.folderWorkspaceId)
@@ -254,9 +250,6 @@ export function getExecutionHostIdForWorktree(
   worktreeId: string | null | undefined
 ): ExecutionHostId {
   if (!worktreeId) {
-    return 'local'
-  }
-  if (worktreeId === FLOATING_TERMINAL_WORKTREE_ID) {
     return 'local'
   }
   const workspaceScope = parseWorkspaceKey(worktreeId)

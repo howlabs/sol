@@ -207,8 +207,6 @@ inline src/renderer/src/components/editor/useEditorPanelContentState.ts
 inline src/renderer/src/components/feature-wall/BrowserAnimatedVisual.tsx
 inline src/renderer/src/components/feature-wall/EditorAnimatedVisual.tsx
 inline src/renderer/src/components/feature-wall/WorkbenchAnimatedVisual.tsx
-inline src/renderer/src/components/floating-terminal/FloatingTerminalPanel.test.tsx
-inline src/renderer/src/components/floating-terminal/FloatingTerminalPanel.tsx
 inline src/renderer/src/components/github-project/ProjectCell.tsx
 inline src/renderer/src/components/github-project/ProjectPicker.tsx
 inline src/renderer/src/components/github-project/ProjectViewWrapper.tsx

@@ -7,18 +7,14 @@ const {
   appQuitMock,
   appRelaunchMock,
   spawnMock,
-  destroySystemTrayMock,
-  showOpenDialogMock,
-  grantFloatingWorkspaceDirectoryMock
+  destroySystemTrayMock
 } = vi.hoisted(() => ({
   handlers: new Map<string, (_event: unknown, args?: unknown) => unknown>(),
   appExitMock: vi.fn(),
   appQuitMock: vi.fn(),
   appRelaunchMock: vi.fn(),
   spawnMock: vi.fn(),
-  destroySystemTrayMock: vi.fn(),
-  showOpenDialogMock: vi.fn(),
-  grantFloatingWorkspaceDirectoryMock: vi.fn()
+  destroySystemTrayMock: vi.fn()
 }))
 
 vi.mock('node:child_process', () => ({
@@ -70,12 +66,6 @@ vi.mock('electron', () => ({
     quit: appQuitMock,
     relaunch: appRelaunchMock
   },
-  BrowserWindow: {
-    fromWebContents: vi.fn(() => null)
-  },
-  dialog: {
-    showOpenDialog: showOpenDialogMock
-  },
   ipcMain: {
     handle: vi.fn((channel: string, handler: (_event: unknown, args?: unknown) => unknown) => {
       handlers.set(channel, handler)
@@ -89,12 +79,6 @@ vi.mock('@electron-toolkit/utils', () => ({
 
 vi.mock('../tray/system-tray', () => ({
   destroySystemTray: destroySystemTrayMock
-}))
-
-vi.mock('./floating-workspace-directory', () => ({
-  ensureDefaultFloatingWorkspacePath: vi.fn(),
-  grantFloatingWorkspaceDirectory: grantFloatingWorkspaceDirectoryMock,
-  resolveFloatingTerminalCwd: vi.fn()
 }))
 
 import { registerAppHandlers } from './app'
@@ -113,8 +97,6 @@ describe('registerAppHandlers', () => {
     appRelaunchMock.mockReset()
     spawnMock.mockReset()
     destroySystemTrayMock.mockReset()
-    showOpenDialogMock.mockReset()
-    grantFloatingWorkspaceDirectoryMock.mockReset()
     processKillSpy = vi.spyOn(process, 'kill').mockReturnValue(true)
     Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true })
   })
@@ -338,22 +320,5 @@ describe('registerAppHandlers', () => {
     // shell and any orphaned `defaults`/`plutil` stages are reaped on timeout.
     expect(processKillSpy).toHaveBeenCalledTimes(2)
     expect(processKillSpy).toHaveBeenCalledWith(-4242, 'SIGKILL')
-  })
-
-  it('picks an existing floating workspace directory without enabling native directory creation', async () => {
-    const store = {}
-    showOpenDialogMock.mockResolvedValue({
-      canceled: false,
-      filePaths: ['/Users/kaylee/notes']
-    })
-    registerAppHandlers(store as never)
-
-    await expect(
-      handlers.get('app:pickFloatingWorkspaceDirectory')?.({ sender: {} })
-    ).resolves.toBe('/Users/kaylee/notes')
-    expect(showOpenDialogMock).toHaveBeenCalledWith({
-      properties: ['openDirectory']
-    })
-    expect(grantFloatingWorkspaceDirectoryMock).toHaveBeenCalledWith(store, '/Users/kaylee/notes')
   })
 })

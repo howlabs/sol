@@ -10,7 +10,6 @@ import { useAppStore } from '@/store'
 import { makePaneKey } from '../../../../shared/stable-pane-id'
 import { TUI_AGENT_CONFIG } from '../../../../shared/tui-agent-config'
 import { slugifyForWorkspaceName } from '../../../../shared/workspace-name'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 import type { TuiAgent } from '../../../../shared/types'
 import { isWslUncPath } from '../../../../shared/wsl-paths'
 import type { ProjectExecutionRuntimeResolution } from '../../../../shared/project-execution-runtime'
@@ -51,7 +50,6 @@ function getUsableForkBase(
 ): string | null {
   const branch = worktree?.branch?.trim()
   if (
-    worktreeId === FLOATING_TERMINAL_WORKTREE_ID ||
     !branch ||
     worktree?.isArchived ||
     worktree?.isBare ||
