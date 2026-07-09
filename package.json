@@ -49,7 +49,7 @@
     "verify:localization-catalog": "node config/scripts/verify-localization-catalog.mjs",
     "sync:localization-catalog": "node config/scripts/verify-localization-catalog.mjs --fix",
     "bootstrap:locale-catalog": "node config/scripts/bootstrap-locale-catalog.mjs",
-    "bootstrap:zh-catalog": "node config/scripts/bootstrap-zh-catalog.mjs",
+    "bootstrap:zh-catalog": "node config/scripts/bootstrap-locale-catalog.mjs --locale zh",
     "bootstrap:ko-catalog": "node config/scripts/bootstrap-locale-catalog.mjs --locale ko",
     "bootstrap:ja-catalog": "node config/scripts/bootstrap-locale-catalog.mjs --locale ja",
     "bootstrap:es-catalog": "node config/scripts/bootstrap-locale-catalog.mjs --locale es",
