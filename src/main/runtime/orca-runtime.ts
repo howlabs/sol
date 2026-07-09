@@ -618,11 +618,8 @@ import {
   shouldRunSetupForCreate,
   writeIssueCommand
 } from '../hooks'
-import {
-  DEFAULT_REPO_BADGE_COLOR,
-  FLOATING_TERMINAL_WORKTREE_ID,
-  getDefaultVoiceSettings
-} from '../../shared/constants'
+import { DEFAULT_REPO_BADGE_COLOR, FLOATING_TERMINAL_WORKTREE_ID } from '../../shared/constants'
+import { resolveVoiceSettings, type VoiceSettings } from '../../shared/speech-types'
 import { listRepoWorktrees } from '../repo-worktrees'
 import { createWorktreeLinkedPaths, removeWorktreeLinkedPaths } from '../ipc/worktree-symlinks'
 import { deleteWorktreeHistoryDir } from '../terminal-history'
@@ -693,7 +690,6 @@ import type { CodexAccountService } from '../codex-accounts/service'
 import type { RateLimitService } from '../rate-limits/service'
 import type { ClaudeRateLimitAccountsState, CodexRateLimitAccountsState } from '../../shared/types'
 import type { RateLimitState } from '../../shared/rate-limit-types'
-import type { VoiceSettings } from '../../shared/speech-types'
 import { getSpeechModelManager, getSpeechSttService } from '../speech/speech-runtime-service'
 import { getCatalogModel, isLocalSpeechModel, SPEECH_MODEL_CATALOG } from '../speech/model-catalog'
 import {
@@ -6457,7 +6453,7 @@ export class OrcaRuntimeService {
     if (!this.store) {
       throw new Error('voice_dictation_unavailable')
     }
-    const voice = this.store.getSettings().voice ?? getDefaultVoiceSettings()
+    const voice = resolveVoiceSettings(this.store.getSettings())
     const states = await getSpeechModelManager(this.store).getModelStates()
     const stateById = new Map(states.map((state) => [state.id, state]))
     const models: RuntimeSpeechModelSummary[] = SPEECH_MODEL_CATALOG.map((manifest) => {
@@ -6532,7 +6528,7 @@ export class OrcaRuntimeService {
     if (!this.store?.getSettings || !this.store.updateSettings) {
       throw new Error('voice_dictation_unavailable')
     }
-    const current = this.store.getSettings().voice ?? getDefaultVoiceSettings()
+    const current = resolveVoiceSettings(this.store.getSettings())
     // An explicit '' clears the selected model (the OptionalString RPC schema
     // maps '' → undefined, so this only matters for direct callers); any other
     // non-empty modelId must be a known catalog entry.
@@ -6545,7 +6541,10 @@ export class OrcaRuntimeService {
       ...(params.modelId !== undefined ? { sttModel: params.modelId } : {}),
       ...(params.dictationMode !== undefined ? { dictationMode: params.dictationMode } : {})
     }
-    this.store.updateSettings({ voice: nextVoice }, { notifyListeners: true })
+    // Why: voice settings are legacy until PR2 removes the mobile speech RPC surface.
+    this.store.updateSettings({ voice: nextVoice } as Partial<GlobalSettings>, {
+      notifyListeners: true
+    })
     return this.listMobileSpeechModels()
   }
 
@@ -6562,7 +6561,7 @@ export class OrcaRuntimeService {
       throw new Error('voice_dictation_unavailable')
     }
 
-    const voice = this.store.getSettings().voice ?? getDefaultVoiceSettings()
+    const voice = resolveVoiceSettings(this.store.getSettings())
     if (!voice.enabled) {
       throw new Error('voice_dictation_disabled')
     }

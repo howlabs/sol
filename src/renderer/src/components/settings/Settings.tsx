@@ -28,7 +28,8 @@ import {
   getFallbackTerminalFonts,
   mergeFontSuggestions
 } from './SettingsConstants'
-import { DEFAULT_APP_FONT_FAMILY, getDefaultVoiceSettings } from '../../../../shared/constants'
+import { DEFAULT_APP_FONT_FAMILY } from '../../../../shared/constants'
+import { getDefaultVoiceSettings } from '../../../../shared/speech-types'
 import { getRepoExecutionHostId, LOCAL_EXECUTION_HOST_ID } from '../../../../shared/execution-host'
 import { GeneralPane } from './GeneralPane'
 import { BrowserPane } from './BrowserPane'
@@ -199,7 +200,7 @@ function hasReadyVoiceModel(
   settings: GlobalSettings,
   modelStates: readonly SpeechModelState[]
 ): boolean {
-  const voiceSettings = settings.voice ?? getDefaultVoiceSettings()
+  const voiceSettings = getDefaultVoiceSettings()
   if (
     voiceSettings.sttModel !== '' &&
     modelStates.some((state) => state.id === voiceSettings.sttModel && state.status === 'ready')

@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { SpeechModelManifest, SpeechModelState } from '../../../../shared/speech-types'
-import { getDefaultVoiceSettings } from '../../../../shared/constants'
+import { getDefaultVoiceSettings } from '../../../../shared/speech-types'
 
 const toastErrorMock = vi.hoisted(() => vi.fn())
 

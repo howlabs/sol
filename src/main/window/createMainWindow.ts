@@ -735,11 +735,6 @@ export function createMainWindow(
   // reused by the normal keydown path and the double-tap path so they cannot drift.
   const sendResolvedWindowShortcutAction = (action: WindowShortcutAction): void => {
     switch (action.type) {
-      // The renderer's DictationController re-checks enabled/sttModel and ignores
-      // hold mode, so this path needs no voice guards.
-      case 'dictationKeyDown':
-        mainWindow.webContents.send('ui:dictationKeyDown')
-        return
       case 'zoom':
         mainWindow.webContents.send('terminal:zoom', action.direction)
         return
@@ -816,31 +811,6 @@ export function createMainWindow(
       windowShortcutActionCapturesTerminal(action)
         ? getWindowShortcutActionId(action)
         : null
-
-    // Why: hold-mode dictation needs renderer keyup events, so the main process
-    // may only consume shortcuts that toggle dictation from a single keydown.
-    if (action.type === 'dictationKeyDown') {
-      const voiceSettings = store?.getSettings().voice
-      if (!voiceSettings?.enabled || !voiceSettings.sttModel) {
-        return false
-      }
-      const dictationMode = voiceSettings.dictationMode ?? 'toggle'
-      if (dictationMode === 'hold') {
-        return false
-      }
-      if (isAutoRepeat) {
-        event.preventDefault()
-        return true
-      }
-      event.preventDefault()
-      if (capturedTerminalActionId) {
-        mainWindow.webContents.send('ui:terminalShortcutCaptured', {
-          actionId: capturedTerminalActionId
-        })
-      }
-      mainWindow.webContents.send('ui:dictationKeyDown')
-      return true
-    }
 
     if (action.type === 'toggleQuickCommandsMenu' && isAutoRepeat) {
       event.preventDefault()

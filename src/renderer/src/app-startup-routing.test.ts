@@ -137,7 +137,7 @@ describe('renderer startup runtime routing', () => {
 
     expect(source).toContain("import('./components/dictation/DictationController').then")
     expect(source).not.toContain("from './components/dictation/DictationController'")
-    expect(source).toContain("settings?.voice?.enabled === true || dictationState !== 'idle'")
+    expect(source).toContain("dictationState !== 'idle'")
     expect(source).toContain('shouldMountDictationController ?')
   })
 

@@ -1,5 +1,4 @@
-import { getDefaultVoiceSettings } from '../../shared/constants'
-import type { VoiceSettings } from '../../shared/speech-types'
+import { resolveVoiceSettings, type VoiceSettings } from '../../shared/speech-types'
 import { getCatalogModel, isLocalSpeechModel } from './model-catalog'
 import type { ModelManager } from './model-manager'
 import type { SttService } from './stt-service'
@@ -64,7 +63,7 @@ export async function deleteLocalSpeechModel({
   await sttService.prepareModelForDeletion(modelId)
   await modelManager.deleteModel(modelId)
 
-  const currentVoice = store.getSettings().voice ?? getDefaultVoiceSettings()
+  const currentVoice = resolveVoiceSettings(store.getSettings())
   if (currentVoice.sttModel === modelId) {
     store.updateSettings(
       {

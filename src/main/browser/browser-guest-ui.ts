@@ -295,8 +295,13 @@ export function setupGuestShortcutForwarding(args: {
   shouldForwardDictationShortcut?: ShouldForwardDictationShortcut
   getKeybindings?: () => KeybindingOverrides | undefined
 }): () => void {
-  const { browserTabId, guest, resolveRenderer, shouldForwardDictationShortcut, getKeybindings } =
-    args
+  const {
+    browserTabId,
+    guest,
+    resolveRenderer,
+    shouldForwardDictationShortcut: _shouldForwardDictationShortcut,
+    getKeybindings
+  } = args
   let ctrlTabSwitching = false
   const doubleTapDetector = new ModifierDoubleTapDetector()
   const resetDoubleTapDetector = (): void => doubleTapDetector.reset()
@@ -324,10 +329,6 @@ export function setupGuestShortcutForwarding(args: {
       return true
     }
     if (input.isAutoRepeat) {
-      if (action?.type === 'dictationKeyDown' && shouldForwardDictationShortcut?.()) {
-        event.preventDefault()
-        return true
-      }
       return false
     }
     if (action?.type === 'worktreeHistoryNavigate') {
@@ -473,11 +474,6 @@ export function setupGuestShortcutForwarding(args: {
       renderer.send('ui:jumpToWorktreeIndex', action.index)
     } else if (action?.type === 'jumpToTabIndex') {
       renderer.send('ui:jumpToTabIndex', action.index)
-    } else if (action?.type === 'dictationKeyDown') {
-      if (!shouldForwardDictationShortcut?.()) {
-        return false
-      }
-      renderer.send('ui:dictationKeyDown')
     } else {
       return false
     }

@@ -1,7 +1,6 @@
 import type { VoiceSettings } from '../../../../shared/speech-types'
 import { Label } from '../ui/label'
 import { Separator } from '../ui/separator'
-import { useShortcutLabel } from '@/hooks/useShortcutLabel'
 import { translate } from '@/i18n/i18n'
 
 type VoiceDictationSettingsSectionProps = {
@@ -17,8 +16,6 @@ export function VoiceDictationSettingsSection({
   onToggleVoiceDictation,
   onUpdateVoiceSettings
 }: VoiceDictationSettingsSectionProps): React.JSX.Element {
-  const shortcutLabel = useShortcutLabel('voice.dictation')
-
   return (
     <>
       <div className="flex items-center justify-between gap-4 py-2">
@@ -27,10 +24,9 @@ export function VoiceDictationSettingsSection({
             {translate('auto.components.settings.VoicePane.0121960365', 'Enable Voice Dictation')}
           </Label>
           <p className="text-xs text-muted-foreground">
-            {translate('auto.components.settings.VoicePane.4465596675', 'Press')} {shortcutLabel}{' '}
             {translate(
               'auto.components.settings.VoicePane.366e1b4f36',
-              'to dictate text into any focused pane.'
+              'Dictate text into any focused pane.'
             )}
           </p>
         </div>

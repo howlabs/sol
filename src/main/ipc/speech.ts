@@ -10,15 +10,21 @@ import {
   hasOpenAiSpeechApiKey,
   saveOpenAiSpeechApiKey
 } from '../speech/openai-api-key-store'
+import type { LegacyVoiceSettingsSource } from '../../shared/speech-types'
 import type { Store } from '../persistence'
 
+function asSpeechSettingsStore(store: Store): { getSettings(): LegacyVoiceSettingsSource } {
+  return { getSettings: () => store.getSettings() as LegacyVoiceSettingsSource }
+}
+
 export function registerSpeechHandlers(store: Store): void {
+  const speechStore = asSpeechSettingsStore(store)
   ipcMain.handle('speech:getCatalog', () => {
     return SPEECH_MODEL_CATALOG
   })
 
   ipcMain.handle('speech:getModelStates', async () => {
-    return getSpeechModelManager(store).getModelStates()
+    return getSpeechModelManager(speechStore).getModelStates()
   })
 
   ipcMain.handle('speech:getOpenAiApiKeyStatus', async () => {
@@ -36,7 +42,7 @@ export function registerSpeechHandlers(store: Store): void {
   })
 
   ipcMain.handle('speech:downloadModel', async (event, modelId: string) => {
-    const manager = getSpeechModelManager(store)
+    const manager = getSpeechModelManager(speechStore)
     const window = BrowserWindow.fromWebContents(event.sender)
     if (!window) {
       return
@@ -66,14 +72,18 @@ export function registerSpeechHandlers(store: Store): void {
   })
 
   ipcMain.handle('speech:cancelDownload', async (_event, modelId: string) => {
-    getSpeechModelManager(store).cancelDownload(modelId)
+    getSpeechModelManager(speechStore).cancelDownload(modelId)
   })
 
   ipcMain.handle('speech:deleteModel', async (_event, modelId: string) => {
     await deleteLocalSpeechModel({
-      store,
-      modelManager: getSpeechModelManager(store),
-      sttService: getSpeechSttService(store),
+      store: {
+        getSettings: () => speechStore.getSettings(),
+        updateSettings: (updates, options) =>
+          store.updateSettings(updates as Parameters<Store['updateSettings']>[0], options)
+      },
+      modelManager: getSpeechModelManager(speechStore),
+      sttService: getSpeechSttService(speechStore),
       modelId
     })
   })
@@ -82,7 +92,7 @@ export function registerSpeechHandlers(store: Store): void {
     const digest = createHash('sha256').update(content).digest('hex').slice(0, 12)
     // Why: sherpa-onnx cannot read non-ASCII Windows paths, so co-locate the
     // hotwords file with the ASCII-safe model cache instead of userData.
-    return join(getSpeechModelManager(store).getModelsDir(), `speech-hotwords-${digest}.txt`)
+    return join(getSpeechModelManager(speechStore).getModelsDir(), `speech-hotwords-${digest}.txt`)
   }
 
   const getDesktopOwner = (senderId: number, sessionId: string): string =>
@@ -100,7 +110,7 @@ export function registerSpeechHandlers(store: Store): void {
       const owner = getDesktopOwner(event.sender.id, sessionId)
       const cleanupOnWindowClosed = (): void => {
         windowClosed = true
-        void getSpeechSttService(store)
+        void getSpeechSttService(speechStore)
           .stopDictation(owner)
           .finally(() => {
             if (resolvedHotwordsPath) {
@@ -148,7 +158,7 @@ export function registerSpeechHandlers(store: Store): void {
           return
         }
 
-        await getSpeechSttService(store).startDictation(
+        await getSpeechSttService(speechStore).startDictation(
           modelId,
           (msg) => {
             if (window.isDestroyed()) {
@@ -170,7 +180,7 @@ export function registerSpeechHandlers(store: Store): void {
                 break
               case 'error':
                 window.webContents.send('speech:error', { error: msg.error ?? '', sessionId })
-                void getSpeechSttService(store)
+                void getSpeechSttService(speechStore)
                   .stopDictation(owner)
                   .catch(() => undefined)
                   .finally(cleanupSessionListener)
@@ -199,7 +209,7 @@ export function registerSpeechHandlers(store: Store): void {
       // Why: the preload sends audio as a Buffer to avoid Float32Array data
       // being zeroed out during contextBridge + IPC serialization.
       const samples = new Float32Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / 4)
-      getSpeechSttService(store).feedAudio(
+      getSpeechSttService(speechStore).feedAudio(
         samples,
         sampleRate,
         getDesktopOwner(_event.sender.id, sessionId)
@@ -208,6 +218,8 @@ export function registerSpeechHandlers(store: Store): void {
   )
 
   ipcMain.handle('speech:stopDictation', async (_event, sessionId = 'desktop') => {
-    await getSpeechSttService(store).stopDictation(getDesktopOwner(_event.sender.id, sessionId))
+    await getSpeechSttService(speechStore).stopDictation(
+      getDesktopOwner(_event.sender.id, sessionId)
+    )
   })
 }

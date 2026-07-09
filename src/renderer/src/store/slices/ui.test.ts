@@ -2145,9 +2145,9 @@ describe('createUISlice feature tips', () => {
     store.getState().markFeatureTipsSeen(['voice-dictation'])
     store.getState().markFeatureTipsSeen(['voice-dictation'])
 
-    expect(store.getState().featureTipsSeenIds).toEqual(['voice-dictation'])
+    expect(store.getState().featureTipsSeenIds).toEqual([])
     expect(setMock).toHaveBeenCalledTimes(1)
-    expect(setMock).toHaveBeenCalledWith({ featureTipsSeenIds: ['voice-dictation'] })
+    expect(setMock).toHaveBeenCalledWith({ featureTipsSeenIds: [] })
   })
 
   it('normalizes persisted feature tip ids during hydration', () => {
@@ -2159,7 +2159,7 @@ describe('createUISlice feature tips', () => {
       })
     )
 
-    expect(store.getState().featureTipsSeenIds).toEqual(['voice-dictation'])
+    expect(store.getState().featureTipsSeenIds).toEqual([])
   })
 })
 

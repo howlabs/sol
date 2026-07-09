@@ -42,6 +42,7 @@ import { useNativeChatSkills } from './use-native-chat-skills'
 import { useNativeChatComposerAttachments } from './use-native-chat-composer-attachments'
 import { useNativeChatComposerPaste } from './use-native-chat-composer-paste'
 import { useNativeChatExternalAttachments } from './use-native-chat-external-attachments'
+import { resolveVoiceSettings } from '../../../../shared/speech-types'
 import { dispatchDictationControl } from '../dictation/dictation-control-events'
 import { useNativeChatComposerKeyDown } from './use-native-chat-composer-keydown'
 
@@ -127,7 +128,7 @@ export const NativeChatComposer = forwardRef<NativeChatComposerHandle, NativeCha
     const skills = useNativeChatSkills(agent, terminalTabId)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const dictationState = useAppStore((store) => store.dictationState)
-    const voiceSettings = useAppStore((store) => store.settings?.voice)
+    const voiceSettings = resolveVoiceSettings(useAppStore((store) => store.settings) ?? {})
     const isDictationHoldMode = voiceSettings?.dictationMode === 'hold'
     const dictationDisabled = voiceSettings?.enabled !== true || !voiceSettings.sttModel
     const isDictating =

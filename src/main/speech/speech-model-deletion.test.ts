@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { getDefaultVoiceSettings } from '../../shared/constants'
-import type { VoiceSettings } from '../../shared/speech-types'
-import type { GlobalSettings } from '../../shared/types'
+import { getDefaultVoiceSettings } from '../../shared/speech-types'
+import type { LegacyVoiceSettingsSource, VoiceSettings } from '../../shared/speech-types'
 import { SPEECH_MODEL_CATALOG } from './model-catalog'
 import { deleteLocalSpeechModel } from './speech-model-deletion'
 
@@ -10,14 +9,12 @@ const cloudModel = SPEECH_MODEL_CATALOG.find((model) => model.provider === 'open
 
 function makeStore(initialVoice: VoiceSettings) {
   let voice = initialVoice
-  const updateSettings = vi.fn((updates: Partial<GlobalSettings>) => {
-    if (updates.voice) {
-      voice = updates.voice
-    }
-    return { voice } as GlobalSettings
+  const updateSettings = vi.fn((updates: { voice: VoiceSettings }) => {
+    voice = updates.voice
+    return { voice } as LegacyVoiceSettingsSource
   })
   return {
-    getSettings: vi.fn(() => ({ voice }) as GlobalSettings),
+    getSettings: vi.fn(() => ({ voice }) as LegacyVoiceSettingsSource),
     updateSettings
   }
 }

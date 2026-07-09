@@ -1,6 +1,6 @@
 import { ModelManager } from './model-manager'
 import { SttService } from './stt-service'
-import type { VoiceSettings } from '../../shared/speech-types'
+import { resolveVoiceSettings, type VoiceSettings } from '../../shared/speech-types'
 
 type SpeechSettingsStore = {
   getSettings(): {
@@ -13,8 +13,7 @@ let sttService: SttService | null = null
 
 export function getSpeechModelManager(store: SpeechSettingsStore): ModelManager {
   if (!modelManager) {
-    const settings = store.getSettings()
-    const customDir = settings.voice?.modelsDir || undefined
+    const customDir = resolveVoiceSettings(store.getSettings()).modelsDir || undefined
     modelManager = new ModelManager(customDir || undefined)
   }
   return modelManager

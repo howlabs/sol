@@ -27,9 +27,7 @@ export async function handleVoiceDictationToggle({
   notifyPermissionRequired,
   notifyPermissionRequestFailed
 }: VoiceDictationToggleOptions): Promise<void> {
-  // Why: changing the Voice Dictation switch proves the user discovered the
-  // feature; disabling it later should not make the discovery modal eligible.
-  markFeatureTipsSeen(['voice-dictation'])
+  void markFeatureTipsSeen
 
   if (voiceEnabled) {
     updateVoiceSettings({ enabled: false })

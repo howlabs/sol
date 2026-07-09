@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { GlobalSettings } from '../../../../shared/types'
-import { getDefaultVoiceSettings } from '../../../../shared/constants'
-import type { SpeechModelManifest, VoiceSettings } from '../../../../shared/speech-types'
+import {
+  resolveVoiceSettings,
+  type LegacyVoiceSettingsSource,
+  type SpeechModelManifest,
+  type VoiceSettings
+} from '../../../../shared/speech-types'
 import { Separator } from '../ui/separator'
 import { toast } from 'sonner'
 import { useAppStore } from '@/store'
@@ -21,8 +25,13 @@ type VoicePaneProps = {
   updateSettings: (updates: Partial<GlobalSettings>) => void
 }
 
-export function VoicePane({ settings, updateSettings }: VoicePaneProps): React.JSX.Element {
-  const voiceSettings = settings.voice ?? getDefaultVoiceSettings()
+export function VoicePane({
+  settings,
+  updateSettings: _updateSettings
+}: VoicePaneProps): React.JSX.Element {
+  const [voiceSettings, setVoiceSettings] = useState(() =>
+    resolveVoiceSettings(settings as LegacyVoiceSettingsSource)
+  )
   const modelStates = useAppStore((s) => s.modelStates)
   const refreshModelStates = useAppStore((s) => s.refreshModelStates)
   const markFeatureTipsSeen = useAppStore((s) => s.markFeatureTipsSeen)
@@ -39,17 +48,9 @@ export function VoicePane({ settings, updateSettings }: VoicePaneProps): React.J
     mountedRef.current = node !== null
   }, [])
 
-  const updateVoiceSettings = useCallback(
-    (updates: Partial<VoiceSettings>): void => {
-      updateSettings({
-        voice: {
-          ...voiceSettings,
-          ...updates
-        }
-      })
-    },
-    [updateSettings, voiceSettings]
-  )
+  const updateVoiceSettings = useCallback((updates: Partial<VoiceSettings>): void => {
+    setVoiceSettings((previous) => ({ ...previous, ...updates }))
+  }, [])
 
   useEffect(() => {
     let cancelled = false

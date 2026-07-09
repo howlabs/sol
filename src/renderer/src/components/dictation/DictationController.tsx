@@ -13,14 +13,15 @@ import { recordStoppedSession, waitForStoppedSession } from './dictation-stopped
 import { translate } from '@/i18n/i18n'
 import { showDictationStartErrorToast } from './dictation-start-error-toast'
 import { useHoldDictationGesture } from './use-hold-dictation-gesture'
+import { resolveVoiceSettings } from '../../../../shared/speech-types'
 import { DICTATION_CONTROL_EVENT, type DictationControlAction } from './dictation-control-events'
 
 export function DictationController() {
   const dictationState = useAppStore((s) => s.dictationState)
   const setDictationState = useAppStore((s) => s.setDictationState)
   const setPartialTranscript = useAppStore((s) => s.setPartialTranscript)
-  const recordFeatureInteraction = useAppStore((s) => s.recordFeatureInteraction)
   const settings = useAppStore((s) => s.settings)
+  const voice = resolveVoiceSettings(settings ?? {})
   const keybindings = useAppStore((s) => s.keybindings)
   const {
     start: startCapture,
@@ -91,7 +92,7 @@ export function DictationController() {
       return
     }
 
-    const modelId = settings?.voice?.sttModel
+    const modelId = voice.sttModel
     if (!modelId) {
       toast('No speech model selected. Download one in Settings > Voice.', {
         action: {
@@ -108,7 +109,7 @@ export function DictationController() {
       return
     }
 
-    if (!settings?.voice?.enabled) {
+    if (!voice.enabled) {
       toast('Voice dictation is disabled. Enable it in Settings > Voice.')
       return
     }
@@ -169,7 +170,6 @@ export function DictationController() {
 
       dictationStateRef.current = 'listening'
       setDictationState('listening')
-      recordFeatureInteraction('voice-dictation')
     } catch (err) {
       if (dictationRunRef.current !== runId) {
         return
@@ -201,7 +201,6 @@ export function DictationController() {
       setDictationState('idle')
     }
   }, [
-    settings,
     setDictationState,
     startCapture,
     flushBufferedAudio,
@@ -210,7 +209,7 @@ export function DictationController() {
     finishDictationSession,
     drainStoppedSession,
     setPartialTranscript,
-    recordFeatureInteraction
+    voice
   ])
 
   const stopDictation = useCallback(async () => {
@@ -236,17 +235,13 @@ export function DictationController() {
   // Toggle mode: use IPC from main process (before-input-event intercepts
   // the keyDown so Cmd+E doesn't reach xterm or trigger system shortcuts).
   useEffect(() => {
-    const mode = settings?.voice?.dictationMode ?? 'toggle'
+    const mode = voice.dictationMode ?? 'toggle'
     if (mode !== 'toggle') {
       return
     }
 
     const handleKeyDown = (): void => {
-      if (
-        !settings?.voice?.enabled ||
-        !settings.voice.sttModel ||
-        dictationStateRef.current === 'stopping'
-      ) {
+      if (!voice.enabled || !voice.sttModel || dictationStateRef.current === 'stopping') {
         return
       }
       if (dictationStateRef.current === 'listening' || dictationStateRef.current === 'starting') {
@@ -258,16 +253,10 @@ export function DictationController() {
 
     const cleanup = window.api.ui.onDictationKeyDown(handleKeyDown)
     return cleanup
-  }, [
-    settings?.voice?.dictationMode,
-    settings?.voice?.enabled,
-    settings?.voice?.sttModel,
-    startDictation,
-    stopDictation
-  ])
+  }, [voice.dictationMode, voice.enabled, voice.sttModel, startDictation, stopDictation])
 
   useEffect(() => {
-    const canDictate = (): boolean => Boolean(settings?.voice?.enabled && settings.voice.sttModel)
+    const canDictate = (): boolean => Boolean(voice.enabled && voice.sttModel)
     const handleControl = (event: Event): void => {
       if (!canDictate() || dictationStateRef.current === 'stopping') {
         return
@@ -293,7 +282,7 @@ export function DictationController() {
     }
     document.addEventListener(DICTATION_CONTROL_EVENT, handleControl)
     return () => document.removeEventListener(DICTATION_CONTROL_EVENT, handleControl)
-  }, [settings?.voice?.enabled, settings?.voice?.sttModel, startDictation, stopDictation])
+  }, [voice.enabled, voice.sttModel, startDictation, stopDictation])
 
   useHoldDictationGesture({
     dictationStateRef,

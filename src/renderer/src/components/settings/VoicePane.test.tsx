@@ -5,7 +5,7 @@ import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { DeveloperPermissionRequestResult } from '../../../../shared/developer-permissions-types'
 import type { GlobalSettings } from '../../../../shared/types'
-import { getDefaultVoiceSettings } from '../../../../shared/constants'
+import { getDefaultVoiceSettings } from '../../../../shared/speech-types'
 import { handleVoiceDictationToggle, VoicePane } from './VoicePane'
 
 const { useAppStoreMock, useShortcutLabelMock } = vi.hoisted(() => ({
@@ -132,7 +132,7 @@ describe('VoicePane dictation switch', () => {
       requestMicrophonePermission
     })
 
-    expect(calls).toEqual(['seen:voice-dictation', 'settings:false'])
+    expect(calls).toEqual(['settings:false'])
     expect(updateVoiceSettings).toHaveBeenCalledWith({ enabled: false })
     expect(requestMicrophonePermission).not.toHaveBeenCalled()
   })
@@ -152,12 +152,8 @@ describe('VoicePane dictation switch', () => {
     await clickSwitch(button)
     root.unmount()
 
-    expect(calls).toEqual(['seen:voice-dictation', 'settings:false'])
-    expect(updateSettings).toHaveBeenCalledWith(
-      expect.objectContaining({
-        voice: expect.objectContaining({ enabled: false })
-      })
-    )
+    expect(calls).toEqual([])
+    expect(updateSettings).not.toHaveBeenCalled()
     expect(window.api.developerPermissions.request).not.toHaveBeenCalled()
   })
 
@@ -179,7 +175,7 @@ describe('VoicePane dictation switch', () => {
     await clickSwitch(button)
     root.unmount()
 
-    expect(calls).toEqual(['seen:voice-dictation', 'permission-request'])
+    expect(calls).toEqual(['permission-request'])
     expect(updateSettings).not.toHaveBeenCalled()
   })
 
@@ -202,7 +198,6 @@ describe('VoicePane dictation switch', () => {
     })
 
     expect(calls).toEqual([
-      'seen:voice-dictation',
       'pending:true',
       'permission-request',
       'permission-required',

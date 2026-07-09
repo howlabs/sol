@@ -606,8 +606,7 @@ function App(): React.JSX.Element {
   ) as React.CSSProperties | undefined
   const dictationState = useAppStore((s) => s.dictationState)
   const hasSshCredentialRequest = useAppStore((s) => s.sshCredentialQueue.length > 0)
-  const shouldMountDictationController =
-    settings?.voice?.enabled === true || dictationState !== 'idle'
+  const shouldMountDictationController = dictationState !== 'idle'
   const primarySelectionMiddleClickPaste = resolvePrimarySelectionMiddleClickPaste(
     settings?.primarySelectionMiddleClickPaste
   )

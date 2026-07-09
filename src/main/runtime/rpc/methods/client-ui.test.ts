@@ -203,7 +203,7 @@ describe('client UI RPC methods', () => {
           }
         }
       },
-      featureTipsSeenIds: ['voice-dictation'],
+      featureTipsSeenIds: ['orca-cli'],
       featureInteractions: {
         tasks: { firstInteractedAt: 100, interactionCount: 2 }
       },
@@ -242,7 +242,7 @@ describe('client UI RPC methods', () => {
           }
         }
       },
-      featureTipsSeenIds: ['voice-dictation'],
+      featureTipsSeenIds: ['orca-cli'],
       featureInteractions: {
         tasks: { firstInteractedAt: 100, interactionCount: 2 }
       },
@@ -357,7 +357,7 @@ describe('client UI RPC methods', () => {
     const dispatcher = new RpcDispatcher({ runtime, methods: CLIENT_UI_METHODS })
 
     const response = await dispatcher.dispatch(
-      makeRequest('ui.set', { featureTipsSeenIds: ['voice-dictation', 'unknown-tip'] })
+      makeRequest('ui.set', { featureTipsSeenIds: ['orca-cli', 'unknown-tip'] })
     )
 
     expect(response).toMatchObject({ ok: false, error: { code: 'invalid_argument' } })
