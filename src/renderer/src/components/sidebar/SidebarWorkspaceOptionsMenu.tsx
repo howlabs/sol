@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { SlidersHorizontal } from 'lucide-react'
 import { useAppStore } from '@/store'
 import { Button } from '@/components/ui/button'
@@ -26,15 +26,7 @@ import { WorktreeCardDisplayMenuSection } from './WorktreeCardDisplayMenuSection
 import { translate } from '@/i18n/i18n'
 import { SidebarGroupByToggle } from './SidebarGroupByToggle'
 
-type SidebarWorkspaceOptionsMenuProps = {
-  preserveWorkspaceBoardOpen?: boolean
-  onMenuOpenChange?: (open: boolean) => void
-}
-
-const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsMenu({
-  preserveWorkspaceBoardOpen = false,
-  onMenuOpenChange
-}: SidebarWorkspaceOptionsMenuProps) {
+const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsMenu() {
   const showSleepingWorkspaces = useAppStore((s) => s.showSleepingWorkspaces)
   const hideDefaultBranchWorkspace = useAppStore((s) => s.hideDefaultBranchWorkspace)
   const hideAutomationGeneratedWorkspaces = useAppStore((s) => s.hideAutomationGeneratedWorkspaces)
@@ -53,14 +45,6 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
   const [open, setOpen] = useState(false)
   const { hostOptions } = useSidebarHostScopeOptions()
   const showHostScopeControls = shouldShowHostScopeControls(hostOptions)
-
-  const handleOpenChange = useCallback(
-    (next: boolean) => {
-      setOpen(next)
-      onMenuOpenChange?.(next)
-    },
-    [onMenuOpenChange]
-  )
 
   // Why: derive from current repos so stale ids (e.g. lingering after a repo
   // is removed) don't inflate counts or falsely signal an applied filter.
@@ -95,7 +79,7 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
   const hostVisibilityLabel = getSidebarHostVisibilityLabel(visibleWorkspaceHostIds, hostOptions)
 
   return (
-    <DropdownMenu modal={false} open={open} onOpenChange={handleOpenChange}>
+    <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
       <Tooltip>
         <TooltipTrigger asChild>
           <DropdownMenuTrigger asChild>
@@ -116,7 +100,6 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
                       'Workspace options'
                     )
               }
-              data-workspace-board-preserve-open={preserveWorkspaceBoardOpen ? '' : undefined}
             >
               <SlidersHorizontal className="size-3.5" strokeWidth={2.25} />
               {hasAnyFilter && (
@@ -150,14 +133,12 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
         align="start"
         sideOffset={8}
         className="w-72 pb-2"
-        data-workspace-board-preserve-open={preserveWorkspaceBoardOpen ? '' : undefined}
       >
         {showHostScopeControls && (
           <SidebarHostScopeMenuSection
             hostOptionsCount={hostOptions.length}
             hostVisibilityLabel={hostVisibilityLabel}
             hostOptions={hostOptions}
-            preserveWorkspaceBoardOpen={preserveWorkspaceBoardOpen}
             setWorkspaceHostScope={setWorkspaceHostScope}
             visibleWorkspaceHostIds={visibleWorkspaceHostIds}
             setVisibleWorkspaceHostIds={setVisibleWorkspaceHostIds}
@@ -186,7 +167,6 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent
             className="w-44"
-            data-workspace-board-preserve-open={preserveWorkspaceBoardOpen ? '' : undefined}
           >
             <DropdownMenuRadioGroup
               value={sortBy}
@@ -239,7 +219,6 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent
               className="w-44"
-              data-workspace-board-preserve-open={preserveWorkspaceBoardOpen ? '' : undefined}
             >
               <DropdownMenuRadioGroup
                 value={projectOrderBy}
@@ -266,7 +245,7 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
           </DropdownMenuSub>
         )}
 
-        <WorktreeCardDisplayMenuSection preserveWorkspaceBoardOpen={preserveWorkspaceBoardOpen} />
+        <WorktreeCardDisplayMenuSection />
 
         <DropdownMenuSeparator />
         <SidebarWorkspaceFilterSection />

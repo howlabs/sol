@@ -7,12 +7,10 @@ import SidebarNav from './SidebarNav'
 import SetupScriptPromptCard from './SetupScriptPromptCard'
 import WorktreeList from './WorktreeList'
 import SidebarToolbar from './SidebarToolbar'
-import WorkspaceKanbanDrawer from './WorkspaceKanbanDrawer'
 import type { VirtualizedScrollAnchor } from '@/hooks/useVirtualizedScrollAnchor'
 import { cn } from '@/lib/utils'
 import { FolderPlus, Loader2 } from 'lucide-react'
 import { useSidebarProjectDrop } from './useSidebarProjectDrop'
-import { useWorkspaceBoardPanel } from './useWorkspaceBoardPanel'
 import { resolveLeftSidebarStyleVariables } from '@/lib/left-sidebar-appearance'
 import { useSystemPrefersDark } from '@/components/terminal-pane/use-system-prefers-dark'
 import { lazyWithRetry } from '@/lib/lazy-with-retry'
@@ -48,26 +46,12 @@ function Sidebar({
   const settings = useAppStore((s) => s.settings)
   const fetchAllWorktrees = useAppStore((s) => s.fetchAllWorktrees)
   const activeModal = useAppStore((s) => s.activeModal)
-  const statusBarVisible = useAppStore((s) => s.statusBarVisible)
   const systemPrefersDark = useSystemPrefersDark()
   const leftSidebarStyle = useMemo(
     () => resolveLeftSidebarStyleVariables(settings, systemPrefersDark),
     [settings, systemPrefersDark]
   ) as React.CSSProperties | undefined
   const { nativeDropTarget, dropHandlers, affordance } = useSidebarProjectDrop()
-  const {
-    workspaceBoardOpen,
-    workspaceBoardRenderedOpen,
-    workspaceBoardDragPreviewOpen,
-    workspaceBoardMenuOpen,
-    toggleWorkspaceBoard,
-    handleWorkspaceBoardOpenChange,
-    setWorkspaceBoardMenuOpen,
-    closeWorkspaceBoard,
-    previewWorkspaceBoardFromDrag,
-    solidifyWorkspaceBoardFromDrag,
-    cancelWorkspaceBoardDragPreview
-  } = useWorkspaceBoardPanel()
 
   const setLiveSidebarWidth = React.useCallback((width: number) => {
     document.documentElement.style.setProperty('--workspace-sidebar-live-width', `${width}px`)
@@ -114,12 +98,6 @@ function Sidebar({
     void fetchAllWorktrees().then(() => fetchWorktreeLineage())
   }, [onlineRuntimeEnvKey, fetchAllWorktrees, fetchWorktreeLineage])
 
-  useEffect(() => {
-    if (!sidebarOpen && workspaceBoardRenderedOpen) {
-      closeWorkspaceBoard()
-    }
-  }, [closeWorkspaceBoard, sidebarOpen, workspaceBoardRenderedOpen])
-
   const { containerRef, onResizeStart, isResizing } = useSidebarResize<HTMLDivElement>({
     isOpen: sidebarOpen,
     width: sidebarWidth,
@@ -143,25 +121,17 @@ function Sidebar({
           <>
             {/* Fixed controls */}
             <SidebarNav />
-            <SidebarHeader onWorkspaceBoardMenuOpenChange={setWorkspaceBoardMenuOpen} />
+            <SidebarHeader />
 
             <WorktreeList
               scrollOffsetRef={worktreeScrollOffsetRef}
               scrollAnchorRef={worktreeScrollAnchorRef}
-              workspaceBoardOpen={workspaceBoardOpen}
-              onWorkspaceBoardDragPreviewStart={previewWorkspaceBoardFromDrag}
-              onWorkspaceBoardDragPreviewCommit={solidifyWorkspaceBoardFromDrag}
-              onWorkspaceBoardDragPreviewCancel={cancelWorkspaceBoardDragPreview}
             />
 
             <SetupScriptPromptCard />
 
             {/* Fixed bottom toolbar */}
-            <SidebarToolbar
-              workspaceBoardOpen={workspaceBoardOpen}
-              workspaceBoardDragPreviewOpen={workspaceBoardDragPreviewOpen}
-              onWorkspaceBoardToggle={toggleWorkspaceBoard}
-            />
+            <SidebarToolbar />
           </>
         )}
 
@@ -210,17 +180,6 @@ function Sidebar({
         {activeModal === 'confirm-orca-yaml-hooks' ? <OrcaYamlTrustDialog /> : null}
         {activeModal === 'forget-ssh-workspace' ? <ForgetSshWorkspaceDialog /> : null}
       </React.Suspense>
-      {sidebarOpen ? (
-        <WorkspaceKanbanDrawer
-          leftSidebarStyle={leftSidebarStyle}
-          open={workspaceBoardRenderedOpen}
-          statusBarVisible={statusBarVisible}
-          dragPreview={workspaceBoardDragPreviewOpen}
-          preserveOpenForMenu={workspaceBoardMenuOpen}
-          onOpenChange={handleWorkspaceBoardOpenChange}
-          onMenuOpenChange={setWorkspaceBoardMenuOpen}
-        />
-      ) : null}
     </TooltipProvider>
   )
 }

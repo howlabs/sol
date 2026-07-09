@@ -147,7 +147,7 @@ export const CORE_COMMAND_SPECS: CommandSpec[] = [
       'no-parent'
     ],
     notes: [
-      'Workspace status ids match the board columns (defaults: todo, in-progress, in-review, completed); custom statuses use their configured id.',
+      'Workspace status ids (defaults: todo, in-progress, in-review, completed); custom statuses use their configured id.',
       'Pass --linear-issue null to clear the Linear issue link.'
     ],
     examples: [

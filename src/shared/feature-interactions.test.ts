@@ -31,9 +31,7 @@ describe('feature interactions', () => {
       ? true
       : never = true
     const expectedIds: FeatureInteractionId[] = [
-      'workspace-board',
       'workspace-agent-sessions',
-      'workspace-board-actions',
       'cmd-j',
       'cmd-j-workspace-open',
       'cmd-j-browser-page-open',
