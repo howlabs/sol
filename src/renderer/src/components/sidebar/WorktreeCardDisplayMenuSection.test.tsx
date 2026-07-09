@@ -108,7 +108,7 @@ function renderMenu(): void {
   document.body.appendChild(container)
   root = createRoot(container)
   act(() => {
-    root?.render(<WorktreeCardDisplayMenuSection preserveWorkspaceBoardOpen={false} />)
+    root?.render(<WorktreeCardDisplayMenuSection />)
   })
 }
 

@@ -76,9 +76,6 @@ import {
   type ExecutionHostId
 } from '../../../../shared/execution-host'
 import {
-  WORKSPACE_BOARD_COLUMN_WIDTH_DEFAULT,
-  clampWorkspaceBoardColumnWidth,
-  clampWorkspaceBoardOpacity,
   cloneDefaultWorkspaceStatuses,
   normalizeWorkspaceStatuses
 } from '../../../../shared/workspace-statuses'
@@ -781,12 +778,6 @@ export type UISlice = {
   setAgentActivityDisplayMode: (mode: AgentActivityDisplayMode) => void
   workspaceStatuses: WorkspaceStatusDefinition[]
   setWorkspaceStatuses: (statuses: WorkspaceStatusDefinition[]) => void
-  workspaceBoardOpacity: number
-  setWorkspaceBoardOpacity: (opacity: number) => void
-  workspaceBoardColumnWidth: number
-  setWorkspaceBoardColumnWidth: (width: number) => void
-  syncTaskStatusFromWorkspaceBoard: boolean
-  setSyncTaskStatusFromWorkspaceBoard: (enabled: boolean) => void
   statusBarItems: StatusBarItem[]
   toggleStatusBarItem: (item: StatusBarItem) => void
   statusBarVisible: boolean
@@ -1944,26 +1935,6 @@ export const createUISlice: StateCreator<AppState, [], [], UISlice> = (set, get)
     set({ workspaceStatuses: normalized })
   },
 
-  workspaceBoardOpacity: 1,
-  setWorkspaceBoardOpacity: (opacity) => {
-    const clamped = clampWorkspaceBoardOpacity(opacity)
-    window.api.ui.set({ workspaceBoardOpacity: clamped }).catch(console.error)
-    set({ workspaceBoardOpacity: clamped })
-  },
-
-  workspaceBoardColumnWidth: WORKSPACE_BOARD_COLUMN_WIDTH_DEFAULT,
-  setWorkspaceBoardColumnWidth: (width) => {
-    const clamped = clampWorkspaceBoardColumnWidth(width)
-    window.api.ui.set({ workspaceBoardColumnWidth: clamped }).catch(console.error)
-    set({ workspaceBoardColumnWidth: clamped })
-  },
-
-  syncTaskStatusFromWorkspaceBoard: false,
-  setSyncTaskStatusFromWorkspaceBoard: (enabled) => {
-    window.api.ui.set({ syncTaskStatusFromWorkspaceBoard: enabled }).catch(console.error)
-    set({ syncTaskStatusFromWorkspaceBoard: enabled })
-  },
-
   statusBarItems: [...DEFAULT_STATUS_BAR_ITEMS],
   toggleStatusBarItem: (item) =>
     set((s) => {
@@ -2143,9 +2114,6 @@ export const createUISlice: StateCreator<AppState, [], [], UISlice> = (set, get)
         _worktreeCardModeDefaulted: ui._worktreeCardModeDefaulted === true,
         agentActivityDisplayMode: normalizeAgentActivityDisplayMode(ui.agentActivityDisplayMode),
         workspaceStatuses: normalizeWorkspaceStatuses(ui.workspaceStatuses),
-        workspaceBoardOpacity: clampWorkspaceBoardOpacity(ui.workspaceBoardOpacity),
-        workspaceBoardColumnWidth: clampWorkspaceBoardColumnWidth(ui.workspaceBoardColumnWidth),
-        syncTaskStatusFromWorkspaceBoard: ui.syncTaskStatusFromWorkspaceBoard === true,
         statusBarItems: statusBarItemsWithMiniMax,
         statusBarVisible: ui.statusBarVisible ?? true,
 

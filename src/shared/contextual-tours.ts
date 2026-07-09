@@ -1,7 +1,6 @@
 import type { FeatureInteractionId } from './feature-interactions'
 
 export type ContextualTourId =
-  | 'workspace-board'
   | 'workspace-agent-sessions'
   | 'browser'
   | 'tasks'
@@ -50,24 +49,6 @@ export type ContextualTour = {
 }
 
 export const CONTEXTUAL_TOURS = [
-  {
-    id: 'workspace-board',
-    steps: [
-      {
-        title: 'Plan work on the board',
-        body: 'Use the board when you want to see workspaces by status instead of by project.',
-        targetSelector: '[data-contextual-tour-target="workspace-board-center"]',
-        requiredForStart: true,
-        preferredPlacement: 'bottom'
-      },
-      {
-        title: 'Move work through lanes',
-        body: 'Drag workspaces between lanes as their status changes.',
-        targetSelector:
-          '[data-contextual-tour-target="workspace-board-done-lane"], [data-contextual-tour-target="workspace-board-lanes"]'
-      }
-    ]
-  },
   {
     id: 'workspace-agent-sessions',
     steps: [

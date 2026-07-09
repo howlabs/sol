@@ -163,8 +163,6 @@ import { normalizeContextualTourIds } from '../shared/contextual-tours'
 import { normalizeFeatureTipIds } from '../shared/feature-tips'
 import {
   DEFAULT_WORKSPACE_STATUS_ID,
-  clampWorkspaceBoardColumnWidth,
-  clampWorkspaceBoardOpacity,
   normalizePersistedWorkspaceStatuses,
   normalizeWorkspaceStatuses
 } from '../shared/workspace-statuses'
@@ -5148,11 +5146,6 @@ export class Store {
         this.state.ui?.agentActivityDisplayMode
       ),
       workspaceStatuses: normalizeWorkspaceStatuses(this.state.ui?.workspaceStatuses),
-      workspaceBoardOpacity: clampWorkspaceBoardOpacity(this.state.ui?.workspaceBoardOpacity),
-      workspaceBoardColumnWidth: clampWorkspaceBoardColumnWidth(
-        this.state.ui?.workspaceBoardColumnWidth
-      ),
-      syncTaskStatusFromWorkspaceBoard: this.state.ui?.syncTaskStatusFromWorkspaceBoard === true,
       // Why: strict boolean coercion so a missing/legacy value reads as false
       // (first-run notice still fires) rather than leaking a non-bool through.
       trayMinimizeNoticeShown: this.state.ui?.trayMinimizeNoticeShown === true,
@@ -5222,16 +5215,6 @@ export class Store {
         sanitizedUpdates.workspaceStatuses !== undefined
           ? normalizeWorkspaceStatuses(sanitizedUpdates.workspaceStatuses)
           : normalizeWorkspaceStatuses(this.state.ui?.workspaceStatuses),
-      workspaceBoardOpacity: clampWorkspaceBoardOpacity(
-        sanitizedUpdates.workspaceBoardOpacity ?? this.state.ui?.workspaceBoardOpacity
-      ),
-      workspaceBoardColumnWidth: clampWorkspaceBoardColumnWidth(
-        sanitizedUpdates.workspaceBoardColumnWidth ?? this.state.ui?.workspaceBoardColumnWidth
-      ),
-      syncTaskStatusFromWorkspaceBoard:
-        sanitizedUpdates.syncTaskStatusFromWorkspaceBoard !== undefined
-          ? sanitizedUpdates.syncTaskStatusFromWorkspaceBoard === true
-          : this.state.ui?.syncTaskStatusFromWorkspaceBoard === true,
       markdownTocPanelWidth: clampMarkdownTocPanelWidth(
         sanitizedUpdates.markdownTocPanelWidth ?? this.state.ui?.markdownTocPanelWidth
       ),
