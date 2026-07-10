@@ -94,6 +94,22 @@ export function nextVisibleTaskProviders(
   return TASK_PROVIDERS.filter((entry) => entry === provider || visibleProviders.includes(entry))
 }
 
+/** Settings patch for a provider toggle, including defaultTaskSource recompute. */
+export function buildTaskProviderVisibilityUpdate(args: {
+  visibleProviders: readonly TaskProvider[]
+  provider: TaskProvider
+  defaultTaskSource: GlobalSettings['defaultTaskSource']
+}): Partial<GlobalSettings> | null {
+  const nextProviders = nextVisibleTaskProviders(args.visibleProviders, args.provider)
+  if (nextProviders === null) {
+    return null
+  }
+  return {
+    visibleTaskProviders: [...nextProviders],
+    defaultTaskSource: resolveVisibleTaskProvider(args.defaultTaskSource, nextProviders)
+  }
+}
+
 /**
  * Task Sources settings — document list of providers. Section chrome lives in
  * Settings; this pane is only the control surface.
@@ -102,14 +118,14 @@ export function TasksPane({ settings, updateSettings }: TasksPaneProps): React.J
   const visibleProviders = normalizeVisibleTaskProviders(settings.visibleTaskProviders)
 
   const toggleProvider = (provider: TaskProvider): void => {
-    const nextProviders = nextVisibleTaskProviders(visibleProviders, provider)
-    if (nextProviders === null) {
-      return
-    }
-    updateSettings({
-      visibleTaskProviders: [...nextProviders],
-      defaultTaskSource: resolveVisibleTaskProvider(settings.defaultTaskSource, nextProviders)
+    const update = buildTaskProviderVisibilityUpdate({
+      visibleProviders,
+      provider,
+      defaultTaskSource: settings.defaultTaskSource
     })
+    if (update) {
+      updateSettings(update)
+    }
   }
 
   return (
@@ -147,6 +163,7 @@ export function TasksPane({ settings, updateSettings }: TasksPaneProps): React.J
             const isLastEnabled = enabled && visibleProviders.length === 1
             const Icon = option.Icon
             const switchId = `task-source-${option.id}`
+            const lastHintId = `task-source-${option.id}-last-hint`
 
             return (
               <div
@@ -167,7 +184,10 @@ export function TasksPane({ settings, updateSettings }: TasksPaneProps): React.J
                     {option.description}
                   </p>
                   {isLastEnabled ? (
-                    <p className="text-[11px] leading-snug text-muted-foreground/90">
+                    <p
+                      id={lastHintId}
+                      className="text-[11px] leading-snug text-muted-foreground/90"
+                    >
                       {translate(
                         'auto.components.settings.TasksPane.lastProviderHint',
                         'At least one provider must stay on.'
@@ -179,11 +199,7 @@ export function TasksPane({ settings, updateSettings }: TasksPaneProps): React.J
                   checked={enabled}
                   disabled={isLastEnabled}
                   ariaLabelledBy={switchId}
-                  ariaLabel={translate(
-                    'auto.components.settings.TasksPane.providerVisibility',
-                    'Show {{value0}} in Tasks',
-                    { value0: option.label }
-                  )}
+                  ariaDescribedBy={isLastEnabled ? lastHintId : undefined}
                   onChange={() => toggleProvider(option.id)}
                 />
               </div>
