@@ -31,7 +31,7 @@ export function AppearanceAdvancedDisclosure({
   const expanded = open || isSearching
 
   return (
-    <div className={cn('mt-3 pt-2', showTopBorder && 'border-t border-border/50', className)}>
+    <div className={cn('mt-1.5 pt-1', showTopBorder && 'border-t border-border/40', className)}>
       <button
         type="button"
         aria-expanded={expanded}
@@ -39,18 +39,18 @@ export function AppearanceAdvancedDisclosure({
         // Why: while searching the disclosure is forced open, so disable the
         // toggle's collapse affordance rather than letting it fight the search.
         disabled={isSearching}
-        className="flex w-full items-center gap-2 py-1 text-sm font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-default"
+        className="flex h-8 w-full items-center gap-1.5 text-[13px] font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:cursor-default"
       >
         <ChevronRight
           className={cn(
-            'size-3.5 text-muted-foreground transition-transform',
+            'size-3.5 text-muted-foreground transition-transform duration-200 ease-out motion-reduce:transition-none',
             expanded && 'rotate-90'
           )}
         />
         {label ??
           translate('auto.components.settings.AppearanceAdvancedDisclosure.advanced', 'Advanced')}
       </button>
-      {expanded ? <div className={cn('pt-1', contentClassName)}>{children}</div> : null}
+      {expanded ? <div className={cn('pt-0.5', contentClassName)}>{children}</div> : null}
     </div>
   )
 }

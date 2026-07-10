@@ -23,6 +23,7 @@ import { Label } from '../ui/label'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import { AgentSkillSetupPanel } from './AgentSkillSetupPanel'
 import { CliRegistrationDialog } from './CliRegistrationDialog'
+import { SettingsSwitch } from './SettingsFormControls'
 import {
   buildSkillCommandForRuntime,
   ensureWslCliAvailableForAgentSkillTerminal,
@@ -232,9 +233,9 @@ export function CliSection({
   }
 
   return (
-    <section className="space-y-4" data-settings-section="cli">
+    <section className="space-y-3" data-settings-section="cli">
       <div className="space-y-1">
-        <h2 className="text-sm font-semibold">
+        <h2 className="text-sm font-semibold tracking-tight">
           {translate('auto.components.settings.CliSection.c5c0f2641d', 'Orca CLI')}
         </h2>
         <p className="text-xs text-muted-foreground">
@@ -247,7 +248,7 @@ export function CliSection({
 
       <div className="space-y-3 rounded-xl border border-border/60 bg-card/50 p-4">
         <div className="flex items-center justify-between gap-4">
-          <div className="space-y-0.5">
+          <div className="min-w-0 flex-1 space-y-1">
             <Label>
               {translate('auto.components.settings.CliSection.38edbb5721', 'Shell command')}
             </Label>
@@ -283,21 +284,15 @@ export function CliSection({
               </Tooltip>
             </TooltipProvider>
             {!isBrowserManaged ? (
-              <button
-                role="switch"
-                aria-checked={isEnabled}
+              <SettingsSwitch
+                checked={isEnabled}
                 disabled={loading || !isSupported || busyAction !== null}
-                onClick={() => setDialogOpen(true)}
-                className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent transition-colors ${
-                  isEnabled ? 'bg-foreground' : 'bg-muted-foreground/30'
-                } ${loading || !isSupported || busyAction !== null ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
-              >
-                <span
-                  className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-                    isEnabled ? 'translate-x-4' : 'translate-x-0.5'
-                  }`}
-                />
-              </button>
+                onChange={() => setDialogOpen(true)}
+                ariaLabel={translate(
+                  'auto.components.settings.CliSection.38edbb5721',
+                  'Shell command'
+                )}
+              />
             ) : null}
           </div>
         </div>
@@ -350,7 +345,7 @@ export function CliSection({
 
         {!isBrowserManaged ? (
           <div className="border-t border-border/60 pt-3">
-            <div className="space-y-0.5">
+            <div className="space-y-1">
               <Label>
                 {translate('auto.components.settings.CliSection.04873eea3e', 'Agent skills')}
               </Label>

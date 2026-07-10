@@ -80,7 +80,7 @@ export function SettingsRow({
     <div
       className={cn(
         'flex gap-4',
-        description ? 'py-3' : 'py-2',
+        description ? 'py-3' : 'py-2.5',
         alignTop ? 'items-start' : 'items-center justify-between'
       )}
     >
@@ -103,6 +103,7 @@ type SettingsSwitchRowProps = {
   checked: boolean
   onChange: () => void
   ariaLabel?: string
+  disabled?: boolean
 }
 
 export function SettingsSwitchRow({
@@ -110,7 +111,8 @@ export function SettingsSwitchRow({
   description,
   checked,
   onChange,
-  ariaLabel
+  ariaLabel,
+  disabled
 }: SettingsSwitchRowProps): React.JSX.Element {
   return (
     <SettingsRow
@@ -120,6 +122,7 @@ export function SettingsSwitchRow({
         <SettingsSwitch
           checked={checked}
           onChange={onChange}
+          disabled={disabled}
           ariaLabel={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
         />
       }
@@ -240,8 +243,8 @@ export function SettingsSubsectionHeader({
 }: SettingsSubsectionHeaderProps): React.JSX.Element {
   return (
     <div className={cn('flex items-start justify-between gap-3', className)}>
-      <div className="space-y-1">
-        <h3 className="text-sm font-semibold">{title}</h3>
+      <div className="min-w-0 space-y-1">
+        <h3 className="text-sm font-semibold tracking-tight">{title}</h3>
         {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

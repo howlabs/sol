@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import type { GlobalSettings } from '../../../../shared/types'
 import { Button } from '../ui/button'
 import { Separator } from '../ui/separator'
-import { BellRing, Bot, Siren } from 'lucide-react'
+import { BellRing } from 'lucide-react'
 import { useAppStore } from '@/store'
-import { NotificationSettingToggle } from './NotificationSettingToggle'
 import { NotificationSoundSection } from './NotificationSoundSection'
 import {
   createNotificationVolumeDraftState,
   resolveNotificationVolumeDraftState,
   sendNotificationSettingsTestNotification
 } from './notification-settings-copy'
+import { SettingsRow, SettingsSwitchRow } from './SettingsFormControls'
 import { translate } from '@/i18n/i18n'
 export { getNotificationsPaneSearchEntries } from './notifications-search'
 export {
@@ -81,7 +81,7 @@ export function NotificationsPane({
 
   return (
     <div className="space-y-1">
-      <NotificationSettingToggle
+      <SettingsSwitchRow
         label={translate(
           'auto.components.settings.NotificationsPane.841c8c549f',
           'Enable Notifications'
@@ -91,7 +91,7 @@ export function NotificationsPane({
           'Native system notifications for background events.'
         )}
         checked={notificationSettings.enabled}
-        onToggle={() => {
+        onChange={() => {
           if (!notificationSettings.enabled) {
             useAppStore.getState().recordFeatureInteraction('notifications')
           }
@@ -101,8 +101,7 @@ export function NotificationsPane({
 
       <Separator />
 
-      <NotificationSettingToggle
-        icon={<Bot className="size-4" />}
+      <SettingsSwitchRow
         label={translate(
           'auto.components.settings.NotificationsPane.ca76d06fd2',
           'Agent Task Complete'
@@ -113,15 +112,14 @@ export function NotificationsPane({
         )}
         checked={notificationSettings.agentTaskComplete}
         disabled={!notificationSettings.enabled}
-        onToggle={() =>
+        onChange={() =>
           void updateNotificationSettings({
             agentTaskComplete: !notificationSettings.agentTaskComplete
           })
         }
       />
 
-      <NotificationSettingToggle
-        icon={<Siren className="size-4" />}
+      <SettingsSwitchRow
         label={translate('auto.components.settings.NotificationsPane.591fe605b9', 'Terminal Bell')}
         description={translate(
           'auto.components.settings.NotificationsPane.b6fc369244',
@@ -129,7 +127,7 @@ export function NotificationsPane({
         )}
         checked={notificationSettings.terminalBell}
         disabled={!notificationSettings.enabled}
-        onToggle={() =>
+        onChange={() =>
           void updateNotificationSettings({
             terminalBell: !notificationSettings.terminalBell
           })
@@ -149,7 +147,7 @@ export function NotificationsPane({
 
       <Separator />
 
-      <NotificationSettingToggle
+      <SettingsSwitchRow
         label={translate(
           'auto.components.settings.NotificationsPane.00cd406dbb',
           'Suppress While Focused'
@@ -160,28 +158,35 @@ export function NotificationsPane({
         )}
         checked={notificationSettings.suppressWhenFocused}
         disabled={!notificationSettings.enabled}
-        onToggle={() =>
+        onChange={() =>
           void updateNotificationSettings({
             suppressWhenFocused: !notificationSettings.suppressWhenFocused
           })
         }
       />
 
-      <div className="flex flex-wrap items-center gap-2 pt-3">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={!notificationSettings.enabled}
-          onClick={() => void handleSendTestNotification()}
-          className="gap-2"
-        >
-          <BellRing className="size-3.5" />
-          {translate(
-            'auto.components.settings.NotificationsPane.906b4afebf',
-            'Send Test Notification'
-          )}
-        </Button>
-      </div>
+      <SettingsRow
+        label={translate(
+          'auto.components.settings.NotificationsPane.906b4afebf',
+          'Send Test Notification'
+        )}
+        description={translate(
+          'auto.components.settings.NotificationsPane.testDescription',
+          'Preview the current sound and system notification delivery.'
+        )}
+        control={
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!notificationSettings.enabled}
+            onClick={() => void handleSendTestNotification()}
+            className="gap-1.5"
+          >
+            <BellRing className="size-3.5" />
+            {translate('auto.components.settings.NotificationsPane.testAction', 'Send test')}
+          </Button>
+        }
+      />
     </div>
   )
 }

@@ -166,7 +166,7 @@ export function AppearancePane({
   } · ${settings.terminalFontSize}px`
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-2">
       {interfaceMatches ? (
         <AppearanceSection
           id="interface"
@@ -247,7 +247,7 @@ export function AppearancePane({
             entry.description ?? '',
             ...(entry.keywords ?? [])
           ])}
-          className="max-w-none px-1 pt-2"
+          className="max-w-none pt-1"
         >
           <AppIconSelector
             value={normalizeAppIconId(settings.appIcon)}

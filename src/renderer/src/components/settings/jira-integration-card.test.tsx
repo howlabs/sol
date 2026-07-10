@@ -3,22 +3,18 @@
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getProviderRuntimeContextKey } from '@/lib/provider-runtime-context'
 import { JiraIntegrationCard } from './jira-integration-card'
 
 type StoreState = {
-  jiraStatus: {
-    connected: boolean
-    sites?: { id: string; displayName: string; siteUrl: string; email?: string }[]
-  }
+  settings: { activeRuntimeEnvironmentId: string | null }
+  jiraStatus: { connected: boolean; sites: unknown[] }
   jiraStatusChecked: boolean
   jiraStatusContextKey: string | null
-  checkJiraConnection: () => Promise<void>
-  disconnectJira: (siteId?: string) => Promise<void>
-  testJiraConnection: (siteId: string) => Promise<{ ok: boolean; error?: string }>
-  settings: { activeRuntimeEnvironmentId: string | null }
-  openSettingsPage: () => void
-  openSettingsTarget: (target: { pane: string; repoId: string | null }) => void
+  checkJiraConnection: ReturnType<typeof vi.fn>
+  disconnectJira: ReturnType<typeof vi.fn>
+  testJiraConnection: ReturnType<typeof vi.fn>
+  openSettingsPage: ReturnType<typeof vi.fn>
+  openSettingsTarget: ReturnType<typeof vi.fn>
 }
 
 const mocks = vi.hoisted(() => ({
@@ -34,54 +30,17 @@ vi.mock('@/store', () => ({
   }
 }))
 
-vi.mock('@/components/jira-connect-dialog', () => ({
-  JiraConnectDialog: ({ onConnected }: { onConnected?: () => void }) => (
-    <button type="button" data-testid="simulate-jira-connected" onClick={onConnected}>
-      Simulate Jira connected
-    </button>
-  )
+vi.mock('@/lib/provider-runtime-context', () => ({
+  getProviderRuntimeContextKey: (settings: { activeRuntimeEnvironmentId: string | null }) =>
+    settings.activeRuntimeEnvironmentId ?? 'local',
+  hasRemoteProviderRuntime: (settings: { activeRuntimeEnvironmentId: string | null }) =>
+    Boolean(settings.activeRuntimeEnvironmentId)
 }))
 
 let root: Root | null = null
 let container: HTMLDivElement | null = null
 
-function installStore(settings: StoreState['settings']): StoreState {
-  const state: StoreState = {
-    jiraStatus: {
-      connected: true,
-      sites: [
-        {
-          id: 'site-1',
-          displayName: 'Acme Jira',
-          siteUrl: 'https://acme.atlassian.net',
-          email: 'jira@example.test'
-        }
-      ]
-    },
-    jiraStatusChecked: true,
-    jiraStatusContextKey: getProviderRuntimeContextKey(settings),
-    checkJiraConnection: vi.fn(async () => {}),
-    disconnectJira: vi.fn(async () => {}),
-    testJiraConnection: vi.fn(async () => ({ ok: true })),
-    settings,
-    openSettingsPage: vi.fn(),
-    openSettingsTarget: vi.fn()
-  }
-  mocks.store.current = state
-  return state
-}
-
-async function renderCard(): Promise<HTMLDivElement> {
-  container = document.createElement('div')
-  document.body.appendChild(container)
-  root = createRoot(container)
-  await act(async () => {
-    root?.render(<JiraIntegrationCard />)
-  })
-  return container
-}
-
-describe('JiraIntegrationCard account scope', () => {
+describe('JiraIntegrationCard', () => {
   afterEach(async () => {
     if (root) {
       await act(async () => {
@@ -94,23 +53,41 @@ describe('JiraIntegrationCard account scope', () => {
     mocks.store.current = null
   })
 
-  it('shows remote-server account ownership and opens Hosts settings', async () => {
-    const state = installStore({ activeRuntimeEnvironmentId: 'runtime-1' })
+  it('opens remote servers from the row actions', async () => {
+    const openSettingsPage = vi.fn()
+    const openSettingsTarget = vi.fn()
+    mocks.store.current = {
+      settings: { activeRuntimeEnvironmentId: 'runtime-1' },
+      jiraStatus: { connected: false, sites: [] },
+      jiraStatusChecked: true,
+      jiraStatusContextKey: 'runtime-1',
+      checkJiraConnection: vi.fn(),
+      disconnectJira: vi.fn(),
+      testJiraConnection: vi.fn(),
+      openSettingsPage,
+      openSettingsTarget
+    }
 
-    const rendered = await renderCard()
+    container = document.createElement('div')
+    document.body.appendChild(container)
+    root = createRoot(container)
+    await act(async () => {
+      root?.render(<JiraIntegrationCard />)
+    })
 
-    expect(rendered.textContent).toContain('Account scope: Remote server: runtime-1')
-    expect(rendered.textContent).toContain('Acme Jira')
-    expect(rendered.textContent).toContain('https://acme.atlassian.net · jira@example.test')
+    expect(container.textContent).toContain('Jira')
+    expect(container.textContent).toContain('Connect Jira')
+    expect(container.textContent).toContain('Check again')
+    expect(container.textContent).toContain('Open remote servers')
 
     await act(async () => {
-      Array.from(rendered.querySelectorAll('button'))
-        .find((button) => button.textContent === 'Open Remote Servers')
+      Array.from(container!.querySelectorAll('button'))
+        .find((button) => button.textContent === 'Open remote servers')
         ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
     })
 
-    expect(state.openSettingsPage).toHaveBeenCalledTimes(1)
-    expect(state.openSettingsTarget).toHaveBeenCalledWith({
+    expect(openSettingsPage).toHaveBeenCalledTimes(1)
+    expect(openSettingsTarget).toHaveBeenCalledWith({
       pane: 'servers',
       repoId: null,
       sectionId: 'default-runtime'

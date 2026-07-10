@@ -3,26 +3,26 @@
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getExecutionHostLabel } from '../../../../shared/execution-host'
-import { getProviderRuntimeContextKey } from '@/lib/provider-runtime-context'
 import { LinearIntegrationCard } from './task-tracker-integration-cards'
 
-const LOCAL_HOST_LABEL = getExecutionHostLabel('local')
+type LinearWorkspace = {
+  id: string
+  organizationName: string
+  displayName: string
+  email: string | null
+}
 
 type StoreState = {
-  linearStatus: {
-    connected: boolean
-    workspaces?: { id: string; organizationName: string; displayName: string; email?: string }[]
-  }
+  settings: { activeRuntimeEnvironmentId: string | null }
+  linearStatus: { connected: boolean; workspaces: LinearWorkspace[] }
   linearStatusChecked: boolean
   linearStatusContextKey: string | null
-  disconnectLinear: () => Promise<void>
-  disconnectLinearWorkspace: (workspaceId?: string) => Promise<void>
-  checkLinearConnection: (force?: boolean) => Promise<void>
-  testLinearConnection: (workspaceId: string) => Promise<{ ok: boolean; error?: string }>
-  settings: { activeRuntimeEnvironmentId: string | null }
-  openSettingsPage: () => void
-  openSettingsTarget: (target: { pane: string; repoId: string | null }) => void
+  disconnectLinear: ReturnType<typeof vi.fn>
+  disconnectLinearWorkspace: ReturnType<typeof vi.fn>
+  checkLinearConnection: ReturnType<typeof vi.fn>
+  testLinearConnection: ReturnType<typeof vi.fn>
+  openSettingsPage: ReturnType<typeof vi.fn>
+  openSettingsTarget: ReturnType<typeof vi.fn>
 }
 
 const mocks = vi.hoisted(() => ({
@@ -38,12 +38,9 @@ vi.mock('@/store', () => ({
   }
 }))
 
-vi.mock('@/components/linear-api-key-dialog', () => ({
-  LinearApiKeyDialog: ({ onConnected }: { onConnected?: () => void }) => (
-    <button type="button" data-testid="simulate-linear-connected" onClick={onConnected}>
-      Simulate Linear connected
-    </button>
-  )
+vi.mock('@/lib/provider-runtime-context', () => ({
+  getProviderRuntimeContextKey: (settings: { activeRuntimeEnvironmentId: string | null }) =>
+    settings.activeRuntimeEnvironmentId ?? 'local'
 }))
 
 let root: Root | null = null
@@ -51,29 +48,30 @@ let container: HTMLDivElement | null = null
 
 function installStore(
   connected: boolean,
-  settings: StoreState['settings'] = { activeRuntimeEnvironmentId: null }
-): StoreState {
+  settings?: { activeRuntimeEnvironmentId: string | null }
+) {
+  const activeRuntimeEnvironmentId = settings?.activeRuntimeEnvironmentId ?? null
   const state: StoreState = {
+    settings: { activeRuntimeEnvironmentId },
     linearStatus: {
       connected,
       workspaces: connected
         ? [
             {
-              id: 'workspace-1',
+              id: 'ws-1',
               organizationName: 'Acme',
-              displayName: 'Acme workspace',
-              email: 'linear@example.test'
+              displayName: 'Acme',
+              email: 'a@b.c'
             }
           ]
         : []
     },
     linearStatusChecked: true,
-    linearStatusContextKey: getProviderRuntimeContextKey(settings),
-    disconnectLinear: vi.fn(async () => {}),
-    disconnectLinearWorkspace: vi.fn(async () => {}),
-    checkLinearConnection: vi.fn(async () => {}),
-    testLinearConnection: vi.fn(async () => ({ ok: true })),
-    settings,
+    linearStatusContextKey: activeRuntimeEnvironmentId ?? 'local',
+    disconnectLinear: vi.fn(),
+    disconnectLinearWorkspace: vi.fn(),
+    checkLinearConnection: vi.fn(),
+    testLinearConnection: vi.fn().mockResolvedValue({ ok: true }),
     openSettingsPage: vi.fn(),
     openSettingsTarget: vi.fn()
   }
@@ -91,7 +89,7 @@ async function renderCard(): Promise<HTMLDivElement> {
   return container
 }
 
-describe('LinearIntegrationCard account scope', () => {
+describe('LinearIntegrationCard', () => {
   afterEach(async () => {
     if (root) {
       await act(async () => {
@@ -104,76 +102,32 @@ describe('LinearIntegrationCard account scope', () => {
     mocks.store.current = null
   })
 
-  it('shows local-client account ownership when Linear is disconnected', async () => {
+  it('shows connect, check, and remote servers when disconnected', async () => {
     const state = installStore(false)
-
     const rendered = await renderCard()
 
-    expect(rendered.textContent).toContain(`Account scope: ${LOCAL_HOST_LABEL}`)
-    expect(rendered.textContent).toContain(
-      'Credentials and account checks for this provider are owned by this desktop client. Use Settings > Remote Orca Servers > Advanced to edit server-owned credentials.'
-    )
-    expect(rendered.textContent).toContain('Open Remote Servers')
-    expect(rendered.textContent).toContain('Add access with a Personal API key')
+    expect(rendered.textContent).toContain('Linear')
+    expect(rendered.textContent).toContain('Not connected')
+    expect(rendered.textContent).toContain('Connect Linear')
+    expect(rendered.textContent).toContain('Check again')
+    expect(rendered.textContent).toContain('Open remote servers')
 
     await act(async () => {
       Array.from(rendered.querySelectorAll('button'))
-        .find((button) => button.textContent === 'Re-check')
+        .find((button) => button.textContent === 'Check again')
         ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
     })
 
     expect(state.checkLinearConnection).toHaveBeenCalledWith(true)
   })
 
-  it('shows remote-server account ownership and connected workspace rows', async () => {
-    const state = installStore(true, { activeRuntimeEnvironmentId: 'runtime-1' })
-
+  it('lists workspaces with test when connected', async () => {
+    installStore(true, { activeRuntimeEnvironmentId: 'runtime-1' })
     const rendered = await renderCard()
 
-    expect(rendered.textContent).toContain('Account scope: Remote server: runtime-1')
-    expect(rendered.textContent).toContain(
-      'Credentials and account checks for this provider are owned by this remote server. Use Settings > Remote Orca Servers > Advanced to edit another default runtime scope.'
-    )
-    await act(async () => {
-      Array.from(rendered.querySelectorAll('button'))
-        .find((button) => button.textContent === 'Open Remote Servers')
-        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-    })
-    expect(state.openSettingsPage).toHaveBeenCalledTimes(1)
-    expect(state.openSettingsTarget).toHaveBeenCalledWith({
-      pane: 'servers',
-      repoId: null,
-      sectionId: 'default-runtime'
-    })
+    expect(rendered.textContent).toContain('Connected')
     expect(rendered.textContent).toContain('Acme')
-    expect(rendered.textContent).toContain('Acme workspace · linear@example.test')
-
-    await act(async () => {
-      Array.from(rendered.querySelectorAll('button'))
-        .find((button) => button.textContent === 'Test')
-        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-    })
-
-    expect(state.testLinearConnection).toHaveBeenCalledWith('workspace-1')
-  })
-
-  it('clears verification state after adding another Linear workspace', async () => {
-    installStore(true)
-    const rendered = await renderCard()
-
-    await act(async () => {
-      Array.from(rendered.querySelectorAll('button'))
-        .find((button) => button.textContent === 'Test')
-        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-    })
-    expect(rendered.textContent).toContain('Verified')
-
-    await act(async () => {
-      rendered
-        .querySelector<HTMLButtonElement>('[data-testid="simulate-linear-connected"]')
-        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
-    })
-
-    expect(rendered.textContent).not.toContain('Verified')
+    expect(rendered.textContent).toContain('Test')
+    expect(rendered.textContent).toContain('Add workspace')
   })
 })

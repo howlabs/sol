@@ -10,24 +10,42 @@ type ProviderHostScopeControlProps = {
   className?: string
 }
 
+export function OpenRemoteServersButton(props: {
+  className?: string
+  size?: 'sm' | 'default'
+}): React.JSX.Element {
+  const openSettingsPage = useAppStore((state) => state.openSettingsPage)
+  const openSettingsTarget = useAppStore((state) => state.openSettingsTarget)
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size={props.size ?? 'sm'}
+      className={props.className}
+      onClick={() => {
+        openSettingsPage()
+        openSettingsTarget({ pane: 'servers', repoId: null, sectionId: 'default-runtime' })
+      }}
+    >
+      <ServerCog className="size-3.5" />
+      {translate(
+        'auto.components.settings.ProviderHostScopeControl.change_host',
+        'Open remote servers'
+      )}
+    </Button>
+  )
+}
+
+/** Rate-limit panels still show scope label + description; Integrations cards use OpenRemoteServersButton only. */
 export function ProviderHostScopeControl({
   labelPrefix,
   scope,
   className
 }: ProviderHostScopeControlProps): React.JSX.Element {
-  const openSettingsPage = useAppStore((state) => state.openSettingsPage)
-  const openSettingsTarget = useAppStore((state) => state.openSettingsTarget)
-
-  const openHostsSettings = (): void => {
-    openSettingsPage()
-    openSettingsTarget({ pane: 'servers', repoId: null, sectionId: 'default-runtime' })
-  }
-
   return (
     <div className={className}>
       <div className="flex flex-wrap items-start justify-between gap-3">
-        {/* Why: integration cards can become narrow while Settings navigation
-        remains visible, so the action must wrap before scope copy collapses. */}
         <div className="min-w-[min(14rem,100%)] flex-1">
           <span className="font-medium text-foreground">
             {translate(
@@ -38,19 +56,7 @@ export function ProviderHostScopeControl({
           </span>
           <div className="mt-0.5 text-muted-foreground">{scope.description}</div>
         </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="shrink-0"
-          onClick={openHostsSettings}
-        >
-          <ServerCog className="size-3.5" />
-          {translate(
-            'auto.components.settings.ProviderHostScopeControl.change_host',
-            'Open Remote Servers'
-          )}
-        </Button>
+        <OpenRemoteServersButton className="shrink-0" />
       </div>
     </div>
   )

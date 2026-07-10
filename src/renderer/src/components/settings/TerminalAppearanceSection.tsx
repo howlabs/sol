@@ -155,13 +155,13 @@ export function TerminalAppearanceSection({
   const previewAdvancedContent = showAdvancedDisclosure ? (
     <AppearanceAdvancedDisclosure
       showTopBorder={false}
-      className="mt-0 pt-2"
-      contentClassName="ml-4 pt-4"
+      className="mt-0 pt-1"
+      contentClassName="ml-3 pt-1.5"
     >
       {advancedGroups.map((group, index) => (
         <div
           key={group.key}
-          className={index > 0 ? 'mt-2 border-t border-border/60 pt-4' : undefined}
+          className={index > 0 ? 'mt-1.5 border-t border-border/40 pt-2' : undefined}
         >
           {group.node}
         </div>
@@ -170,12 +170,12 @@ export function TerminalAppearanceSection({
   ) : null
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3">
       {/* Primary: font + theme + previews. The expanded section column is far
           narrower than the xl breakpoint, so the preview grids inside the
           theme catalog already stack full-width below their controls. */}
       {showPrimaryTypography ? (
-        <section className="space-y-3 pt-2">
+        <section className="space-y-1.5">
           <SettingsSubsectionHeader
             className="items-center"
             title={translate(
@@ -200,7 +200,7 @@ export function TerminalAppearanceSection({
             }
           />
 
-          <div className="ml-4 divide-y divide-border/40 border-y border-border/40">
+          <div className="ml-3 divide-y divide-border/40 border-y border-border/40">
             <TerminalFontSizeSetting
               settings={settings}
               updateSettings={updateSettings}
@@ -237,8 +237,8 @@ export function TerminalAppearanceSection({
           </div>
 
           {showTypographyAdvancedDisclosure ? (
-            <div className="ml-4">
-              <AppearanceAdvancedDisclosure showTopBorder={false} contentClassName="ml-4">
+            <div className="ml-3">
+              <AppearanceAdvancedDisclosure showTopBorder={false} contentClassName="ml-3">
                 <TerminalAdvancedTypographyControls
                   settings={settings}
                   updateSettings={updateSettings}

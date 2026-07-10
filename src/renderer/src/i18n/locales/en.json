@@ -8343,7 +8343,7 @@
             "control": {
               "integration": {
                 "cards": {
-                  "d5b3be8ecd": "Re-check",
+                  "d5b3be8ecd": "Check again",
                   "8cbc39f862": "Learn more",
                   "707180d09c": "glab auth login",
                   "4be0616873": "The GitLab CLI is installed but not authenticated. Run this command in a terminal:",
@@ -8370,7 +8370,7 @@
           "tracker": {
             "integration": {
               "cards": {
-                "c90f2ef419": "Re-check",
+                "c90f2ef419": "Check again",
                 "dd3529015d": "Disconnect {{value0}}",
                 "8b2408a8e5": "Jira is connected for this runtime. Re-check if the connected site list looks stale.",
                 "8c20e76308": "Each connected Jira site has one token stored by the active runtime.",
@@ -8378,16 +8378,20 @@
                 "3e7c10d286": "Testing...",
                 "a2c0015fb8": "Verified",
                 "e2ff968276": "Connect Jira",
-                "60996beda6": "Add Jira site",
-                "7ca5ffffdb": "Browse, create, and start work from Jira Cloud issues.",
-                "a1093a06c7": "Checking Jira access before showing setup actions.",
+                "60996beda6": "Add site",
+                "7ca5ffffdb": "Browse and start work from Jira Cloud issues.",
+                "a1093a06c7": "Checking connection…",
                 "9fa04a032e": "{{value0}} site{{value1}} connected",
-                "cef18762a2": "Add access with a Personal API key from your Linear settings. Full-access keys can see every team the key owner can reach.",
-                "6224fe9d34": "Each connected Linear workspace has one key stored by the active runtime. Full-access keys can cover all teams the key owner can access; restricted keys can be replaced any time.",
-                "1a12e33fe5": "Add Linear access",
-                "622c224082": "Add workspace access",
-                "eae4a9f16b": "Add Linear access to browse and link issues.",
-                "fe9231215b": "Checking Linear access before showing setup actions.",
+                "cef18762a2": "Paste a Linear Personal API key from Linear → Settings → API.",
+                "6224fe9d34": "One API key per workspace on the active runtime.",
+                "linearKeyHintShort": "One API key per workspace on the active runtime.",
+                "linearAccessHintShort": "Paste a Linear Personal API key from Linear → Settings → API.",
+                "1a12e33fe5": "Connect Linear",
+                "622c224082": "Add workspace",
+                "eae4a9f16b": "Browse and link Linear issues.",
+                "fe9231215b": "Checking connection…",
+                "statusConnected": "Connected",
+                "statusNotConnected": "Not connected",
                 "e1f5e6424c": "{{value0}} workspace{{value1}} connected",
                 "disconnect_all": "Disconnect",
                 "account_scope_prefix": "Account scope"
@@ -8439,7 +8443,7 @@
         },
         "ProviderHostScopeControl": {
           "scope_label": "{{value0}}: {{value1}}",
-          "change_host": "Open Remote Servers"
+          "change_host": "Open remote servers"
         },
         "computerUseSkillRuntime": {
           "thisDevice": "This device"
@@ -8456,11 +8460,11 @@
         },
         "providerAccountScope": {
           "remoteServer": "Remote server: {{value0}}",
-          "remoteServerCredentials": "Credentials and account checks for this provider are owned by this remote server. Use Settings > Remote Orca Servers > Advanced to edit another default runtime scope.",
+          "remoteServerCredentials": "Sign-in for this provider is stored on this remote server. Change the default runtime in Settings → Remote Orca Servers → Advanced.",
           "localMac": "Local Mac",
-          "localCredentials": "Credentials and account checks for this provider are owned by this desktop client. Use Settings > Remote Orca Servers > Advanced to edit server-owned credentials.",
-          "remoteServerRateLimit": "{{value0}} API budget is fetched from the CLI on this remote server. Use Settings > Remote Orca Servers > Advanced to view another default runtime budget.",
-          "localRateLimit": "{{value0}} API budget is fetched from the CLI on this desktop client. Use Settings > Remote Orca Servers > Advanced to view server-owned budgets."
+          "localCredentials": "Sign-in for this provider is stored on this computer. Manage remote-server credentials in Settings → Remote Orca Servers → Advanced.",
+          "remoteServerRateLimit": "{{value0}} rate limits come from the CLI on this remote server. Pick another runtime in Settings → Remote Orca Servers → Advanced.",
+          "localRateLimit": "{{value0}} rate limits come from the CLI on this computer. View server budgets in Settings → Remote Orca Servers → Advanced."
         },
         "settingOwnership": {
           "clientDefault": "Client default",

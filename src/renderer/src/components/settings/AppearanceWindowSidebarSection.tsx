@@ -97,13 +97,13 @@ export function AppearanceWindowSidebarSection({
   const showAdvanced = showSidebarAdvanced || showFileExplorerAdvanced
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <div className="divide-y divide-border/40">
         <SearchableSetting
           title={leftSidebarAppearanceEntry.title}
           description={leftSidebarAppearanceEntry.description}
           keywords={leftSidebarAppearanceEntry.keywords}
-          className="space-y-2"
+          className="space-y-1.5"
           forceVisible={forceVisiblePrimary}
         >
           <LeftSidebarAppearanceSetting settings={settings} updateSettings={updateSettings} />
@@ -116,7 +116,7 @@ export function AppearanceWindowSidebarSection({
         >
           <SettingsRow label={statusBarTitle} description={statusBarDescription} control={null} />
           {showStatusBarControls ? (
-            <div className="ml-4 divide-y divide-border/40 border-t border-border/40">
+            <div className="ml-3 divide-y divide-border/40 border-t border-border/40">
               {visibleStatusBarToggles.map((toggle) => {
                 const enabled = statusBarItems.includes(toggle.id)
                 return (
@@ -145,14 +145,14 @@ export function AppearanceWindowSidebarSection({
       </div>
 
       {showAdvanced ? (
-        <AppearanceAdvancedDisclosure contentClassName="ml-4 pt-4">
-          <div className="space-y-4">
+        <AppearanceAdvancedDisclosure contentClassName="ml-3 pt-1.5">
+          <div className="space-y-2.5">
             {showSidebarAdvanced ? (
-              <div className="space-y-3">
+              <div className="space-y-1.5">
                 <SettingsSubsectionHeader
                   title={translate('auto.components.settings.AppearancePane.dc29f3cc0d', 'Sidebar')}
                 />
-                <div className="ml-4 divide-y divide-border/40">
+                <div className="ml-3 divide-y divide-border/40">
                   {/* Why: this setting lives with the sidebar layout controls; Settings only
                   names that ownership so we do not create a second stateful control. */}
                   <SearchableSetting
@@ -239,14 +239,14 @@ export function AppearanceWindowSidebarSection({
             ) : null}
 
             {showFileExplorerAdvanced ? (
-              <div className="space-y-3">
+              <div className="space-y-1.5">
                 <SettingsSubsectionHeader
                   title={translate(
                     'auto.components.settings.AppearancePane.d496901cd0',
                     'File Explorer'
                   )}
                 />
-                <div className="ml-4 divide-y divide-border/40">
+                <div className="ml-3 divide-y divide-border/40">
                   <SearchableSetting
                     title={
                       layoutEntries[0]?.title ??
