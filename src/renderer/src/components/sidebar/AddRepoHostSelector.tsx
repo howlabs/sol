@@ -29,6 +29,9 @@ function getHostStatusDetail(host: SidebarHostOption): string {
   return `${getSidebarHostHealthLabel(host.health)}${host.detail ? ` - ${host.detail}` : ''}`
 }
 
+/**
+ * Host field for Add Project: label above, full-width outline trigger.
+ */
 export function AddRepoHostSelector({
   hosts,
   selectedHostId,
@@ -49,11 +52,12 @@ export function AddRepoHostSelector({
   if (!selectedHost) {
     return null
   }
+
   return (
-    <div className="flex w-full items-center gap-3 text-[12px]">
-      <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+    <div className="space-y-1.5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
         {translate('auto.components.sidebar.AddRepoHostSelector.host', 'Host')}
-      </span>
+      </p>
       <Popover open={open} onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
           <Button
@@ -61,18 +65,20 @@ export function AddRepoHostSelector({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="h-8 min-w-0 flex-1 gap-1.5 px-2.5 text-[13px] font-medium text-foreground shadow-none"
+            className="h-9 w-full justify-between gap-2 px-3 text-[13px] font-medium shadow-none"
           >
-            <span className="min-w-0 truncate">{selectedHost.label}</span>
-            {selectedHost.health !== 'local' ? (
-              <span
-                title={getHostStatusDetail(selectedHost)}
-                className="shrink-0 text-[11px] font-normal text-muted-foreground"
-              >
-                {getSidebarHostHealthLabel(selectedHost.health)}
-              </span>
-            ) : null}
-            <ChevronsUpDown className="size-3.5 shrink-0 opacity-50" />
+            <span className="min-w-0 truncate text-left">{selectedHost.label}</span>
+            <span className="flex shrink-0 items-center gap-1.5">
+              {selectedHost.health !== 'local' ? (
+                <span
+                  title={getHostStatusDetail(selectedHost)}
+                  className="text-[11px] font-normal text-muted-foreground"
+                >
+                  {getSidebarHostHealthLabel(selectedHost.health)}
+                </span>
+              ) : null}
+              <ChevronsUpDown className="size-3.5 opacity-50" />
+            </span>
           </Button>
         </PopoverTrigger>
         <PopoverContent
