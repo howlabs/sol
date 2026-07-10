@@ -67,8 +67,8 @@ function resolveAgentRowStatus(props: {
     }
   }
   return {
-    label: translate('auto.components.settings.AgentsPane.ed3e110e61', 'detected'),
-    tone: 'connected'
+    label: translate('auto.components.settings.AgentsPane.onPath', 'On PATH'),
+    tone: 'neutral'
   }
 }
 
