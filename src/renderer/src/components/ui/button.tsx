@@ -44,11 +44,35 @@ type ButtonProps = ButtonPrimitive.Props &
     asChild?: boolean
   }
 
+/**
+ * Why: Base UI Button defaults to a native <button>; asChild onto <a>/<div>/
+ * components must set nativeButton={false} or Base UI warns about the host.
+ */
+function resolveButtonNativeButton(
+  asChild: boolean | undefined,
+  children: React.ReactNode
+): boolean | undefined {
+  if (!asChild || !React.isValidElement(children)) {
+    return undefined
+  }
+  // Native DOM tag only; function/forwardRef children are non-button hosts.
+  return children.type === 'button'
+}
+
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { className, variant = 'default', size = 'default', asChild = false, children, ...props },
+  {
+    className,
+    variant = 'default',
+    size = 'default',
+    asChild = false,
+    children,
+    nativeButton,
+    ...props
+  },
   ref
 ) {
   const classes = cn(buttonVariants({ variant, size, className }))
+  const resolvedNativeButton = nativeButton ?? resolveButtonNativeButton(asChild, children)
 
   // Why: Base UI uses `render` instead of Radix `asChild`; keep asChild so
   // existing call sites (<Button asChild><a/></Button>) keep working.
@@ -61,6 +85,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
         data-size={size}
         className={classes}
         render={children as React.ReactElement}
+        nativeButton={resolvedNativeButton}
         {...props}
       />
     )
@@ -73,6 +98,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       data-variant={variant}
       data-size={size}
       className={classes}
+      nativeButton={resolvedNativeButton}
       {...props}
     >
       {children}
@@ -80,5 +106,5 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   )
 })
 
-export { Button, buttonVariants }
+export { Button, buttonVariants, resolveButtonNativeButton }
 export type { ButtonProps }

@@ -28,6 +28,13 @@ type SettingsSwitchProps = {
   disabled?: boolean
 }
 
+// Why: hit box targets Mira control density (~28px) while the painted track stays compact (h-4 w-7).
+export const SETTINGS_SWITCH_HIT_TARGET_CLASS =
+  'relative inline-flex min-h-7 min-w-9 shrink-0 cursor-pointer items-center justify-center rounded-full p-1.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50'
+
+export const SETTINGS_SWITCH_TRACK_CLASS =
+  'pointer-events-none relative inline-flex h-4 w-7 items-center rounded-full border border-transparent transition-colors'
+
 export function SettingsSwitch({
   checked,
   onChange,
@@ -46,17 +53,21 @@ export function SettingsSwitch({
       aria-describedby={ariaDescribedBy}
       disabled={disabled}
       onClick={onChange}
-      className={cn(
-        'relative inline-flex h-4 w-7 shrink-0 cursor-pointer items-center rounded-full border border-transparent outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50',
-        checked ? 'bg-foreground' : 'bg-muted-foreground/30'
-      )}
+      className={SETTINGS_SWITCH_HIT_TARGET_CLASS}
     >
       <span
         className={cn(
-          'pointer-events-none block size-3 rounded-full bg-background shadow-sm transition-transform',
-          checked ? 'translate-x-3' : 'translate-x-0.5'
+          SETTINGS_SWITCH_TRACK_CLASS,
+          checked ? 'bg-foreground' : 'bg-muted-foreground/30'
         )}
-      />
+      >
+        <span
+          className={cn(
+            'pointer-events-none block size-3 rounded-full bg-background shadow-sm transition-transform',
+            checked ? 'translate-x-3' : 'translate-x-0.5'
+          )}
+        />
+      </span>
     </button>
   )
 }
@@ -108,6 +119,7 @@ type SettingsSwitchRowProps = {
   checked: boolean
   onChange: () => void
   ariaLabel?: string
+  ariaDescribedBy?: string
   disabled?: boolean
 }
 
@@ -117,6 +129,7 @@ export function SettingsSwitchRow({
   checked,
   onChange,
   ariaLabel,
+  ariaDescribedBy,
   disabled
 }: SettingsSwitchRowProps): React.JSX.Element {
   return (
@@ -129,6 +142,7 @@ export function SettingsSwitchRow({
           onChange={onChange}
           disabled={disabled}
           ariaLabel={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
+          ariaDescribedBy={ariaDescribedBy}
         />
       }
     />
@@ -239,7 +253,7 @@ type SettingsSubsectionHeaderProps = {
   className?: string
 }
 
-/** Consistent subsection header: h3 text-sm font-semibold + optional muted description. */
+/** Consistent subsection header: h3 text-xs font-semibold tracking-tight + optional muted description. */
 export function SettingsSubsectionHeader({
   title,
   description,
