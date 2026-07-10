@@ -1,6 +1,5 @@
 import { useAppStore } from '@/store'
 import type { AppState } from '@/store/types'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../shared/constants'
 import { getRepoIdFromWorktreeId } from '../../../shared/worktree-id'
 import { parseWorkspaceKey } from '../../../shared/workspace-scope'
 import {
@@ -26,9 +25,6 @@ export function getConnectionIdFromState(
   worktreeId: string | null
 ): string | null | undefined {
   if (!worktreeId) {
-    return null
-  }
-  if (worktreeId === FLOATING_TERMINAL_WORKTREE_ID) {
     return null
   }
   const parsedWorkspaceKey = parseWorkspaceKey(worktreeId)

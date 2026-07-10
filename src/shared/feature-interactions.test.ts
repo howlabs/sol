@@ -31,9 +31,7 @@ describe('feature interactions', () => {
       ? true
       : never = true
     const expectedIds: FeatureInteractionId[] = [
-      'workspace-board',
       'workspace-agent-sessions',
-      'workspace-board-actions',
       'cmd-j',
       'cmd-j-workspace-open',
       'cmd-j-browser-page-open',
@@ -63,12 +61,8 @@ describe('feature interactions', () => {
       'ai-commit-generation',
       'ai-pr-generation',
       'claude-account-switching',
-      'computer-use-setup',
-      'computer-use',
       'codex-account-switching',
       'cookie-import',
-      'floating-workspace',
-      'floating-workspace-hidden',
       'notifications',
       'ports',
       'quick-commands',

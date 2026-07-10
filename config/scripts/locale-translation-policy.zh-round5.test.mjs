@@ -129,7 +129,7 @@ describe('locale-translation-policy zh round 5', () => {
     ).toBe('Terminal Cursor')
     expect(
       repairTranslatedValue({
-        key: 'auto.components.terminal.FloatingTerminalPanel.3215fc73e9',
+        key: 'auto.components.terminal.TerminalPanel.3215fc73e9',
         enValue: 'New Terminal',
         localeValue: '新Terminal',
         locale: 'zh'

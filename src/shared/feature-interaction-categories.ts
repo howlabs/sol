@@ -19,9 +19,7 @@ export const FEATURE_INTERACTION_CATEGORIES = [
 export type FeatureInteractionCategory = (typeof FEATURE_INTERACTION_CATEGORIES)[number]
 
 export const FEATURE_INTERACTION_CATEGORY_BY_ID = {
-  'workspace-board': 'workspace',
   'workspace-agent-sessions': 'workspace',
-  'workspace-board-actions': 'workspace',
   'cmd-j': 'launcher',
   'cmd-j-workspace-open': 'launcher',
   'cmd-j-browser-page-open': 'launcher',
@@ -51,12 +49,8 @@ export const FEATURE_INTERACTION_CATEGORY_BY_ID = {
   'ai-commit-generation': 'source_control',
   'ai-pr-generation': 'source_control',
   'claude-account-switching': 'settings',
-  'computer-use-setup': 'setup',
-  'computer-use': 'agent',
   'codex-account-switching': 'settings',
   'cookie-import': 'browser',
-  'floating-workspace': 'workspace',
-  'floating-workspace-hidden': 'workspace',
   notifications: 'settings',
   ports: 'resource_management',
   'quick-commands': 'launcher',

@@ -1,7 +1,5 @@
 export type FeatureInteractionId =
-  | 'workspace-board'
   | 'workspace-agent-sessions'
-  | 'workspace-board-actions'
   | 'cmd-j'
   | 'cmd-j-workspace-open'
   | 'cmd-j-browser-page-open'
@@ -31,12 +29,8 @@ export type FeatureInteractionId =
   | 'ai-commit-generation'
   | 'ai-pr-generation'
   | 'claude-account-switching'
-  | 'computer-use-setup'
-  | 'computer-use'
   | 'codex-account-switching'
   | 'cookie-import'
-  | 'floating-workspace'
-  | 'floating-workspace-hidden'
   | 'notifications'
   | 'ports'
   | 'quick-commands'
@@ -59,14 +53,9 @@ export type FeatureInteractionDefinition = {
 // Why: these ids become persisted product state; see
 // docs/reference/feature-discovery-interaction-tracking.md before changing them.
 export const FEATURE_INTERACTIONS = [
-  { id: 'workspace-board', interaction: 'workspace board opened' },
   {
     id: 'workspace-agent-sessions',
     interaction: 'workspace agent-session surface opened'
-  },
-  {
-    id: 'workspace-board-actions',
-    interaction: 'workspace board card, lane, density, or status action used'
   },
   { id: 'cmd-j', interaction: 'Cmd+J palette opened' },
   { id: 'cmd-j-workspace-open', interaction: 'workspace opened from Cmd+J' },
@@ -110,20 +99,10 @@ export const FEATURE_INTERACTIONS = [
     interaction: 'Claude managed account added, selected, reauthenticated, or removed'
   },
   {
-    id: 'computer-use-setup',
-    interaction: 'Computer Use setup or permission flow opened'
-  },
-  { id: 'computer-use', interaction: 'computer-use runtime method used' },
-  {
     id: 'codex-account-switching',
     interaction: 'Codex managed account added, selected, reauthenticated, or removed'
   },
   { id: 'cookie-import', interaction: 'browser cookies imported or cleared' },
-  { id: 'floating-workspace', interaction: 'Floating Workspace opened or configured' },
-  {
-    id: 'floating-workspace-hidden',
-    interaction: 'Floating Workspace explicitly hidden or disabled'
-  },
   { id: 'notifications', interaction: 'desktop notifications enabled or tested' },
   { id: 'ports', interaction: 'Ports popover opened, configured, or port action used' },
   { id: 'quick-commands', interaction: 'terminal quick command created or edited' },

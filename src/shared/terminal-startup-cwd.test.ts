@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest'
-import { FLOATING_TERMINAL_WORKTREE_ID } from './constants'
 import {
   resolveTerminalStartupCwd,
   resolveTerminalStartupCwdForWorkspace
@@ -59,17 +58,6 @@ describe('resolveTerminalStartupCwd', () => {
         requestedCwd: '/repo/app-other'
       })
     ).toBe('/repo/app-other')
-  })
-
-  it('passes floating terminal cwds through untouched', () => {
-    // Why: floating terminal cwds are validated against trusted-directory
-    // grants in main and have no worktree root to resolve against.
-    expect(
-      resolveTerminalStartupCwdForWorkspace({
-        workspaceId: FLOATING_TERMINAL_WORKTREE_ID,
-        requestedCwd: '/Volumes/work/notes'
-      })
-    ).toBe('/Volumes/work/notes')
   })
 
   it('falls back to the provider default when no workspace root is resolvable', () => {
@@ -186,18 +174,6 @@ describe('resolveTerminalStartupCwd', () => {
         }
       })
     ).toBe('/repo/app')
-  })
-
-  it('never probes floating terminal cwds', () => {
-    const directoryExists = vi.fn(() => false)
-    expect(
-      resolveTerminalStartupCwdForWorkspace({
-        workspaceId: FLOATING_TERMINAL_WORKTREE_ID,
-        requestedCwd: '/Volumes/work/notes',
-        missingDirFallback: { directoryExists }
-      })
-    ).toBe('/Volumes/work/notes')
-    expect(directoryExists).not.toHaveBeenCalled()
   })
 
   it('resolves renderer PTY cwd values against folder workspace keys', () => {

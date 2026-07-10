@@ -1,6 +1,5 @@
 /* oxlint-disable max-lines -- Why: this App-level IPC bridge intentionally keeps the renderer's main-process event contract in one place so shortcut, runtime, updater, and agent-status wiring do not drift across files. */
 import { useEffect } from 'react'
-import { toast } from 'sonner'
 import { useAppStore } from '../store'
 import { shouldRetryPaneSpawnOnSshReconnect } from './ssh-reconnect-pane-retry'
 import { getWorktreeMapFromState, getRepoMapFromState } from '@/store/selectors'
@@ -9,7 +8,7 @@ import { activateAndRevealWorktree } from '@/lib/worktree-activation'
 import { buildLinearIssueLinkedWorkItem } from '@/lib/linear-linked-work-item'
 import { runWorktreeDelete } from '@/components/sidebar/delete-worktree-flow'
 import { runSleepWorktree } from '@/components/sidebar/sleep-worktree-flow'
-import { OPEN_WORKSPACE_BOARD_EVENT } from '@/components/sidebar/useWorkspaceBoardPanel'
+
 import {
   BACKGROUND_MOUNT_TERMINAL_WORKTREE_EVENT,
   SPLIT_TERMINAL_PANE_EVENT,
@@ -57,7 +56,6 @@ import {
   shouldSuppressInheritedTerminalStatus
 } from '../../../shared/agent-status-identity'
 import { isGitRepoKind } from '../../../shared/repo-kind'
-import { TOGGLE_FLOATING_TERMINAL_EVENT } from '@/lib/floating-terminal'
 import { TOGGLE_QUICK_COMMANDS_MENU_EVENT } from '@/lib/quick-commands-menu-events'
 import { focusTerminalTabSurface } from '@/lib/focus-terminal-tab-surface'
 import { activateTabAndFocusPane } from '@/lib/activate-tab-and-focus-pane'
@@ -100,14 +98,6 @@ import {
   createWebRuntimeSessionTerminal,
   isWebRuntimeSessionActive
 } from '@/runtime/web-runtime-session'
-import {
-  createFloatingWorkspaceBrowserTab,
-  createFloatingWorkspaceMarkdownTab,
-  createFloatingWorkspaceTerminalTab,
-  isEmptyFloatingWorkspacePanelVisible,
-  isFloatingWorkspacePanelFocused,
-  switchFloatingWorkspaceTab
-} from '@/lib/floating-workspace-terminal-actions'
 import {
   observeAgentHookCompletionForNotification,
   resetAgentHookCompletionNotificationCoordinators,
@@ -1242,11 +1232,7 @@ export function useIpcEvents(): void {
       })
     )
 
-    unsubs.push(
-      window.api.ui.onToggleFloatingTerminal(() => {
-        window.dispatchEvent(new CustomEvent(TOGGLE_FLOATING_TERMINAL_EVENT))
-      })
-    )
+    unsubs.push()
 
     if (window.api.ui.onTerminalShortcutCaptured) {
       unsubs.push(
@@ -1294,19 +1280,6 @@ export function useIpcEvents(): void {
             return
           }
           runWorktreeDelete(store.activeWorktreeId)
-        })
-      )
-    }
-
-    if (window.api.ui.onOpenWorkspaceBoard) {
-      unsubs.push(
-        window.api.ui.onOpenWorkspaceBoard(() => {
-          const store = useAppStore.getState()
-          if (store.activeView === 'settings') {
-            return
-          }
-          store.setSidebarOpen(true)
-          window.dispatchEvent(new CustomEvent(OPEN_WORKSPACE_BOARD_EVENT))
         })
       )
     }
@@ -2042,10 +2015,6 @@ export function useIpcEvents(): void {
     unsubs.push(
       window.api.ui.onNewBrowserTab(() => {
         const store = useAppStore.getState()
-        if (isFloatingWorkspacePanelFocused()) {
-          void createFloatingWorkspaceBrowserTab(store)
-          return
-        }
         const worktreeId = store.activeWorktreeId
         if (worktreeId) {
           const environmentId = getWorktreeRuntimeEnvironmentId(worktreeId)
@@ -2080,19 +2049,6 @@ export function useIpcEvents(): void {
     unsubs.push(
       window.api.ui.onNewMarkdownTab(() => {
         const store = useAppStore.getState()
-        if (isFloatingWorkspacePanelFocused()) {
-          void createFloatingWorkspaceMarkdownTab(store).catch((err) => {
-            toast.error(
-              err instanceof Error
-                ? err.message
-                : translate(
-                    'auto.hooks.useIpcEvents.56d3ec4203',
-                    'Failed to create untitled markdown file.'
-                  )
-            )
-          })
-          return
-        }
         const worktreeId = store.activeWorktreeId
         if (!worktreeId) {
           return
@@ -2343,10 +2299,6 @@ export function useIpcEvents(): void {
     unsubs.push(
       window.api.ui.onNewTerminalTab(() => {
         const store = useAppStore.getState()
-        if (isFloatingWorkspacePanelFocused()) {
-          void createFloatingWorkspaceTerminalTab(store)
-          return
-        }
         const worktreeId = store.activeWorktreeId
         if (!worktreeId) {
           return
@@ -2393,10 +2345,6 @@ export function useIpcEvents(): void {
 
     unsubs.push(
       window.api.ui.onCloseActiveTab(() => {
-        if (isEmptyFloatingWorkspacePanelVisible()) {
-          window.dispatchEvent(new Event(TOGGLE_FLOATING_TERMINAL_EVENT))
-          return
-        }
         const store = useAppStore.getState()
         if (store.activeTabType === 'browser' && store.activeBrowserTabId) {
           const tabId = store.activeBrowserTabId
@@ -2433,32 +2381,17 @@ export function useIpcEvents(): void {
 
     unsubs.push(
       window.api.ui.onSwitchTab((direction) => {
-        const store = useAppStore.getState()
-        if (isFloatingWorkspacePanelFocused()) {
-          switchFloatingWorkspaceTab(store, direction, 'same-type')
-          return
-        }
         handleSwitchTab(direction)
       })
     )
     unsubs.push(
       window.api.ui.onSwitchTabAcrossAllTypes((direction) => {
-        const store = useAppStore.getState()
-        if (isFloatingWorkspacePanelFocused()) {
-          switchFloatingWorkspaceTab(store, direction, 'all-types')
-          return
-        }
         handleSwitchTabAcrossAllTypes(direction)
       })
     )
     unsubs.push(window.api.ui.onSwitchRecentTab(handleSwitchRecentTab))
     unsubs.push(
       window.api.ui.onSwitchTerminalTab((direction) => {
-        const store = useAppStore.getState()
-        if (isFloatingWorkspacePanelFocused()) {
-          switchFloatingWorkspaceTab(store, direction, 'terminal')
-          return
-        }
         handleSwitchTerminalTab(direction)
       })
     )

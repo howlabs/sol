@@ -32,14 +32,12 @@ export type WindowShortcutAction =
   | { type: 'openSettings' }
   | { type: 'forceReload' }
   | { type: 'toggleWorktreePalette' }
-  | { type: 'toggleFloatingTerminal' }
   | { type: 'toggleLeftSidebar' }
   | { type: 'toggleRightSidebar' }
   | { type: 'openQuickOpen' }
   | { type: 'toggleQuickCommandsMenu' }
   | { type: 'openNewWorkspace' }
   | { type: 'deleteCurrentWorkspace' }
-  | { type: 'openWorkspaceBoard' }
   | { type: 'openTasks' }
   | { type: 'switchRecentTab' }
   | { type: 'jumpToWorktreeIndex'; index: number }
@@ -184,10 +182,6 @@ export function resolveWindowShortcutAction(
     }
   }
 
-  if (actionMatches('floatingTerminal.toggle', input, platform, keybindings, options)) {
-    return { type: 'toggleFloatingTerminal' }
-  }
-
   if (actionMatches('zoom.in', input, platform, keybindings, options)) {
     return { type: 'zoom', direction: 'in' }
   }
@@ -236,10 +230,6 @@ export function resolveWindowShortcutAction(
 
   if (actionMatches('workspace.delete', input, platform, keybindings, options)) {
     return { type: 'deleteCurrentWorkspace' }
-  }
-
-  if (actionMatches('workspace.openBoard', input, platform, keybindings, options)) {
-    return { type: 'openWorkspaceBoard' }
   }
 
   if (actionMatches('view.tasks', input, platform, keybindings, options)) {
@@ -301,8 +291,6 @@ export function getWindowShortcutActionId(action: WindowShortcutAction): Keybind
       return 'app.forceReload'
     case 'toggleWorktreePalette':
       return 'worktree.palette'
-    case 'toggleFloatingTerminal':
-      return 'floatingTerminal.toggle'
     case 'toggleLeftSidebar':
       return 'sidebar.left.toggle'
     case 'toggleRightSidebar':
@@ -315,8 +303,6 @@ export function getWindowShortcutActionId(action: WindowShortcutAction): Keybind
       return 'workspace.create'
     case 'deleteCurrentWorkspace':
       return 'workspace.delete'
-    case 'openWorkspaceBoard':
-      return 'workspace.openBoard'
     case 'openTasks':
       return 'view.tasks'
     case 'switchRecentTab':

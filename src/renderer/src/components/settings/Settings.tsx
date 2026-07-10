@@ -35,7 +35,6 @@ import { AppearancePane } from './AppearancePane'
 import { InputPane } from './InputPane'
 import { ShortcutsPane } from './ShortcutsPane'
 import { TerminalPane } from './TerminalPane'
-import { FloatingWorkspacePane } from './FloatingWorkspacePane'
 import { useGhosttyImport } from './useGhosttyImport'
 import { useWarpThemeImport } from './useWarpThemeImport'
 import { RepositoryPane } from './RepositoryPane'
@@ -53,7 +52,6 @@ import { IntegrationsPane } from './IntegrationsPane'
 import { TasksPane } from './TasksPane'
 import { QuickCommandsPane } from './QuickCommandsPane'
 import { DeveloperPermissionsPane } from './DeveloperPermissionsPane'
-import { ComputerUsePane } from './ComputerUsePane'
 import { RuntimeEnvironmentsPane } from './RuntimeEnvironmentsPane'
 import { PrivacyPane } from './PrivacyPane'
 import { AdvancedPane } from './AdvancedPane'
@@ -81,10 +79,7 @@ import type {
   SettingsNavSection,
   SettingsNavTarget
 } from '@/lib/settings-navigation-types'
-import {
-  COMPUTER_USE_SKILL_NAME,
-  ORCHESTRATION_SKILL_NAME
-} from '@/lib/agent-feature-install-commands'
+import { ORCHESTRATION_SKILL_NAME } from '@/lib/agent-feature-install-commands'
 import {
   GLOBAL_AGENT_SKILL_SOURCE_KINDS,
   useInstalledAgentSkill
@@ -276,11 +271,6 @@ function Settings(): React.JSX.Element {
   const showDesktopOnlySettings = !isWebClient
   const activeSkillRuntime = useActiveProjectSkillRuntime()
   const orchestrationSkill = useInstalledAgentSkill(ORCHESTRATION_SKILL_NAME, {
-    discoveryTarget: activeSkillRuntime.discoveryTarget,
-    sourceKinds: GLOBAL_AGENT_SKILL_SOURCE_KINDS
-  })
-  const computerUseSkill = useInstalledAgentSkill(COMPUTER_USE_SKILL_NAME, {
-    enabled: showDesktopOnlySettings,
     discoveryTarget: activeSkillRuntime.discoveryTarget,
     sourceKinds: GLOBAL_AGENT_SKILL_SOURCE_KINDS
   })
@@ -614,8 +604,6 @@ function Settings(): React.JSX.Element {
   const baseNavSections = useSettingsNavigationMetadata()
   const { installed: orchestrationSkillInstalled, loading: orchestrationSkillLoading } =
     orchestrationSkill
-  const { installed: computerUseSkillInstalled, loading: computerUseSkillLoading } =
-    computerUseSkill
   const capabilityInstallStatusBySectionId = useMemo(() => {
     const next = new Map<string, SettingsNavInstallStatus>([
       [
@@ -626,23 +614,8 @@ function Settings(): React.JSX.Element {
         })
       ]
     ])
-    if (showDesktopOnlySettings) {
-      next.set(
-        'computer-use',
-        getSkillNavInstallStatus({
-          installed: computerUseSkillInstalled,
-          loading: computerUseSkillLoading
-        })
-      )
-    }
     return next
-  }, [
-    computerUseSkillInstalled,
-    computerUseSkillLoading,
-    orchestrationSkillInstalled,
-    orchestrationSkillLoading,
-    showDesktopOnlySettings
-  ])
+  }, [orchestrationSkillInstalled, orchestrationSkillLoading])
   const navSections = useMemo(
     () =>
       baseNavSections.map((section) => {
@@ -934,21 +907,6 @@ function Settings(): React.JSX.Element {
     ]
   )
 
-  const openComputerUseFromBrowser = useCallback(async () => {
-    if (!(await confirmDiscardSourceControlAiPromptChanges())) {
-      return
-    }
-    pendingNavSectionRef.current = 'computer-use'
-    pendingScrollTargetRef.current = 'computer-use'
-    if (settingsSearchQuery !== '') {
-      setSettingsSearchQuery('')
-      return
-    }
-    // Why: the pending section refs do not schedule a render by themselves.
-    // When search is already clear, this reruns the centralized jump effect.
-    setPendingNavRequestTick((tick) => tick + 1)
-  }, [confirmDiscardSourceControlAiPromptChanges, setSettingsSearchQuery, settingsSearchQuery])
-
   if (!settings) {
     return (
       <div
@@ -1095,23 +1053,6 @@ function Settings(): React.JSX.Element {
                   {isSectionMounted('orchestration') ? <OrchestrationPane /> : null}
                 </SettingsSection>
 
-                {showDesktopOnlySettings ? (
-                  <SettingsSection
-                    id="computer-use"
-                    title={translate(
-                      'auto.components.settings.Settings.c9841721cb',
-                      'Computer Use'
-                    )}
-                    description={translate(
-                      'auto.components.settings.Settings.7118953f14',
-                      'Enable agents to control any app on your computer.'
-                    )}
-                    searchEntries={getSectionSearchEntries('computer-use')}
-                  >
-                    {isSectionMounted('computer-use') ? <ComputerUsePane /> : null}
-                  </SettingsSection>
-                ) : null}
-
                 <SettingsSection
                   id="general"
                   title={translate('auto.components.settings.Settings.7807c11c4d', 'General')}
@@ -1255,31 +1196,10 @@ function Settings(): React.JSX.Element {
                     searchEntries={getSectionSearchEntries('browser')}
                   >
                     {isSectionMounted('browser') ? (
-                      <BrowserPane
-                        settings={settings}
-                        updateSettings={updateSettings}
-                        onOpenComputerUse={openComputerUseFromBrowser}
-                      />
+                      <BrowserPane settings={settings} updateSettings={updateSettings} />
                     ) : null}
                   </SettingsSection>
                 ) : null}
-
-                <SettingsSection
-                  id="floating-workspace"
-                  title={translate(
-                    'auto.components.settings.Settings.3eb22a3ada',
-                    'Floating Workspace'
-                  )}
-                  description={translate(
-                    'auto.components.settings.Settings.3d9adfe6a5',
-                    'Global terminal, browser, and markdown tabs.'
-                  )}
-                  searchEntries={getSectionSearchEntries('floating-workspace')}
-                >
-                  {isSectionMounted('floating-workspace') ? (
-                    <FloatingWorkspacePane settings={settings} updateSettings={updateSettings} />
-                  ) : null}
-                </SettingsSection>
 
                 <SettingsSection
                   id="appearance"

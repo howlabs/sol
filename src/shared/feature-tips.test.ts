@@ -46,10 +46,15 @@ describe('feature tips', () => {
   })
 
   it('normalizes persisted tip ids', () => {
-    expect(normalizeFeatureTipIds(['feature-tour', 'orca-cli', 'bogus', 'cmd-j-palette'])).toEqual([
-      'orca-cli',
-      'cmd-j-palette'
-    ])
+    expect(
+      normalizeFeatureTipIds([
+        'feature-tour',
+        'orca-cli',
+        'bogus',
+        'cmd-j-palette',
+        'legacy-unknown-tip'
+      ])
+    ).toEqual(['orca-cli', 'cmd-j-palette'])
   })
 
   it('describes the command palette tip as a passive acknowledgement', () => {

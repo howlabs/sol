@@ -4,8 +4,7 @@ import {
   buildManualOrderUpdatesForGroupDrop,
   buildManualOrderUpdatesForVisibleGroups,
   expandDraggedWorktreeIdsForVisibleLineage,
-  moveWorktreeIdsWithinGroup,
-  shouldWriteManualOrderForGroupDrop
+  moveWorktreeIdsWithinGroup
 } from './worktree-manual-order'
 
 describe('expandDraggedWorktreeIdsForVisibleLineage', () => {
@@ -356,7 +355,7 @@ describe('buildManualOrderUpdatesForGroupDrop', () => {
     expect(result.updates.size).toBe(0)
   })
 
-  it('uses sparse moved-row ranks for cross-lane manual drops', () => {
+  it('uses sparse moved-row ranks for cross-group manual drops', () => {
     const result = buildManualOrderUpdatesForGroupDrop({
       groups: [
         { key: 'todo', worktreeIds: ['todo-a', 'todo-b'] },
@@ -376,37 +375,5 @@ describe('buildManualOrderUpdatesForGroupDrop', () => {
 
     expect(result.orderedIds).toEqual(['todo-a', 'doing-a', 'todo-b', 'doing-b'])
     expect(Array.from(result.updates)).toEqual([['todo-b', { manualOrder: 1500 }]])
-  })
-})
-
-describe('shouldWriteManualOrderForGroupDrop', () => {
-  it('writes order for any lane drop while Manual sort is active', () => {
-    expect(
-      shouldWriteManualOrderForGroupDrop({
-        sortBy: 'manual',
-        sourceGroupKeys: ['todo'],
-        targetGroupKey: 'doing'
-      })
-    ).toBe(true)
-  })
-
-  it('writes order for same-lane drops outside Manual sort', () => {
-    expect(
-      shouldWriteManualOrderForGroupDrop({
-        sortBy: 'recent',
-        sourceGroupKeys: ['doing', 'doing'],
-        targetGroupKey: 'doing'
-      })
-    ).toBe(true)
-  })
-
-  it('keeps cross-lane drops status-only outside Manual sort', () => {
-    expect(
-      shouldWriteManualOrderForGroupDrop({
-        sortBy: 'recent',
-        sourceGroupKeys: ['todo', 'doing'],
-        targetGroupKey: 'doing'
-      })
-    ).toBe(false)
   })
 })

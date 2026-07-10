@@ -26,19 +26,22 @@ function ids(
 
 describe('settings navigation metadata', () => {
   it('puts AI capability panes at the top on desktop', () => {
-    expect(ids().slice(0, 8)).toEqual([
+    // Why: voice dictation settings were removed for Sol; top order is
+    // capabilities then setup panes without a Voice entry.
+    expect(ids().slice(0, 7)).toEqual([
       'agents',
       'accounts',
       'orchestration',
-      'computer-use',
       'general',
       'integrations',
-      'mobile',
-      'git'
+      'git',
+      'tasks'
     ])
   })
 
-  it('places Mobile under Set Up instead of its own sidebar group', () => {
+  it('does not expose a dedicated mobile settings pane', () => {
+    // Why: Sol deprioritizes the mobile companion; servers/pairing may remain
+    // but there is no standalone Mobile settings section.
     const sections = buildSettingsNavigationMetadata({
       isMac: false,
       isWindows: false,
@@ -46,7 +49,8 @@ describe('settings navigation metadata', () => {
       repos: [repo]
     })
 
-    expect(sections.find((section) => section.id === 'mobile')?.group).toBe('setup')
+    expect(sections.find((section) => section.id === 'mobile')).toBeUndefined()
+    expect(sections.find((section) => section.id === 'voice')).toBeUndefined()
   })
 
   it('puts web-safe AI capability panes at the top while hiding desktop-only panes', () => {
@@ -66,7 +70,6 @@ describe('settings navigation metadata', () => {
     expect(webIds).not.toContain('browser')
     expect(webIds).not.toContain('ssh')
     expect(webIds).not.toContain('mobile')
-    expect(webIds).not.toContain('computer-use')
     expect(webIds).not.toContain('advanced')
     expect(webIds).toContain('servers')
     expect(webIds).toContain('repo-repo-1')
@@ -80,7 +83,7 @@ describe('settings navigation metadata', () => {
       repos: [repo]
     })
 
-    expect(sections.find((section) => section.id === 'computer-use')?.badge).toBeUndefined()
+    expect(sections.find((section) => section.id === 'orchestration')?.badge).toBeUndefined()
   })
 
   it('places per-workspace environments under Experimental instead of as a beta sidebar item', () => {

@@ -42,8 +42,6 @@ import type {
   NestedRepoScanResult,
   OnboardingState,
   PersistedUIState,
-  FloatingTerminalCwdRequest,
-  MarkdownDocument,
   SearchResult,
   TuiAgent,
   UpdateStatus,
@@ -458,16 +456,9 @@ const api = {
     // Returns null on non-Darwin or when the defaults read fails.
     getKeyboardInputSourceId: (): Promise<string | null> =>
       ipcRenderer.invoke('app:getKeyboardInputSourceId'),
+    getHomeDirectory: (): Promise<string> => ipcRenderer.invoke('app:getHomeDirectory'),
     setUnreadDockBadgeCount: (count: number): Promise<void> =>
-      ipcRenderer.invoke('app:setUnreadDockBadgeCount', count),
-    getFloatingTerminalCwd: (args?: FloatingTerminalCwdRequest): Promise<string> =>
-      ipcRenderer.invoke('app:getFloatingTerminalCwd', args),
-    getFloatingMarkdownDirectory: (): Promise<string> =>
-      ipcRenderer.invoke('app:getFloatingMarkdownDirectory'),
-    pickFloatingMarkdownDocument: (): Promise<MarkdownDocument | null> =>
-      ipcRenderer.invoke('app:pickFloatingMarkdownDocument'),
-    pickFloatingWorkspaceDirectory: (): Promise<string | null> =>
-      ipcRenderer.invoke('app:pickFloatingWorkspaceDirectory')
+      ipcRenderer.invoke('app:setUnreadDockBadgeCount', count)
   },
 
   platform: {
@@ -1930,13 +1921,6 @@ const api = {
       ipcRenderer.invoke('developerPermissions:openSettings', args)
   },
 
-  computerUsePermissions: {
-    getStatus: (): Promise<unknown> => ipcRenderer.invoke('computerUsePermissions:getStatus'),
-    openSetup: (args?: { id?: string }): Promise<unknown> =>
-      ipcRenderer.invoke('computerUsePermissions:openSetup', args),
-    reset: (): Promise<unknown> => ipcRenderer.invoke('computerUsePermissions:reset')
-  },
-
   shell: {
     openPath: (path: string): Promise<void> => ipcRenderer.invoke('shell:openPath', path),
 
@@ -2816,11 +2800,6 @@ const api = {
       ipcRenderer.on('ui:toggleWorktreePalette', listener)
       return () => ipcRenderer.removeListener('ui:toggleWorktreePalette', listener)
     },
-    onToggleFloatingTerminal: (callback: () => void): (() => void) => {
-      const listener = (_event: Electron.IpcRendererEvent) => callback()
-      ipcRenderer.on('ui:toggleFloatingTerminal', listener)
-      return () => ipcRenderer.removeListener('ui:toggleFloatingTerminal', listener)
-    },
     onTerminalShortcutCaptured: (
       callback: (data: { actionId: KeybindingActionId }) => void
     ): (() => void) => {
@@ -2850,11 +2829,6 @@ const api = {
       const listener = (_event: Electron.IpcRendererEvent) => callback()
       ipcRenderer.on('ui:deleteCurrentWorkspace', listener)
       return () => ipcRenderer.removeListener('ui:deleteCurrentWorkspace', listener)
-    },
-    onOpenWorkspaceBoard: (callback: () => void): (() => void) => {
-      const listener = (_event: Electron.IpcRendererEvent) => callback()
-      ipcRenderer.on('ui:openWorkspaceBoard', listener)
-      return () => ipcRenderer.removeListener('ui:openWorkspaceBoard', listener)
     },
     onOpenTasks: (callback: () => void): (() => void) => {
       const listener = (_event: Electron.IpcRendererEvent) => callback()
@@ -3348,9 +3322,6 @@ const api = {
     },
     setTerminalInputFocused: (focused: boolean): void => {
       ipcRenderer.send('ui:setTerminalInputFocused', focused)
-    },
-    setFloatingTerminalInputFocused: (focused: boolean): void => {
-      ipcRenderer.send('ui:setFloatingTerminalInputFocused', focused)
     },
     setShortcutRecorderFocused: (focused: boolean): void => {
       ipcRenderer.send('ui:setShortcutRecorderFocused', focused)

@@ -92,10 +92,6 @@ const mockApi = {
 globalThis.window = { api: mockApi }
 
 import type { WorkspaceSessionState } from '../../../../shared/types'
-import {
-  FLOATING_TERMINAL_WORKTREE_ID,
-  getDefaultWorkspaceSession
-} from '../../../../shared/constants'
 import { folderWorkspaceKey, worktreeWorkspaceKey } from '../../../../shared/workspace-scope'
 import {
   createTestStore,
@@ -338,39 +334,6 @@ describe('hydrateWorkspaceSession', () => {
     // Why: restart can preserve scrollback for an exited pane while live siblings
     // reattach. Keyboard focus must land on a PTY-backed pane, not the dead leaf.
     expect(store.getState().terminalLayoutsByTabId['tab-1']?.activeLeafId).toBe(liveLeftLeafId)
-  })
-
-  it('hydrates floating terminal tabs even though they are not repo worktrees', () => {
-    const store = createTestStore()
-    const session: WorkspaceSessionState = {
-      activeRepoId: null,
-      activeWorktreeId: null,
-      activeTabId: null,
-      tabsByWorktree: {
-        [FLOATING_TERMINAL_WORKTREE_ID]: [
-          makeTab({
-            id: 'floating-tab-1',
-            worktreeId: FLOATING_TERMINAL_WORKTREE_ID,
-            ptyId: 'floating-pty-1'
-          })
-        ]
-      },
-      terminalLayoutsByTabId: {
-        'floating-tab-1': makeLayout()
-      },
-      activeTabIdByWorktree: {
-        [FLOATING_TERMINAL_WORKTREE_ID]: 'floating-tab-1'
-      },
-      activeWorktreeIdsOnShutdown: [FLOATING_TERMINAL_WORKTREE_ID]
-    }
-
-    store.getState().hydrateWorkspaceSession(session)
-
-    expect(store.getState().tabsByWorktree[FLOATING_TERMINAL_WORKTREE_ID]).toHaveLength(1)
-    expect(store.getState().activeTabIdByWorktree[FLOATING_TERMINAL_WORKTREE_ID]).toBe(
-      'floating-tab-1'
-    )
-    expect(store.getState().pendingReconnectWorktreeIds).toEqual([FLOATING_TERMINAL_WORKTREE_ID])
   })
 
   it('batches restored terminal reconnect wake hints into one store update', async () => {

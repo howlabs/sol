@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ManagedPane } from '@/lib/pane-manager/pane-manager'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 
 const mockLaunchAgentInNewTab = vi.fn()
 const mockActivateAndRevealWorktree = vi.fn()
@@ -424,29 +423,6 @@ describe('forkAgentSessionFromPane', () => {
       pane: makePane('User: fork this folder workspace'),
       tabId: 'tab-1',
       worktreeId: 'wt-1',
-      groupId: null
-    })
-
-    expect(mockCreateWorktree).not.toHaveBeenCalled()
-    expect(mockWriteClipboardText).not.toHaveBeenCalled()
-    expect(mockToast.error).toHaveBeenCalledWith(
-      'This workspace cannot be forked into a git worktree.'
-    )
-  })
-
-  it('does not create a worktree from a floating terminal workspace', async () => {
-    store.getKnownWorktreeById.mockReturnValue({
-      id: FLOATING_TERMINAL_WORKTREE_ID,
-      repoId: 'repo-1',
-      displayName: 'Floating',
-      branch: 'feature/auth'
-    })
-    const { forkAgentSessionFromPane } = await import('./terminal-agent-session-fork')
-
-    await forkAgentSessionFromPane({
-      pane: makePane('User: fork this floating terminal'),
-      tabId: 'tab-1',
-      worktreeId: FLOATING_TERMINAL_WORKTREE_ID,
       groupId: null
     })
 

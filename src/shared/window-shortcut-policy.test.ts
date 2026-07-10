@@ -25,7 +25,8 @@ describe('resolveWindowShortcutAction', () => {
     const nonMacCases: WindowShortcutInput[] = [
       { code: 'KeyR', key: 'r', meta: false, control: true, alt: false, shift: false },
       { code: 'KeyU', key: 'u', meta: false, control: true, alt: false, shift: false },
-      { code: 'KeyJ', key: 'j', meta: false, control: true, alt: false, shift: false }
+      { code: 'KeyJ', key: 'j', meta: false, control: true, alt: false, shift: false },
+      { code: 'KeyE', key: 'e', meta: false, control: true, alt: false, shift: false }
     ]
 
     for (const input of nonMacCases) {
@@ -302,7 +303,6 @@ describe('resolveWindowShortcutAction', () => {
   it('applies custom keybinding overrides to main-process shortcuts', () => {
     const overrides: KeybindingOverrides = {
       'worktree.quickOpen': ['Mod+Shift+O'],
-      'workspace.openBoard': ['Mod+Alt+B'],
       'view.tasks': ['Mod+Alt+K']
     }
 
@@ -320,13 +320,6 @@ describe('resolveWindowShortcutAction', () => {
         overrides
       )
     ).toEqual({ type: 'openQuickOpen' })
-    expect(
-      resolveWindowShortcutAction(
-        { code: 'KeyB', key: 'b', meta: false, control: true, alt: true, shift: false },
-        'linux',
-        overrides
-      )
-    ).toEqual({ type: 'openWorkspaceBoard' })
     expect(
       resolveWindowShortcutAction(
         { code: 'KeyK', key: 'k', meta: false, control: true, alt: true, shift: false },
@@ -531,82 +524,6 @@ describe('resolveWindowShortcutAction', () => {
         'linux'
       )
     ).toEqual({ type: 'worktreeHistoryNavigate', direction: 'back' })
-  })
-
-  it('resolves the floating terminal chord despite carrying Alt', () => {
-    expect(
-      resolveWindowShortcutAction(
-        {
-          code: 'KeyA',
-          key: 'a',
-          meta: true,
-          control: false,
-          alt: true,
-          shift: false
-        },
-        'darwin'
-      )
-    ).toEqual({ type: 'toggleFloatingTerminal' })
-
-    expect(
-      resolveWindowShortcutAction(
-        {
-          code: 'KeyA',
-          key: 'a',
-          meta: false,
-          control: true,
-          alt: true,
-          shift: false
-        },
-        'linux'
-      )
-    ).toEqual({ type: 'toggleFloatingTerminal' })
-  })
-
-  it('resolves the floating terminal chord when macOS Option composes the letter', () => {
-    expect(
-      resolveWindowShortcutAction(
-        {
-          code: 'KeyA',
-          key: 'å',
-          meta: true,
-          control: false,
-          alt: true,
-          shift: false
-        },
-        'darwin'
-      )
-    ).toEqual({ type: 'toggleFloatingTerminal' })
-  })
-
-  it('rejects floating terminal chord variants with Shift or opposite primary modifier', () => {
-    expect(
-      resolveWindowShortcutAction(
-        {
-          code: 'KeyA',
-          key: 'a',
-          meta: true,
-          control: false,
-          alt: true,
-          shift: true
-        },
-        'darwin'
-      )
-    ).toBeNull()
-
-    expect(
-      resolveWindowShortcutAction(
-        {
-          code: 'KeyA',
-          key: 'a',
-          meta: true,
-          control: true,
-          alt: true,
-          shift: false
-        },
-        'linux'
-      )
-    ).toBeNull()
   })
 
   it('rejects the history chord when Shift is also held', () => {

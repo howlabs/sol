@@ -970,7 +970,7 @@ describe('createUISlice hydratePersistedUI', () => {
   it('does not churn persisted UI references when hydration is identical by value', () => {
     const store = createUIStore()
     const persistedUI = makePersistedUI({
-      featureTipsSeenIds: ['cmd-j-palette'],
+      featureTipsSeenIds: ['orca-cli'],
       contextualToursSeenIds: ['tasks'],
       showDotfilesByWorktree: { 'repo-1::/repo': false },
       collapsedGroups: ['repo:one'],
@@ -1244,38 +1244,6 @@ describe('createUISlice hydratePersistedUI', () => {
 
     expect(store.getState().statusBarItems).toEqual(['claude', 'resource-usage'])
     expect(setUI).not.toHaveBeenCalled()
-  })
-
-  it('clamps persisted workspace board column width', () => {
-    const store = createUIStore()
-
-    store.getState().hydratePersistedUI(
-      makePersistedUI({
-        workspaceBoardColumnWidth: 900
-      })
-    )
-
-    expect(store.getState().workspaceBoardColumnWidth).toBe(520)
-  })
-
-  it('defaults workspace board task status sync off and persists changes', () => {
-    const setUI = vi.fn().mockResolvedValue(undefined)
-    vi.stubGlobal('window', { api: { ui: { set: setUI } } })
-    const store = createUIStore()
-
-    expect(store.getState().syncTaskStatusFromWorkspaceBoard).toBe(false)
-
-    store.getState().hydratePersistedUI(
-      makePersistedUI({
-        syncTaskStatusFromWorkspaceBoard: true
-      })
-    )
-    expect(store.getState().syncTaskStatusFromWorkspaceBoard).toBe(true)
-
-    store.getState().setSyncTaskStatusFromWorkspaceBoard(false)
-
-    expect(store.getState().syncTaskStatusFromWorkspaceBoard).toBe(false)
-    expect(setUI).toHaveBeenCalledWith({ syncTaskStatusFromWorkspaceBoard: false })
   })
 
   it('hydrates a valid Kagi session link', () => {
@@ -2142,12 +2110,12 @@ describe('createUISlice feature tips', () => {
     })
     const store = createUIStore()
 
-    store.getState().markFeatureTipsSeen(['cmd-j-palette'])
-    store.getState().markFeatureTipsSeen(['cmd-j-palette'])
+    store.getState().markFeatureTipsSeen(['orca-cli'])
+    store.getState().markFeatureTipsSeen(['orca-cli'])
 
-    expect(store.getState().featureTipsSeenIds).toEqual(['cmd-j-palette'])
+    expect(store.getState().featureTipsSeenIds).toEqual(['orca-cli'])
     expect(setMock).toHaveBeenCalledTimes(1)
-    expect(setMock).toHaveBeenCalledWith({ featureTipsSeenIds: ['cmd-j-palette'] })
+    expect(setMock).toHaveBeenCalledWith({ featureTipsSeenIds: ['orca-cli'] })
   })
 
   it('normalizes persisted feature tip ids during hydration', () => {
@@ -2155,11 +2123,11 @@ describe('createUISlice feature tips', () => {
 
     store.getState().hydratePersistedUI(
       makePersistedUI({
-        featureTipsSeenIds: ['cmd-j-palette', 'unknown', 'cmd-j-palette'] as never
+        featureTipsSeenIds: ['orca-cli', 'unknown', 'orca-cli'] as never
       })
     )
 
-    expect(store.getState().featureTipsSeenIds).toEqual(['cmd-j-palette'])
+    expect(store.getState().featureTipsSeenIds).toEqual(['orca-cli'])
   })
 })
 

@@ -29,12 +29,6 @@ describe('shouldOpenStatusBarContextMenu', () => {
     ).toBe(false)
   })
 
-  it('keeps the floating terminal context menu independent', () => {
-    expect(shouldOpenStatusBarContextMenu(targetMatching('[data-floating-terminal-toggle]'))).toBe(
-      false
-    )
-  })
-
   it('opens when the browser gives a non-element target', () => {
     expect(shouldOpenStatusBarContextMenu(null)).toBe(true)
   })

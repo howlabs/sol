@@ -241,7 +241,7 @@ export function createMainWindow(
     title: opts?.title ?? 'Orca',
     show: false,
     // Why: macOS swallows the app-activating click by default, so clicking
-    // back into Orca (e.g. the floating workspace) needed a second click.
+    // back into Orca needed a second click without this option.
     // macOS-only option; Windows/Linux already deliver that click.
     acceptFirstMouse: true,
     // Why: on macOS the menu lives in the system menu bar, so the in-window
@@ -552,7 +552,6 @@ export function createMainWindow(
   // global shortcut behavior.
   let markdownEditorFocused = false
   let terminalInputFocused = false
-  let floatingTerminalInputFocused = false
   let shortcutRecorderFocused = false
 
   const markdownFocusChannel = 'ui:setMarkdownEditorFocused'
@@ -579,16 +578,6 @@ export function createMainWindow(
     terminalInputFocused = focused === true
   }
   ipcMain.on(terminalInputFocusChannel, onTerminalInputFocused)
-  const floatingTerminalInputFocusChannel = 'ui:setFloatingTerminalInputFocused'
-  // Why: main before-input-event runs before renderer keydown handlers. Mirror
-  // floating xterm focus so Ctrl+B/L and related shell chords can reach SSH/tmux.
-  const onFloatingTerminalInputFocused = (event: Electron.IpcMainEvent, focused: unknown): void => {
-    if (event.sender !== mainWindow.webContents) {
-      return
-    }
-    floatingTerminalInputFocused = focused === true
-  }
-  ipcMain.on(floatingTerminalInputFocusChannel, onFloatingTerminalInputFocused)
   const shortcutRecorderFocusChannel = 'ui:setShortcutRecorderFocused'
   // Why: the Settings recorder must receive existing app shortcuts so users can
   // rebind them; before-input-event would otherwise consume the key first.
@@ -620,9 +609,6 @@ export function createMainWindow(
   }
   const resetTerminalInputFocus = (): void => {
     terminalInputFocused = false
-  }
-  const resetFloatingTerminalInputFocus = (): void => {
-    floatingTerminalInputFocused = false
   }
   const resetShortcutRecorderFocus = (): void => {
     shortcutRecorderFocused = false
@@ -689,7 +675,6 @@ export function createMainWindow(
     rendererProcessGone = true
     resetMarkdownEditorFocus()
     resetTerminalInputFocus()
-    resetFloatingTerminalInputFocus()
     resetShortcutRecorderFocus()
     // Why: macOS can report BrowserWindow teardown as renderer `killed`/SIGKILL
     // after a confirmed close; that is window lifecycle noise, not a crash.
@@ -707,14 +692,12 @@ export function createMainWindow(
   mainWindow.webContents.on('destroyed', () => {
     resetMarkdownEditorFocus()
     resetTerminalInputFocus()
-    resetFloatingTerminalInputFocus()
     resetShortcutRecorderFocus()
   })
   mainWindow.webContents.on('did-start-navigation', (_e, _url, _isInPlace, isMainFrame) => {
     if (isMainFrame) {
       resetMarkdownEditorFocus()
       resetTerminalInputFocus()
-      resetFloatingTerminalInputFocus()
       resetShortcutRecorderFocus()
     }
   })
@@ -748,9 +731,6 @@ export function createMainWindow(
       case 'toggleWorktreePalette':
         mainWindow.webContents.send('ui:toggleWorktreePalette')
         return
-      case 'toggleFloatingTerminal':
-        mainWindow.webContents.send('ui:toggleFloatingTerminal')
-        return
       case 'openQuickOpen':
         mainWindow.webContents.send('ui:openQuickOpen')
         return
@@ -762,9 +742,6 @@ export function createMainWindow(
         return
       case 'deleteCurrentWorkspace':
         mainWindow.webContents.send('ui:deleteCurrentWorkspace')
-        return
-      case 'openWorkspaceBoard':
-        mainWindow.webContents.send('ui:openWorkspaceBoard')
         return
       case 'openTasks':
         mainWindow.webContents.send('ui:openTasks')
@@ -792,12 +769,6 @@ export function createMainWindow(
     }
   ): boolean => {
     const { focusedShortcutContext, isAutoRepeat } = options
-    if (
-      floatingTerminalInputFocused &&
-      (action.type === 'toggleLeftSidebar' || action.type === 'toggleRightSidebar')
-    ) {
-      return false
-    }
 
     const capturedTerminalActionId =
       focusedShortcutContext.context === 'terminal' &&
@@ -847,7 +818,7 @@ export function createMainWindow(
 
     const keybindings = opts?.getKeybindings?.()
     const terminalShortcutContext: KeybindingMatchOptions = {
-      context: terminalInputFocused || floatingTerminalInputFocused ? 'terminal' : 'app',
+      context: terminalInputFocused ? 'terminal' : 'app',
       terminalShortcutPolicy: normalizeTerminalShortcutPolicy(
         store?.getSettings().terminalShortcutPolicy
       )
@@ -962,7 +933,7 @@ export function createMainWindow(
         process.platform,
         opts?.getKeybindings?.(),
         {
-          context: terminalInputFocused || floatingTerminalInputFocused ? 'terminal' : 'app',
+          context: terminalInputFocused ? 'terminal' : 'app',
           terminalShortcutPolicy: normalizeTerminalShortcutPolicy(
             store?.getSettings().terminalShortcutPolicy
           )
@@ -1152,7 +1123,6 @@ export function createMainWindow(
     // with the webContents lifecycle resets above.
     markdownEditorFocused = false
     terminalInputFocused = false
-    floatingTerminalInputFocused = false
     shortcutRecorderFocused = false
     clearRendererRecoveryTimer()
     ipcMain.removeListener(trafficLightChannel, onSyncTrafficLights)
@@ -1164,7 +1134,6 @@ export function createMainWindow(
     ipcMain.removeListener(confirmCloseChannel, onConfirmClose)
     ipcMain.removeListener(markdownFocusChannel, onMarkdownEditorFocused)
     ipcMain.removeListener(terminalInputFocusChannel, onTerminalInputFocused)
-    ipcMain.removeListener(floatingTerminalInputFocusChannel, onFloatingTerminalInputFocused)
     ipcMain.removeListener(shortcutRecorderFocusChannel, onShortcutRecorderFocused)
     clearTrustedUIRendererWebContentsId(rendererWebContentsId)
     // Why: on updater-triggered shutdown, BrowserWindow can emit `closed`

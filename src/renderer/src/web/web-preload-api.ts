@@ -13,10 +13,6 @@ import type { RuntimeRpcResponse } from '../../../shared/runtime-rpc-envelope'
 import type { AiVaultListArgs, AiVaultListResult } from '../../../shared/ai-vault-types'
 import { buildNativeChatUnsubscribe } from '../../../shared/native-chat-stream-unsubscribe'
 import type {
-  ComputerUsePermissionSetupResult,
-  ComputerUsePermissionStatusResult
-} from '../../../shared/computer-use-permissions-types'
-import type {
   DetectedWorktreeListResult,
   DirEntry,
   ForceDeleteWorktreeBranchResult,
@@ -473,11 +469,8 @@ function createWebPreloadApi(): Partial<PreloadApi> {
       awaitFirstWindowStartupServices: () => Promise.resolve(),
       startupDiagnostic: () => Promise.resolve(),
       getKeyboardInputSourceId: () => Promise.resolve(null),
-      setUnreadDockBadgeCount: () => Promise.resolve(),
-      getFloatingTerminalCwd: () => Promise.resolve(''),
-      getFloatingMarkdownDirectory: () => Promise.resolve(''),
-      pickFloatingMarkdownDocument: () => Promise.resolve(null),
-      pickFloatingWorkspaceDirectory: () => Promise.resolve(null)
+      getHomeDirectory: () => Promise.resolve('/'),
+      setUnreadDockBadgeCount: () => Promise.resolve()
     },
     platform: {
       get: () => ({
@@ -628,7 +621,6 @@ function createWebPreloadApi(): Partial<PreloadApi> {
     cli: createCliApi(),
     agentHooks: createAgentHooksApi(),
     developerPermissions: createDeveloperPermissionsApi(),
-    computerUsePermissions: createComputerUsePermissionsApi(),
     updater: createUpdaterApi(),
     shell: createShellApi(),
     skills: createSkillsApi(),
@@ -2195,14 +2187,12 @@ function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
     onToggleLeftSidebar: () => noopUnsubscribe,
     onToggleRightSidebar: () => noopUnsubscribe,
     onToggleWorktreePalette: () => noopUnsubscribe,
-    onToggleFloatingTerminal: () => noopUnsubscribe,
     onTerminalShortcutCaptured: () => noopUnsubscribe,
     onOpenQuickOpen: () => noopUnsubscribe,
     onToggleQuickCommandsMenu: () => noopUnsubscribe,
     onOpenTasks: () => noopUnsubscribe,
     onOpenNewWorkspace: () => noopUnsubscribe,
     onDeleteCurrentWorkspace: () => noopUnsubscribe,
-    onOpenWorkspaceBoard: () => noopUnsubscribe,
     onJumpToWorktreeIndex: () => noopUnsubscribe,
     onJumpToTabIndex: () => noopUnsubscribe,
     onWorktreeHistoryNavigate: () => noopUnsubscribe,
@@ -2253,7 +2243,6 @@ function createWebUiApi(): NonNullable<Partial<PreloadApi>['ui']> {
     syncTrafficLights: () => {},
     setMarkdownEditorFocused: () => {},
     setTerminalInputFocused: () => {},
-    setFloatingTerminalInputFocused: () => {},
     setShortcutRecorderFocused: () => {},
     onRichMarkdownContextCommand: () => noopUnsubscribe,
     onFullscreenChanged: () => noopUnsubscribe,
@@ -2414,39 +2403,6 @@ function createDeveloperPermissionsApi(): NonNullable<Partial<PreloadApi>['devel
     request: ({ id }) =>
       Promise.resolve({ id, status: 'unsupported', openedSystemSettings: false } as const),
     openSettings: () => Promise.resolve()
-  }
-}
-
-function createComputerUsePermissionsApi(): NonNullable<
-  Partial<PreloadApi>['computerUsePermissions']
-> {
-  return {
-    getStatus: () =>
-      callRuntimeResult<ComputerUsePermissionStatusResult>(
-        'computer.permissionsStatus',
-        {},
-        15_000
-      ),
-    openSetup: (args) =>
-      callRuntimeResult<ComputerUsePermissionSetupResult>(
-        'computer.permissions',
-        args ?? {},
-        15_000
-      ).catch(() => ({
-        platform: getBrowserPlatform(),
-        helperAppPath: null,
-        openedSettings: false,
-        launchedHelper: false,
-        nextStep: 'Computer-use permissions are managed on the Orca server.'
-      })),
-    reset: () =>
-      Promise.resolve({
-        platform: getBrowserPlatform(),
-        helperAppPath: null,
-        helperUnavailableReason: 'web_client',
-        bundleId: null,
-        permissions: []
-      })
   }
 }
 
@@ -2896,7 +2852,6 @@ function getStoredSettings(): GlobalSettings {
   return mergeSettings(
     {
       ...defaults,
-      floatingTerminalEnabled: false,
       rightSidebarOpenByDefault: false,
       activeRuntimeEnvironmentId: environment?.id ?? null
     },

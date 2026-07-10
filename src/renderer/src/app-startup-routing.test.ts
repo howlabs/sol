@@ -72,16 +72,6 @@ describe('renderer startup runtime routing', () => {
     expect(servicesIndex).toBeLessThan(reconnectIndex)
   })
 
-  it('does not eagerly import the floating terminal panel on startup', () => {
-    const source = readFileSync(join(process.cwd(), 'src/renderer/src/App.tsx'), 'utf8')
-
-    expect(source).toContain(
-      "import { FloatingTerminalToggleButton } from './components/floating-terminal/FloatingTerminalToggleButton'"
-    )
-    expect(source).toContain("import('./components/floating-terminal/FloatingTerminalPanel').then")
-    expect(source).not.toContain("from './components/floating-terminal/FloatingTerminalPanel'")
-  })
-
   it('does not eagerly import idle optional overlay surfaces on startup', () => {
     const source = readFileSync(join(process.cwd(), 'src/renderer/src/App.tsx'), 'utf8')
 
@@ -130,6 +120,14 @@ describe('renderer startup runtime routing', () => {
     expect(manualOpenBlock.indexOf('setReport(null)')).toBeLessThan(
       manualOpenBlock.indexOf('loadCrashReport(false)')
     )
+  })
+
+  it('does not load the removed dictation controller', () => {
+    const source = readFileSync(join(process.cwd(), 'src/renderer/src/App.tsx'), 'utf8')
+
+    expect(source).not.toContain('DictationController')
+    expect(source).not.toContain('overlay.dictation')
+    expect(source).not.toContain('shouldMountDictationController')
   })
 
   it('loads the SSH passphrase dialog only when a credential request is queued', () => {

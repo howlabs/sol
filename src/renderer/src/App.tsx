@@ -1,14 +1,5 @@
 /* eslint-disable max-lines */
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type SetStateAction
-} from 'react'
+import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
 
 import {
@@ -58,20 +49,8 @@ import RightSidebar from './components/right-sidebar'
 import { TelemetryFirstLaunchSurface } from './components/TelemetryFirstLaunchSurface'
 import { ZoomOverlay } from './components/ZoomOverlay'
 import { MarkdownTemplatePicker } from './components/editor/MarkdownTemplatePicker'
-import { FloatingTerminalToggleButton } from './components/floating-terminal/FloatingTerminalToggleButton'
-import {
-  TOGGLE_FLOATING_TERMINAL_EVENT,
-  requestFloatingTerminalOpenMaximized
-} from '@/lib/floating-terminal'
-import {
-  isFloatingWorkspacePanelFocused,
-  isFloatingWorkspacePanelShortcut,
-  isFloatingWorkspaceTerminalInputTarget,
-  shouldMinimizeFloatingWorkspacePanelOnCloseShortcut
-} from '@/lib/floating-workspace-terminal-actions'
-import { createFloatingWorkspaceTourInteractionSnapshot } from '@/lib/floating-workspace-tour-interaction-snapshot'
 import { requestScrollToCurrentWorkspaceRevealAndRename } from '@/lib/scroll-to-current-workspace-status'
-import { OPEN_WORKSPACE_BOARD_EVENT } from './components/sidebar/useWorkspaceBoardPanel'
+
 import { WorkspacePortScanner } from './components/ports/WorkspacePortScanner'
 import { CrashReportDialog } from './components/crash-report/CrashReportDialog'
 import NewWorkspaceComposerModal from './components/NewWorkspaceComposerModal'
@@ -135,7 +114,6 @@ import {
   canGoBackWorktreeHistory,
   canGoForwardWorktreeHistory
 } from '@/store/slices/worktree-nav-history'
-import { selectFloatingVisibleTabCount } from './store/selectors'
 import { selectActiveTerminalChromeState } from './store/active-terminal-chrome-selector'
 import type { VirtualizedScrollAnchor } from './hooks/useVirtualizedScrollAnchor'
 import type { RemoteWorkspacePatchResult } from '../../shared/remote-workspace-types'
@@ -312,11 +290,6 @@ const ContextualTourOverlay = lazy(() =>
     default: module.ContextualTourOverlay
   }))
 )
-const FloatingTerminalPanel = lazy(() =>
-  import('./components/floating-terminal/FloatingTerminalPanel').then((module) => ({
-    default: module.FloatingTerminalPanel
-  }))
-)
 
 function applyRemoteWorkspacePatchStatus(
   targetId: string,
@@ -362,12 +335,6 @@ function App(): React.JSX.Element {
   const clearUnreadDockBadge = useUnreadDockBadge()
   useRadixBodyPointerEventsRecovery()
   useWebSessionTabsSync()
-  const [floatingTerminalOpen, setFloatingTerminalOpen] = useState(false)
-  const floatingWorkspaceTourInteractionSnapshotRef = useRef<{
-    wasPreviouslyInteracted?: boolean
-    persisted?: Promise<void>
-    recordFeatureInteractionForTour: boolean
-  } | null>(null)
 
   // Why: Zustand actions are referentially stable, but each individual
   // useAppStore(s => s.someAction) still registers a subscription that React
@@ -440,7 +407,6 @@ function App(): React.JSX.Element {
   // that remount so the left workspace list doesn't restart at scrollTop 0.
   const worktreeSidebarScrollOffsetRef = useRef(0)
   const worktreeSidebarScrollAnchorRef = useRef<VirtualizedScrollAnchor>(null)
-  const floatingVisibleTabCount = useAppStore(selectFloatingVisibleTabCount)
   const workspaceSessionReady = useAppStore((s) => s.workspaceSessionReady)
   const keybindings = useAppStore((s) => s.keybindings)
   const updateStatus = useAppStore((s) => s.updateStatus)
@@ -449,14 +415,7 @@ function App(): React.JSX.Element {
   const rightSidebarShortcutLabel = useShortcutLabel('sidebar.right.toggle')
   const historyBackShortcutLabel = useShortcutLabel('worktree.history.back')
   const historyForwardShortcutLabel = useShortcutLabel('worktree.history.forward')
-  const floatingTerminalEnabled = useAppStore((s) => s.settings?.floatingTerminalEnabled === true)
-  const floatingTerminalTriggerLocation = useAppStore(
-    (s) => s.settings?.floatingTerminalTriggerLocation ?? 'floating-button'
-  )
   const statusBarVisible = useAppStore((s) => s.statusBarVisible)
-  const showFloatingTerminalButton =
-    floatingTerminalEnabled &&
-    (floatingTerminalTriggerLocation === 'floating-button' || !statusBarVisible)
   const hasMountedTerminalWorkbenchRef = useRef(false)
   if (activeWorktreeId !== null) {
     hasMountedTerminalWorkbenchRef.current = true
@@ -478,100 +437,16 @@ function App(): React.JSX.Element {
     activeView === 'terminal' && activeWorktreeId !== null && !creationLayoutActive
   const terminalWorkbenchVisible =
     activeView === 'terminal' && activeWorktreeId !== null && !creationLayoutActive
-  // Why: a closed empty floating workspace is not startup-critical. Once it owns
-  // tabs, keep it mounted while closed so hidden terminal/browser/editor panes
-  // retain their local state.
-  const shouldMountFloatingTerminalPanel =
-    floatingTerminalEnabled && (floatingTerminalOpen || floatingVisibleTabCount > 0)
-  // Why: the floating workspace is a transient overlay; hotkey minimize should
-  // return keyboard focus to the surface the user was working in before it.
-  const floatingTerminalReturnFocusRef = useRef<HTMLElement | null>(null)
-  const floatingTerminalReturnFocusFrameRef = useRef<number | null>(null)
-
-  const cancelFloatingTerminalReturnFocusFrame = useCallback((): void => {
-    if (floatingTerminalReturnFocusFrameRef.current === null) {
-      return
-    }
-    cancelAnimationFrame(floatingTerminalReturnFocusFrameRef.current)
-    floatingTerminalReturnFocusFrameRef.current = null
-  }, [])
 
   const setAppRootNode = useCallback(
     (node: HTMLDivElement | null): void => {
       // Why: these best-effort App chrome cleanups share the App root lifetime.
       if (!node) {
-        cancelFloatingTerminalReturnFocusFrame()
         clearUnreadDockBadge()
       }
     },
-    [cancelFloatingTerminalReturnFocusFrame, clearUnreadDockBadge]
+    [clearUnreadDockBadge]
   )
-
-  const rememberFloatingTerminalReturnFocus = useCallback((): void => {
-    const active = document.activeElement
-    if (!(active instanceof HTMLElement)) {
-      floatingTerminalReturnFocusRef.current = null
-      return
-    }
-    if (
-      active.closest('[data-floating-terminal-panel]') ||
-      active.closest('[data-floating-terminal-toggle]')
-    ) {
-      return
-    }
-    floatingTerminalReturnFocusRef.current = active
-  }, [])
-
-  const restoreFloatingTerminalReturnFocus = useCallback((): void => {
-    const target = floatingTerminalReturnFocusRef.current
-    floatingTerminalReturnFocusRef.current = null
-    if (!target || !document.contains(target)) {
-      return
-    }
-    cancelFloatingTerminalReturnFocusFrame()
-    floatingTerminalReturnFocusFrameRef.current = requestAnimationFrame(() => {
-      floatingTerminalReturnFocusFrameRef.current = null
-      if (!document.contains(target)) {
-        return
-      }
-      target.focus({ preventScroll: true })
-    })
-  }, [cancelFloatingTerminalReturnFocusFrame])
-
-  const setFloatingTerminalOpenWithFocus = useCallback(
-    (nextOpen: SetStateAction<boolean>): void => {
-      const resolvedOpen =
-        typeof nextOpen === 'function' ? nextOpen(floatingTerminalOpen) : nextOpen
-      // Why: recordFeatureInteraction updates Zustand subscribers; doing it
-      // inside React's state updater logs a render-phase update warning.
-      if (resolvedOpen && !floatingTerminalOpen) {
-        const state = useAppStore.getState()
-        floatingWorkspaceTourInteractionSnapshotRef.current =
-          createFloatingWorkspaceTourInteractionSnapshot(state)
-        rememberFloatingTerminalReturnFocus()
-      } else if (!resolvedOpen && floatingTerminalOpen) {
-        restoreFloatingTerminalReturnFocus()
-      }
-      setFloatingTerminalOpen(resolvedOpen)
-    },
-    [floatingTerminalOpen, rememberFloatingTerminalReturnFocus, restoreFloatingTerminalReturnFocus]
-  )
-
-  useEffect(() => {
-    const toggleFloatingTerminal = (): void => {
-      if (floatingTerminalEnabled) {
-        setFloatingTerminalOpenWithFocus((open) => !open)
-      }
-    }
-    window.addEventListener(TOGGLE_FLOATING_TERMINAL_EVENT, toggleFloatingTerminal)
-    return () => window.removeEventListener(TOGGLE_FLOATING_TERMINAL_EVENT, toggleFloatingTerminal)
-  }, [floatingTerminalEnabled, setFloatingTerminalOpenWithFocus])
-
-  useEffect(() => {
-    if (!floatingTerminalEnabled) {
-      setFloatingTerminalOpenWithFocus(false)
-    }
-  }, [floatingTerminalEnabled, setFloatingTerminalOpenWithFocus])
 
   const sidebarWidth = useAppStore((s) => s.sidebarWidth)
   const sidebarOpen = useAppStore((s) => s.sidebarOpen)
@@ -1373,12 +1248,8 @@ function App(): React.JSX.Element {
     activeView,
     activeWorktreeId,
     actions,
-    floatingTerminalEnabled,
-    floatingTerminalOpen,
-    floatingVisibleTabCount,
     keybindings,
     terminalShortcutPolicy: settings?.terminalShortcutPolicy,
-    setFloatingTerminalOpenWithFocus,
     workspaceChromeActive,
     creationLayoutActive
   })
@@ -1388,12 +1259,8 @@ function App(): React.JSX.Element {
     activeView,
     activeWorktreeId,
     actions,
-    floatingTerminalEnabled,
-    floatingTerminalOpen,
-    floatingVisibleTabCount,
     keybindings,
     terminalShortcutPolicy: settings?.terminalShortcutPolicy,
-    setFloatingTerminalOpenWithFocus,
     workspaceChromeActive,
     creationLayoutActive
   }
@@ -1406,12 +1273,8 @@ function App(): React.JSX.Element {
         activeView,
         activeWorktreeId,
         actions,
-        floatingTerminalEnabled,
-        floatingTerminalOpen,
-        floatingVisibleTabCount,
         keybindings,
         terminalShortcutPolicy,
-        setFloatingTerminalOpenWithFocus,
         workspaceChromeActive,
         creationLayoutActive
       } = globalShortcutStateRef.current
@@ -1486,38 +1349,6 @@ function App(): React.JSX.Element {
         }
       }
 
-      // Why: an empty floating workspace has no tab to close; Cmd/Ctrl+W
-      // should hide that transient overlay before underlying app surfaces act.
-      if (
-        keybindingMatchesAction('tab.close', input, shortcutPlatform, keybindings, {
-          context: 'app'
-        }) &&
-        shouldMinimizeFloatingWorkspacePanelOnCloseShortcut({
-          floatingTerminalOpen,
-          floatingVisibleTabCount
-        })
-      ) {
-        input.preventDefault()
-        setFloatingTerminalOpenWithFocus(false)
-        return
-      }
-
-      // Why: when the floating workspace is closed, its own keydown handler is
-      // unmounted and cannot claim Cmd+Opt+Shift+A. Honor the maximize chord
-      // here by opening the panel with a one-shot intent so it mounts straight
-      // into the maximized state. While the panel is open, this is a no-op: the
-      // panel's handler owns the maximize/restore toggle.
-      if (
-        !floatingTerminalOpen &&
-        matchShortcut('floatingWorkspace.maximize') &&
-        floatingTerminalEnabled
-      ) {
-        input.preventDefault()
-        requestFloatingTerminalOpenMaximized()
-        setFloatingTerminalOpenWithFocus(true)
-        return
-      }
-
       // Why: keep this guard. TipTap's Cmd+B bold binding depends on the
       // window-level handler *not* toggling the sidebar when focus lives in an
       // editable surface. The main-process before-input-event already carves out
@@ -1525,13 +1356,6 @@ function App(): React.JSX.Element {
       // docs/markdown-cmd-b-bold-design.md), but this renderer-side fallback
       // still covers the blur→press IPC race and any non-carved editable surface.
       if (isEditableTarget(input.target)) {
-        return
-      }
-
-      // Why: xterm's helper textarea is intentionally not a generic editable
-      // target, but floating-terminal SSH/tmux control chords must still reach
-      // the terminal instead of app-level chrome shortcuts.
-      if (isFloatingWorkspaceTerminalInputTarget(input.target)) {
         return
       }
 
@@ -1552,23 +1376,6 @@ function App(): React.JSX.Element {
           store.goForwardWorktree()
         }
         return
-      }
-
-      // Why: only short-circuit chords the floating panel's own keydown
-      // handler claims (Cmd/Ctrl+T, Cmd/Ctrl+W, Cmd/Ctrl+Shift+B/M). Other
-      // app-level mod shortcuts (B, L, Shift+E/F/G) have no panel-level
-      // counterpart, so suppressing them here would silently no-op when
-      // focus lives inside the floating panel.
-      const floatingWorkspaceFocused = isFloatingWorkspacePanelFocused()
-      if (floatingWorkspaceFocused) {
-        if (
-          isFloatingWorkspacePanelShortcut(input, shortcutPlatform, null, keybindings, {
-            context,
-            terminalShortcutPolicy
-          })
-        ) {
-          return
-        }
       }
 
       // Cmd/Ctrl+B — toggle left sidebar
@@ -1598,7 +1405,7 @@ function App(): React.JSX.Element {
       // focus zone because the browser pane owns its own Cmd+R reload and that
       // focus never reaches this renderer-window handler. Only terminal tabs
       // have an inline title editor, so other active tab types fall through.
-      if (workspaceChromeActive && !floatingWorkspaceFocused && matchShortcut('tab.rename')) {
+      if (workspaceChromeActive && matchShortcut('tab.rename')) {
         const store = useAppStore.getState()
         if (store.activeTabType === 'terminal' && store.activeTabId) {
           input.preventDefault()
@@ -1611,26 +1418,12 @@ function App(): React.JSX.Element {
       // Why: open the active worktree's inline title editor. Open/reveal it
       // first so the card is mounted and visible even when sidebar filters or
       // collapse state would otherwise hide it.
-      if (
-        workspaceChromeActive &&
-        !floatingWorkspaceFocused &&
-        matchShortcut('workspace.rename') &&
-        activeWorktreeId
-      ) {
+      if (workspaceChromeActive && matchShortcut('workspace.rename') && activeWorktreeId) {
         input.preventDefault()
         notifyTerminalCapture('workspace.rename')
         const store = useAppStore.getState()
         store.setSidebarOpen(true)
         requestScrollToCurrentWorkspaceRevealAndRename()
-        return
-      }
-
-      if (matchShortcut('workspace.openBoard') && activeView !== 'settings') {
-        input.preventDefault()
-        notifyTerminalCapture('workspace.openBoard')
-        const store = useAppStore.getState()
-        store.setSidebarOpen(true)
-        window.dispatchEvent(new CustomEvent(OPEN_WORKSPACE_BOARD_EVENT))
         return
       }
 
@@ -2247,12 +2040,6 @@ function App(): React.JSX.Element {
                             </RecoverableRenderErrorBoundary>
                           </Suspense>
                         </div>
-                        {showFloatingTerminalButton ? (
-                          <FloatingTerminalToggleButton
-                            open={floatingTerminalOpen}
-                            onToggle={() => setFloatingTerminalOpenWithFocus((open) => !open)}
-                          />
-                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -2281,27 +2068,6 @@ function App(): React.JSX.Element {
                 ) : null}
               </div>
             </RecoverableRenderErrorBoundary>
-            {shouldMountFloatingTerminalPanel ? (
-              <Suspense fallback={null}>
-                <RecoverableRenderErrorBoundary
-                  boundaryId="overlay.floating-workspace"
-                  surface="overlay"
-                  resetKey={floatingTerminalOpen}
-                  compact
-                  title={translate('auto.App.1b3024bcd6', 'The floating workspace hit an error.')}
-                  description={translate(
-                    'auto.App.7cbfbf622f',
-                    'Retry the floating workspace or close and reopen it.'
-                  )}
-                >
-                  <FloatingTerminalPanel
-                    open={floatingTerminalOpen}
-                    onOpenChange={setFloatingTerminalOpenWithFocus}
-                    tourInteractionSnapshot={floatingWorkspaceTourInteractionSnapshotRef.current}
-                  />
-                </RecoverableRenderErrorBoundary>
-              </Suspense>
-            ) : null}
             {statusBarVisible ? (
               <Suspense
                 fallback={
@@ -2319,7 +2085,7 @@ function App(): React.JSX.Element {
                     'Retry the status bar to remount its controls.'
                   )}
                 >
-                  <StatusBar floatingTerminalOpen={floatingTerminalOpen} />
+                  <StatusBar />
                 </RecoverableRenderErrorBoundary>
               </Suspense>
             ) : null}

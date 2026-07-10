@@ -956,7 +956,6 @@ describe('useIpcEvents browser tab create routing', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -1176,7 +1175,6 @@ describe('useIpcEvents updater integration', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -1419,7 +1417,6 @@ describe('useIpcEvents updater integration', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -1657,11 +1654,9 @@ describe('useIpcEvents updater integration', () => {
     const setTabBarOrder = vi.fn()
     const replyTerminalCreate = vi.fn()
     const dispatchEvent = vi.fn()
-    const createFloatingWorkspaceTerminalTab = vi.fn()
     const createWebRuntimeSessionTerminal = vi.fn().mockResolvedValue(false)
     const focusRuntimeTerminalSurface = vi.fn(() => false)
     const focusTerminalTabSurface = vi.fn()
-    let floatingPanelFocused = false
     const storeState = {
       setUpdateStatus: vi.fn(),
       createTab,
@@ -1814,11 +1809,6 @@ describe('useIpcEvents updater integration', () => {
     vi.doMock('@/lib/zoom-events', () => ({
       dispatchZoomLevelChanged: vi.fn()
     }))
-    vi.doMock('@/lib/floating-workspace-terminal-actions', () => ({
-      createFloatingWorkspaceTerminalTab,
-      isEmptyFloatingWorkspacePanelVisible: () => false,
-      isFloatingWorkspacePanelFocused: () => floatingPanelFocused
-    }))
     vi.doMock('@/runtime/web-runtime-session', () => ({
       activateWebRuntimeSessionTab: vi.fn(),
       closeWebRuntimeSessionTab: vi.fn(),
@@ -1852,7 +1842,6 @@ describe('useIpcEvents updater integration', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -2004,18 +1993,9 @@ describe('useIpcEvents updater integration', () => {
       throw new Error('Expected new-terminal-tab listener to be registered')
     }
 
-    floatingPanelFocused = true
-    newTerminalTabListenerRef.current()
-    expect(createFloatingWorkspaceTerminalTab).toHaveBeenCalledWith(storeState)
-    expect(createTab).not.toHaveBeenCalled()
-
-    floatingPanelFocused = false
-    createFloatingWorkspaceTerminalTab.mockClear()
-    createTab.mockClear()
     newTerminalTabListenerRef.current()
     await Promise.resolve()
     await Promise.resolve()
-    expect(createFloatingWorkspaceTerminalTab).not.toHaveBeenCalled()
     expect(createWebRuntimeSessionTerminal).toHaveBeenCalledWith({
       worktreeId: 'wt-1',
       // Why: multi-host scopes the new terminal to the worktree's own runtime
@@ -2747,7 +2727,6 @@ describe('useIpcEvents browser tab close routing', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -3235,7 +3214,6 @@ describe('useIpcEvents browser tab close routing', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -3451,7 +3429,6 @@ describe('useIpcEvents browser tab close routing', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -3662,7 +3639,6 @@ describe('useIpcEvents browser tab close routing', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -3891,7 +3867,6 @@ describe('useIpcEvents CLI-created worktree activation', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -4146,7 +4121,6 @@ describe('useIpcEvents CLI-created worktree activation', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},
@@ -4378,7 +4352,6 @@ describe('useIpcEvents agent status snapshot integration', () => {
           onToggleLeftSidebar: () => () => {},
           onToggleRightSidebar: () => () => {},
           onToggleWorktreePalette: () => () => {},
-          onToggleFloatingTerminal: () => () => {},
           onOpenQuickOpen: () => () => {},
           onToggleQuickCommandsMenu: () => () => {},
           onOpenNewWorkspace: () => () => {},

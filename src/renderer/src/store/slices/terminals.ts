@@ -16,10 +16,7 @@ import type {
   AgentProviderSessionMetadata,
   SleepingAgentLaunchConfig
 } from '../../../../shared/agent-session-resume'
-import {
-  DEFAULT_REPO_BADGE_COLOR,
-  FLOATING_TERMINAL_WORKTREE_ID
-} from '../../../../shared/constants'
+import { DEFAULT_REPO_BADGE_COLOR } from '../../../../shared/constants'
 import { parseExecutionHostId, type ExecutionHostId } from '../../../../shared/execution-host'
 import {
   folderWorkspaceKey,
@@ -2872,10 +2869,6 @@ export const createTerminalSlice: StateCreator<AppState, [], [], TerminalSlice> 
           .filter(([, detected]) => detected.authoritative)
           .map(([repoId]) => repoId)
       )
-      // Why: the Floating Workspace is intentionally not a repo worktree, but
-      // its tabs still use the normal terminal session pipeline so daemon PTYs
-      // can survive app restart just like workspace terminals.
-      validWorktreeIds.add(FLOATING_TERMINAL_WORKTREE_ID)
       for (const workspace of s.folderWorkspaces) {
         validWorktreeIds.add(folderWorkspaceKey(workspace.id))
       }

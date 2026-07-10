@@ -37,7 +37,6 @@ export type KeybindingActionId =
   | 'workspace.create'
   | 'workspace.rename'
   | 'workspace.delete'
-  | 'workspace.openBoard'
   | 'workspace.selectByIndex'
   | 'view.tasks'
   | 'sidebar.left.toggle'
@@ -49,9 +48,6 @@ export type KeybindingActionId =
   | 'sidebar.ports.toggle'
   | 'sidebar.sleepingWorkspaces.toggle'
   | 'sidebar.focusWorktreeList'
-  | 'floatingTerminal.toggle'
-  | 'floatingWorkspace.maximize'
-  | 'floatingWorkspace.minimize'
   | 'zoom.in'
   | 'zoom.out'
   | 'zoom.reset'
@@ -288,17 +284,6 @@ export const KEYBINDING_DEFINITIONS: readonly KeybindingDefinition[] = [
     allowInTerminal: true
   },
   {
-    id: 'workspace.openBoard',
-    title: 'Open Workspace Board',
-    group: 'Global',
-    scope: 'global',
-    searchKeywords: ['shortcut', 'global', 'workspace', 'board', 'kanban', 'worktree'],
-    // Why: make the command configurable without taking a global chord from
-    // terminal/browser/editor users by default.
-    defaultBindings: platformBindings([]),
-    allowInTerminal: true
-  },
-  {
     id: 'workspace.selectByIndex',
     title: 'Select Workspace 1–9',
     group: 'Global',
@@ -415,66 +400,6 @@ export const KEYBINDING_DEFINITIONS: readonly KeybindingDefinition[] = [
     scope: 'global',
     searchKeywords: ['shortcut', 'sidebar', 'worktree', 'focus'],
     defaultBindings: platformBindings(['Mod+0'])
-  },
-  {
-    id: 'floatingTerminal.toggle',
-    title: 'Toggle Floating Terminal',
-    group: 'Global',
-    scope: 'global',
-    searchKeywords: ['shortcut', 'floating terminal', 'terminal'],
-    defaultBindings: platformBindings(['Mod+Alt+A']),
-    allowInTerminal: true
-  },
-  {
-    id: 'floatingWorkspace.maximize',
-    title: 'Maximize Floating Workspace Panel',
-    group: 'Global',
-    scope: 'global',
-    searchKeywords: [
-      'shortcut',
-      'floating',
-      'workspace',
-      'panel',
-      'floating workspace',
-      'workspace panel',
-      'maximize',
-      'expand'
-    ],
-    // Why: pairs with the floatingTerminal.toggle chord (Cmd+Opt+A) so
-    // maximize/restore lives on the same key anchor and stays one-handed,
-    // instead of the two-hand reach to Cmd+Opt+ArrowUp. macOS-only default;
-    // Linux/Windows stay unbound for users to assign.
-    defaultBindings: {
-      darwin: ['Mod+Alt+Shift+A'],
-      linux: [],
-      win32: []
-    },
-    allowInTerminal: true
-  },
-  {
-    id: 'floatingWorkspace.minimize',
-    title: 'Minimize Floating Workspace Panel',
-    group: 'Global',
-    scope: 'global',
-    searchKeywords: [
-      'shortcut',
-      'floating',
-      'workspace',
-      'panel',
-      'floating workspace',
-      'workspace panel',
-      'minimize',
-      'hide'
-    ],
-    // Why: intentionally unbound on every platform. floatingTerminal.toggle
-    // already owns the default show/hide chord; this action exists only so
-    // users can bind an explicit "hide the focused panel" shortcut in Settings.
-    defaultBindings: {
-      darwin: [],
-      linux: [],
-      win32: []
-    },
-    allowInTerminal: true
   },
   {
     id: 'zoom.in',

@@ -116,7 +116,6 @@ import {
   planTerminalLiveLayoutInsertions
 } from './terminal-live-layout-reconciliation'
 import type { TerminalQuickCommand, TerminalQuickCommandScope } from '../../../../shared/types'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 import { isRuntimeOwnedSshTargetId } from '../../../../shared/execution-host'
 import { getRepoIdFromWorktreeId } from '../../../../shared/worktree-id'
 import {
@@ -850,8 +849,7 @@ export default function TerminalPane({
     })
   }, [openSpacePage, refreshWorkspaceSpace])
 
-  const quickCommandRepoId =
-    worktreeId === FLOATING_TERMINAL_WORKTREE_ID ? null : getRepoIdFromWorktreeId(worktreeId)
+  const quickCommandRepoId = getRepoIdFromWorktreeId(worktreeId)
   const quickCommandRepo = useRepoById(quickCommandRepoId)
   const quickCommandRepoLabel = quickCommandRepo
     ? quickCommandRepo.displayName || quickCommandRepo.path

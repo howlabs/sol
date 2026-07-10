@@ -321,7 +321,6 @@ function prunePackagedRuntimeTypeDeclarations(resourcesDir) {
   pruneMatchingFiles(nodeModulesDir, (filename) => TYPE_DECLARATION_ARTIFACT_RE.test(filename))
 }
 
-
 function prunePackagedZodSources(resourcesDir) {
   // Why: Zod's src tree is TypeScript source only selected by the @zod/source
   // condition; packaged runtime import/require paths resolve to built JS.

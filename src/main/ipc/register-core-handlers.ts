@@ -31,7 +31,6 @@ import { registerNotificationHandlers } from './notifications'
 import { registerNotebookHandlers } from './notebook'
 import { registerOnboardingHandlers } from './onboarding'
 import { registerDeveloperPermissionHandlers } from './developer-permissions'
-import { registerComputerUsePermissionHandlers } from './computer-use-permissions'
 import { setTrustedBrowserRendererWebContentsId, setAgentBrowserBridgeRef } from './browser'
 import { registerSessionHandlers } from './session'
 import { registerSettingsHandlers } from './settings'
@@ -144,7 +143,6 @@ export function registerCoreHandlers(
   // `src/main/observability/`, never from `src/main/telemetry/`. Order is
   // not load-bearing; both register independent ipcMain channels.
   registerDiagnosticsHandlers()
-  registerComputerUsePermissionHandlers()
   registerSettingsHandlers(store, agentAwakeService)
   registerSkillsHandlers(store)
   if (automations) {

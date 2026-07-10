@@ -7,7 +7,6 @@ export const ZH_VALUE_OVERRIDES = {
   iphone: 'iPhone',
   ipad: 'iPad',
   'ios simulator': 'iOS 模拟器',
-  'mobile emulator': '移动端模拟器',
   web: 'Web',
   'Git Bash': 'git bash',
   'Switch to phone mode': '切换到手机模式',

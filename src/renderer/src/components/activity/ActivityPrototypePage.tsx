@@ -54,7 +54,6 @@ import {
   type ActivityTerminalPortalTarget
 } from './activity-terminal-portal'
 import type { Repo, TerminalTab, Worktree } from '../../../../shared/types'
-import { FLOATING_TERMINAL_WORKTREE_ID } from '../../../../shared/constants'
 import {
   AGENT_STATUS_STALE_AFTER_MS,
   type AgentStateHistoryEntry,
@@ -489,8 +488,7 @@ function freshActivityLiveAgentState(
 }
 
 function standaloneActivityWorktree(worktreeId: string): Worktree {
-  const displayName =
-    worktreeId === FLOATING_TERMINAL_WORKTREE_ID ? 'Floating terminal' : 'Standalone terminal'
+  const displayName = 'Standalone terminal'
   return {
     id: worktreeId,
     repoId: STANDALONE_ACTIVITY_WORKTREE_REPO_ID,

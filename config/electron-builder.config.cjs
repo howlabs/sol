@@ -18,13 +18,14 @@ const relayExtraResource = {
   from: 'out/relay',
   to: 'relay'
 }
-// Why: the main bundle, packaged CLI, and SSH paths all execute
-// from package directories where pnpm's symlink farm is absent. Copy the exact
-// runtime dependency closure to Resources/node_modules so bare require() calls
-// do not fall through to a developer checkout's node_modules.
+// Why: the main bundle, packaged CLI, and SSH paths all execute from package
+// directories where pnpm's symlink farm is absent. Copy the exact runtime
+// dependency closure to Resources/node_modules so bare require() calls do not
+// fall through to a developer checkout's node_modules.
 const packagedRuntimeNodeModuleResources = createPackagedRuntimeNodeModuleResources()
 
 const commonExtraResources = [relayExtraResource, ...packagedRuntimeNodeModuleResources]
+
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
   appId: 'com.stablyai.orca',
@@ -83,14 +84,13 @@ module.exports = {
     'out/main/hermes/**',
     'out/main/win32-utils.js',
     'out/main/daemon-entry.js',
-    'out/main/computer-sidecar.js',
     'out/main/parcel-watcher-process-entry.js',
     'out/main/chunks/**',
     'resources/**',
     'node_modules/ws/**',
     'node_modules/tweetnacl/**',
     'node_modules/zod/**',
-    'node_modules/yaml/**',
+    'node_modules/yaml/**'
   ],
   afterPack: async (context) => {
     const resourcesDir =
@@ -151,10 +151,6 @@ module.exports = {
       {
         from: 'node_modules/agent-browser/bin/agent-browser-win32-x64.exe',
         to: 'agent-browser-win32-x64.exe'
-      },
-      {
-        from: 'native/computer-use-windows/runtime.ps1',
-        to: 'computer-use-windows/runtime.ps1'
       }
     ]
   },
@@ -208,10 +204,6 @@ module.exports = {
       {
         from: 'node_modules/agent-browser/bin/agent-browser-darwin-${arch}',
         to: 'agent-browser-darwin-${arch}'
-      },
-      {
-        from: 'native/computer-use-macos/.build/release/Orca Computer Use.app',
-        to: 'Orca Computer Use.app'
       }
     ],
     target: [
@@ -254,10 +246,6 @@ module.exports = {
       {
         from: 'node_modules/agent-browser/bin/agent-browser-linux-${arch}',
         to: 'agent-browser-linux-${arch}'
-      },
-      {
-        from: 'native/computer-use-linux/runtime.py',
-        to: 'computer-use-linux/runtime.py'
       }
     ],
     target: ['AppImage', 'deb'],
@@ -372,7 +360,7 @@ function codesignArgs(identity, targetPath) {
       'runtime',
       '--timestamp',
       '--entitlements',
-      resolve(__dirname, '../resources/build/entitlements.computer-use.mac.plist')
+      resolve(__dirname, '../resources/build/entitlements.mac.plist')
     )
   }
   args.push(targetPath)

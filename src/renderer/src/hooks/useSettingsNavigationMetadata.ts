@@ -17,10 +17,8 @@ import {
   Keyboard,
   ListChecks,
   Lock,
-  MousePointerClick,
   Network,
   Palette,
-  PanelsTopLeft,
   Play,
   Server,
   ShieldCheck,
@@ -43,7 +41,6 @@ import { getGitPaneSearchEntries } from '@/components/settings/git-search'
 import { getGitProviderApiBudgetSearchEntries } from '@/components/settings/git-provider-api-budget-search'
 import { getCommitMessageAiPaneSearchEntries } from '@/components/settings/commit-message-ai-search'
 import { getTasksPaneSearchEntries } from '@/components/settings/tasks-search'
-import { getFloatingWorkspaceSearchEntries } from '@/components/settings/floating-workspace-search'
 import { getAppearancePaneSearchEntries } from '@/components/settings/appearance-search'
 import { getInputPaneSearchEntries } from '@/components/settings/input-search'
 import { getTerminalPaneSearchEntries } from '@/components/settings/terminal-search'
@@ -56,7 +53,6 @@ import {
   getWebRuntimeEnvironmentsSearchEntry
 } from '@/components/settings/runtime-environments-search'
 import { getSshPaneSearchEntries } from '@/components/settings/ssh-search'
-import { getComputerUsePaneSearchEntries } from '@/components/settings/computer-use-search'
 import { getDeveloperPermissionsPaneSearchEntries } from '@/components/settings/developer-permissions-search'
 import { getPrivacyPaneSearchEntries } from '@/components/settings/privacy-search'
 import { getAdvancedPaneSearchEntries } from '@/components/settings/advanced-search'
@@ -165,21 +161,6 @@ export function buildSettingsNavigationMetadata({
       searchEntries: getOrchestrationPaneSearchEntries(),
       group: 'capabilities'
     },
-    ...(showDesktopOnlySettings
-      ? [
-          {
-            id: 'computer-use',
-            title: translate('auto.hooks.useSettingsNavigationMetadata.b35e92364b', 'Computer Use'),
-            description: translate(
-              'auto.hooks.useSettingsNavigationMetadata.0059bd17f3',
-              'Enable agents to control any app on your computer.'
-            ),
-            icon: MousePointerClick,
-            searchEntries: getComputerUsePaneSearchEntries(),
-            group: 'capabilities'
-          }
-        ]
-      : []),
     {
       id: 'general',
       title: translate('auto.hooks.useSettingsNavigationMetadata.13241992bd', 'General'),
@@ -270,17 +251,6 @@ export function buildSettingsNavigationMetadata({
           }
         ]
       : []),
-    {
-      id: 'floating-workspace',
-      title: translate('auto.hooks.useSettingsNavigationMetadata.65b19f5bde', 'Floating Workspace'),
-      description: translate(
-        'auto.hooks.useSettingsNavigationMetadata.2d0659f6f0',
-        'Global terminal, browser, and markdown tabs.'
-      ),
-      icon: PanelsTopLeft,
-      searchEntries: getFloatingWorkspaceSearchEntries(),
-      group: 'workflows'
-    },
     {
       id: 'appearance',
       title: translate('auto.hooks.useSettingsNavigationMetadata.93d88d20bf', 'Appearance'),

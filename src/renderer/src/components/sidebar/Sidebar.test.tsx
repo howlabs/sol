@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 import { getDefaultSettings } from '../../../../shared/constants'
@@ -44,43 +44,11 @@ vi.mock('./SidebarToolbar', () => ({
   default: () => <div data-testid="sidebar-toolbar" />
 }))
 
-vi.mock('./WorkspaceKanbanDrawer', () => ({
-  default: ({
-    leftSidebarStyle,
-    statusBarVisible
-  }: {
-    leftSidebarStyle?: CSSProperties
-    statusBarVisible: boolean
-  }) => (
-    <div
-      data-testid="workspace-kanban-drawer"
-      data-status-bar-visible={String(statusBarVisible)}
-      style={leftSidebarStyle}
-    />
-  )
-}))
-
 vi.mock('./useSidebarProjectDrop', () => ({
   useSidebarProjectDrop: () => ({
     nativeDropTarget: undefined,
     dropHandlers: {},
     affordance: { visible: false }
-  })
-}))
-
-vi.mock('./useWorkspaceBoardPanel', () => ({
-  useWorkspaceBoardPanel: () => ({
-    workspaceBoardOpen: false,
-    workspaceBoardRenderedOpen: true,
-    workspaceBoardDragPreviewOpen: false,
-    workspaceBoardMenuOpen: false,
-    toggleWorkspaceBoard: vi.fn(),
-    handleWorkspaceBoardOpenChange: vi.fn(),
-    setWorkspaceBoardMenuOpen: vi.fn(),
-    closeWorkspaceBoard: vi.fn(),
-    previewWorkspaceBoardFromDrag: vi.fn(),
-    solidifyWorkspaceBoardFromDrag: vi.fn(),
-    cancelWorkspaceBoardDragPreview: vi.fn()
   })
 }))
 
@@ -120,16 +88,6 @@ describe('Sidebar', () => {
 
     expect(markup).toContain('--worktree-sidebar:#101820')
     expect(markup).toContain('--worktree-sidebar-foreground:#f0f4f8')
-    expect(markup).toContain('data-testid="workspace-kanban-drawer"')
-    expect(markup.match(/--worktree-sidebar:#101820/g)).toHaveLength(2)
-  })
-
-  it('passes status bar visibility into the workspace board drawer', () => {
-    setSidebarState(getDefaultSettings('/tmp'), false)
-
-    const markup = renderSidebar()
-
-    expect(markup).toContain('data-testid="workspace-kanban-drawer"')
-    expect(markup).toContain('data-status-bar-visible="false"')
+    expect(markup.match(/--worktree-sidebar:#101820/g)).toHaveLength(1)
   })
 })

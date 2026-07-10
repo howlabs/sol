@@ -13,7 +13,7 @@ import type {
   WorkspaceSessionState
 } from '../../../../shared/types'
 import { GRAB_BUDGET, type BrowserPageAnnotation } from '../../../../shared/browser-grab-types'
-import { FLOATING_TERMINAL_WORKTREE_ID, ORCA_BROWSER_BLANK_URL } from '../../../../shared/constants'
+import { ORCA_BROWSER_BLANK_URL } from '../../../../shared/constants'
 import { folderWorkspaceKey } from '../../../../shared/workspace-scope'
 import { redactKagiSessionToken } from '../../../../shared/browser-url'
 import {
@@ -548,9 +548,8 @@ export const createBrowserSlice: StateCreator<AppState, [], [], BrowserSlice> = 
 
       const shouldActivate = options?.activate ?? true
       const shouldUpdateGlobalActiveSurface = shouldActivate && s.activeWorktreeId === worktreeId
-      const shouldFocusFloatingTab = shouldActivate && worktreeId === FLOATING_TERMINAL_WORKTREE_ID
       const shouldFocusAddressBar =
-        (shouldUpdateGlobalActiveSurface || shouldFocusFloatingTab) &&
+        shouldUpdateGlobalActiveSurface &&
         (options?.focusAddressBar ??
           (page.url === 'about:blank' || page.url === ORCA_BROWSER_BLANK_URL))
 
@@ -1519,7 +1518,6 @@ export const createBrowserSlice: StateCreator<AppState, [], [], BrowserSlice> = 
         .flat()
         .map((worktree) => worktree.id)
     )
-    validWorktreeIdsForCleanup.add(FLOATING_TERMINAL_WORKTREE_ID)
     for (const workspace of currentState.folderWorkspaces) {
       validWorktreeIdsForCleanup.add(folderWorkspaceKey(workspace.id))
     }
@@ -1552,7 +1550,6 @@ export const createBrowserSlice: StateCreator<AppState, [], [], BrowserSlice> = 
           .flat()
           .map((worktree) => worktree.id)
       )
-      validWorktreeIds.add(FLOATING_TERMINAL_WORKTREE_ID)
       for (const workspace of s.folderWorkspaces) {
         validWorktreeIds.add(folderWorkspaceKey(workspace.id))
       }

@@ -92,9 +92,6 @@ function createSettings(overrides: Partial<GlobalSettings> = {}): GlobalSettings
     sourceControlCompareAgainstUpstream: false,
     showTitlebarAppName: true,
     showTasksButton: true,
-    floatingTerminalEnabled: false,
-    floatingTerminalCwd: '~',
-    floatingTerminalTriggerLocation: 'floating-button',
     diffDefaultView: 'inline',
     combinedDiffFileTreeVisibleByDefault: false,
     notifications: {
