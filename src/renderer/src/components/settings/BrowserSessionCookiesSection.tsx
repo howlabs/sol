@@ -1,7 +1,6 @@
 import { Plus } from '@/lib/icons'
 import type { BrowserSessionProfile } from '../../../../shared/types'
 import { Button } from '../ui/button'
-import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { SearchableSetting } from './SearchableSetting'
 import { BrowserProfileRow, type BrowserProfileRowProps } from './BrowserProfileRow'
@@ -61,23 +60,23 @@ export function BrowserSessionCookiesSection({
         'arc',
         'profile'
       ]}
-      className="space-y-3 py-2"
+      className="space-y-1.5"
     >
-      <div className="flex items-center justify-between gap-3">
-        <div className="space-y-0.5">
-          <Label>
+      <div className="flex items-start justify-between gap-3 py-1.5">
+        <div className="min-w-0 flex-1 space-y-0.5">
+          <p className="select-text text-xs font-medium leading-none">
             {translate('auto.components.settings.BrowserPane.2d66a6efb5', 'Session & Cookies')}
-          </Label>
-          <p className="text-xs text-muted-foreground">
+          </p>
+          <p className="select-text text-[11px] leading-snug text-muted-foreground">
             {translate(
               'auto.components.settings.BrowserPane.cd47bc9622',
               'Select a default profile for new browser tabs. Import cookies and switch profiles per-tab via the'
-            )}
+            )}{' '}
             <strong>···</strong>{' '}
             {translate('auto.components.settings.BrowserPane.e4aaf8051b', 'toolbar menu.')}
           </p>
         </div>
-        <Button variant="outline" size="xs" onClick={onAddProfile} className="shrink-0 gap-1.5">
+        <Button variant="outline" size="sm" onClick={onAddProfile} className="h-7 shrink-0 gap-1.5">
           <Plus className="size-3" />
           {translate('auto.components.settings.BrowserPane.6f2584b39e', 'Add Profile')}
         </Button>
@@ -86,9 +85,9 @@ export function BrowserSessionCookiesSection({
       {hostOptions.length > 1 ? (
         <div className="flex items-center justify-between gap-3 rounded-md border border-border/70 px-3 py-2">
           <div className="min-w-0 space-y-0.5">
-            <Label className="text-xs">
+            <p className="select-text text-xs font-medium leading-none">
               {translate('auto.components.settings.BrowserPane.5e19a692f7', 'Host')}
-            </Label>
+            </p>
             <p className="truncate text-[11px] text-muted-foreground">
               {selectedHost?.detail ??
                 translate(
