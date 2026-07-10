@@ -1,5 +1,5 @@
 import React from 'react'
-import { Pencil, Pause, Play, Trash2 } from '@/lib/icons'
+import { CalendarClock, Pencil, Pause, Play, Trash2 } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -7,7 +7,7 @@ import { getAgentCatalog, AgentIcon } from '@/lib/agent-catalog'
 import type { Automation, AutomationRun } from '../../../../shared/automations-types'
 import { formatAutomationSchedule } from '../../../../shared/automation-schedules'
 import { formatAutomationPrecheckTimeout } from '../../../../shared/automation-precheck'
-import { formatAutomationDateTimeWithRelative } from './automation-page-parts'
+import { formatAutomationDateTimeWithRelative, Metric } from './automation-page-parts'
 import {
   formatAutomationCost,
   formatAutomationTokens,
@@ -16,7 +16,6 @@ import {
 import type { AutomationTargetAvailability } from './automation-target-availability'
 import { getAutomationSourceDisplay } from './automation-source-display'
 import { translate } from '@/i18n/i18n'
-import { cn } from '@/lib/utils'
 
 type AutomationDetailProps = {
   automation: Automation | null
@@ -31,27 +30,6 @@ type AutomationDetailProps = {
   onEdit: (automation: Automation) => void
   onToggle: (automation: Automation) => void
   onDelete: (automation: Automation) => void
-}
-
-function DetailMetric({
-  label,
-  value,
-  title
-}: {
-  label: string
-  value: string
-  title?: string
-}): React.JSX.Element {
-  return (
-    <div className="min-w-0 space-y-1">
-      <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
-        {label}
-      </div>
-      <div className="break-words text-[13px] font-medium text-foreground" title={title}>
-        {value}
-      </div>
-    </div>
-  )
 }
 
 function formatGrace(minutes: number): string {
@@ -81,8 +59,8 @@ function ToolbarIconButton({
       <TooltipTrigger asChild>
         <Button
           type="button"
-          variant="ghost"
-          size="icon-sm"
+          variant="outline"
+          size="icon"
           aria-label={label}
           onClick={onClick}
           className={className}
@@ -97,10 +75,6 @@ function ToolbarIconButton({
   )
 }
 
-/**
- * Automation detail surface — flat document metrics, primary Run Now,
- * no stacked card chrome.
- */
 export function AutomationDetail({
   automation,
   runs,
@@ -117,14 +91,17 @@ export function AutomationDetail({
 }: AutomationDetailProps): React.JSX.Element {
   if (!automation) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 px-8 text-center">
-        <p className="text-sm font-medium text-foreground">
+      <div className="flex h-full flex-col items-center justify-center gap-3 px-10 text-center">
+        <div className="flex size-14 items-center justify-center rounded-2xl border border-border bg-muted/40 text-muted-foreground">
+          <CalendarClock className="size-7" />
+        </div>
+        <p className="text-lg font-semibold tracking-tight text-foreground">
           {translate(
             'auto.components.automations.AutomationDetail.emptyTitle',
             'No automation selected'
           )}
         </p>
-        <p className="max-w-sm text-[13px] leading-relaxed text-muted-foreground">
+        <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
           {translate(
             'auto.components.automations.AutomationDetail.221916d93c',
             'Create an automation to start scheduling agent work.'
@@ -133,6 +110,7 @@ export function AutomationDetail({
       </div>
     )
   }
+
   const usageSummary = summarizeAutomationRunUsage(runs)
   const usageCoverage =
     usageSummary.knownRuns > 0
@@ -150,38 +128,45 @@ export function AutomationDetail({
   const runNowDisabled = runNowAvailability?.canRunNow === false
 
   return (
-    <div className="flex w-full flex-col gap-6">
-      <div className="flex items-start justify-between gap-4 border-b border-border/50 pb-5">
-        <div className="min-w-0 space-y-1.5">
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <h2 className="truncate text-lg font-semibold tracking-tight text-foreground">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
+      {/* Hero identity — large type, actions as a clear toolbar */}
+      <div className="flex flex-col gap-5 border-b border-border pb-8 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 space-y-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               {automation.name}
             </h2>
             <Badge
-              variant={automation.enabled ? 'secondary' : 'outline'}
-              className="rounded-full text-[10px] uppercase tracking-[0.05em]"
+              variant={automation.enabled ? 'default' : 'outline'}
+              className="h-6 rounded-md px-2 text-[11px] font-semibold uppercase tracking-wide"
             >
               {automation.enabled
                 ? translate('auto.components.automations.AutomationDetail.eaa02014f8', 'Enabled')
                 : translate('auto.components.automations.AutomationDetail.b09b2384fd', 'Paused')}
             </Badge>
           </div>
-          <p className="truncate text-[13px] text-muted-foreground">
-            {projectName} / {workspaceName}
+          <p className="text-sm text-muted-foreground">
+            <span className="text-foreground/80">{projectName}</span>
+            <span className="mx-1.5 text-border">/</span>
+            <span>{workspaceName}</span>
           </p>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <AgentIcon agent={automation.agentId} size={18} />
+            <span className="font-medium text-foreground">{agentLabel}</span>
+          </div>
         </div>
-        <div className="flex shrink-0 items-center gap-1.5">
+
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
               <span>
                 <Button
                   variant="default"
-                  size="sm"
-                  className="h-8 gap-1.5 px-3"
+                  className="h-10 gap-2 px-5 text-sm"
                   onClick={() => onRunNow(automation)}
                   disabled={runNowDisabled}
                 >
-                  <Play className="size-3.5" />
+                  <Play className="size-4" />
                   {translate('auto.components.automations.AutomationDetail.2fb1605beb', 'Run Now')}
                 </Button>
               </span>
@@ -223,7 +208,7 @@ export function AutomationDetail({
               'Delete automation'
             )}
             onClick={() => onDelete(automation)}
-            className="text-destructive hover:text-destructive"
+            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="size-4" />
           </ToolbarIconButton>
@@ -231,7 +216,7 @@ export function AutomationDetail({
       </div>
 
       {automation.executionTargetType === 'ssh' ? (
-        <div className="border border-border/50 bg-muted/30 px-4 py-3 text-[13px] leading-relaxed text-muted-foreground">
+        <div className="rounded-lg border border-border bg-muted/40 px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
           {translate(
             'auto.components.automations.AutomationDetail.dbef8dc110',
             'This SSH automation runs only while Orca can reach the SSH host. If reconnect needs interactive credentials or the host is unavailable, the run is recorded as skipped.'
@@ -240,121 +225,82 @@ export function AutomationDetail({
       ) : null}
 
       {runNowAvailability?.canRunNow === false ? (
-        <div className="border border-border/50 bg-muted/30 px-4 py-3 text-[13px] leading-relaxed text-muted-foreground">
+        <div className="rounded-lg border border-border bg-muted/40 px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
           {runNowAvailability.message}
         </div>
       ) : null}
 
-      <section className="space-y-3">
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-          {translate('auto.components.automations.AutomationDetail.scheduleSection', 'Schedule')}
-        </h3>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-x-6 gap-y-4 border-t border-border/50 pt-4">
-          <DetailMetric
-            label={translate('auto.components.automations.AutomationDetail.18763ded26', 'Schedule')}
-            value={formatAutomationSchedule(automation.rrule)}
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <Metric
+          label={translate('auto.components.automations.AutomationDetail.18763ded26', 'Schedule')}
+          value={formatAutomationSchedule(automation.rrule)}
+        />
+        <Metric
+          label={translate('auto.components.automations.AutomationDetail.578ff46987', 'Next run')}
+          value={
+            automation.enabled
+              ? formatAutomationDateTimeWithRelative(automation.nextRunAt, now)
+              : 'Paused'
+          }
+        />
+        <Metric
+          label={
+            automation.workspaceMode === 'new_per_run'
+              ? translate('auto.components.automations.AutomationDetail.2f8baf5360', 'Create from')
+              : translate('auto.components.automations.AutomationDetail.5405a09b1f', 'Run location')
+          }
+          value={runLocationLabel}
+        />
+        <Metric
+          label={translate('auto.components.automations.AutomationDetail.a7c312430d', 'Last run')}
+          value={formatAutomationDateTimeWithRelative(automation.lastRunAt, now)}
+        />
+        <Metric
+          label={translate('auto.components.automations.AutomationDetail.15ea446b93', 'Session')}
+          value={automation.reuseSession ? 'Reuse live session' : 'Fresh each run'}
+        />
+        <Metric
+          label={translate('auto.components.automations.AutomationDetail.620b22145e', 'Grace')}
+          value={formatGrace(automation.missedRunGraceMinutes)}
+        />
+        <Metric
+          label={translate('auto.components.automations.AutomationDetail.e353ab9516', 'Precheck')}
+          value={
+            automation.precheck
+              ? `Enabled, ${formatAutomationPrecheckTimeout(automation.precheck.timeoutSeconds)}`
+              : 'None'
+          }
+        />
+        {sourceDisplay ? (
+          <Metric
+            label={translate('auto.components.automations.AutomationDetail.29baf8f4c2', 'Source')}
+            value={sourceDisplay.label}
           />
-          <DetailMetric
-            label={translate('auto.components.automations.AutomationDetail.578ff46987', 'Next run')}
-            value={
-              automation.enabled
-                ? formatAutomationDateTimeWithRelative(automation.nextRunAt, now)
-                : 'Paused'
-            }
-          />
-          <DetailMetric
-            label={
-              automation.workspaceMode === 'new_per_run'
-                ? translate(
-                    'auto.components.automations.AutomationDetail.2f8baf5360',
-                    'Create from'
-                  )
-                : translate(
-                    'auto.components.automations.AutomationDetail.5405a09b1f',
-                    'Run location'
-                  )
-            }
-            value={runLocationLabel}
-          />
-          <DetailMetric
-            label={translate('auto.components.automations.AutomationDetail.15ea446b93', 'Session')}
-            value={automation.reuseSession ? 'Reuse live session' : 'Fresh each run'}
-          />
-          {sourceDisplay ? (
-            <DetailMetric
-              label={translate('auto.components.automations.AutomationDetail.29baf8f4c2', 'Source')}
-              value={sourceDisplay.label}
-              title={sourceDisplay.title}
-            />
-          ) : null}
-          <DetailMetric
-            label={translate('auto.components.automations.AutomationDetail.620b22145e', 'Grace')}
-            value={formatGrace(automation.missedRunGraceMinutes)}
-          />
-          <DetailMetric
-            label={translate('auto.components.automations.AutomationDetail.e353ab9516', 'Precheck')}
-            value={
-              automation.precheck
-                ? `Enabled, ${formatAutomationPrecheckTimeout(automation.precheck.timeoutSeconds)}`
-                : 'None'
-            }
-          />
-          <div className="min-w-0 space-y-1">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
-              {translate('auto.components.automations.AutomationDetail.2df8970cd5', 'Agent')}
-            </div>
-            <div className="flex min-w-0 items-center gap-2 text-[13px] font-medium">
-              <AgentIcon agent={automation.agentId} size={16} />
-              <span className="truncate">{agentLabel}</span>
-            </div>
-          </div>
-        </div>
-      </section>
+        ) : null}
+        <Metric
+          label={translate('auto.components.automations.AutomationDetail.401f40ae79', 'Est. spend')}
+          value={formatAutomationCost(usageSummary.estimatedCostUsd)}
+        />
+        <Metric
+          label={translate('auto.components.automations.AutomationDetail.449fc83bf7', 'Tokens')}
+          value={formatAutomationTokens(usageSummary.totalTokens)}
+        />
+        <Metric
+          label={translate(
+            'auto.components.automations.AutomationDetail.a1d52c2189',
+            'Usage coverage'
+          )}
+          value={usageCoverage}
+        />
+      </div>
 
-      <section className="space-y-3">
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
-          {translate('auto.components.automations.AutomationDetail.usageSection', 'Usage')}
-        </h3>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-x-6 gap-y-4 border-t border-border/50 pt-4">
-          <DetailMetric
-            label={translate('auto.components.automations.AutomationDetail.a7c312430d', 'Last run')}
-            value={formatAutomationDateTimeWithRelative(automation.lastRunAt, now)}
-          />
-          <DetailMetric
-            label={translate(
-              'auto.components.automations.AutomationDetail.401f40ae79',
-              'Est. spend'
-            )}
-            value={formatAutomationCost(usageSummary.estimatedCostUsd)}
-          />
-          <DetailMetric
-            label={translate('auto.components.automations.AutomationDetail.449fc83bf7', 'Tokens')}
-            value={formatAutomationTokens(usageSummary.totalTokens)}
-          />
-          <DetailMetric
-            label={translate(
-              'auto.components.automations.AutomationDetail.a1d52c2189',
-              'Usage coverage'
-            )}
-            value={usageCoverage}
-          />
-        </div>
-      </section>
-
-      <section className="space-y-3">
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+      <section className="rounded-xl border border-border bg-muted/25 p-5">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
           {translate('auto.components.automations.AutomationDetail.007c8ad874', 'Prompt')}
         </h3>
-        <div className="border-t border-border/50 pt-4">
-          <p
-            className={cn(
-              'whitespace-pre-wrap text-[13px] leading-relaxed text-foreground',
-              'line-clamp-6'
-            )}
-          >
-            {automation.prompt}
-          </p>
-        </div>
+        <p className="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed text-foreground">
+          {automation.prompt}
+        </p>
       </section>
     </div>
   )

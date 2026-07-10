@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CalendarClock,
   Check,
-  Clock,
   Eye,
   Pause,
   Pencil,
@@ -34,12 +33,10 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAppStore } from '@/store'
 import { callRuntimeRpc } from '@/runtime/runtime-rpc-client'
 import { getLocalPreflightContext, localPreflightContextKey } from '@/lib/local-preflight-context'
 import { cn } from '@/lib/utils'
-import RepoBadgeLabel from '@/components/repo/RepoBadgeLabel'
 import { getAgentCatalog } from '@/lib/agent-catalog'
 import { useRepoMap, useWorktreeMap } from '@/store/selectors'
 import { activateAndRevealWorktree } from '@/lib/worktree-activation'
@@ -80,11 +77,7 @@ import {
   getAutomationRunStatusLabel,
   getAutomationRunStatusVariant
 } from './automation-page-parts'
-import {
-  formatAutomationCost,
-  formatAutomationTokens,
-  summarizeAutomationRunUsage
-} from './automation-usage-model'
+
 import {
   canRerunAutomationRun,
   getAutomationRerunPendingRemainingMs,
@@ -265,10 +258,6 @@ function buildHermesCronSchedule(draft: AutomationDraft): string {
     minute,
     dayOfWeek: Number(draft.dayOfWeek)
   })
-}
-
-function getAgentLabel(agentId: string): string {
-  return getAgentCatalog().find((agent) => agent.id === agentId)?.label ?? agentId
 }
 
 function getExternalAutomationKey(
@@ -2112,78 +2101,74 @@ export default function AutomationsPage(): React.JSX.Element {
     return () => window.removeEventListener('keydown', onKeyDown, { capture: true })
   }, [closeAutomationsPage, createOpen, deleteTarget, externalDeleteTarget])
 
+  const automationCount = automations.length + externalAutomationEntries.length
+  const pausedCount =
+    automations.filter((entry) => !entry.enabled).length +
+    externalAutomationEntries.filter((entry) => entry.kind === 'job' && !entry.job.enabled).length
+
   return (
     <main className="relative flex h-full min-h-0 flex-col bg-background text-foreground">
-      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-border/50 px-5 py-3 md:px-8">
-        <div className="flex min-w-0 items-center gap-3">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="size-8 shrink-0"
-                onClick={closeAutomationsPage}
-                aria-label={translate(
-                  'auto.components.automations.AutomationsPage.67c7ff795b',
-                  'Close automations'
-                )}
-              >
-                <X className="size-4" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={6}>
+      {/* Tall command header — deliberately larger than app chrome bars */}
+      <header className="shrink-0 border-b border-border bg-muted/45 px-5 py-5 md:px-10 md:py-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0 space-y-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="-ml-2 h-8 gap-1.5 text-muted-foreground hover:text-foreground"
+              onClick={closeAutomationsPage}
+            >
+              <X className="size-3.5" />
               {translate('auto.components.automations.AutomationsPage.0329f9bef1', 'Close · Esc')}
-            </TooltipContent>
-          </Tooltip>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <CalendarClock className="size-4 shrink-0 text-muted-foreground" />
-              <h1 className="text-base font-semibold tracking-tight">
+            </Button>
+            <div className="space-y-1.5">
+              <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
                 {translate('auto.components.automations.AutomationsPage.77c2778945', 'Automations')}
               </h1>
+              <p className="text-sm text-muted-foreground">
+                {automationCount === 0
+                  ? translate(
+                      'auto.components.automations.AutomationsPage.pageSubtitle',
+                      'Schedule agents to run on a cadence.'
+                    )
+                  : translate(
+                      'auto.components.automations.AutomationsPage.pageCountSummary',
+                      '{{count}} scheduled · {{paused}} paused',
+                      {
+                        count: String(automationCount),
+                        paused: String(pausedCount)
+                      }
+                    )}
+              </p>
             </div>
-            <p className="mt-0.5 text-[12px] leading-snug text-muted-foreground">
-              {translate(
-                'auto.components.automations.AutomationsPage.pageSubtitle',
-                'Schedule agents to run on a cadence.'
-              )}
-            </p>
           </div>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon-sm"
-                aria-label={translate(
-                  'auto.components.automations.AutomationsPage.19a6e30eae',
-                  'Refresh automations'
-                )}
-                onClick={refresh}
-                disabled={isLoading}
-                className="size-8 shadow-none"
-              >
-                <RefreshCw className={cn('size-4', isLoading && 'animate-spin')} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={6}>
-              {translate(
+          <div className="flex shrink-0 items-center gap-2">
+            <Button
+              variant="outline"
+              className="h-10 gap-2 px-4 shadow-none"
+              aria-label={translate(
                 'auto.components.automations.AutomationsPage.19a6e30eae',
                 'Refresh automations'
               )}
-            </TooltipContent>
-          </Tooltip>
-          <Button
-            variant="default"
-            size="sm"
-            className="h-8 gap-1.5 px-3"
-            onClick={() => openCreateDialog()}
-            data-contextual-tour-target="automations-create"
-          >
-            <Plus className="size-3.5" />
-            {translate('auto.components.automations.AutomationsPage.8d1afa8269', 'Add automation')}
-          </Button>
+              onClick={refresh}
+              disabled={isLoading}
+            >
+              <RefreshCw className={cn('size-4', isLoading && 'animate-spin')} />
+              {translate('auto.components.automations.AutomationsPage.refreshLabel', 'Refresh')}
+            </Button>
+            <Button
+              variant="default"
+              className="h-10 gap-2 px-5 text-sm"
+              onClick={() => openCreateDialog()}
+              data-contextual-tour-target="automations-create"
+            >
+              <Plus className="size-4" />
+              {translate(
+                'auto.components.automations.AutomationsPage.8d1afa8269',
+                'Add automation'
+              )}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -2370,25 +2355,23 @@ export default function AutomationsPage(): React.JSX.Element {
         </DialogContent>
       </Dialog>
 
-      <div className="grid min-h-0 flex-1 grid-cols-[minmax(300px,22rem)_1fr] overflow-hidden">
+      <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden md:grid-cols-[minmax(18rem,26rem)_1fr]">
         <section
-          className="flex min-h-0 flex-col border-r border-border/50 bg-background"
+          className="flex min-h-0 flex-col border-r border-border bg-muted/50"
           data-contextual-tour-target="automations-list"
         >
+          <div className="border-b border-border px-4 py-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+              {translate('auto.components.automations.AutomationsPage.listHeading', 'Library')}
+            </p>
+            <p className="mt-0.5 text-sm font-medium text-foreground">
+              {translate(
+                'auto.components.automations.AutomationsPage.listSubheading',
+                'Pick one to inspect or run'
+              )}
+            </p>
+          </div>
           <div className="scrollbar-sleek min-h-0 flex-1 overflow-auto">
-            {automations.length + externalAutomationEntries.length > 0 ? (
-              <div className="grid grid-cols-[1fr_auto] gap-2 border-b border-border/50 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
-                <span>
-                  {translate(
-                    'auto.components.automations.AutomationsPage.761a35834d',
-                    'Automation'
-                  )}
-                </span>
-                <span>
-                  {translate('auto.components.automations.AutomationsPage.587a4b205c', 'Next')}
-                </span>
-              </div>
-            ) : null}
             {automations.map((automation) => {
               const automationRepo = repoMap.get(getAutomationRunRepoId(automation))
               const automationWorktree = automation.workspaceId
@@ -2404,21 +2387,6 @@ export default function AutomationsPage(): React.JSX.Element {
                 automationHostTarget,
                 sourceHostAvailability: automationSourceHostAvailabilityById.get(automation.id)
               })
-              const workspaceLabel =
-                automation.workspaceMode === 'new_per_run'
-                  ? `Create from ${automation.baseBranch ?? automationRepo?.worktreeBaseRef ?? 'project default'}`
-                  : (automationWorktree?.displayName ?? 'Missing workspace')
-              const usageSummary = summarizeAutomationRunUsage(
-                runs.filter((run) => run.automationId === automation.id)
-              )
-              const usageText =
-                usageSummary.knownRuns > 0
-                  ? `${formatAutomationCost(
-                      usageSummary.estimatedCostUsd
-                    )} est. · ${formatAutomationTokens(usageSummary.totalTokens)} tokens`
-                  : usageSummary.unavailableRuns > 0
-                    ? 'Usage unavailable'
-                    : 'No run usage yet'
               const nextRunLabel = automation.enabled
                 ? formatAutomationDateTimeWithRelative(automation.nextRunAt, relativeNow)
                 : 'Paused'
@@ -2436,48 +2404,30 @@ export default function AutomationsPage(): React.JSX.Element {
                         selectedExternal === null && selected?.id === automation.id
                       )}
                     >
-                      <span className="min-w-0">
-                        <span className="flex min-w-0 items-center gap-2">
-                          <span
-                            className={cn(
-                              'size-2 shrink-0 rounded-full',
-                              automation.enabled ? 'bg-foreground' : 'bg-muted-foreground/40'
-                            )}
-                          />
-                          <span className="truncate text-[13px] font-medium">
+                      <span className="flex min-w-0 items-start gap-3">
+                        <span
+                          className={cn(
+                            'mt-1.5 size-2.5 shrink-0 rounded-full',
+                            automation.enabled ? 'bg-foreground' : 'bg-muted-foreground/35'
+                          )}
+                        />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[15px] font-semibold tracking-tight">
                             {automation.name}
                           </span>
-                        </span>
-                        <span className="mt-1 block truncate text-[12px] text-muted-foreground">
-                          {scheduleLabel}
-                        </span>
-                        <span className="mt-1 flex min-w-0 items-center gap-1.5 text-[12px] text-muted-foreground">
-                          {automationRepo ? (
-                            <RepoBadgeLabel
-                              name={automationRepo.displayName}
-                              color={automationRepo.badgeColor}
-                              badgeClassName="size-1.5"
-                            />
-                          ) : (
-                            <span>
-                              {translate(
+                          <span className="mt-1 block truncate text-[12px] text-muted-foreground">
+                            {scheduleLabel}
+                            <span className="mx-1.5 text-border">·</span>
+                            {automationRepo?.displayName ??
+                              translate(
                                 'auto.components.automations.AutomationsPage.13118faadf',
                                 'Unknown project'
                               )}
-                            </span>
-                          )}
-                          <span className="shrink-0">/</span>
-                          <span className="truncate">{workspaceLabel}</span>
-                          <span className="shrink-0">·</span>
-                          <span className="truncate">{getAgentLabel(automation.agentId)}</span>
+                          </span>
+                          <span className="mt-1.5 block truncate text-[13px] font-medium text-foreground/80">
+                            {nextRunLabel}
+                          </span>
                         </span>
-                        <span className="mt-1 block truncate text-[11px] text-muted-foreground/90">
-                          {usageText}
-                        </span>
-                      </span>
-                      <span className="flex max-w-28 flex-col items-end gap-1 text-right text-[12px] text-muted-foreground">
-                        <Clock className="size-3.5 opacity-70" />
-                        <span className="line-clamp-2">{nextRunLabel}</span>
                       </span>
                     </button>
                   </ContextMenuTrigger>
@@ -2561,31 +2511,19 @@ export default function AutomationsPage(): React.JSX.Element {
                     }}
                     className={automationListItemClass(selectedExternal?.key === entry.key)}
                   >
-                    <span className="min-w-0">
-                      <span className="flex min-w-0 items-center gap-2">
-                        <span className="size-2 shrink-0 rounded-full bg-muted-foreground/40" />
-                        <span className="truncate text-[13px] font-medium">
+                    <span className="flex min-w-0 items-start gap-3">
+                      <span className="mt-1.5 size-2.5 shrink-0 rounded-full bg-muted-foreground/35" />
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[15px] font-semibold tracking-tight">
                           {entry.manager.targetLabel}
                         </span>
-                      </span>
-                      <span className="mt-1 flex min-w-0 items-center gap-1.5 text-[12px] text-muted-foreground">
-                        <span>
-                          {providerLabel}{' '}
-                          {translate(
-                            'auto.components.automations.AutomationsPage.82eb6cb933',
-                            'source'
-                          )}
+                        <span className="mt-1 block truncate text-[12px] text-muted-foreground">
+                          {providerLabel} · {targetKindLabel}
                         </span>
-                        <span className="shrink-0">/</span>
-                        <span className="truncate">{targetKindLabel}</span>
+                        <span className="mt-1.5 block truncate text-[13px] font-medium text-foreground/80">
+                          {sourceAvailability.statusLabel}
+                        </span>
                       </span>
-                      <span className="mt-1 block truncate text-[11px] text-muted-foreground/90">
-                        {sourceAvailability.summary}
-                      </span>
-                    </span>
-                    <span className="flex max-w-28 flex-col items-end gap-1 text-right text-[12px] text-muted-foreground">
-                      <Clock className="size-3.5 opacity-70" />
-                      <span className="line-clamp-2">{sourceAvailability.statusLabel}</span>
                     </span>
                   </button>
                 )
@@ -2617,42 +2555,26 @@ export default function AutomationsPage(): React.JSX.Element {
                       }}
                       className={automationListItemClass(selectedExternal?.key === entry.key)}
                     >
-                      <span className="min-w-0">
-                        <span className="flex min-w-0 items-center gap-2">
-                          <span
-                            className={cn(
-                              'size-2 shrink-0 rounded-full',
-                              entry.job.enabled ? 'bg-foreground' : 'bg-muted-foreground/40'
-                            )}
-                          />
-                          <span className="truncate text-[13px] font-medium">{entry.job.name}</span>
-                        </span>
-                        <span className="mt-1 block truncate text-[12px] text-muted-foreground">
-                          {scheduleDisplay.label}
-                        </span>
-                        <span className="mt-1 flex min-w-0 items-center gap-2 text-[12px] text-muted-foreground">
-                          <span className="truncate">
-                            {providerLabel} / {entry.manager.targetLabel}
+                      <span className="flex min-w-0 items-start gap-3">
+                        <span
+                          className={cn(
+                            'mt-1.5 size-2.5 shrink-0 rounded-full',
+                            entry.job.enabled ? 'bg-foreground' : 'bg-muted-foreground/35'
+                          )}
+                        />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[15px] font-semibold tracking-tight">
+                            {entry.job.name}
                           </span>
-                          <span className="shrink-0">·</span>
-                          <span className="truncate">
-                            {entry.manager.provider === 'hermes'
-                              ? `${entry.job.runCount} ${entry.job.runCount === 1 ? 'run' : 'runs'}`
-                              : entry.manager.canManage
-                                ? translate(
-                                    'auto.components.automations.AutomationsPage.aecdc3681f',
-                                    'Manageable'
-                                  )
-                                : translate(
-                                    'auto.components.automations.AutomationsPage.e059042585',
-                                    'Read-only'
-                                  )}
+                          <span className="mt-1 block truncate text-[12px] text-muted-foreground">
+                            {scheduleDisplay.label}
+                            <span className="mx-1.5 text-border">·</span>
+                            {providerLabel}
+                          </span>
+                          <span className="mt-1.5 block truncate text-[13px] font-medium text-foreground/80">
+                            {nextRunLabel}
                           </span>
                         </span>
-                      </span>
-                      <span className="flex max-w-28 flex-col items-end gap-1 text-right text-[12px] text-muted-foreground">
-                        <Clock className="size-3.5 opacity-70" />
-                        <span className="line-clamp-2">{nextRunLabel}</span>
                       </span>
                     </button>
                   </ContextMenuTrigger>
@@ -2724,50 +2646,59 @@ export default function AutomationsPage(): React.JSX.Element {
               )
             })}
             {automations.length === 0 && externalAutomationEntries.length === 0 ? (
-              <div className="flex flex-col gap-4 p-5">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-foreground">
+              <div className="flex flex-col gap-5 p-5">
+                <div className="space-y-2 rounded-xl border border-border bg-background p-5">
+                  <CalendarClock className="size-8 text-muted-foreground" />
+                  <p className="text-base font-semibold tracking-tight text-foreground">
                     {translate(
                       'auto.components.automations.AutomationsPage.d207ab4c25',
                       'Start from a template'
                     )}
                   </p>
-                  <p className="text-[12px] leading-relaxed text-muted-foreground">
+                  <p className="text-sm leading-relaxed text-muted-foreground">
                     {translate(
                       'auto.components.automations.AutomationsPage.emptyListHint',
                       'Pick a template or create a blank automation.'
                     )}
                   </p>
+                  <Button
+                    type="button"
+                    variant="default"
+                    className="mt-2 h-11 w-full gap-2 text-sm"
+                    onClick={() => openCreateDialog()}
+                  >
+                    <Plus className="size-4" />
+                    {translate('auto.components.automations.AutomationsPage.25060635c6', 'Add new')}
+                  </Button>
                 </div>
-                <div className="flex flex-col border-t border-border/50">
-                  {getAutomationTemplates().map((template) => (
-                    <button
-                      key={template.id}
-                      type="button"
-                      onClick={() => openCreateDialog(template)}
-                      className="border-b border-border/50 px-0 py-3.5 text-left transition-colors hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40"
-                    >
-                      <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
-                        {template.category}
-                      </div>
-                      <div className="mt-1 text-[13px] font-medium text-foreground">
-                        {template.label}
-                      </div>
-                      <div className="mt-1 line-clamp-2 text-[12px] leading-relaxed text-muted-foreground">
-                        {template.description}
-                      </div>
-                    </button>
-                  ))}
+                <div className="space-y-2">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                    {translate(
+                      'auto.components.automations.AutomationsPage.templatesHeading',
+                      'Templates'
+                    )}
+                  </p>
+                  <div className="overflow-hidden rounded-xl border border-border bg-background">
+                    {getAutomationTemplates().map((template) => (
+                      <button
+                        key={template.id}
+                        type="button"
+                        onClick={() => openCreateDialog(template)}
+                        className="w-full border-b border-border/60 px-4 py-4 text-left transition-colors last:border-b-0 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40"
+                      >
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                          {template.category}
+                        </div>
+                        <div className="mt-1 text-[15px] font-semibold tracking-tight text-foreground">
+                          {template.label}
+                        </div>
+                        <div className="mt-1 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
+                          {template.description}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <Button
-                  type="button"
-                  variant="default"
-                  className="h-10 w-full justify-center gap-1.5"
-                  onClick={() => openCreateDialog()}
-                >
-                  <Plus className="size-3.5" />
-                  {translate('auto.components.automations.AutomationsPage.25060635c6', 'Add new')}
-                </Button>
               </div>
             ) : null}
           </div>
@@ -2775,7 +2706,7 @@ export default function AutomationsPage(): React.JSX.Element {
 
         <section className="flex min-h-0 flex-col overflow-hidden">
           {selectedExternal ? (
-            <div className="scrollbar-sleek min-h-0 overflow-auto p-5">
+            <div className="scrollbar-sleek min-h-0 overflow-auto bg-background p-6 md:p-10">
               {selectedExternalRunPage ? (
                 <AutomationRunPageFrame
                   title={selectedExternalRunPage.job.name}
@@ -2881,7 +2812,7 @@ export default function AutomationsPage(): React.JSX.Element {
 
               <TabsContent
                 value="overview"
-                className="scrollbar-sleek min-h-0 overflow-auto p-6 md:p-8"
+                className="scrollbar-sleek min-h-0 overflow-auto bg-background p-6 md:p-10"
               >
                 <AutomationDetail
                   automation={selected}
@@ -2905,7 +2836,7 @@ export default function AutomationsPage(): React.JSX.Element {
 
               <TabsContent
                 value="runs"
-                className="scrollbar-sleek min-h-0 overflow-auto p-6 md:p-8"
+                className="scrollbar-sleek min-h-0 overflow-auto bg-background p-6 md:p-10"
               >
                 {selectedAutomationRunPage ? (
                   <AutomationRunPageFrame

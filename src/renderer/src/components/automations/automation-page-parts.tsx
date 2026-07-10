@@ -112,20 +112,27 @@ export function Field({
 
 export function Metric({ label, value }: { label: string; value: string }): React.JSX.Element {
   return (
-    <div className="min-w-0 space-y-1 border-b border-border/40 pb-3 last:border-b-0 sm:border-b-0 sm:pb-0">
+    <div className="min-w-0 rounded-lg border border-border/70 bg-card px-4 py-3.5">
       <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
         {label}
       </div>
-      <div className="truncate text-[13px] font-medium text-foreground">{value}</div>
+      <div className="mt-2 truncate text-[15px] font-semibold tracking-tight text-foreground">
+        {value}
+      </div>
     </div>
   )
 }
 
-/** Shared list-row chrome for Automations sidebar (document style, no card stack). */
+/**
+ * High-contrast list row: thick left rail when selected, roomy padding.
+ * Intentionally different from prior muted card/stack styles.
+ */
 export function automationListItemClass(selected: boolean): string {
   return cn(
-    'mb-0 grid w-full grid-cols-[minmax(0,1fr)_auto] gap-3 border-b border-border/50 px-3 py-3 text-left text-sm transition-colors',
+    'group mb-0 block w-full border-b border-border/60 px-4 py-4 text-left transition-colors',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40',
-    selected ? 'bg-accent text-foreground' : 'bg-transparent hover:bg-muted/40'
+    selected
+      ? 'border-l-4 border-l-foreground bg-background'
+      : 'border-l-4 border-l-transparent bg-transparent hover:bg-background/80'
   )
 }
