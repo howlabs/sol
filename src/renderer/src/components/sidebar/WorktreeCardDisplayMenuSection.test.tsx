@@ -175,4 +175,27 @@ describe('WorktreeCardDisplayMenuSection', () => {
     expect(container?.textContent).toContain('Branch / folder path')
     expect(container?.textContent).not.toContain('Branch name')
   })
+
+  it('keeps density control under new card style Card display', () => {
+    settings = { compactWorktreeCards: false, experimentalNewWorktreeCardStyle: true }
+
+    renderMenu()
+
+    expect(container?.textContent).toContain('Card display')
+    expect(container?.textContent).toContain('Card layout')
+    expect(container?.textContent).toContain('Detailed')
+    expect(container?.textContent).toContain('Compact')
+    expect(container?.textContent).toContain('Show properties')
+
+    const compactLayoutButton = document.querySelector<HTMLButtonElement>(
+      '[data-radio-group-value="detailed"] [data-radio-item-value="compact"]'
+    )
+    expect(compactLayoutButton).not.toBeNull()
+
+    act(() => {
+      compactLayoutButton?.click()
+    })
+
+    expect(setWorktreeCardMode).toHaveBeenCalledWith('Compact')
+  })
 })

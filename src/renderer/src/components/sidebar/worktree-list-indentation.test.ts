@@ -3,6 +3,8 @@ import {
   FLUSH_CARD_CONTENT_PULLBACK,
   FLUSH_CARD_MIN_CONTENT_INSET,
   NEW_CARD_STYLE_STATUS_LANE_EXTRA_PULLBACK,
+  NEW_CARD_STYLE_STATUS_LANE_GAP_PX,
+  NEW_CARD_STYLE_STATUS_LANE_WIDTH_PX,
   LINEAGE_CHILDREN_INLINE_OFFSET,
   LINEAGE_IMMEDIATE_PARENT_STEP,
   LINEAGE_NESTED_ROW_SURFACE_INSET,
@@ -14,6 +16,7 @@ import {
   getFolderWorkspaceCardSurfaceInset,
   getFolderWorkspaceRowGeometry,
   getFlushWorktreeCardPaddingLeft,
+  getNewCardStyleParentContentMarginLeft,
   getLineageChildrenInlineStyle,
   getLineageEffectiveChildStart,
   getLineageNestedRowGeometry,
@@ -224,9 +227,20 @@ describe('worktree list indentation', () => {
   })
 
   it('pulls experimental flush cards back further for the fixed status lane', () => {
+    expect(NEW_CARD_STYLE_STATUS_LANE_WIDTH_PX).toBe(20)
+    expect(NEW_CARD_STYLE_STATUS_LANE_GAP_PX).toBe(4)
+    expect(NEW_CARD_STYLE_STATUS_LANE_EXTRA_PULLBACK).toBe(8)
     expect(getFlushWorktreeCardPaddingLeft(20, true)).toBe(
       `max(2px, calc(20px - ${FLUSH_CARD_CONTENT_PULLBACK + NEW_CARD_STYLE_STATUS_LANE_EXTRA_PULLBACK}px))`
     )
+  })
+
+  it('finishes shallow status-lane alignment with parent content margin', () => {
+    // Why: shallow indents hit the min-inset floor after pullback; remaining
+    // shift is applied as negative margin so title text still tracks the tree.
+    expect(getNewCardStyleParentContentMarginLeft(12)).toBeLessThan(0)
+    expect(getNewCardStyleParentContentMarginLeft(0)).toBe(0)
+    expect(getNewCardStyleParentContentMarginLeft(40)).toBe(0)
   })
 
   it('keeps flush card content off the sidebar edge without indentation', () => {

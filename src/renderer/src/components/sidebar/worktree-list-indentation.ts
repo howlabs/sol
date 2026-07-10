@@ -6,9 +6,16 @@ const PROJECT_WORKTREE_CARD_EXTRA_INDENT = 2
 // raw tree indent to sit under the group header. A smaller pullback nudges
 // content rightward for clearer nesting; this is the knob to tune that gap.
 export const FLUSH_CARD_CONTENT_PULLBACK = 4
-// Why: experimental cards reserve a fixed status lane inside the padded
-// content box; pull the box back so title/meta text stay on the tree step.
-export const NEW_CARD_STYLE_STATUS_LANE_EXTRA_PULLBACK = 6
+// Why: new-card status lane is a fixed width column (glyph box + trailing
+// gap). Keep these in lockstep with WorktreeCard's status-slot styles so
+// padding pullback and title alignment share one source of truth.
+export const NEW_CARD_STYLE_STATUS_LANE_WIDTH_PX = 20
+export const NEW_CARD_STYLE_STATUS_LANE_GAP_PX = 4
+// Why: experimental cards reserve that lane inside the padded content box;
+// pull the box back so title/meta text stay closer to the tree step. Full
+// lane width is too aggressive (hits the min-inset floor on shallow rows);
+// this nudge plus getNewCardStyleParentContentMarginLeft finishes the job.
+export const NEW_CARD_STYLE_STATUS_LANE_EXTRA_PULLBACK = 8
 // Why: even at zero indent a flush card keeps this minimal left inset so its
 // surface never sits hard against the sidebar edge.
 export const FLUSH_CARD_MIN_CONTENT_INSET = 2

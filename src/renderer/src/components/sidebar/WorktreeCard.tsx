@@ -75,7 +75,9 @@ import { DetachedHeadBadge } from '@/components/DetachedHeadBadge'
 import { getWorktreeGitIdentityDisplay } from '@/lib/worktree-git-identity-display'
 import {
   getFlushWorktreeCardPaddingLeft,
-  getNewCardStyleParentContentMarginLeft
+  getNewCardStyleParentContentMarginLeft,
+  NEW_CARD_STYLE_STATUS_LANE_GAP_PX,
+  NEW_CARD_STYLE_STATUS_LANE_WIDTH_PX
 } from './worktree-list-indentation'
 import { translate } from '@/i18n/i18n'
 import { recordRendererCrashBreadcrumb } from '@/lib/crash-diagnostics'
@@ -242,7 +244,10 @@ const WorktreeCard = React.memo(function WorktreeCard({
     useAppStore((s) => s.agentActivityDisplayMode) ?? DEFAULT_AGENT_ACTIVITY_DISPLAY_MODE
   const projectGroups = useAppStore((s) => s.projectGroups)
   const newCardStyle = settings?.experimentalNewWorktreeCardStyle === true
-  const compactCards = !newCardStyle && settings?.compactWorktreeCards === true
+  // Why: density (Compact) remains available under new card style; only the
+  // legacy Detailed/Compact *layout modes* that rewired the whole card are
+  // gated. New style stays property + status-lane driven either way.
+  const compactCards = settings?.compactWorktreeCards === true
   const activeSurfaceIsSecondary = isActiveSurface && activeSurfaceVariant === 'secondary'
   const handleEditIssue = useCallback(
     (e: React.MouseEvent) => {
@@ -1164,8 +1169,8 @@ const WorktreeCard = React.memo(function WorktreeCard({
   // Why: pinned trees mix repos in one section; a leading repo icon keeps the
   // list scannable, so it shows regardless of groupBy's hideRepoBadge.
   const showPinnedRepoIcon = inPinnedSection && !!repo
-  // Why: the new card style retired the Compact/Detailed layout switch; repo
-  // identity uses the same compact chip as pinned cards instead of a lower pill.
+  // Why: new card style always prefers the compact title chip for repo
+  // identity (even in Detailed density); legacy Detailed keeps the lower pill.
   const showRepoIdentityInTitle = newCardStyle || compactCards
   const showInlineRepoBadge =
     showRepoIdentityInTitle && !!repo && !hideRepoBadge && !isFolder && !showPinnedRepoIcon
@@ -1204,9 +1209,14 @@ const WorktreeCard = React.memo(function WorktreeCard({
     cacheStartedAt != null ||
     showMetaRowDetails
   )
-  const hasMetaRow = compactCards
-    ? hasMetadataBadge || cacheStartedAt != null
-    : hasDetailedMetaRowContent
+  // Why: new card style keeps metadata property-driven (branch, identity,
+  // ports) even in Compact density. Legacy Compact still collapses the meta
+  // row to conflict/cache only.
+  const hasMetaRow = newCardStyle
+    ? hasDetailedMetaRowContent
+    : compactCards
+      ? hasMetadataBadge || cacheStartedAt != null
+      : hasDetailedMetaRowContent
   const showHeaderActions = showTitleRowPrimary || showDeleteQuickAction
   // Why: the hover owns full identity when the row truncates; normalize once
   // so title/branch de-dupe and identity-only hover eligibility stay in sync.
@@ -1367,9 +1377,21 @@ const WorktreeCard = React.memo(function WorktreeCard({
         <div
           className={cn(
             'flex shrink-0 justify-center',
-            newCardStyle ? 'mr-1 w-5 items-center' : 'items-start pt-[2px]',
+            newCardStyle ? 'items-center' : 'items-start pt-[2px]',
             affiliateListMode && 'px-1'
           )}
+          style={
+            newCardStyle
+              ? {
+                  width: NEW_CARD_STYLE_STATUS_LANE_WIDTH_PX,
+                  // Why: Compact density trims the trailing gap; detailed keeps
+                  // the full lane gap so glyphs and titles stay evenly paced.
+                  marginRight: compactCards
+                    ? Math.max(2, NEW_CARD_STYLE_STATUS_LANE_GAP_PX - 2)
+                    : NEW_CARD_STYLE_STATUS_LANE_GAP_PX
+                }
+              : undefined
+          }
           data-worktree-card-status-slot=""
         >
           <WorktreeCardStatusSlot
@@ -1390,7 +1412,10 @@ const WorktreeCard = React.memo(function WorktreeCard({
       {/* Content area */}
       <div
         className={cn(
-          'flex min-w-0 flex-1 flex-col gap-1.5',
+          'flex min-w-0 flex-1 flex-col',
+          // Why: Compact density under either card style shortens the
+          // title→meta vertical rhythm without collapsing property rows.
+          compactCards ? 'gap-1' : 'gap-1.5',
           // Why: inline agent rows intentionally outdent into the card gutter;
           // title/meta truncation is handled by their own inner elements.
           showInlineAgentList || (!newCardStyle && lineageChildren)
@@ -1885,7 +1910,7 @@ const WorktreeCard = React.memo(function WorktreeCard({
 
       {newCardStyle && lineageChildren ? (
         <div
-          className="mt-1.5 space-y-1"
+          className={cn(compactCards ? 'mt-1 space-y-0.5' : 'mt-1.5 space-y-1')}
           data-worktree-lineage-children=""
           style={lineageChildrenStyle}
         >
