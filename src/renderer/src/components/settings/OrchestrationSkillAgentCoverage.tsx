@@ -92,18 +92,20 @@ export function OrchestrationSkillAgentCoverage(props: {
   return (
     <div
       className={cn(
-        embedded ? 'space-y-2.5' : 'space-y-4 border-t border-border/60 pt-6',
+        // Why: embedded under a flat skill block — avoid a second card; only
+        // standalone mode needs a soft section break.
+        embedded ? 'space-y-2' : 'space-y-2.5 border-t border-border/40 pt-4',
         className
       )}
     >
-      <div className="space-y-1">
-        <h3 className="text-sm font-medium text-foreground">
+      <div className="space-y-0.5">
+        <h3 className="text-xs font-semibold tracking-tight text-foreground">
           {translate(
             'auto.components.settings.OrchestrationSkillAgentCoverage.6dec5ce2d2',
             'Agent coverage'
           )}
         </h3>
-        <p className="text-xs leading-relaxed text-muted-foreground">{summary}</p>
+        <p className="text-[11px] leading-snug text-muted-foreground">{summary}</p>
       </div>
 
       {showAgentChips ? (

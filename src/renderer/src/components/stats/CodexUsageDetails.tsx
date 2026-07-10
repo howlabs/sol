@@ -28,7 +28,7 @@ export function CodexUsageDetails({
     <>
       <CodexUsageDailyChart daily={daily} />
 
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className="grid gap-2 xl:grid-cols-2">
         <UsageBreakdownSection
           title={translate('auto.components.stats.CodexUsagePane.5a0d1d69cd', 'By model')}
           topLabel={translate('auto.components.stats.CodexUsagePane.95d2d89285', 'Top model:')}

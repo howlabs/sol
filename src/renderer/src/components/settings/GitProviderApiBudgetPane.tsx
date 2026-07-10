@@ -1,5 +1,6 @@
 import { useAppStore } from '../../store'
 import { SearchableSetting } from './SearchableSetting'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 import { matchesSettingsSearch } from './settings-search'
 import { GitHubRateLimitPanel } from '../github/github-rate-limit-display'
 import { GitLabRateLimitPanel } from '../gitlab/gitlab-rate-limit-display'
@@ -38,7 +39,6 @@ export function GitProviderApiBudgetPane({
           'Current GitHub CLI REST, Search, and GraphQL rate limits.'
         )}
         keywords={['github', 'gh', 'graphql', 'rate limit', 'api budget']}
-        className="space-y-3"
       >
         <GitHubRateLimitPanel />
       </SearchableSetting>
@@ -64,7 +64,6 @@ export function GitProviderApiBudgetPane({
           'Current GitLab CLI REST rate-limit headers when available.'
         )}
         keywords={['gitlab', 'glab', 'rate limit', 'api budget']}
-        className="space-y-3"
       >
         <GitLabRateLimitPanel />
       </SearchableSetting>
@@ -77,5 +76,19 @@ export function GitProviderApiBudgetPane({
 
   // Why: provider budgets are diagnostic, so they render after core git and AI
   // settings instead of competing with everyday branch and attribution controls.
-  return <div className="space-y-1 border-t border-border/40 pt-4">{visibleSections}</div>
+  return (
+    <div className="space-y-1 border-t border-border/40 pt-3">
+      <SettingsSubsectionHeader
+        title={translate(
+          'auto.components.settings.GitPane.apiBudgetSubsectionTitle',
+          'API budgets'
+        )}
+        description={translate(
+          'auto.components.settings.GitPane.apiBudgetSubsectionDescription',
+          'Live rate-limit headers from your GitHub and GitLab CLIs.'
+        )}
+      />
+      {visibleSections}
+    </div>
+  )
 }

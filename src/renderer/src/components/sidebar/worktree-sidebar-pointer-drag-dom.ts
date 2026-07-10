@@ -12,15 +12,19 @@ const INTERACTIVE_DRAG_BLOCKER_SELECTOR = [
   '[contenteditable="true"]',
   '[role="button"]',
   '[role="menuitem"]',
-  '[data-radix-collection-item]'
+  '[role="option"]',
+  '[data-slot="dropdown-menu-item"]',
+  '[data-slot="context-menu-item"]',
+  '[data-slot="select-item"]'
 ].join(',')
 
 export function isSidebarPointerDragBlocked(target: EventTarget | null, row: HTMLElement): boolean {
   if (!(target instanceof Node)) {
     return false
   }
-  // Why: Radix hover cards portal outside the row, but React still bubbles their
-  // pointer events through row handlers; text selection there must not drag rows.
+  // Why: Portaled hover cards/menus sit outside the row in the DOM, but React
+  // can still bubble their pointer events through row handlers; interactions
+  // there must not start a row drag.
   if (!row.contains(target)) {
     return true
   }

@@ -146,9 +146,8 @@ export function AutoRenameBranchFromWorkSetting({
         'slug'
       ]}
       forceVisible={forceVisible || branchNamePromptDirty || advancedSearchOpen}
-      className="space-y-3 py-2"
     >
-      <div ref={setSettingRootRef}>
+      <div ref={setSettingRootRef} className="space-y-1">
         <SettingsSwitchRow
           label={translate(
             'auto.components.settings.AutoRenameBranchFromWorkSetting.ef787db0e3',
@@ -183,36 +182,39 @@ export function AutoRenameBranchFromWorkSetting({
             })
           }
         />
-      </div>
 
-      <Collapsible open={advancedOpen} onOpenChange={setOptionsOpen}>
-        <CollapsibleTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="-ml-2 h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
-          >
-            {translate(
-              'auto.components.settings.AutoRenameBranchFromWorkSetting.e784ea62dc',
-              'Advanced'
-            )}
-            <ChevronDown
-              className={cn('size-3.5 transition-transform', advancedOpen && 'rotate-180')}
-            />
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="mt-2 space-y-3 rounded-md border border-border/60 bg-muted/20 px-3 py-3">
-            <div className="space-y-2">
+        <Collapsible open={advancedOpen} onOpenChange={setOptionsOpen}>
+          <CollapsibleTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="-ml-2 h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+            >
+              {translate(
+                'auto.components.settings.AutoRenameBranchFromWorkSetting.e784ea62dc',
+                'Advanced'
+              )}
+              <ChevronDown
+                className={cn('size-3.5 transition-transform', advancedOpen && 'rotate-180')}
+              />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            {/* Why: SettingsSection is already the page card — one quiet list
+                surface for the advanced draft, not a nested bg-muted panel. */}
+            <div className="mt-1.5 space-y-1.5 rounded-md border border-border/50 bg-muted/15 px-3 py-2.5">
               <div className="space-y-0.5">
-                <Label htmlFor="git-auto-rename-branch-name-template">
+                <Label
+                  htmlFor="git-auto-rename-branch-name-template"
+                  className="text-xs font-medium"
+                >
                   {translate(
                     'auto.components.settings.AutoRenameBranchFromWorkSetting.a869d0edd8',
                     'Branch name command template'
                   )}
                 </Label>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[11px] leading-snug text-muted-foreground">
                   {translate(
                     'auto.components.settings.AutoRenameBranchFromWorkSetting.9241b59bf5',
                     'Use'
@@ -355,9 +357,9 @@ export function AutoRenameBranchFromWorkSetting({
                 </div>
               </div>
             </div>
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
     </SearchableSetting>
   )
 }

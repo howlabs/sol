@@ -298,10 +298,7 @@ export default function AgentCombobox({
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className={cn(
-            'w-[var(--anchor-width, var(--radix-popover-trigger-width))] p-0',
-            !allowNarrowTrigger && 'min-w-[18rem]'
-          )}
+          className={cn('w-[var(--anchor-width)] p-0', !allowNarrowTrigger && 'min-w-[18rem]')}
           data-agent-combobox-root="true"
           onOpenAutoFocus={(event) => {
             event.preventDefault()

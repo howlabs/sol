@@ -16,7 +16,7 @@ export function TerminalPaneAppearanceSection({
   const paneStyleOptions = resolvePaneStyleOptions(settings)
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-1.5">
       <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.TerminalAppearanceSection.e1a5c25555',
@@ -24,7 +24,7 @@ export function TerminalPaneAppearanceSection({
         )}
       />
 
-      <div className="ml-4 divide-y divide-border/40">
+      <div className="ml-3 divide-y divide-border/40">
         <SearchableSetting
           title={translate(
             'auto.components.settings.TerminalAppearanceSection.a6fdd6a3b1',

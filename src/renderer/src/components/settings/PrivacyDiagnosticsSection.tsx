@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { FileText } from '@/lib/icons'
+
 import type {
   DiagnosticsBundlePayload,
   DiagnosticsStatusPayload
 } from '../../../../preload/api-types'
-import { Label } from '../ui/label'
-import { Separator } from '../ui/separator'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 import {
   getDiagnosticBundleDescription,
   PrivacyDiagnosticBundleControls
@@ -236,19 +235,18 @@ export function PrivacyDiagnosticsSection(): React.JSX.Element {
   }, [ticketId])
 
   return (
-    <>
+    <section className="space-y-1.5 border-t border-border/40 pt-3">
       {status?.disabledReason ? (
         <DiagnosticsDisabledStateNote reason={status.disabledReason} />
       ) : null}
-      <Separator />
-      <PrivacyDiagnosticsRow
-        icon={<FileText className="size-4" />}
+      <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.PrivacyDiagnosticsSection.af2fc82cde',
           'Send app diagnostics to support'
         )}
         description={getDiagnosticBundleDescription({ bundle, previewOpened, ticketId })}
-      >
+      />
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <PrivacyDiagnosticBundleControls
           status={status}
           bundle={bundle}
@@ -268,8 +266,8 @@ export function PrivacyDiagnosticsSection(): React.JSX.Element {
           onDeleteUploadedBundle={handleDeleteUploadedBundle}
           onDismissTicket={() => setTicketId(null)}
         />
-      </PrivacyDiagnosticsRow>
-    </>
+      </div>
+    </section>
   )
 }
 
@@ -309,33 +307,8 @@ function DiagnosticsDisabledStateNote({
               )
 
   return (
-    <div className="rounded border border-dashed border-border/60 bg-card/30 px-3 py-2 text-xs text-muted-foreground">
+    <div className="rounded-lg border border-dashed border-border/60 bg-card/20 px-3 py-2 text-[11px] leading-snug text-muted-foreground">
       {message}
-    </div>
-  )
-}
-
-function PrivacyDiagnosticsRow({
-  icon,
-  title,
-  description,
-  children
-}: {
-  icon: React.ReactNode
-  title: string
-  description: string
-  children: React.ReactNode
-}): React.JSX.Element {
-  return (
-    <div className="flex items-center justify-between gap-4 py-2">
-      <div className="flex min-w-0 flex-1 items-start gap-2.5">
-        <div className="mt-0.5 text-muted-foreground">{icon}</div>
-        <div className="min-w-0 space-y-0.5">
-          <Label className="text-sm">{title}</Label>
-          <p className="text-xs text-muted-foreground">{description}</p>
-        </div>
-      </div>
-      <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">{children}</div>
     </div>
   )
 }

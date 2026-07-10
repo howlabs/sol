@@ -1,6 +1,6 @@
 import type { SourceControlAiSettings } from '../../../../shared/source-control-ai-types'
-import { Label } from '../ui/label'
 import { SearchableSetting } from './SearchableSetting'
+import { SettingsSwitchRow } from './SettingsFormControls'
 import { translate } from '@/i18n/i18n'
 
 type HostedReviewDefaultKey = keyof NonNullable<SourceControlAiSettings['prCreationDefaults']>
@@ -88,39 +88,25 @@ export function HostedReviewCreationDefaults({
         'Defaults used when the hosted-review composer opens.'
       )}
       keywords={KEYWORDS}
-      className="space-y-3 px-1 py-2"
     >
-      <div className="space-y-0.5">
-        <Label>
-          {translate(
-            'auto.components.settings.CommitMessageAiPane.2dafc7646e',
-            'Hosted-review creation defaults'
-          )}
-        </Label>
-        <p className="text-xs text-muted-foreground">
+      {/* Why: form-list only — no nested card around switch rows; SettingsSection
+          is already the page surface. */}
+      <div className="space-y-1">
+        <p className="text-[11px] leading-snug text-muted-foreground">
           {translate(
             'auto.components.settings.CommitMessageAiPane.347094560b',
             'Used by repositories that inherit global hosted-review defaults.'
           )}
         </p>
-      </div>
-      <div className="space-y-2">
         {getHostedReviewDefaultRows().map((row) => (
-          <label
+          <SettingsSwitchRow
             key={row.key}
-            className="flex items-start justify-between gap-4 rounded-md border border-border px-3 py-2"
-          >
-            <span className="space-y-0.5">
-              <span className="block text-xs font-medium text-foreground">{row.label}</span>
-              <span className="block text-[11px] text-muted-foreground">{row.description}</span>
-            </span>
-            <input
-              type="checkbox"
-              checked={prDefaults[row.key] === true}
-              onChange={(event) => onPrDefaultChange(row.key, event.target.checked)}
-              className="mt-0.5 size-4 rounded border-border accent-primary"
-            />
-          </label>
+            label={row.label}
+            description={row.description}
+            ariaLabel={row.label}
+            checked={prDefaults[row.key] === true}
+            onChange={() => onPrDefaultChange(row.key, prDefaults[row.key] !== true)}
+          />
         ))}
       </div>
     </SearchableSetting>

@@ -1,5 +1,6 @@
 import type { CodexUsageSessionRow } from '../../../../shared/codex-usage-types'
 import { translate } from '@/i18n/i18n'
+import { USAGE_SUBPANEL_SHELL_CLASS } from './usage-panel-shell'
 import { formatSessionTime, formatTokens } from './usage-formatters'
 
 export function CodexUsageRecentSessionsTable({
@@ -8,12 +9,12 @@ export function CodexUsageRecentSessionsTable({
   recentSessions: CodexUsageSessionRow[]
 }): React.JSX.Element {
   return (
-    <section className="rounded-lg border border-border/60 bg-card/40 p-4">
-      <div className="mb-3">
-        <h4 className="text-sm font-semibold text-foreground">
+    <section className={`${USAGE_SUBPANEL_SHELL_CLASS} space-y-1.5`}>
+      <div className="space-y-0.5">
+        <h4 className="text-xs font-semibold tracking-tight text-foreground">
           {translate('auto.components.stats.CodexUsagePane.0cb0983c07', 'Recent sessions')}
         </h4>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[11px] leading-snug text-muted-foreground">
           {translate(
             'auto.components.stats.CodexUsagePane.0bd8655475',
             'Most recent local Codex sessions in this scope.'

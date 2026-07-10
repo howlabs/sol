@@ -75,17 +75,42 @@ export function SourceControlActionRecipeRow({
   const agentSupportText = getSourceControlActionAgentSupportText(actionId)
 
   return (
-    <div className="rounded-md border border-border px-3 py-3">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    // Why: SettingsSection is already the page card — one quiet list surface
+    // per recipe, not a nested rounded-lg border bg-card shell.
+    <div className="space-y-2 rounded-md border border-border/50 bg-muted/15 px-3 py-2.5">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-0.5">
           <p className="text-xs font-medium text-foreground">
             {SOURCE_CONTROL_ACTION_LABELS[actionId]}
           </p>
-          <p className="text-[11px] text-muted-foreground">{getActionDescriptions()[actionId]}</p>
+          <p className="text-[11px] leading-snug text-muted-foreground">
+            {getActionDescriptions()[actionId]}
+          </p>
         </div>
         <div className="w-full shrink-0 space-y-1 sm:w-[220px]">
           <Select
             value={selectedAgent ?? DEFAULT_AGENT_VALUE}
+            items={[
+              {
+                value: DEFAULT_AGENT_VALUE,
+                label: translate(
+                  'auto.components.settings.SourceControlAiActionRecipeDefaults.ee0e5c2a48',
+                  'Use default agent'
+                )
+              },
+              ...(SOURCE_CONTROL_TEXT_ACTION_ID_SET.has(actionId)
+                ? [
+                    {
+                      value: CUSTOM_AGENT_ID,
+                      label: translate(
+                        'auto.components.settings.SourceControlAiActionRecipeDefaults.0740d30915',
+                        'Custom command'
+                      )
+                    }
+                  ]
+                : []),
+              ...agentOptions.map((agent) => ({ value: agent.id, label: agent.label }))
+            ]}
             onValueChange={(value) => onAgentChange(actionId, value)}
           >
             <SelectTrigger size="sm" className="h-8 w-full text-xs">
@@ -129,8 +154,8 @@ export function SourceControlActionRecipeRow({
           ) : null}
         </div>
       </div>
-      <div className="mt-3 grid gap-3 sm:grid-cols-[220px_1fr]">
-        <div className="space-y-2">
+      <div className="grid gap-2 sm:grid-cols-[220px_1fr]">
+        <div className="space-y-1.5">
           <Label className="text-[11px] text-muted-foreground">
             {translate(
               'auto.components.settings.SourceControlAiActionRecipeDefaults.2cb4bb7e5d',
@@ -145,7 +170,7 @@ export function SourceControlActionRecipeRow({
             className="h-8 font-mono text-xs"
           />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label className="text-[11px] text-muted-foreground">
             {translate(
               'auto.components.settings.SourceControlAiActionRecipeDefaults.fb09da4345',
@@ -165,7 +190,7 @@ export function SourceControlActionRecipeRow({
           />
         </div>
       </div>
-      <div className="mt-3 space-y-2">
+      <div className="space-y-1.5">
         {repoOverrideNote}
         <div className="flex items-center justify-between gap-3">
           <p className="text-[11px] text-muted-foreground">

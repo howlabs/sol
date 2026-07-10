@@ -89,6 +89,20 @@ export function DefaultWindowsProjectRuntimeSetting({
             {defaultRuntime.kind === 'wsl' ? (
               <Select
                 value={defaultRuntime.distro ?? NO_DISTRO_VALUE}
+                items={[
+                  ...(!defaultRuntime.distro
+                    ? [
+                        {
+                          value: NO_DISTRO_VALUE,
+                          label: translate(
+                            'auto.components.settings.DefaultWindowsProjectRuntimeSetting.selectDistro',
+                            'Select distro'
+                          )
+                        }
+                      ]
+                    : []),
+                  ...distroOptions.map((distro) => ({ value: distro, label: distro }))
+                ]}
                 onValueChange={(distro) => {
                   if (distro !== NO_DISTRO_VALUE) {
                     void updateSettings({

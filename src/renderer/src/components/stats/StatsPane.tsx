@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger
 } from '../ui/dropdown-menu'
 import { AgentIcon } from '@/lib/agent-catalog'
+import { SettingsSubsectionHeader } from '@/components/settings/SettingsFormControls'
 import { translate } from '@/i18n/i18n'
 export { getStatsPaneSearchEntries } from './stats-search'
 
@@ -96,19 +97,26 @@ export function StatsPane(): React.JSX.Element {
   }, [fetchStatsSummary, recordFeatureInteraction])
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-1">
       {summary ? (
-        <div className="space-y-3">
+        <section className="space-y-1.5">
+          <SettingsSubsectionHeader
+            title={translate('auto.components.stats.StatsPane.orcaActivityTitle', 'Orca activity')}
+            description={translate(
+              'auto.components.stats.StatsPane.orcaActivityDescription',
+              'Agents spawned, time worked, and pull requests created in this Orca install.'
+            )}
+          />
           {summary.totalAgentsSpawned === 0 && summary.totalPRsCreated === 0 ? (
-            <div className="flex min-h-[8rem] items-center justify-center rounded-lg border border-dashed border-border/60 bg-card/30 text-sm text-muted-foreground">
+            <p className="flex min-h-[4.5rem] items-center text-[11px] leading-snug text-muted-foreground">
               {translate(
                 'auto.components.stats.StatsPane.73ed07859c',
                 'Start your first agent to begin tracking'
               )}
-            </div>
+            </p>
           ) : (
             <>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 <StatCard
                   label={translate('auto.components.stats.StatsPane.9dbec9e675', 'Agents spawned')}
                   value={summary.totalAgentsSpawned.toLocaleString()}
@@ -128,60 +136,64 @@ export function StatsPane(): React.JSX.Element {
                   icon={<GitPullRequest className="size-4" />}
                 />
               </div>
-              {formatTrackingSince(summary.firstEventAt) && (
-                <p className="px-1 text-xs text-muted-foreground">
+              {formatTrackingSince(summary.firstEventAt) ? (
+                <p className="text-[11px] text-muted-foreground">
                   {formatTrackingSince(summary.firstEventAt)}
                 </p>
-              )}
+              ) : null}
             </>
           )}
-        </div>
+        </section>
       ) : null}
 
-      <div className="space-y-4">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="text-sm font-semibold text-foreground">
-            {translate('auto.components.stats.StatsPane.c79f073d4c', 'Usage Analytics')}
-          </h3>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                data-testid="usage-provider-select"
-                aria-label={translate(
-                  'auto.components.stats.StatsPane.42d3e0bdf7',
-                  'Usage analytics provider: {{value0}}',
-                  { value0: activeUsageOption.label }
-                )}
-                className="min-w-36 justify-between"
-              >
-                <span className="flex min-w-0 items-center gap-2">
-                  <UsageAnalyticsOptionIcon tab={activeUsageOption.id} />
-                  <span className="truncate">{activeUsageOption.label}</span>
-                </span>
-                <ChevronDown className="ml-1 size-3.5 text-muted-foreground" aria-hidden />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44">
-              {USAGE_ANALYTICS_OPTIONS.map((option) => (
-                <DropdownMenuItem key={option.id} onSelect={() => setActiveUsageTab(option.id)}>
+      <section className="space-y-1 border-t border-border/40 pt-3">
+        <SettingsSubsectionHeader
+          title={translate('auto.components.stats.StatsPane.c79f073d4c', 'Usage Analytics')}
+          description={translate(
+            'auto.components.stats.StatsPane.usageAnalyticsDescription',
+            'Combined overview or per-provider token logs from local agent sessions.'
+          )}
+          action={
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  data-testid="usage-provider-select"
+                  aria-label={translate(
+                    'auto.components.stats.StatsPane.42d3e0bdf7',
+                    'Usage analytics provider: {{value0}}',
+                    { value0: activeUsageOption.label }
+                  )}
+                  className="h-7 min-w-36 justify-between text-xs"
+                >
                   <span className="flex min-w-0 items-center gap-2">
-                    <UsageAnalyticsOptionIcon tab={option.id} />
-                    <span className="truncate">{option.label}</span>
+                    <UsageAnalyticsOptionIcon tab={activeUsageOption.id} />
+                    <span className="truncate">{activeUsageOption.label}</span>
                   </span>
-                  <Check
-                    className={`ml-auto size-3.5 ${
-                      activeUsageTab === option.id ? 'opacity-100' : 'opacity-0'
-                    }`}
-                    aria-hidden
-                  />
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+                  <ChevronDown className="ml-1 size-3.5 text-muted-foreground" aria-hidden />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                {USAGE_ANALYTICS_OPTIONS.map((option) => (
+                  <DropdownMenuItem key={option.id} onSelect={() => setActiveUsageTab(option.id)}>
+                    <span className="flex min-w-0 items-center gap-2">
+                      <UsageAnalyticsOptionIcon tab={option.id} />
+                      <span className="truncate">{option.label}</span>
+                    </span>
+                    <Check
+                      className={`ml-auto size-3.5 ${
+                        activeUsageTab === option.id ? 'opacity-100' : 'opacity-0'
+                      }`}
+                      aria-hidden
+                    />
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          }
+        />
 
         {/* Why: the Stats section lives inside the scroll-tracked settings page. Keeping only the
             active panel mounted avoids hidden tab-content layout/focus churn that produced a visible
@@ -197,7 +209,7 @@ export function StatsPane(): React.JSX.Element {
             <OpenCodeUsagePane />
           )}
         </div>
-      </div>
+      </section>
     </div>
   )
 }

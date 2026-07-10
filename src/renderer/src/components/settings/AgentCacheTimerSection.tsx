@@ -104,6 +104,22 @@ export function AgentCacheTimerSection({
           </div>
           <Select
             value={String(settings.promptCacheTtlMs)}
+            items={[
+              {
+                value: '300000',
+                label: translate(
+                  'auto.components.settings.AgentCacheTimerSection.54395ecd7c',
+                  '5 minutes'
+                )
+              },
+              {
+                value: '3600000',
+                label: translate(
+                  'auto.components.settings.AgentCacheTimerSection.05de84a104',
+                  '1 hour'
+                )
+              }
+            ]}
             onValueChange={(v) => updateSettings({ promptCacheTtlMs: Number(v) })}
           >
             <SelectTrigger size="sm" className="h-7 text-xs w-[120px]">

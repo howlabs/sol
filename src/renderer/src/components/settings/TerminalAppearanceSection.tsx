@@ -170,7 +170,7 @@ export function TerminalAppearanceSection({
   ) : null
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-1.5">
       {/* Primary: font + theme + previews. The expanded section column is far
           narrower than the xl breakpoint, so the preview grids inside the
           theme catalog already stack full-width below their controls. */}
@@ -187,7 +187,7 @@ export function TerminalAppearanceSection({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5"
+                  className="h-7 gap-1.5 text-xs"
                   onClick={() => void ghostty.handleClick()}
                 >
                   <img src={ghosttyIcon} alt="" aria-hidden="true" className="size-4" />

@@ -166,7 +166,7 @@ export function AppearancePane({
   } · ${settings.terminalFontSize}px`
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {interfaceMatches ? (
         <AppearanceSection
           id="interface"
@@ -233,8 +233,9 @@ export function AppearancePane({
         </AppearanceSection>
       ) : null}
 
-      {/* App icon stays at the bottom of Appearance as a small easter egg,
-          matching production — not buried inside Interface advanced. */}
+      {/* Why: App Icon is a quiet easter-egg control (collection template edge).
+          SearchableSetting title/description are search-only — do not stack a
+          formal SettingsSubsectionHeader that duplicates that copy. */}
       {appIconMatches ? (
         <SearchableSetting
           title={translate('auto.components.settings.AppearancePane.ca1590d42f', 'App Icon')}
@@ -247,7 +248,7 @@ export function AppearancePane({
             entry.description ?? '',
             ...(entry.keywords ?? [])
           ])}
-          className="max-w-none pt-1"
+          className="max-w-none border-t border-border/40 pt-3"
         >
           <AppIconSelector
             value={normalizeAppIconId(settings.appIcon)}

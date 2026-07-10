@@ -1,5 +1,5 @@
 import { translate } from '@/i18n/i18n'
-import { SettingsSegmentedControl } from './SettingsFormControls'
+import { SettingsSegmentedControl, SettingsSubsectionHeader } from './SettingsFormControls'
 import type { AgentPermissionMode } from '../../../../shared/tui-agent-permissions'
 
 type AgentPermissionsSettingProps = {
@@ -15,17 +15,14 @@ export function AgentPermissionsSetting({
   const visibleMode: Exclude<AgentPermissionMode, 'mixed'> = mode === 'manual' ? 'manual' : 'yolo'
   return (
     <section className="flex items-start justify-between gap-4 border-t border-border/50 pt-6">
-      <div className="min-w-0 space-y-1">
-        <h3 className="text-sm font-medium tracking-tight text-foreground">
-          {translate('auto.components.settings.AgentsPane.agentPermissions', 'Permissions')}
-        </h3>
-        <p className="max-w-prose text-[12px] leading-relaxed text-muted-foreground">
-          {translate(
-            'auto.components.settings.AgentsPane.agentPermissionsDescriptionShort',
-            'Yolo reduces prompts. Manual keeps checks. Per-agent launch args still win.'
-          )}
-        </p>
-      </div>
+      <SettingsSubsectionHeader
+        className="min-w-0 flex-1"
+        title={translate('auto.components.settings.AgentsPane.agentPermissions', 'Permissions')}
+        description={translate(
+          'auto.components.settings.AgentsPane.agentPermissionsDescriptionShort',
+          'Yolo reduces prompts. Manual keeps checks. Per-agent launch args still win.'
+        )}
+      />
       <SettingsSegmentedControl<AgentPermissionMode>
         value={visibleMode}
         onChange={(nextMode) => {

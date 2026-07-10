@@ -11,6 +11,7 @@ import {
   applyRadixDismissHandlers,
   mapRadixCloseAutoFocus,
   mapRadixOpenAutoFocus,
+  nativeButtonForAsChild,
   PopupDismissProvider,
   splitRadixContentCompatProps,
   usePopupDismissRegistry,
@@ -38,16 +39,58 @@ function Dialog({ onOpenChange, ...props }: DialogPrimitive.Root.Props): React.J
   )
 }
 
-function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props): React.JSX.Element {
-  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
+function DialogTrigger({
+  asChild,
+  children,
+  nativeButton,
+  ...props
+}: DialogPrimitive.Trigger.Props & { asChild?: boolean }): React.JSX.Element {
+  // Why: Base UI uses `render` (not Radix asChild). Map asChild so call sites
+  // keep working and avoid nested <button> hosts.
+  const resolvedNativeButton = nativeButtonForAsChild(asChild, children, nativeButton)
+  if (asChild && React.isValidElement(children)) {
+    return (
+      <DialogPrimitive.Trigger
+        data-slot="dialog-trigger"
+        render={children as React.ReactElement}
+        nativeButton={resolvedNativeButton}
+        {...props}
+      />
+    )
+  }
+  return (
+    <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props}>
+      {children}
+    </DialogPrimitive.Trigger>
+  )
 }
 
 function DialogPortal({ ...props }: DialogPrimitive.Portal.Props): React.JSX.Element {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 }
 
-function DialogClose({ ...props }: DialogPrimitive.Close.Props): React.JSX.Element {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
+function DialogClose({
+  asChild,
+  children,
+  nativeButton,
+  ...props
+}: DialogPrimitive.Close.Props & { asChild?: boolean }): React.JSX.Element {
+  const resolvedNativeButton = nativeButtonForAsChild(asChild, children, nativeButton)
+  if (asChild && React.isValidElement(children)) {
+    return (
+      <DialogPrimitive.Close
+        data-slot="dialog-close"
+        render={children as React.ReactElement}
+        nativeButton={resolvedNativeButton}
+        {...props}
+      />
+    )
+  }
+  return (
+    <DialogPrimitive.Close data-slot="dialog-close" {...props}>
+      {children}
+    </DialogPrimitive.Close>
+  )
 }
 
 function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props): React.JSX.Element {

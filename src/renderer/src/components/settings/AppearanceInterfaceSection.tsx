@@ -167,6 +167,10 @@ export function AppearanceInterfaceSection({
                   control={
                     <Select
                       value={settings.uiLanguage}
+                      items={UI_LANGUAGE_CHOICES.map((choice) => ({
+                        value: choice.value,
+                        label: getUiLanguageChoiceLabel(choice, translate)
+                      }))}
                       onValueChange={(value) => updateSettings({ uiLanguage: value as UiLanguage })}
                     >
                       <SelectTrigger

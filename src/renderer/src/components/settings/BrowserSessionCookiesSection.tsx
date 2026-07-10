@@ -98,6 +98,7 @@ export function BrowserSessionCookiesSection({
           </div>
           <Select
             value={selectedHostId}
+            items={hostOptions.map((host) => ({ value: host.id, label: host.label }))}
             onValueChange={(value) => onSelectHost(value as ExecutionHostId)}
           >
             <SelectTrigger size="sm" className="max-w-48">

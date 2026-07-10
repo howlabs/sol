@@ -8,6 +8,7 @@ import { useMountedRef } from '@/hooks/useMountedRef'
 import { translate } from '@/i18n/i18n'
 import { Button } from '../ui/button'
 import { cn } from '@/lib/utils'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 
 const CLEANED_STATUSES = new Set<EphemeralVmRuntimeRecord['status']>(['cleaned'])
 
@@ -166,44 +167,43 @@ export function EphemeralVmRuntimesSection(): React.JSX.Element {
 
   const hasRuntimes = runtimes.length > 0
   return (
-    <div className="space-y-3 pt-2" data-settings-section="temporary-vm-runtimes">
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0 space-y-0.5">
-          <div className="text-sm font-medium">
-            {translate(
-              'auto.components.settings.EphemeralVmRuntimesSection.title',
-              'Temporary VM runtimes'
+    <div
+      className="space-y-1.5 border-t border-border/40 pt-3"
+      data-settings-section="temporary-vm-runtimes"
+    >
+      <SettingsSubsectionHeader
+        title={translate(
+          'auto.components.settings.EphemeralVmRuntimesSection.title',
+          'Temporary VM runtimes'
+        )}
+        description={translate(
+          'auto.components.settings.EphemeralVmRuntimesSection.description',
+          'Recipe-created runtimes are workspace-owned. Clean up stale entries after crashes, failed creates, or manual recovery.'
+        )}
+        action={
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            aria-label={translate(
+              'auto.components.settings.EphemeralVmRuntimesSection.refresh',
+              'Refresh temporary VM runtimes'
             )}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.EphemeralVmRuntimesSection.description',
-              'Recipe-created runtimes are workspace-owned. Clean up stale entries after crashes, failed creates, or manual recovery.'
+            title={translate(
+              'auto.components.settings.EphemeralVmRuntimesSection.refresh',
+              'Refresh temporary VM runtimes'
             )}
-          </p>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="icon-sm"
-          aria-label={translate(
-            'auto.components.settings.EphemeralVmRuntimesSection.refresh',
-            'Refresh temporary VM runtimes'
-          )}
-          title={translate(
-            'auto.components.settings.EphemeralVmRuntimesSection.refresh',
-            'Refresh temporary VM runtimes'
-          )}
-          onClick={() => void refresh()}
-          disabled={isLoading || cleaningId !== null}
-        >
-          {isLoading ? <Loader2 className="animate-spin" /> : <RefreshCw />}
-        </Button>
-      </div>
+            onClick={() => void refresh()}
+            disabled={isLoading || cleaningId !== null}
+          >
+            {isLoading ? <Loader2 className="animate-spin" /> : <RefreshCw />}
+          </Button>
+        }
+      />
 
-      <div className="rounded-lg border border-border/50 bg-card/30">
+      <div className="rounded-lg border border-border/60 bg-card/30">
         {!hasRuntimes ? (
-          <div className="px-3 py-4 text-sm text-muted-foreground">
+          <div className="px-3 py-4 text-xs text-muted-foreground">
             {isLoading
               ? translate(
                   'auto.components.settings.EphemeralVmRuntimesSection.loading',
@@ -215,7 +215,7 @@ export function EphemeralVmRuntimesSection(): React.JSX.Element {
                 )}
           </div>
         ) : (
-          <div className="divide-y divide-border/50">
+          <div className="divide-y divide-border/40">
             {runtimes.map((runtime) => (
               <EphemeralVmRuntimeRow
                 key={runtime.id}
@@ -249,7 +249,7 @@ function EphemeralVmRuntimeRow({
   const statusLabel = getEphemeralVmRuntimeStatusLabel(runtime)
   const hasError = runtime.cleanupStatus === 'failed' || runtime.status === 'failed'
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className="flex items-center gap-3 px-3 py-2.5">
       <div
         className={cn(
           'size-2 shrink-0 rounded-full',
@@ -258,13 +258,13 @@ function EphemeralVmRuntimeRow({
       />
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 items-center gap-2">
-          <div className="truncate text-sm font-medium">
+          <div className="truncate text-xs font-medium">
             {runtime.workspaceName || runtime.recipeId}
           </div>
           <span className="shrink-0 text-[11px] text-muted-foreground">{statusLabel}</span>
           {hasError ? <AlertTriangle className="size-3.5 shrink-0 text-destructive" /> : null}
         </div>
-        <p className="truncate text-xs text-muted-foreground">
+        <p className="truncate text-[11px] text-muted-foreground">
           {runtime.recipeId} · {getEphemeralVmRecipeResultProjectRoot(runtime.recipeResult)}
         </p>
         {runtime.cleanupLastError ? (

@@ -1,11 +1,13 @@
 // @vitest-environment happy-dom
 
+import * as React from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import {
   applyRadixDismissHandlers,
   createRadixPreventableEvent,
   mapRadixCloseAutoFocus,
   mapRadixOpenAutoFocus,
+  nativeButtonForAsChild,
   splitRadixContentCompatProps
 } from './radix-popup-compat'
 
@@ -128,5 +130,33 @@ describe('radix-popup-compat', () => {
     } as unknown as React.MouseEvent<HTMLElement>)
     expect(onClick).toHaveBeenCalledTimes(1)
     expect(onSelect).toHaveBeenCalledTimes(1)
+  })
+
+  describe('nativeButtonForAsChild', () => {
+    it('returns undefined when asChild is false', () => {
+      expect(nativeButtonForAsChild(false, <button type="button">x</button>)).toBeUndefined()
+      expect(nativeButtonForAsChild(undefined, <a href="/">x</a>)).toBeUndefined()
+    })
+
+    it('returns true for asChild + native <button>', () => {
+      expect(nativeButtonForAsChild(true, <button type="button">x</button>)).toBe(true)
+    })
+
+    it('returns false for asChild + native non-button tags', () => {
+      expect(nativeButtonForAsChild(true, <a href="/">x</a>)).toBe(false)
+      expect(nativeButtonForAsChild(true, <div role="button">x</div>)).toBe(false)
+    })
+
+    it('returns undefined for asChild + component hosts (Base UI default true)', () => {
+      function Host(props: React.ComponentPropsWithoutRef<'button'>): React.JSX.Element {
+        return <button type="button" {...props} />
+      }
+      expect(nativeButtonForAsChild(true, <Host>x</Host>)).toBeUndefined()
+    })
+
+    it('honors explicit nativeButton over inference', () => {
+      expect(nativeButtonForAsChild(true, <a href="/">x</a>, true)).toBe(true)
+      expect(nativeButtonForAsChild(true, <button type="button">x</button>, false)).toBe(false)
+    })
   })
 })

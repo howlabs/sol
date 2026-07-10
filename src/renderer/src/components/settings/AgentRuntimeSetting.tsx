@@ -87,6 +87,20 @@ export function AgentRuntimeSetting({
           {runtimeDefault.kind === 'wsl' ? (
             <Select
               value={runtimeDefault.distro ?? NO_DISTRO_VALUE}
+              items={[
+                ...(!runtimeDefault.distro
+                  ? [
+                      {
+                        value: NO_DISTRO_VALUE,
+                        label: translate(
+                          'auto.components.settings.AgentRuntimeSetting.selectDistro',
+                          'Select distro'
+                        )
+                      }
+                    ]
+                  : []),
+                ...distroOptions.map((distro) => ({ value: distro, label: distro }))
+              ]}
               onValueChange={(distro) => {
                 if (distro !== NO_DISTRO_VALUE) {
                   updateAgentRuntime({

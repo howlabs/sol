@@ -4,6 +4,7 @@ import type { GlobalSettings } from '../../../../shared/types'
 import { Button } from '../ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
 import { translate } from '@/i18n/i18n'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 import { AgentCacheTimerSection } from './AgentCacheTimerSection'
 import { AgentsPaneSessionSettings } from './AgentsPaneSessionSettings'
 
@@ -35,20 +36,17 @@ export function AgentsPaneMorePreferences({
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="border-t border-border/50 pt-6">
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 space-y-1">
-          <h3 className="text-sm font-medium tracking-tight text-foreground">
-            {translate(
-              'auto.components.settings.AgentsPane.morePreferences',
-              'Session preferences'
-            )}
-          </h3>
-          <p className="max-w-prose text-[12px] leading-relaxed text-muted-foreground">
-            {translate(
-              'auto.components.settings.AgentsPane.morePreferencesDescription',
-              'Runtime, hooks, tab titles, keep-alive, and cache timer.'
-            )}
-          </p>
-        </div>
+        <SettingsSubsectionHeader
+          className="min-w-0 flex-1"
+          title={translate(
+            'auto.components.settings.AgentsPane.morePreferences',
+            'Session preferences'
+          )}
+          description={translate(
+            'auto.components.settings.AgentsPane.morePreferencesDescription',
+            'Runtime, hooks, tab titles, keep-alive, and cache timer.'
+          )}
+        />
         <CollapsibleTrigger asChild>
           <Button
             type="button"

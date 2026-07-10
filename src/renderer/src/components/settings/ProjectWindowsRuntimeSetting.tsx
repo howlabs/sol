@@ -149,6 +149,7 @@ export function ProjectWindowsRuntimeSetting({
             {isWslSelected ? (
               <Select
                 value={selectedPreference.kind === 'wsl' ? selectedPreference.distro : ''}
+                items={distroOptions.map((distro) => ({ value: distro, label: distro }))}
                 onValueChange={handleDistroChange}
                 disabled={wslCapabilitiesLoading || !wslAvailable}
               >

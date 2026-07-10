@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
   BROWSER_PAGE_ZOOM_LEVELS,
   browserPageZoomLevelToPercent,
@@ -6,6 +7,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { SearchableSetting } from './SearchableSetting'
 import { SettingsRow } from './SettingsFormControls'
+import { settingsSelectItems } from './settings-select-items'
 import { translate } from '@/i18n/i18n'
 
 type BrowserDefaultZoomSettingProps = {
@@ -26,6 +28,16 @@ export function BrowserDefaultZoomSetting({
     'auto.components.settings.BrowserDefaultZoomSetting.2622126877',
     'Zoom level applied to newly opened browser tabs.'
   )
+  const items = useMemo(
+    () =>
+      settingsSelectItems(
+        BROWSER_PAGE_ZOOM_LEVELS.map((level) => ({
+          value: String(level),
+          label: `${browserPageZoomLevelToPercent(level)}%`
+        }))
+      ),
+    []
+  )
 
   return (
     <SearchableSetting
@@ -42,15 +54,16 @@ export function BrowserDefaultZoomSetting({
         control={
           <Select
             value={String(selectedZoomLevel)}
+            items={items}
             onValueChange={(next) => onChange(Number(next))}
           >
             <SelectTrigger size="sm" className="w-28">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {BROWSER_PAGE_ZOOM_LEVELS.map((level) => (
-                <SelectItem key={level} value={String(level)}>
-                  {browserPageZoomLevelToPercent(level)}%
+              {items.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
                 </SelectItem>
               ))}
             </SelectContent>

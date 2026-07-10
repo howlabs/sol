@@ -161,12 +161,8 @@ describe('FontAutocomplete', () => {
       getInput().focus()
     })
 
-    expect(getScrollArea().style.maxHeight).toBe(
-      'var(--available-height, var(--radix-popover-content-available-height))'
-    )
-    expect(getScrollAreaViewport().style.maxHeight).toBe(
-      'var(--available-height, var(--radix-popover-content-available-height))'
-    )
+    expect(getScrollArea().style.maxHeight).toBe('var(--available-height)')
+    expect(getScrollAreaViewport().style.maxHeight).toBe('var(--available-height)')
   })
 
   it('keeps typed searches filtered even after the value updates', async () => {

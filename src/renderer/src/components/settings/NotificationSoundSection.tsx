@@ -102,6 +102,14 @@ export function NotificationSoundSection({
 
   const selectedSoundId = notificationSettings.customSoundId
   const soundOptions = getNotificationSoundOptions(notificationSettings.customSoundPath)
+  const customSoundLabel = notificationSettings.customSoundPath
+    ? translate('auto.components.settings.NotificationsPane.76e02467b8', 'Change Custom File')
+    : translate('auto.components.settings.NotificationsPane.6e6df3a09a', 'Choose Custom File')
+  // Why: Base UI Select.Value needs items for labels (including custom file option).
+  const soundSelectItems = [
+    ...soundOptions.map((option) => ({ value: option.id, label: option.title })),
+    { value: CHOOSE_CUSTOM_SOUND_VALUE, label: customSoundLabel }
+  ]
 
   return (
     <>
@@ -132,6 +140,7 @@ export function NotificationSoundSection({
           control={
             <Select
               value={selectedSoundId}
+              items={soundSelectItems}
               disabled={!notificationsEnabled || isPickingSound}
               onValueChange={(value) =>
                 void handleSoundSelect(value as NotificationSoundSelectValue | null)
@@ -145,10 +154,7 @@ export function NotificationSoundSection({
                   )}
                 />
               </SelectTrigger>
-              <SelectContent
-                align="end"
-                className="w-[var(--anchor-width,var(--radix-select-trigger-width))]"
-              >
+              <SelectContent align="end" className="w-[var(--anchor-width)]">
                 {soundOptions.map((option) => {
                   const OptionIcon = option.icon
                   return (

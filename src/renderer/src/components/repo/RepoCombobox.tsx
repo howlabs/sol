@@ -221,7 +221,7 @@ export default function RepoCombobox({
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className="w-[var(--anchor-width, var(--radix-popover-trigger-width))] min-w-[18rem] p-0"
+          className="w-[var(--anchor-width)] min-w-[18rem] p-0"
           data-repo-combobox-root="true"
           onOpenAutoFocus={(event) => {
             event.preventDefault()

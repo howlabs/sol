@@ -1,6 +1,7 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import type { CodexUsageDailyPoint } from '../../../../shared/codex-usage-types'
 import { translate } from '@/i18n/i18n'
+import { USAGE_SUBPANEL_SHELL_CLASS } from './usage-panel-shell'
 
 function formatTokens(value: number): string {
   if (value >= 1_000_000) {
@@ -30,12 +31,12 @@ export function CodexUsageDailyChart({ daily }: CodexUsageDailyChartProps): Reac
   const maxDailyTotal = getMaxDailyTotal(daily)
 
   return (
-    <section className="rounded-lg border border-border/60 bg-card/40 p-4">
-      <div className="mb-3">
-        <h4 className="text-sm font-semibold text-foreground">
+    <section className={`${USAGE_SUBPANEL_SHELL_CLASS} space-y-1.5`}>
+      <div className="space-y-0.5">
+        <h4 className="text-xs font-semibold tracking-tight text-foreground">
           {translate('auto.components.stats.CodexUsageDailyChart.609aa96e8b', 'Daily usage')}
         </h4>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[11px] leading-snug text-muted-foreground">
           {translate(
             'auto.components.stats.CodexUsageDailyChart.c756cda6a8',
             'Input, cached input, output, and reasoning totals by day.'
@@ -120,7 +121,7 @@ export function CodexUsageDailyChart({ daily }: CodexUsageDailyChartProps): Reac
           )
         })}
       </div>
-      <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
+      <div className="flex flex-wrap gap-3 text-[11px] text-muted-foreground">
         <span className="inline-flex items-center gap-2">
           <span className="size-2 rounded-full bg-sky-500/80" />
           {translate('auto.components.stats.CodexUsageDailyChart.99a91d3143', 'Input')}

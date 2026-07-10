@@ -3,6 +3,7 @@ import type { GlobalSettings, TuiAgent } from '../../../../shared/types'
 import { AgentIcon } from '@/lib/agent-catalog'
 import { translate } from '@/i18n/i18n'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 import { resolveDefaultAgentToggleValue } from './agents-default-agent-toggle'
 
 export type AgentDefaultAgentPickerProps = {
@@ -27,14 +28,10 @@ export function AgentDefaultAgentPicker({
 
   return (
     <section className="space-y-3">
-      <header className="space-y-1">
-        <h3 className="text-sm font-medium tracking-tight text-foreground">
-          {translate('auto.components.settings.AgentsPane.385212c7a1', 'Default agent')}
-        </h3>
-        <p className="max-w-prose text-[12px] leading-relaxed text-muted-foreground">
-          {ownershipDescription}
-        </p>
-      </header>
+      <SettingsSubsectionHeader
+        title={translate('auto.components.settings.AgentsPane.385212c7a1', 'Default agent')}
+        description={ownershipDescription}
+      />
       <ToggleGroup
         type="single"
         variant="outline"

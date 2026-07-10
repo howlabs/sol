@@ -72,14 +72,14 @@ Call sites keep Lucide icon **names** (`Loader2`, `ChevronDown`, …) for a stab
 
 ### Phase E — Base UI hardening (positioners + open/pressed) — **done**
 
-1. **Dual CSS variables** on product surfaces and `main.css`:
-   - `--available-height` / `--available-width` / `--anchor-width` / `--collapsible-panel-height` first
-   - `--radix-*` names kept as nested fallbacks for residual consumers
+1. **CSS variables** on product surfaces and `main.css`:
+   - `--available-height` / `--available-width` / `--anchor-width` / `--collapsible-panel-height` (Base UI positioners)
+   - Temporary dual `--radix-*` fallbacks were removed after call sites and CSS only consumed Base UI vars
 2. **Open/closed state**: collapsible height animations accept both `data-open`/`data-closed` and `data-state=open|closed`.
 3. **Toggle pressed**: primitive + call-site selected styles accept `data-pressed` (and `aria-pressed` where already present) alongside `data-[state=on]`.
 4. **Modal recovery**: body `pointer-events` recovery watches Base UI `data-open` on dialog/sheet slots (still accepts `data-state=open`).
 5. **ScrollArea**: restored `viewportProps` + root style merge (`position: relative` always wins) so font autocomplete and other clamps reach the viewport.
-6. Tests updated for dual `maxHeight` on font autocomplete scroll areas.
+6. Tests assert Base UI `maxHeight` vars on font autocomplete scroll areas.
 
 ### Phase F — Radix focus/dismiss API shims (call-site compatibility) — **done**
 
@@ -100,7 +100,8 @@ Call sites keep Lucide icon **names** (`Loader2`, `ChevronDown`, …) for a stab
 - **One concern per PR** when possible (tokens **or** icons **or** one primitive family).
 - New UI code must use `@/components/ui/*` + STYLEGUIDE tokens — no new hex for chrome roles.
 - Settings forms: use `SettingsFormControls` first; do not invent parallel toggles/rows.
-- Positioned popovers/selects: prefer Base UI vars (`--available-height`, `--anchor-width`); keep `--radix-*` only as dual fallbacks.
+- Settings pane bodies must pick one STYLEGUIDE **Settings pane template** (form-list / collection-accordion / setup-skill); no ad-hoc `space-y-8+` roots or one-off `text-sm` subsection titles on form/collection surfaces.
+- Positioned popovers/selects: use Base UI vars only (`--available-height`, `--anchor-width`); do not reintroduce `--radix-*` fallbacks.
 - Toggle selected chrome: include `data-pressed:` (Base UI) when overriding pressed styles; `data-[state=on]:` alone is insufficient.
 - Visual regression: Settings (General, Appearance, Accounts, Notifications, Integrations), command palette, dialogs, worktree sidebar.
 - Cross-platform: Windows/Linux/macOS; Electron + web client if both share renderer UI.

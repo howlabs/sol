@@ -122,6 +122,8 @@ export function TerminalPane({
   ].filter(Boolean)
 
   return (
+    // Why: setup/skill-adjacent terminal sections (theme, scrollback) — cap at
+    // space-y-6 per STYLEGUIDE settings templates.
     <div className="space-y-6">
       {visibleSections.map((section, index) => (
         <div key={index} className="space-y-6">

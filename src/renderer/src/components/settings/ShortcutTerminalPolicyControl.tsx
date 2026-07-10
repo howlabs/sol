@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import type { TerminalShortcutPolicy } from '../../../../shared/keybindings'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { SearchableSetting } from './SearchableSetting'
 import { SettingsRow } from './SettingsFormControls'
+import { settingsSelectItems } from './settings-select-items'
 import { translate } from '@/i18n/i18n'
 
 export function ShortcutTerminalPolicyControl({
@@ -16,6 +17,28 @@ export function ShortcutTerminalPolicyControl({
     terminalShortcutPolicy?: TerminalShortcutPolicy
   }) => Promise<void> | void
 }): React.JSX.Element {
+  // Why: Base UI Select needs items for human labels in the trigger.
+  const items = useMemo(
+    () =>
+      settingsSelectItems([
+        {
+          value: 'orca-first',
+          label: translate(
+            'auto.components.settings.ShortcutTerminalPolicyControl.63308571d8',
+            'Orca first'
+          )
+        },
+        {
+          value: 'terminal-first',
+          label: translate(
+            'auto.components.settings.ShortcutTerminalPolicyControl.0762983d13',
+            'Terminal first'
+          )
+        }
+      ]),
+    []
+  )
+
   return (
     <SearchableSetting
       id="terminal-shortcut-policy"
@@ -42,6 +65,7 @@ export function ShortcutTerminalPolicyControl({
         control={
           <Select
             value={terminalShortcutPolicy}
+            items={items}
             onValueChange={(value) =>
               void updateSettings({
                 terminalShortcutPolicy: value as TerminalShortcutPolicy
@@ -52,18 +76,11 @@ export function ShortcutTerminalPolicyControl({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="orca-first">
-                {translate(
-                  'auto.components.settings.ShortcutTerminalPolicyControl.63308571d8',
-                  'Orca first'
-                )}
-              </SelectItem>
-              <SelectItem value="terminal-first">
-                {translate(
-                  'auto.components.settings.ShortcutTerminalPolicyControl.0762983d13',
-                  'Terminal first'
-                )}
-              </SelectItem>
+              {items.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         }

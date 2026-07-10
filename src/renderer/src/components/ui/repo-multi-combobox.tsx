@@ -146,7 +146,7 @@ export default function RepoMultiCombobox({
           size so the search field and repo names aren't truncated. */}
       <PopoverContent
         align="start"
-        className="w-[min(320px,calc(100vw-1rem))] min-w-[var(--anchor-width, var(--radix-popover-trigger-width))] p-0"
+        className="w-[min(320px,calc(100vw-1rem))] min-w-[var(--anchor-width)] p-0"
       >
         <Command shouldFilter={false} value={commandValue} onValueChange={setCommandValue}>
           <CommandInput

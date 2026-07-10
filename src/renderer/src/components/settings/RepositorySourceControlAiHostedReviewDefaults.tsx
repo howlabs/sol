@@ -88,6 +88,29 @@ export function RepositorySourceControlAiHostedReviewDefaults({
               </span>
               <Select
                 value={triStateValue(value?.[row.key])}
+                items={[
+                  {
+                    value: 'inherit',
+                    label: translate(
+                      'auto.components.settings.RepositorySourceControlAiHostedReviewDefaults.ffc3b26b26',
+                      'Use global'
+                    )
+                  },
+                  {
+                    value: 'on',
+                    label: translate(
+                      'auto.components.settings.RepositorySourceControlAiHostedReviewDefaults.777443bf89',
+                      'On'
+                    )
+                  },
+                  {
+                    value: 'off',
+                    label: translate(
+                      'auto.components.settings.RepositorySourceControlAiHostedReviewDefaults.053ccfbf52',
+                      'Off'
+                    )
+                  }
+                ]}
                 onValueChange={(nextValue) => onChange(row.key, nextValue)}
               >
                 <SelectTrigger size="sm" className="h-8 w-[120px] text-xs">

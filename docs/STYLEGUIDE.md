@@ -30,7 +30,7 @@ Target stack for app chrome (not Monaco/xterm content surfaces):
 - **Phase B:** **Mira density** on shared controls (radius, button/input/select/tabs/settings rows).
 - **Phase C:** icons via **`@/lib/icons`** → **Phosphor** (`regular` weight). Lucide package removed.
 - **Phase D:** `components/ui` on **Base UI** (`@base-ui/react`). `radix-ui` package removed.
-- **Phase E:** dual positioner CSS vars (`--available-height` / `--anchor-width` with `--radix-*` fallbacks), open/pressed state selectors (`data-open` / `data-pressed`).
+- **Phase E:** positioner CSS vars (`--available-height` / `--anchor-width` / `--collapsible-panel-height`), open/pressed state selectors (`data-open` / `data-pressed`). Dead `--radix-*` CSS fallbacks removed once producers were Base UI only.
 - **Phase F done:** Radix focus/dismiss content props (`onOpenAutoFocus`, `onInteractOutside`, …) shimmed to Base UI on shared primitives (`radix-popup-compat`).
 
 `components.json` records the full target (`style: base-mira`, `baseColor: stone`, `iconLibrary: phosphor`).
@@ -41,7 +41,7 @@ Rules for new UI:
 
 - Do **not** import Lucide or Phosphor ad hoc — use **`@/lib/icons`**.
 - Do **not** import Base UI or Radix from app features — only through `@/components/ui/*`.
-- Popover/select max-height and trigger width: use Base UI vars first (`--available-height`, `--anchor-width`); dual `--radix-*` fallbacks are fine.
+- Popover/select max-height and trigger width: use Base UI vars only (`--available-height`, `--anchor-width`). Do not add new `--radix-*` fallbacks.
 - Toggle selected styles must include **`data-pressed:`** (Base UI), not only `data-[state=on]:`.
 - Prefer Base UI focus/dismiss APIs for new code (`initialFocus` / `finalFocus` / Root `onOpenChange` + `cancel`). Existing Radix-named props still work via Phase F shims.
 
@@ -58,6 +58,24 @@ Rules for new UI:
 | App typography / scrollbars / titlebar chrome | Same `main.css`                                       |
 
 Never hardcode a hex value in component code if a variable already covers it. If a new token is needed, add it to `main.css` (both `:root` and `.dark`), expose it in the `@theme inline` block, then use it.
+
+## Settings pane templates
+
+Every Settings content pane (body under `SettingsSection`) must pick **one** layout template. Do not invent a fourth spacing/title scale.
+
+| Template | Use when | Density / chrome | Headers & rows |
+| -------- | -------- | ---------------- | -------------- |
+| **form-list** | Toggle/input/select rows, preference lists (General, Advanced, Notifications, Git rows, Privacy, Input, …) | Root stack **`space-y-1`**; subsection blocks **`space-y-1.5`** | `SettingsSubsectionHeader` + `SettingsRow` / `SettingsSwitchRow` / house selects. No one-off `text-sm font-medium` section titles. |
+| **collection / accordion** | Grouped cards or expanders (Appearance sections, Integrations cards, Tasks providers, Accounts provider blocks) | Root **`space-y-1`** between groups; cards `rounded-lg border border-border/60 bg-card/30` (or `integration-card-shell`) | Accordion titles match compact `text-xs font-semibold` + optional `text-[11px]` summary. Prefer house switches/rows inside expanded bodies. |
+| **setup / skill** | Install/setup flows, multi-step skill panels, orchestration onboarding (Ephemeral VMs skill, Orchestration, Agent skill terminals, Developer Permissions grant lists) | Root **`space-y-4`–`space-y-6`** only (never `space-y-8`+ / `space-y-10` without a short in-code “Why: setup/skill template” comment). Inner cards may use `p-3`/`p-4` | May use short prose + primary CTAs; still prefer `SettingsSubsectionHeader` scale (`text-xs` title / `11px` description) over `text-sm` ad-hoc headers when labeling a block. |
+
+### Rules for all templates
+
+- **Page chrome** stays on `SettingsSection` (`h2` + description + body card). Do not re-create a second page-level title inside the pane.
+- **`SearchableSetting`** is search metadata only — it does **not** render title/description. Visible labels come from `SettingsSubsectionHeader`, `SettingsRow`, accordion rows, or card chrome.
+- **Easter-egg / quiet controls** (e.g. Appearance App Icon carousel): keep `SearchableSetting` title/description for search; **do not** stack a formal `SettingsSubsectionHeader` that duplicates that copy.
+- **Do not** use extreme root gaps (`space-y-8`, `space-y-10`) on form-list or collection panes. If a setup/skill pane needs air, cap at `space-y-6` and document the template in a one-line Why comment.
+- Prefer `SettingsFormControls` over bespoke label/switch markup. New Settings UI must match one of the three templates above.
 
 ## Color roles
 
@@ -105,6 +123,8 @@ A common point of drift. Use these conventions for any list-style row (worktrees
 - **Hover:** `bg-accent` (in the worktree sidebar, `bg-sidebar-accent`).
 - **Keyboard-selected (cmdk highlight):** `data-[selected=true]:bg-accent` plus a `border-border` outline so the active row stays visible while the user types. The `data-selected` attribute is set by `cmdk` automatically.
 - **Persistent "current" / "active" row** (e.g. the worktree the user is viewing): also `bg-accent`, _plus_ a `data-current="true"` attribute so CSS or future styling can distinguish it from the cmdk highlight.
+- **Worktree left rail paint:** use `worktree-sidebar-*` tokens (`bg-worktree-sidebar-accent`, hover `/60`, ring `worktree-sidebar-ring`) — not generic `sidebar-*` — for row backgrounds and rings on that rail (including Settings nav when it reuses the rail surface).
+- **Worktree card current:** a persistent current worktree may set `data-current="true"` and/or `data-worktree-card-active` (alongside or instead of only relying on class names).
 - **Don't:** hardcode `bg-[#ededed]` / `bg-[#333333]` or invent a "selected" color. The accent token already adapts to light/dark and matches the rest of the app.
 
 ### Color mixing

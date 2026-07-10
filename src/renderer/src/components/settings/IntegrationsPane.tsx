@@ -65,7 +65,8 @@ export function IntegrationsPane(): React.JSX.Element {
         </IntegrationCardGroup>
       </section>
 
-      <section className="space-y-1.5">
+      {/* Why: hairline section break matches Stats — not a second card frame. */}
+      <section className="space-y-1.5 border-t border-border/40 pt-3">
         <SettingsSubsectionHeader
           title={translate(
             'auto.components.settings.IntegrationsPane.issueTrackers',

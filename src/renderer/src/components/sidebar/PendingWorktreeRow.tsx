@@ -37,8 +37,8 @@ export function PendingWorktreeRow({
       className={cn(
         'group flex w-full items-center gap-1 rounded-md transition-colors',
         active
-          ? 'border border-sidebar-ring/35 bg-sidebar-accent/70 ring-1 ring-sidebar-ring/30'
-          : 'border border-transparent hover:bg-sidebar-accent/60'
+          ? 'border border-worktree-sidebar-ring/35 bg-worktree-sidebar-accent/70 ring-1 ring-worktree-sidebar-ring/30'
+          : 'border border-transparent hover:bg-worktree-sidebar-accent/60'
       )}
     >
       <button
@@ -61,7 +61,7 @@ export function PendingWorktreeRow({
           )}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-[13px] font-medium text-sidebar-foreground">
+          <span className="block truncate text-[13px] font-medium text-worktree-sidebar-foreground">
             {entry.request.displayName || entry.request.name}
           </span>
           <span
@@ -83,7 +83,7 @@ export function PendingWorktreeRow({
         )}
         onClick={() => useAppStore.getState().removePendingWorktreeCreation(creationId)}
         className={cn(
-          'mr-1 flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground transition-opacity hover:bg-sidebar-accent hover:text-foreground focus-visible:opacity-100',
+          'mr-1 flex size-5 shrink-0 items-center justify-center rounded text-muted-foreground transition-opacity hover:bg-worktree-sidebar-accent hover:text-foreground focus-visible:opacity-100',
           isError ? 'opacity-100' : 'can-hover:opacity-0 group-hover:opacity-100'
         )}
       >

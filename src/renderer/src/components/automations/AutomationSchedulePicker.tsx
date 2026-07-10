@@ -168,7 +168,7 @@ export function AutomationSchedulePicker({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="popover-scroll-content scrollbar-sleek max-h-[var(--available-height, var(--radix-popover-content-available-height))] w-[min(var(--anchor-width, var(--radix-popover-trigger-width)),calc(100vw-2rem))] min-w-[min(22rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-y-auto p-3"
+        className="popover-scroll-content scrollbar-sleek max-h-[var(--available-height)] w-[min(var(--anchor-width),calc(100vw-2rem))] min-w-[min(22rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-y-auto p-3"
       >
         <div className="grid gap-3">
           <Field

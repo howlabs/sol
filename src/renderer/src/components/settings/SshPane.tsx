@@ -322,7 +322,7 @@ export function SshPane(_props: SshPaneProps): React.JSX.Element {
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1.5">
       {/* Header row */}
       <div className="flex items-center justify-between gap-3">
         <div className="space-y-0.5">
@@ -374,14 +374,15 @@ export function SshPane(_props: SshPaneProps): React.JSX.Element {
           <>
             {/* Target list */}
             {targets.length === 0 && !showForm ? (
-              <div className="flex items-center justify-center rounded-lg border border-dashed border-border/60 bg-card/30 px-4 py-5 text-sm text-muted-foreground">
+              // Why: empty copy sits on the page card — no dashed bg-card box.
+              <p className="text-[11px] text-muted-foreground">
                 {translate(
                   'auto.components.settings.SshPane.c0f1c80166',
                   'No SSH targets configured.'
                 )}
-              </div>
+              </p>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {targets.map((target) => (
                   <SshTargetCard
                     key={target.id}

@@ -160,7 +160,7 @@ export function AgentSkillSetupPanel({
   }
 
   const actionRow = (
-    <div className="mt-3 flex flex-wrap items-center gap-2">
+    <div className="mt-2.5 flex flex-wrap items-center gap-2">
       {!installed || showInstallWhenInstalled ? (
         <Button
           type="button"
@@ -219,7 +219,7 @@ export function AgentSkillSetupPanel({
         </Button>
       ) : null}
       {terminalOpening ? (
-        <p className="basis-full text-[12px] leading-snug text-muted-foreground">
+        <p className="basis-full text-[11px] leading-snug text-muted-foreground">
           {openingHint ??
             translate(
               'auto.components.settings.AgentSkillSetupPanel.4c05b9d7cb',
@@ -230,85 +230,71 @@ export function AgentSkillSetupPanel({
     </div>
   )
 
+  // Why: SettingsSection already supplies the page card. Nested rounded border
+  // bg shells on skill install read as SaaS card soup — keep setup chrome flat.
   return (
-    <div
-      className={cn(
-        'min-w-0',
-        variant === 'card' ? 'rounded-xl border border-border bg-muted/20' : null,
-        className
-      )}
-    >
-      <div
-        className={variant === 'card' ? cn('px-5 pt-5', terminalOpen ? 'pb-2' : 'pb-5') : 'pt-1.5'}
-      >
-        {hideHeader ? (
-          error ? (
-            <p className="text-[12px] text-destructive">{error}</p>
-          ) : null
-        ) : (
-          <div className="flex items-center gap-4">
-            {leading}
-            {icon ? (
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border bg-background text-foreground">
-                {icon}
-              </div>
-            ) : null}
-            <div className="min-w-0 flex-1 self-center">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <h3 className="text-[15px] font-semibold leading-tight text-foreground">{title}</h3>
-                {loading && !installed ? (
-                  <IntegrationStatusPill tone="neutral">
-                    {translate(
-                      'auto.components.settings.AgentSkillSetupPanel.68a468752e',
-                      'Checking...'
-                    )}
-                  </IntegrationStatusPill>
-                ) : installed ? (
-                  <IntegrationStatusPill tone="connected">
-                    {translate(
-                      'auto.components.settings.AgentSkillSetupPanel.9fcebceb2a',
-                      'Installed'
-                    )}
-                  </IntegrationStatusPill>
-                ) : (
-                  <IntegrationStatusPill tone="attention">
-                    {translate(
-                      'auto.components.settings.AgentSkillSetupPanel.5289300939',
-                      'Not installed'
-                    )}
-                  </IntegrationStatusPill>
-                )}
-              </div>
-              {error ? <p className="mt-1 text-[12px] text-destructive">{error}</p> : null}
-            </div>
-          </div>
-        )}
-        <div className={cn('max-w-none', hideHeader ? null : 'mt-3')}>
-          <p className="text-[13px] leading-snug text-muted-foreground">{description}</p>
-          {actionRow}
-          {actionHint ? <div className="mt-2">{actionHint}</div> : null}
-          {!installed && preInstallNotice && preInstallNoticeVisible ? (
-            <p className="mt-3 text-[12px] leading-snug text-muted-foreground">
-              {preInstallNotice}
-            </p>
+    <div className={cn('min-w-0 space-y-3', variant === 'inline' ? 'pt-0.5' : null, className)}>
+      {hideHeader ? (
+        error ? (
+          <p className="text-[12px] text-destructive">{error}</p>
+        ) : null
+      ) : (
+        <div className="flex items-start gap-2.5">
+          {leading}
+          {icon ? (
+            <div className="mt-0.5 shrink-0 text-muted-foreground [&_svg]:size-4">{icon}</div>
           ) : null}
-        </div>
-        {footer ? (
-          <div
-            className={cn('border-t border-border/60', terminalOpen ? 'mt-2 pt-4' : 'mt-5 pt-5')}
-          >
-            {footer}
+          <div className="min-w-0 flex-1 space-y-0.5">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <h3 className="text-xs font-semibold tracking-tight text-foreground">{title}</h3>
+              {loading && !installed ? (
+                <IntegrationStatusPill tone="neutral">
+                  {translate(
+                    'auto.components.settings.AgentSkillSetupPanel.68a468752e',
+                    'Checking...'
+                  )}
+                </IntegrationStatusPill>
+              ) : installed ? (
+                <IntegrationStatusPill tone="connected">
+                  {translate(
+                    'auto.components.settings.AgentSkillSetupPanel.9fcebceb2a',
+                    'Installed'
+                  )}
+                </IntegrationStatusPill>
+              ) : (
+                <IntegrationStatusPill tone="attention">
+                  {translate(
+                    'auto.components.settings.AgentSkillSetupPanel.5289300939',
+                    'Not installed'
+                  )}
+                </IntegrationStatusPill>
+              )}
+            </div>
+            {error ? <p className="text-[12px] text-destructive">{error}</p> : null}
           </div>
+        </div>
+      )}
+
+      <div className="max-w-none">
+        <p className="text-[11px] leading-snug text-muted-foreground">{description}</p>
+        {actionRow}
+        {actionHint ? <div className="mt-2">{actionHint}</div> : null}
+        {!installed && preInstallNotice && preInstallNoticeVisible ? (
+          <p className="mt-2.5 text-[11px] leading-snug text-muted-foreground">
+            {preInstallNotice}
+          </p>
         ) : null}
       </div>
+
+      {footer ? (
+        <div className={cn('border-t border-border/40', terminalOpen ? 'pt-3' : 'pt-4')}>
+          {footer}
+        </div>
+      ) : null}
+
       {terminalOpen ? (
-        <div
-          className={cn(
-            'min-w-0 max-w-full overflow-hidden',
-            variant === 'card' ? 'px-5 pb-5' : 'mt-2'
-          )}
-        >
-          <div className="flex min-w-0 max-w-full items-center gap-2 overflow-hidden rounded-md border border-border bg-muted/35 px-3 py-2">
+        <div className="min-w-0 max-w-full space-y-2 overflow-hidden">
+          <div className="flex min-w-0 max-w-full items-center gap-2 overflow-hidden rounded-md border border-border/50 bg-muted/15 px-3 py-2">
             <code className="scrollbar-sleek min-w-0 flex-1 overflow-x-auto whitespace-nowrap font-mono text-xs text-muted-foreground">
               {openTerminalCommand}
             </code>

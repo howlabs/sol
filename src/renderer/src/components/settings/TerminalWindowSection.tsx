@@ -1,8 +1,13 @@
 import { useRef, useState } from 'react'
-import { RotateCw } from '@/lib/icons'
+import { ChevronRight, RotateCw } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import { Button } from '../ui/button'
-import { ColorField, NumberField, SettingsSwitchRow } from './SettingsFormControls'
+import {
+  ColorField,
+  NumberField,
+  SettingsSubsectionHeader,
+  SettingsSwitchRow
+} from './SettingsFormControls'
 import { SearchableSetting } from './SearchableSetting'
 import { clampNumber } from '@/lib/terminal-theme'
 import { useMountedRef } from '@/hooks/useMountedRef'
@@ -45,20 +50,16 @@ export function TerminalWindowSection({
   }
 
   return (
-    <section className="space-y-1">
-      <div className="space-y-1">
-        <h3 className="text-sm font-semibold">
-          {translate('auto.components.settings.TerminalWindowSection.b96ba13ed1', 'Window')}
-        </h3>
-        <p className="text-xs text-muted-foreground">
-          {translate(
-            'auto.components.settings.TerminalWindowSection.00eaa6b881',
-            'Window appearance and background settings.'
-          )}
-        </p>
-      </div>
+    <section className="space-y-1.5">
+      <SettingsSubsectionHeader
+        title={translate('auto.components.settings.TerminalWindowSection.b96ba13ed1', 'Window')}
+        description={translate(
+          'auto.components.settings.TerminalWindowSection.00eaa6b881',
+          'Window appearance and background settings.'
+        )}
+      />
 
-      <div className="ml-4 space-y-4">
+      <div className="ml-3 divide-y divide-border/40">
         <SearchableSetting
           title={translate(
             'auto.components.settings.TerminalWindowSection.ea7b1a158e',
@@ -101,7 +102,7 @@ export function TerminalWindowSection({
             'Apply background blur to the terminal window. Requires restart.'
           )}
           keywords={['window', 'blur', 'background', 'transparency', 'vibrancy']}
-          className="space-y-3 py-2"
+          className="space-y-1.5 py-1.5"
         >
           <SettingsSwitchRow
             label={translate(
@@ -125,13 +126,13 @@ export function TerminalWindowSection({
           {blurPendingRestart ? (
             <div className="flex items-center justify-between gap-3 rounded-md border border-yellow-500/50 bg-yellow-500/10 px-3 py-2.5">
               <div className="min-w-0 flex-1 space-y-0.5">
-                <p className="text-sm font-medium text-yellow-700 dark:text-yellow-300">
+                <p className="text-xs font-semibold text-yellow-700 dark:text-yellow-300">
                   {translate(
                     'auto.components.settings.TerminalWindowSection.c65bb9ce63',
                     'Restart required'
                   )}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[11px] leading-snug text-muted-foreground">
                   {translate(
                     'auto.components.settings.TerminalWindowSection.53ce336e15',
                     'Restart Orca to apply the window blur change.'
@@ -253,16 +254,19 @@ export function TerminalWindowSection({
             'Override individual terminal colors.'
           )}
           keywords={['color', 'override', 'ansi', 'palette', 'theme']}
-          className="space-y-3"
+          className="space-y-1.5 py-1.5"
         >
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <button
+              type="button"
               onClick={() => setColorOverridesExpanded((prev) => !prev)}
-              className="flex items-center gap-2 text-sm font-medium"
+              className="flex h-7 items-center gap-1.5 text-xs font-semibold tracking-tight text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
             >
-              <span className={`transition-transform ${colorOverridesExpanded ? 'rotate-90' : ''}`}>
-                ▶
-              </span>
+              <ChevronRight
+                className={`size-3.5 text-muted-foreground transition-transform duration-200 ease-out motion-reduce:transition-none ${
+                  colorOverridesExpanded ? 'rotate-90' : ''
+                }`}
+              />
               {translate(
                 'auto.components.settings.TerminalWindowSection.63f8d9336e',
                 'Color Overrides'
@@ -273,7 +277,7 @@ export function TerminalWindowSection({
                 colorOverridesExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
               }`}
             >
-              <div className="min-h-0 space-y-4">
+              <div className="min-h-0 space-y-2">
                 {COLOR_OVERRIDE_GROUPS.map((group) => (
                   <div key={group.label} className="space-y-2">
                     <p className="text-xs font-semibold text-muted-foreground">{group.label}</p>

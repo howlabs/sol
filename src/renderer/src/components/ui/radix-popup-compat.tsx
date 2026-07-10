@@ -211,7 +211,11 @@ export function mapRadixCloseAutoFocus(
   }
 }
 
-/** When asChild renders a non-<button>, Base UI needs nativeButton={false}. */
+/**
+ * When asChild renders a non-<button> DOM tag, Base UI needs nativeButton={false}.
+ * Component hosts (e.g. app <Button>) leave the prop unset so Base UI keeps its
+ * default (true) — those composites still mount a real <button>.
+ */
 export function nativeButtonForAsChild(
   asChild: boolean | undefined,
   child: React.ReactNode,
@@ -223,7 +227,12 @@ export function nativeButtonForAsChild(
   if (!asChild || !React.isValidElement(child)) {
     return undefined
   }
-  return child.type === 'button'
+  if (typeof child.type === 'string') {
+    return child.type === 'button'
+  }
+  // Why: function/forwardRef children are usually Button-like hosts that render
+  // a native button; forcing false triggers Base UI host mismatch warnings.
+  return undefined
 }
 
 export type RadixContentCompatProps = RadixDismissHandlers &

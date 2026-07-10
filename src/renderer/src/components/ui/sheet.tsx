@@ -12,6 +12,7 @@ import {
   applyRadixDismissHandlers,
   mapRadixCloseAutoFocus,
   mapRadixOpenAutoFocus,
+  nativeButtonForAsChild,
   PopupDismissProvider,
   splitRadixContentCompatProps,
   usePopupDismissRegistry,
@@ -39,12 +40,54 @@ function Sheet({ onOpenChange, ...props }: SheetPrimitive.Root.Props): React.JSX
   )
 }
 
-function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props): React.JSX.Element {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
+function SheetTrigger({
+  asChild,
+  children,
+  nativeButton,
+  ...props
+}: SheetPrimitive.Trigger.Props & { asChild?: boolean }): React.JSX.Element {
+  // Why: Base UI uses `render` (not Radix asChild). Map asChild so call sites
+  // keep working and avoid nested <button> hosts.
+  const resolvedNativeButton = nativeButtonForAsChild(asChild, children, nativeButton)
+  if (asChild && React.isValidElement(children)) {
+    return (
+      <SheetPrimitive.Trigger
+        data-slot="sheet-trigger"
+        render={children as React.ReactElement}
+        nativeButton={resolvedNativeButton}
+        {...props}
+      />
+    )
+  }
+  return (
+    <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props}>
+      {children}
+    </SheetPrimitive.Trigger>
+  )
 }
 
-function SheetClose({ ...props }: SheetPrimitive.Close.Props): React.JSX.Element {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
+function SheetClose({
+  asChild,
+  children,
+  nativeButton,
+  ...props
+}: SheetPrimitive.Close.Props & { asChild?: boolean }): React.JSX.Element {
+  const resolvedNativeButton = nativeButtonForAsChild(asChild, children, nativeButton)
+  if (asChild && React.isValidElement(children)) {
+    return (
+      <SheetPrimitive.Close
+        data-slot="sheet-close"
+        render={children as React.ReactElement}
+        nativeButton={resolvedNativeButton}
+        {...props}
+      />
+    )
+  }
+  return (
+    <SheetPrimitive.Close data-slot="sheet-close" {...props}>
+      {children}
+    </SheetPrimitive.Close>
+  )
 }
 
 function SheetPortal({ ...props }: SheetPrimitive.Portal.Props): React.JSX.Element {

@@ -282,9 +282,11 @@ export function SshTargetCard({
   )
 
   return (
+    // Why: SettingsSection is already the page card — host rows stay quiet list
+    // tiles (muted fill, one soft border) instead of nested bg-card shells.
     <div
       ref={handleCardRef}
-      className="flex items-center gap-3 rounded-lg border border-border/50 bg-card/40 px-4 py-3"
+      className="flex items-center gap-3 rounded-md border border-border/50 bg-muted/15 px-3 py-2"
     >
       <Server className="size-4 shrink-0 text-muted-foreground" />
 

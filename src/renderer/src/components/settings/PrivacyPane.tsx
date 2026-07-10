@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react'
-import { ShieldCheck } from '@/lib/icons'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import type { GlobalSettings } from '../../../../shared/types'
 import type { TelemetryConsentState } from '../../../../shared/telemetry-consent-types'
-import { Label } from '../ui/label'
-import { SettingsSwitch } from './SettingsFormControls'
+import { SettingsSwitchRow } from './SettingsFormControls'
 import { PRIVACY_URL, getConsentState, setOptIn as telemetrySetOptIn } from '../../lib/telemetry'
 import { useAppStore } from '../../store'
 import { PrivacyDiagnosticsSection } from './PrivacyDiagnosticsSection'
@@ -84,45 +82,40 @@ export function PrivacyPane({ settings }: PrivacyPaneProps): React.JSX.Element {
     }
   }
 
+  const telemetryDescription = (
+    <>
+      {translate(
+        'auto.components.settings.PrivacyPane.8bfdd23a88',
+        'Help us figure out what to build next. Orca sends anonymous counts of which features you use and where things break.'
+      )}{' '}
+      <button
+        type="button"
+        className="underline underline-offset-2 hover:text-foreground"
+        onClick={() => void window.api.shell.openUrl(PRIVACY_URL)}
+      >
+        {translate('auto.components.settings.PrivacyPane.77410e0566', 'Privacy policy')}
+      </button>
+      .
+    </>
+  )
+
   return (
     <div className="space-y-1">
-      <div className="flex items-center justify-between gap-4 py-2">
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="size-4" />
-            <Label>
-              {translate(
-                'auto.components.settings.PrivacyPane.fe904ac984',
-                'Share anonymous usage data'
-              )}
-            </Label>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.PrivacyPane.8bfdd23a88',
-              'Help us figure out what to build next. Orca sends anonymous counts of which features you use and where things break.'
-            )}{' '}
-            <button
-              type="button"
-              className="underline underline-offset-2 hover:text-foreground"
-              onClick={() => void window.api.shell.openUrl(PRIVACY_URL)}
-            >
-              {translate('auto.components.settings.PrivacyPane.77410e0566', 'Privacy policy')}
-            </button>
-            .
-          </p>
-        </div>
-        <SettingsSwitch
-          checked={toggleChecked}
-          ariaLabel={translate(
-            'auto.components.settings.PrivacyPane.fe904ac984',
-            'Share anonymous usage data'
-          )}
-          ariaDescribedBy={blocked ? PRIVACY_PANE_BLOCKED_HELPER_ID : undefined}
-          disabled={blocked !== null || inFlight}
-          onChange={() => void handleToggle()}
-        />
-      </div>
+      <SettingsSwitchRow
+        label={translate(
+          'auto.components.settings.PrivacyPane.fe904ac984',
+          'Share anonymous usage data'
+        )}
+        description={telemetryDescription}
+        checked={toggleChecked}
+        ariaLabel={translate(
+          'auto.components.settings.PrivacyPane.fe904ac984',
+          'Share anonymous usage data'
+        )}
+        ariaDescribedBy={blocked ? PRIVACY_PANE_BLOCKED_HELPER_ID : undefined}
+        disabled={blocked !== null || inFlight}
+        onChange={() => void handleToggle()}
+      />
 
       {blocked ? <BlockedHelper blocked={blocked} id={PRIVACY_PANE_BLOCKED_HELPER_ID} /> : null}
       <PrivacyDiagnosticsSection />
@@ -132,7 +125,7 @@ export function PrivacyPane({ settings }: PrivacyPaneProps): React.JSX.Element {
 
 function BlockedHelper({ blocked, id }: { blocked: BlockedReason; id: string }): React.JSX.Element {
   return (
-    <div id={id} className="pb-2 text-xs text-muted-foreground">
+    <div id={id} className="pb-1 text-[11px] leading-snug text-muted-foreground">
       {blocked.reason === 'ci' ? (
         <p>
           {translate(

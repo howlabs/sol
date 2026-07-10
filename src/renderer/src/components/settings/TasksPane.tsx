@@ -129,8 +129,9 @@ export function TasksPane({ settings, updateSettings }: TasksPaneProps): React.J
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-5">
-      <p className="max-w-prose text-[13px] leading-relaxed text-muted-foreground">
+    // Why: collection template — provider cards, not form-list space-y-1 rows.
+    <div className="mx-auto max-w-3xl space-y-4">
+      <p className="max-w-prose text-[11px] leading-snug text-muted-foreground">
         {translate(
           'auto.components.settings.TasksPane.intro',
           'Turn providers on for the Tasks page and sidebar. Keep at least one on.'

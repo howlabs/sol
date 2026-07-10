@@ -518,20 +518,16 @@
   background-color: color-mix(in srgb, var(--foreground, #171717) 36%, transparent);
 }
 
-/* Phase E: Base UI positioners expose --available-height / --anchor-width;
-   keep Radix var names as fallbacks for any residual consumers. */
+/* Base UI positioners expose --available-height / --anchor-width. */
 [data-slot='popover-content'] {
-  max-height: var(--available-height, var(--radix-popover-content-available-height));
+  max-height: var(--available-height);
 }
 
 /* Positioner owns available-height. Make that same node scrollable so
    Chromium scrollbar hit-testing stays inside the layer. */
 .popover-scroll-content {
   color-scheme: dark;
-  max-height: min(
-    15rem,
-    var(--available-height, var(--radix-popover-content-available-height, 15rem))
-  );
+  max-height: min(15rem, var(--available-height, 15rem));
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -686,17 +682,19 @@
 
 /* ── Titlebar ────────────────────────────────────────── */
 
-/* Why: Radix portals (dropdowns, popovers, dialogs, sheets) render at the
-   document root. Electron's OS-level drag hit-test ignores z-index — portaled
-   content that visually overlaps a -webkit-app-region: drag element is
-   unclickable without an explicit no-drag. These rules cover every Radix
-   portal variant: popper wrappers (dropdowns, popovers), dialog/sheet
-   overlays, and their content panels. */
-[data-radix-popper-content-wrapper],
+/* Why: Portaled overlays/panels render at the document root. Electron's
+   OS-level drag hit-test ignores z-index — content that visually overlaps a
+   -webkit-app-region: drag element is unclickable without explicit no-drag. */
 [data-slot='sheet-overlay'],
 [data-slot='sheet-content'],
 [data-slot='dialog-overlay'],
-[data-slot='dialog-content'] {
+[data-slot='dialog-content'],
+[data-slot='popover-content'],
+[data-slot='dropdown-menu-content'],
+[data-slot='context-menu-content'],
+[data-slot='select-content'],
+[data-slot='hover-card-content'],
+[data-slot='tooltip-content'] {
   -webkit-app-region: no-drag;
 }
 
@@ -1513,14 +1511,14 @@
   }
 
   to {
-    height: var(--collapsible-panel-height, var(--radix-collapsible-content-height));
+    height: var(--collapsible-panel-height);
     opacity: 1;
   }
 }
 
 @keyframes collapsible-up {
   from {
-    height: var(--collapsible-panel-height, var(--radix-collapsible-content-height));
+    height: var(--collapsible-panel-height);
     opacity: 1;
   }
 

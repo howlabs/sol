@@ -137,6 +137,22 @@ export function RepositorySourceControlAiActionRows({
               </div>
               <Select
                 value={hasOverride ? ACTION_MODE_OVERRIDE : ACTION_MODE_INHERIT}
+                items={[
+                  {
+                    value: ACTION_MODE_INHERIT,
+                    label: translate(
+                      'auto.components.settings.RepositorySourceControlAiActionRows.403876bb48',
+                      'Use global'
+                    )
+                  },
+                  {
+                    value: ACTION_MODE_OVERRIDE,
+                    label: translate(
+                      'auto.components.settings.RepositorySourceControlAiActionRows.1cd88d470a',
+                      'Customize'
+                    )
+                  }
+                ]}
                 onValueChange={(value) => onActionModeChange(actionId, value)}
               >
                 <SelectTrigger size="sm" className="h-8 w-full shrink-0 text-xs sm:w-[150px]">
@@ -168,6 +184,27 @@ export function RepositorySourceControlAiActionRows({
                 </Label>
                 <Select
                   value={actionAgentSelectValue(effectiveAgent)}
+                  items={[
+                    {
+                      value: DEFAULT_AGENT_VALUE,
+                      label: translate(
+                        'auto.components.settings.RepositorySourceControlAiActionRows.0ffb081b3a',
+                        'Use default agent'
+                      )
+                    },
+                    ...(SOURCE_CONTROL_TEXT_ACTION_ID_SET.has(actionId)
+                      ? [
+                          {
+                            value: CUSTOM_AGENT_ID,
+                            label: translate(
+                              'auto.components.settings.RepositorySourceControlAiActionRows.2b2f38652b',
+                              'Custom command'
+                            )
+                          }
+                        ]
+                      : []),
+                    ...agentOptions.map((agent) => ({ value: agent.id, label: agent.label }))
+                  ]}
                   onValueChange={(value) => onActionAgentChange(actionId, value)}
                   disabled={!hasOverride}
                 >

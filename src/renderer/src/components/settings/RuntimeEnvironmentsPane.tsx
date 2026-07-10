@@ -56,6 +56,7 @@ import { unwrapRuntimeRpcResult } from '@/runtime/runtime-rpc-client'
 import { useAppStore } from '@/store'
 import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 
 const LOCAL_RUNTIME_VALUE = '__local__'
 const NO_RUNTIME_VALUE = '__none__'
@@ -730,45 +731,41 @@ export function RuntimeEnvironmentsPane({
       title={searchEntry.title}
       description={searchEntry.description}
       keywords={searchEntry.keywords}
-      className="space-y-1 py-2"
+      className="space-y-1"
     >
-      <div className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0 space-y-0.5">
-            <div className="text-sm font-medium">
-              {translate(
-                'auto.components.settings.RuntimeEnvironmentsPane.connectToRemoteServers',
-                'Connect to remote servers'
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {translate(
-                'auto.components.settings.RuntimeEnvironmentsPane.connectToRemoteServersHelp',
-                'Pair another Orca runtime, then connect or disconnect it here. Use Advanced > Active Server only when you want to change the default host.'
-              )}
-            </p>
-          </div>
-          {addServerFormOpen ? null : (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="gap-1.5"
-              onClick={() => setAddServerFormOpen(true)}
-              disabled={isBusy}
-            >
-              <Plus />
-              {translate(
-                'auto.components.settings.RuntimeEnvironmentsPane.9bee6bbeeb',
-                'Add Server'
-              )}
-            </Button>
+      <div className="space-y-1.5">
+        <SettingsSubsectionHeader
+          title={translate(
+            'auto.components.settings.RuntimeEnvironmentsPane.connectToRemoteServers',
+            'Connect to remote servers'
           )}
-        </div>
+          description={translate(
+            'auto.components.settings.RuntimeEnvironmentsPane.connectToRemoteServersHelp',
+            'Pair another Orca runtime, then connect or disconnect it here. Use Advanced > Active Server only when you want to change the default host.'
+          )}
+          action={
+            addServerFormOpen ? null : (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-7 gap-1.5 text-xs"
+                onClick={() => setAddServerFormOpen(true)}
+                disabled={isBusy}
+              >
+                <Plus className="size-3.5" />
+                {translate(
+                  'auto.components.settings.RuntimeEnvironmentsPane.9bee6bbeeb',
+                  'Add Server'
+                )}
+              </Button>
+            )
+          }
+        />
 
         {addServerFormOpen ? (
           <form
-            className="space-y-3 rounded-lg border border-border/50 bg-muted/20 p-3"
+            className="space-y-2 rounded-lg border border-border/60 bg-muted/20 p-3"
             onSubmit={(event) => {
               event.preventDefault()
               void addEnvironment()
@@ -812,7 +809,10 @@ export function RuntimeEnvironmentsPane({
                   )}
                   className="h-8 min-w-0 font-mono text-xs"
                 />
-                <p id="runtime-server-pairing-code-help" className="text-xs text-muted-foreground">
+                <p
+                  id="runtime-server-pairing-code-help"
+                  className="text-[11px] leading-snug text-muted-foreground"
+                >
                   {translate('auto.components.settings.RuntimeEnvironmentsPane.163671f7b5', 'Run')}
                   <span className="font-mono">
                     {translate(
@@ -852,21 +852,21 @@ export function RuntimeEnvironmentsPane({
           </form>
         ) : null}
 
-        <div className="rounded-lg border border-border/50 bg-card/30">
+        <div className="rounded-lg border border-border/60 bg-card/30">
           {environments.length === 0 ? (
-            <div className="px-3 py-4 text-sm text-muted-foreground">
+            <div className="px-3 py-4 text-xs text-muted-foreground">
               {translate(
                 'auto.components.settings.RuntimeEnvironmentsPane.9a3758d983',
                 'No saved servers.'
               )}
             </div>
           ) : (
-            <div className="divide-y divide-border/50">
+            <div className="divide-y divide-border/40">
               {environments.map((environment) => (
                 <div
                   key={environment.id}
                   data-settings-section={environment.id}
-                  className="flex items-center gap-3 px-4 py-3"
+                  className="flex items-center gap-3 px-3 py-2.5"
                 >
                   {(() => {
                     const details = detailsByEnvironmentId[environment.id]
@@ -885,7 +885,7 @@ export function RuntimeEnvironmentsPane({
                         <Server className="size-4 shrink-0 text-muted-foreground" />
                         <div className="min-w-0 flex-1">
                           <div className="flex min-w-0 items-center gap-2">
-                            <div className="truncate text-sm font-medium">{environment.name}</div>
+                            <div className="truncate text-xs font-medium">{environment.name}</div>
                             <span
                               className={cn(
                                 'size-2 shrink-0 rounded-full',
@@ -901,7 +901,7 @@ export function RuntimeEnvironmentsPane({
                               <Loader2 className="size-3.5 shrink-0 animate-spin text-muted-foreground" />
                             ) : null}
                           </div>
-                          <p className="truncate text-xs text-muted-foreground">
+                          <p className="truncate text-[11px] text-muted-foreground">
                             {isActive
                               ? translate(
                                   'auto.components.settings.RuntimeEnvironmentsPane.activeServerRowHelp',
@@ -912,7 +912,7 @@ export function RuntimeEnvironmentsPane({
                           {detailsDescription ? (
                             <p
                               className={cn(
-                                'mt-0.5 truncate text-xs',
+                                'mt-0.5 truncate text-[11px]',
                                 details?.compatibility?.kind === 'blocked'
                                   ? 'text-destructive'
                                   : 'text-muted-foreground'
@@ -997,13 +997,13 @@ export function RuntimeEnvironmentsPane({
 
       <EphemeralVmRuntimesSection />
 
-      <div data-settings-section="default-runtime">
+      <div className="border-t border-border/40 pt-3" data-settings-section="default-runtime">
         <Button
           type="button"
           variant="ghost"
           size="sm"
           onClick={() => setAdvancedOpen((current) => !current)}
-          className="-ml-2 text-xs"
+          className="-ml-2 h-7 text-xs"
         >
           {translate('auto.components.settings.RuntimeEnvironmentsPane.advanced', 'Advanced')}
           <ChevronDown
@@ -1027,20 +1027,43 @@ export function RuntimeEnvironmentsPane({
                   : '-translate-y-1 opacity-0 delay-0'
               )}
             >
-              <div className="space-y-1">
-                <Label id="runtime-active-server-label">
-                  {translate(
-                    'auto.components.settings.RuntimeEnvironmentsPane.64b6bea541',
-                    'Default runtime'
-                  )}
-                </Label>
-                <p className="text-xs text-muted-foreground">
-                  {getActiveServerModeDescription(allowLocalRuntime)}
-                </p>
-              </div>
+              <SettingsSubsectionHeader
+                title={translate(
+                  'auto.components.settings.RuntimeEnvironmentsPane.64b6bea541',
+                  'Default runtime'
+                )}
+                description={getActiveServerModeDescription(allowLocalRuntime)}
+              />
               <div className="flex flex-wrap items-center gap-2">
                 <Select
                   value={activeValue}
+                  items={[
+                    ...(allowLocalRuntime
+                      ? [
+                          {
+                            value: LOCAL_RUNTIME_VALUE,
+                            label: translate(
+                              'auto.components.settings.RuntimeEnvironmentsPane.78692becbd',
+                              'Local desktop'
+                            )
+                          }
+                        ]
+                      : environments.length === 0
+                        ? [
+                            {
+                              value: NO_RUNTIME_VALUE,
+                              label: translate(
+                                'auto.components.settings.RuntimeEnvironmentsPane.b07070ed3c',
+                                'No server connected'
+                              )
+                            }
+                          ]
+                        : []),
+                    ...environments.map((environment) => ({
+                      value: environment.id,
+                      label: environment.name
+                    }))
+                  ]}
                   onValueChange={(value) => {
                     if (value !== activeValue) {
                       setSwitchError(null)
@@ -1052,7 +1075,10 @@ export function RuntimeEnvironmentsPane({
                   <SelectTrigger
                     size="sm"
                     className="min-w-[260px]"
-                    aria-labelledby="runtime-active-server-label"
+                    aria-label={translate(
+                      'auto.components.settings.RuntimeEnvironmentsPane.64b6bea541',
+                      'Default runtime'
+                    )}
                   >
                     <SelectValue />
                   </SelectTrigger>
@@ -1099,13 +1125,13 @@ export function RuntimeEnvironmentsPane({
               </div>
               {environments.length > 0 ? (
                 <div className="space-y-2 pt-2">
-                  <div className="text-xs font-medium">
-                    {translate(
+                  <SettingsSubsectionHeader
+                    title={translate(
                       'auto.components.settings.RuntimeEnvironmentsPane.serverDetails',
                       'Server details'
                     )}
-                  </div>
-                  <div className="space-y-1 rounded-lg border border-border/50 bg-card/30 p-2">
+                  />
+                  <div className="space-y-1 rounded-lg border border-border/60 bg-card/30 p-2">
                     {environments.map((environment) => {
                       const details = detailsByEnvironmentId[environment.id]
                       return (
@@ -1161,55 +1187,49 @@ export function RuntimeEnvironmentsPane({
       </div>
 
       {canGeneratePairingUrl ? (
-        <div className="space-y-3 pt-2">
-          <div className="space-y-0.5">
-            <div className="text-sm font-medium">
-              {translate(
-                'auto.components.settings.RuntimeEnvironmentsPane.advertiseThisApp',
-                'Advertise this app as a server'
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {translate(
-                'auto.components.settings.RuntimeEnvironmentsPane.advertiseThisAppHelp',
-                'Create access links for browsers, mobile clients, or another Orca client to connect back to this running app.'
-              )}
-            </p>
-          </div>
-          <div className="overflow-hidden rounded-lg border border-border/50 bg-card/30">
-            <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2.5">
-              <div className="min-w-0 space-y-0.5">
-                <div className="text-sm font-medium">
-                  {translate(
-                    'auto.components.settings.RuntimeEnvironmentsPane.6e1280ca55',
-                    'Share this Orca server'
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {translate(
-                    'auto.components.settings.RuntimeEnvironmentsPane.84b9b2be05',
-                    'Create a revocable access grant so a browser or another Orca client can connect.'
-                  )}
-                </p>
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="gap-1.5"
-                onClick={() => setShareServerFormOpen((open) => !open)}
-              >
-                <Share2 />
-                {shareServerFormOpen
-                  ? translate(
-                      'auto.components.settings.RuntimeEnvironmentsPane.54dee18f5c',
-                      'Hide Form'
-                    )
-                  : translate(
-                      'auto.components.settings.RuntimeEnvironmentsPane.3595fd1948',
-                      'New Link'
-                    )}
-              </Button>
+        <div className="space-y-1.5 border-t border-border/40 pt-3">
+          <SettingsSubsectionHeader
+            title={translate(
+              'auto.components.settings.RuntimeEnvironmentsPane.advertiseThisApp',
+              'Advertise this app as a server'
+            )}
+            description={translate(
+              'auto.components.settings.RuntimeEnvironmentsPane.advertiseThisAppHelp',
+              'Create access links for browsers, mobile clients, or another Orca client to connect back to this running app.'
+            )}
+          />
+          <div className="overflow-hidden rounded-lg border border-border/60 bg-card/30">
+            <div className="px-3 py-2.5">
+              <SettingsSubsectionHeader
+                title={translate(
+                  'auto.components.settings.RuntimeEnvironmentsPane.6e1280ca55',
+                  'Share this Orca server'
+                )}
+                description={translate(
+                  'auto.components.settings.RuntimeEnvironmentsPane.84b9b2be05',
+                  'Create a revocable access grant so a browser or another Orca client can connect.'
+                )}
+                action={
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-7 gap-1.5 text-xs"
+                    onClick={() => setShareServerFormOpen((open) => !open)}
+                  >
+                    <Share2 className="size-3.5" />
+                    {shareServerFormOpen
+                      ? translate(
+                          'auto.components.settings.RuntimeEnvironmentsPane.54dee18f5c',
+                          'Hide Form'
+                        )
+                      : translate(
+                          'auto.components.settings.RuntimeEnvironmentsPane.3595fd1948',
+                          'New Link'
+                        )}
+                  </Button>
+                }
+              />
             </div>
             <div className="border-t border-border/40 px-3 py-3">
               <RuntimePairingUrlGenerator

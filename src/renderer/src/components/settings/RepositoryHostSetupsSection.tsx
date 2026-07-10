@@ -117,6 +117,11 @@ export function RepositoryHostSetupsSection({
               </span>
               <Select
                 value={repo.id}
+                items={openableProjectHostSetups.map((setup) => ({
+                  value: setup.repoId,
+                  label:
+                    hostOptionById.get(setup.hostId)?.label ?? getExecutionHostLabel(setup.hostId)
+                }))}
                 onValueChange={(repoId) => {
                   if (repoId === repo.id) {
                     return

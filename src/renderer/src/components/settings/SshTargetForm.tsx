@@ -42,8 +42,10 @@ export function SshTargetForm({
   }, [editingId, hasAdvancedConnectionFields])
 
   return (
+    // Why: form lives inside SettingsSection already — drop the second card
+    // shell and keep a single quiet surface for the draft fields.
     <form
-      className="space-y-4 rounded-lg border border-border/50 bg-card/40 p-4"
+      className="space-y-3 rounded-md border border-border/50 bg-muted/15 px-3 py-2.5"
       onSubmit={(e) => {
         e.preventDefault()
         onSave()

@@ -590,6 +590,16 @@ export function AccountsPane({
             {wslSupportedPlatform && accountRuntime.runtime === 'wsl' ? (
               <Select
                 value={accountRuntime.wslDistro ?? '__default__'}
+                items={[
+                  {
+                    value: '__default__',
+                    label: translate(
+                      'auto.components.settings.AccountsPane.2358ac71d2',
+                      'WSL default'
+                    )
+                  },
+                  ...wslDistros.map((distro) => ({ value: distro, label: distro }))
+                ]}
                 onValueChange={(value) =>
                   updateSettings({
                     localAccountRuntime: 'wsl',

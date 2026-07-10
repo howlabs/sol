@@ -114,9 +114,9 @@ export function AppearanceWindowSidebarSection({
           keywords={statusBarKeywords}
           forceVisible={forceVisiblePrimary || statusBarSectionMatches || statusBarControlMatches}
         >
-          <SettingsRow label={statusBarTitle} description={statusBarDescription} control={null} />
+          <SettingsSubsectionHeader title={statusBarTitle} description={statusBarDescription} />
           {showStatusBarControls ? (
-            <div className="ml-3 divide-y divide-border/40 border-t border-border/40">
+            <div className="divide-y divide-border/40">
               {visibleStatusBarToggles.map((toggle) => {
                 const enabled = statusBarItems.includes(toggle.id)
                 return (

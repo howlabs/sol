@@ -17,6 +17,7 @@ import {
 import { useActiveProjectSkillRuntime } from '@/hooks/useActiveProjectSkillRuntime'
 import { SearchableSetting } from './SearchableSetting'
 import { matchesSettingsSearch } from './settings-search'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 import { useAppStore } from '../../store'
 import { getOrchestrationPaneSearchEntries } from './orchestration-search'
 import { AgentSkillSetupPanel } from './AgentSkillSetupPanel'
@@ -73,6 +74,7 @@ export function OrchestrationPane(): React.JSX.Element {
   }
 
   return (
+    // Why: setup/skill template — skill install + examples (STYLEGUIDE).
     <SearchableSetting
       title={translate(
         'auto.components.settings.OrchestrationPane.191ac34567',
@@ -83,7 +85,7 @@ export function OrchestrationPane(): React.JSX.Element {
         'Coordinate coding agents across handoffs, worktree handovers, and child-agent work.'
       )}
       keywords={getOrchestrationPaneSearchEntries()[0].keywords}
-      className="space-y-5 py-2"
+      className="space-y-4 py-2"
     >
       <AgentSkillSetupPanel
         title={translate(
@@ -122,7 +124,7 @@ export function OrchestrationPane(): React.JSX.Element {
         actionHint={
           // Installed updates stay on the primary panel so there is only one update path.
           activeSkillRuntime.installDisabledReason || orchestrationSkillDetected ? null : (
-            <p className="text-[12px] leading-snug text-muted-foreground">
+            <p className="text-[11px] leading-snug text-muted-foreground">
               {translate(
                 'auto.components.settings.OrchestrationPane.832f1f3ee6',
                 'Prefer your own terminal?'
@@ -158,36 +160,36 @@ export function OrchestrationPane(): React.JSX.Element {
         onOpenChange={setSkillPromptOpen}
       />
 
-      <div className="space-y-1 border-t border-border/60 pt-6">
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium text-foreground">
-            {translate('auto.components.settings.OrchestrationPane.ae79504732', 'How to use it')}
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.OrchestrationPane.52e0634e2c',
-              'Ask a coordinator agent to use orchestration for handoffs, worktree handovers, and sequential or parallel child agents.'
-            )}
-          </p>
-        </div>
+      <div className="space-y-3 border-t border-border/40 pt-4">
+        <SettingsSubsectionHeader
+          title={translate(
+            'auto.components.settings.OrchestrationPane.ae79504732',
+            'How to use it'
+          )}
+          description={translate(
+            'auto.components.settings.OrchestrationPane.52e0634e2c',
+            'Ask a coordinator agent to use orchestration for handoffs, worktree handovers, and sequential or parallel child agents.'
+          )}
+        />
 
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid gap-1.5 sm:grid-cols-2">
           {getOrchestrationUsageExamples().map((example) => {
             const Icon = EXAMPLE_ICONS[example.id as keyof typeof EXAMPLE_ICONS] ?? Workflow
             return (
               <button
                 key={example.id}
                 type="button"
-                className="rounded-md border border-border/60 bg-muted/20 px-4 py-3 text-left transition-colors hover:bg-muted/35 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                // Why: one quiet list tile only — never nest another card inside.
+                className="rounded-md border border-border/50 bg-muted/15 px-3 py-2.5 text-left transition-colors hover:bg-muted/30 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 onClick={() => setSelectedExampleId(example.id)}
               >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground">
-                    <Icon className="size-4" />
+                <div className="flex items-start gap-2.5">
+                  <div className="mt-0.5 shrink-0 text-muted-foreground">
+                    <Icon className="size-3.5" />
                   </div>
-                  <div className="min-w-0 space-y-1">
-                    <p className="text-sm font-medium text-foreground">{example.title}</p>
-                    <p className="text-xs leading-relaxed text-muted-foreground">
+                  <div className="min-w-0 space-y-0.5">
+                    <p className="text-xs font-medium text-foreground">{example.title}</p>
+                    <p className="text-[11px] leading-snug text-muted-foreground">
                       {example.summary}
                     </p>
                   </div>

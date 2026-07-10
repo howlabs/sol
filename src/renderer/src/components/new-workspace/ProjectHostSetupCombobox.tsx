@@ -63,10 +63,7 @@ export default function ProjectHostSetupCombobox({
           <ChevronsUpDown className="size-3.5 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        className="w-[var(--anchor-width, var(--radix-popover-trigger-width))] min-w-[18rem] p-0"
-      >
+      <PopoverContent align="start" className="w-[var(--anchor-width)] min-w-[18rem] p-0">
         <Command value={selected?.id ?? ''}>
           <CommandList>
             <CommandEmpty>

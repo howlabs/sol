@@ -412,7 +412,7 @@ function PendingBrowserAnnotationCard({
         collisionBoundary={portalContainer ?? undefined}
         collisionPadding={12}
         portalContainer={portalContainer}
-        className="z-40 w-[22rem] max-w-[calc(var(--available-width, var(--radix-popover-content-available-width))-1rem)] p-3 shadow-[0_10px_24px_rgba(0,0,0,0.18)]"
+        className="z-40 w-[22rem] max-w-[calc(var(--available-width)-1rem)] p-3 shadow-[0_10px_24px_rgba(0,0,0,0.18)]"
         aria-label={translate(
           'auto.components.browser.pane.BrowserPane.b472c5fe03',
           'Add browser annotation'

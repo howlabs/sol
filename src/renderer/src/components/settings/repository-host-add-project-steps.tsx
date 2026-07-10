@@ -109,6 +109,16 @@ export function HostSetupExistingFolderStep({
         />
         <Select
           value={setupKind}
+          items={[
+            {
+              value: 'git',
+              label: translate('auto.components.settings.RepositoryPane.setupKindGit', 'Git repo')
+            },
+            {
+              value: 'folder',
+              label: translate('auto.components.settings.RepositoryPane.setupKindFolder', 'Folder')
+            }
+          ]}
           onValueChange={(value) => onKindChange(value as 'git' | 'folder')}
         >
           <SelectTrigger className="h-9 text-xs">

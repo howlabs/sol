@@ -3,6 +3,7 @@ import type {
   ClaudeUsageSummary
 } from '../../../../shared/claude-usage-types'
 import { translate } from '@/i18n/i18n'
+import { USAGE_SUBPANEL_SHELL_CLASS } from './usage-panel-shell'
 import { formatSessionTime, formatTokens } from './usage-formatters'
 
 export function ClaudeUsageRecentSessionsTable({
@@ -13,12 +14,12 @@ export function ClaudeUsageRecentSessionsTable({
   summary: ClaudeUsageSummary | null
 }): React.JSX.Element {
   return (
-    <section className="rounded-lg border border-border/60 bg-card/40 p-4">
-      <div className="mb-3">
-        <h4 className="text-sm font-semibold text-foreground">
+    <section className={`${USAGE_SUBPANEL_SHELL_CLASS} space-y-1.5`}>
+      <div className="space-y-0.5">
+        <h4 className="text-xs font-semibold tracking-tight text-foreground">
           {translate('auto.components.stats.ClaudeUsagePane.7e76c84153', 'Recent sessions')}
         </h4>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[11px] leading-snug text-muted-foreground">
           {translate('auto.components.stats.ClaudeUsagePane.abfc4a4943', 'Cache reuse rate:')}{' '}
           {summary?.cacheReuseRate !== null && summary?.cacheReuseRate !== undefined
             ? `${Math.round(summary.cacheReuseRate * 100)}%`

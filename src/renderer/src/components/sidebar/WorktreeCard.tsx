@@ -1874,8 +1874,8 @@ const WorktreeCard = React.memo(function WorktreeCard({
           ? 'border border-accent-foreground/20 bg-accent/80'
           : isActiveSurface
             ? activeSurfaceIsSecondary
-              ? 'border border-sidebar-ring/25 bg-sidebar-accent/45 shadow-none ring-1 ring-sidebar-ring/15'
-              : 'bg-black/[0.08] shadow-[0_1px_2px_rgba(0,0,0,0.04)] border border-black/[0.015] dark:bg-white/[0.10] dark:border-border/40 dark:shadow-[0_1px_2px_rgba(0,0,0,0.03)]'
+              ? 'border border-worktree-sidebar-ring/25 bg-worktree-sidebar-accent/45 ring-1 ring-worktree-sidebar-ring/15 shadow-none'
+              : 'border border-worktree-sidebar-ring/30 bg-worktree-sidebar-accent/80 ring-1 ring-worktree-sidebar-ring/25 shadow-none'
             : isMultiSelected
               ? 'border border-worktree-sidebar-ring/35 bg-worktree-sidebar-accent/70 ring-1 ring-worktree-sidebar-ring/30'
               : 'border border-transparent worktree-sidebar-card-hover',
@@ -1890,6 +1890,7 @@ const WorktreeCard = React.memo(function WorktreeCard({
       )}
       data-worktree-card-surface="true"
       data-worktree-card-active={isActiveSurface ? activeSurfaceVariant : undefined}
+      data-current={isActiveSurface ? 'true' : undefined}
       onClick={handleClick}
       onDoubleClick={affiliateListMode ? undefined : handleDoubleClick}
       draggable={!affiliateListMode && nativeDragEnabled && !isDeleting && !titleRenaming}

@@ -30,10 +30,12 @@ export function IntegrationCardGroup(props: {
   children: React.ReactNode
   className?: string
 }): React.JSX.Element {
+  // Why: one quiet list frame only — softer than elevated card chrome so
+  // SettingsSection (or a transparent body) never reads as double nesting.
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-lg border border-border/60 divide-y divide-border/50',
+        'overflow-hidden rounded-md border border-border/50 divide-y divide-border/40',
         props.className
       )}
     >
@@ -43,15 +45,9 @@ export function IntegrationCardGroup(props: {
 }
 
 export function useIntegrationSubordinateRowClass(className?: string): string {
-  const presentation = useIntegrationCardPresentation()
-  return cn(
-    presentation === 'setup-guide'
-      ? 'border-t border-border/40 px-0 py-2 first:border-t-0'
-      : // Why: nested muted cards inside each provider row were double chrome.
-        // Hairline top border is enough hierarchy under a list row.
-        'border-t border-border/40 px-0 py-2 first:border-t-0',
-    className
-  )
+  // Why: nested muted cards inside each provider row were double chrome.
+  // Hairline top border is enough hierarchy under a list row.
+  return cn('border-t border-border/40 px-0 py-2 first:border-t-0', className)
 }
 
 export function useIntegrationCommandRowClass(): string {

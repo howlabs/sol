@@ -99,7 +99,9 @@ export function AgentsPane({
     buildAgentCatalogRowProps(agent, isDetected, catalogBindings)
 
   return (
-    <div className="mx-auto max-w-3xl space-y-10">
+    // Why: setup/skill-adjacent document (catalog + permissions), not form-list
+    // space-y-1 — cap at space-y-6 per STYLEGUIDE settings templates.
+    <div className="mx-auto max-w-3xl space-y-6">
       <AgentDefaultAgentPicker
         ownershipDescription={getSettingOwnershipSummary('agentLaunchDefaults').description}
         isAutoDefault={isAutoDefault}

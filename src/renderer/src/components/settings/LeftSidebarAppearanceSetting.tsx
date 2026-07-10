@@ -23,7 +23,7 @@ export function LeftSidebarAppearanceSetting({
   updateSettings
 }: LeftSidebarAppearanceSettingProps): React.JSX.Element {
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <SettingsRow
         alignTop
         label={translate(
@@ -70,7 +70,7 @@ export function LeftSidebarAppearanceSetting({
         }
       />
       {(settings.leftSidebarAppearanceMode ?? 'default') === 'tinted' ? (
-        <div className="space-y-2">
+        <div className="space-y-1.5 pl-0.5">
           <ColorField
             label={translate(
               'auto.components.settings.AppearancePane.leftSidebarAppearance.tintColor',

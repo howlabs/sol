@@ -219,6 +219,10 @@ export function RepositoryHostSetupActions({
         </Label>
         <Select
           value={setupTargetHostId ?? undefined}
+          items={setupHostOptions.map((option) => ({
+            value: option.id,
+            label: option.label
+          }))}
           onValueChange={(value) => setSelectedSetupHostId(value as ExecutionHostId)}
         >
           <SelectTrigger className="h-9 min-w-0">

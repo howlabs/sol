@@ -181,6 +181,10 @@ export function WorkspaceDirectorySetting({
             </span>
             <Select
               value={activeScope}
+              items={choices.map((choice) => ({
+                value: choice.scope,
+                label: choice.label
+              }))}
               onValueChange={(next) => setScope(next as HostSettingScope)}
             >
               <SelectTrigger size="sm" className="h-7 w-44 text-xs">
