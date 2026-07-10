@@ -1,9 +1,8 @@
 import type { GlobalSettings } from '../../../../shared/types'
 import { translate } from '@/i18n/i18n'
-import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { SearchableSetting } from './SearchableSetting'
-import { SettingsSwitch } from './SettingsFormControls'
+import { SettingsRow, SettingsSwitchRow } from './SettingsFormControls'
 import { getExperimentalSearchEntry } from './experimental-search'
 
 type NativeChatDefaultView = 'terminal-chat' | 'native-chat'
@@ -29,51 +28,40 @@ export function NativeChatExperimentalSetting({
         'Preview the desktop chat surface for Claude and Codex terminal sessions.'
       )}
       keywords={getExperimentalSearchEntry().nativeChat.keywords}
-      className="space-y-3 py-2"
+      className="space-y-1.5"
       id="experimental-native-chat"
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 shrink space-y-0.5">
-          <Label>
-            {translate('auto.components.settings.ExperimentalPane.nativeChat.title', 'Native chat')}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.ExperimentalPane.nativeChat.copy',
-              'Adds a native chat view you can switch to from supported Claude and Codex terminal panes. Experimental while we tune transcript fidelity, streaming, and terminal parity.'
-            )}
-          </p>
-        </div>
-        <SettingsSwitch
-          checked={nativeChatEnabled}
-          ariaLabel={translate(
-            'auto.components.settings.ExperimentalPane.nativeChat.toggleLabel',
-            'Toggle native chat'
-          )}
-          onChange={() =>
-            updateSettings({
-              experimentalNativeChat: !nativeChatEnabled
-            })
-          }
-        />
-      </div>
+      <SettingsSwitchRow
+        label={translate(
+          'auto.components.settings.ExperimentalPane.nativeChat.title',
+          'Native chat'
+        )}
+        description={translate(
+          'auto.components.settings.ExperimentalPane.nativeChat.copy',
+          'Adds a native chat view you can switch to from supported Claude and Codex terminal panes. Experimental while we tune transcript fidelity, streaming, and terminal parity.'
+        )}
+        checked={nativeChatEnabled}
+        ariaLabel={translate(
+          'auto.components.settings.ExperimentalPane.nativeChat.toggleLabel',
+          'Toggle native chat'
+        )}
+        onChange={() =>
+          updateSettings({
+            experimentalNativeChat: !nativeChatEnabled
+          })
+        }
+      />
       {nativeChatEnabled ? (
-        <div className="ml-4 border-l border-border pl-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0 shrink space-y-0.5">
-              <Label>
-                {translate(
-                  'auto.components.settings.ExperimentalPane.nativeChat.defaultTitle',
-                  'Default view'
-                )}
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                {translate(
-                  'auto.components.settings.ExperimentalPane.nativeChat.defaultCopy',
-                  'Choose how new Claude and Codex terminal tabs open.'
-                )}
-              </p>
-            </div>
+        <SettingsRow
+          label={translate(
+            'auto.components.settings.ExperimentalPane.nativeChat.defaultTitle',
+            'Default view'
+          )}
+          description={translate(
+            'auto.components.settings.ExperimentalPane.nativeChat.defaultCopy',
+            'Choose how new Claude and Codex terminal tabs open.'
+          )}
+          control={
             <Select
               value={defaultView}
               onValueChange={(value: NativeChatDefaultView) => {
@@ -107,8 +95,8 @@ export function NativeChatExperimentalSetting({
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
-        </div>
+          }
+        />
       ) : null}
     </SearchableSetting>
   )
