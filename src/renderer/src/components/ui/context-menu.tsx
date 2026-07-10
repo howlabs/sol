@@ -247,13 +247,16 @@ function ContextMenuLabel({
   className,
   inset,
   ...props
-}: ContextMenuPrimitive.GroupLabel.Props & {
+}: React.ComponentProps<'div'> & {
   inset?: boolean
 }): React.JSX.Element {
+  // Why: same as DropdownMenuLabel — Base UI GroupLabel throws without Menu.Group;
+  // Sol context menus use free-standing section labels (Radix-compatible).
   return (
-    <ContextMenuPrimitive.GroupLabel
+    <div
       data-slot="context-menu-label"
       data-inset={inset}
+      role="presentation"
       className={cn(
         'px-2 py-1 text-[11px] font-semibold text-muted-foreground data-inset:pl-8',
         className

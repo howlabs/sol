@@ -192,13 +192,17 @@ function DropdownMenuLabel({
   className,
   inset,
   ...props
-}: MenuPrimitive.GroupLabel.Props & {
+}: React.ComponentProps<'div'> & {
   inset?: boolean
 }): React.JSX.Element {
+  // Why: Base UI GroupLabel requires Menu.Group context and throws if missing.
+  // Sol (and Radix-era) call sites use free-standing section labels without a
+  // group — render a presentation div so menus like SidebarWorkspaceOptions open.
   return (
-    <MenuPrimitive.GroupLabel
+    <div
       data-slot="dropdown-menu-label"
       data-inset={inset}
+      role="presentation"
       className={cn(
         'px-2 py-1 text-[11px] font-semibold text-muted-foreground data-inset:pl-7',
         className
