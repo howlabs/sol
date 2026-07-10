@@ -30,7 +30,7 @@ SaaS onboarding walls, nested card stacks, marketing fluff in settings, decorati
 
 ## Design system target
 
-Gradual chrome migration (see `docs/design-system-migration.md`):
+Gradual chrome migration (see `docs/reference/design-system-migration.md`):
 
 - **Style:** shadcn **Mira** (compact, dense product UI)
 - **Base color:** **stone**

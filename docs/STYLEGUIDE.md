@@ -32,7 +32,7 @@ Target stack for app chrome (not Monaco/xterm content surfaces):
 
 `components.json` records the full target (`style: base-mira`, `baseColor: stone`, `iconLibrary: phosphor`).
 
-Phased plan, guardrails, and non-goals: [`docs/design-system-migration.md`](./design-system-migration.md).
+Phased plan, guardrails, and non-goals: [`docs/reference/design-system-migration.md`](./reference/design-system-migration.md).
 
 Until a layer is migrated:
 
@@ -49,7 +49,7 @@ Until a layer is migrated:
 | Component primitives                          | `src/renderer/src/components/ui/` (shadcn-style)      |
 | Settings form grammar                         | `src/renderer/src/components/settings/SettingsFormControls.tsx` |
 | shadcn CLI target config                      | `components.json`                                     |
-| Migration plan                                | `docs/design-system-migration.md`                     |
+| Migration plan                                | `docs/reference/design-system-migration.md`           |
 | App typography / scrollbars / titlebar chrome | Same `main.css`                                       |
 
 Never hardcode a hex value in component code if a variable already covers it. If a new token is needed, add it to `main.css` (both `:root` and `.dark`), expose it in the `@theme inline` block, then use it.
