@@ -1181,9 +1181,8 @@ function TabBarInner({
       <DropdownMenu
         open={newTabMenuOpen}
         onOpenChange={setNewTabMenuOpen}
-        // Why: this menu can stay open after the Mobile Emulator "Hide" action,
-        // which shows a toast with a re-enable link; modal would disable body
-        // pointer events and make that toast (and other outside UI) unclickable.
+        // Why: keep this menu non-modal so outside UI (toasts, palettes) stays
+        // clickable while it is open; a modal would disable body pointer events.
         modal={false}
       >
         <DropdownMenuTrigger asChild>

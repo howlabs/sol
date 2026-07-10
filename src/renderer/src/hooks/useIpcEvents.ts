@@ -1,6 +1,5 @@
 /* oxlint-disable max-lines -- Why: this App-level IPC bridge intentionally keeps the renderer's main-process event contract in one place so shortcut, runtime, updater, and agent-status wiring do not drift across files. */
 import { useEffect } from 'react'
-import { toast } from 'sonner'
 import { useAppStore } from '../store'
 import { shouldRetryPaneSpawnOnSshReconnect } from './ssh-reconnect-pane-retry'
 import { getWorktreeMapFromState, getRepoMapFromState } from '@/store/selectors'
@@ -1233,8 +1232,7 @@ export function useIpcEvents(): void {
       })
     )
 
-    unsubs.push(
-    )
+    unsubs.push()
 
     if (window.api.ui.onTerminalShortcutCaptured) {
       unsubs.push(
@@ -2383,20 +2381,17 @@ export function useIpcEvents(): void {
 
     unsubs.push(
       window.api.ui.onSwitchTab((direction) => {
-        const store = useAppStore.getState()
         handleSwitchTab(direction)
       })
     )
     unsubs.push(
       window.api.ui.onSwitchTabAcrossAllTypes((direction) => {
-        const store = useAppStore.getState()
         handleSwitchTabAcrossAllTypes(direction)
       })
     )
     unsubs.push(window.api.ui.onSwitchRecentTab(handleSwitchRecentTab))
     unsubs.push(
       window.api.ui.onSwitchTerminalTab((direction) => {
-        const store = useAppStore.getState()
         handleSwitchTerminalTab(direction)
       })
     )

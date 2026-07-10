@@ -21,7 +21,7 @@ import {
   normalizeKeybindingListForAction,
   normalizeKeybindingList
 } from './keybindings'
-import type { KeybindingActionId, KeybindingPlatform } from './keybindings'
+import type { KeybindingPlatform } from './keybindings'
 import { ALL_TUI_AGENTS } from './tui-agent-display-names'
 
 describe('keybindings', () => {
@@ -602,7 +602,6 @@ describe('keybindings', () => {
     )
   })
 
-
   it('defines a macOS-only default for the new agent tab shortcut', () => {
     expect(getEffectiveKeybindingsForAction('tab.newAgent', 'darwin')).toEqual(['Mod+Alt+T'])
     expect(getEffectiveKeybindingsForAction('tab.newAgent', 'linux')).toEqual([])
@@ -696,7 +695,6 @@ describe('keybindings', () => {
       )
     ).toBe(true)
   })
-
 
   it('keeps terminal-allowed app shortcuts active in terminal-first mode', () => {
     const deleteBinding = {
