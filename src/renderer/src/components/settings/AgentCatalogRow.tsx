@@ -3,6 +3,9 @@ import { ChevronDown, ExternalLink } from '@/lib/icons'
 import type { TuiAgent } from '../../../../shared/types'
 import { AgentIcon } from '@/lib/agent-catalog'
 import { Button } from '../ui/button'
+import { ButtonGroup } from '../ui/button-group'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
 import {
@@ -114,49 +117,84 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
     </p>
   )
 
-  return (
-    <IntegrationCardShell
-      className={cn(!isDetected && 'opacity-80')}
-      icon={<AgentIcon agent={agentId} size={16} />}
-      name={label}
-      statusLabel={status.label}
-      statusTone={status.tone}
-      actions={
-        <>
-          <SettingsSwitch
-            checked={isEnabled}
-            onChange={() => onSetEnabled(!isEnabled)}
-            ariaLabel={translate(
-              'auto.components.settings.AgentsPane.1c9a9679ec',
-              '{{value0}} availability',
-              { value0: label }
-            )}
-          />
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            asChild
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <a
-              href={homepageUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={
-                isDetected
-                  ? translate('auto.components.settings.AgentsPane.fe4d630c94', 'Docs')
-                  : translate('auto.components.settings.AgentsPane.f95b5c79b8', 'Install')
-              }
+  const docsLabel = isDetected
+    ? translate('auto.components.settings.AgentsPane.fe4d630c94', 'Docs')
+    : translate('auto.components.settings.AgentsPane.f95b5c79b8', 'Install')
+
+  const overrideDetails = (
+    <IntegrationCardDetails>
+      <AgentCommandOverrideInput
+        key={cmdOverride ?? defaultCmd}
+        defaultCmd={defaultCmd}
+        cmdOverride={cmdOverride}
+        onSaveOverride={onSaveOverride}
+      />
+      <AgentDefaultArgsInput
+        key={`${agentId}:${argsOverride}`}
+        defaultArgs={defaultArgs}
+        argsOverride={argsOverride}
+        onSaveArgs={onSaveArgs}
+      />
+      {defaultEnvSummary || envSummary ? (
+        <AgentDefaultEnvInput
+          key={`${agentId}:${envSummary}`}
+          defaultEnv={defaultEnv}
+          envOverride={envOverride}
+          onSaveEnv={onSaveEnv}
+        />
+      ) : null}
+      {sessionSourceHome ? (
+        <AgentSessionSourceHomeInput
+          key={`${agentId}:${sessionSourceHome.runtimeLabel}:${sessionSourceHome.value}`}
+          runtimeLabel={sessionSourceHome.runtimeLabel}
+          value={sessionSourceHome.value}
+          onSave={sessionSourceHome.onSave}
+        />
+      ) : null}
+      <p className="text-[11px] leading-snug text-muted-foreground">
+        {translate(
+          'auto.components.settings.AgentsPane.f9f127d664',
+          'Override the binary path or name, and edit the default launch arguments or environment for this agent.'
+        )}
+      </p>
+    </IntegrationCardDetails>
+  )
+
+  const rowActions = (
+    <>
+      <SettingsSwitch
+        checked={isEnabled}
+        onChange={() => onSetEnabled(!isEnabled)}
+        ariaLabel={translate(
+          'auto.components.settings.AgentsPane.1c9a9679ec',
+          '{{value0}} availability',
+          { value0: label }
+        )}
+      />
+      <ButtonGroup className="shrink-0">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon-sm"
+              asChild
+              className="text-muted-foreground hover:text-foreground"
             >
-              <ExternalLink className="size-3.5" />
-            </a>
-          </Button>
-          {isDetected ? (
+              <a href={homepageUrl} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="size-3.5" />
+              </a>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={6}>
+            {docsLabel}
+          </TooltipContent>
+        </Tooltip>
+        {isDetected ? (
+          <CollapsibleTrigger asChild>
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="icon-sm"
-              onClick={() => setCmdOpen((prev) => !prev)}
               aria-label={
                 cmdOpen
                   ? translate(
@@ -177,49 +215,37 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
                 )}
               />
             </Button>
-          ) : null}
-        </>
-      }
+          </CollapsibleTrigger>
+        ) : null}
+      </ButtonGroup>
+    </>
+  )
+
+  const shell = (
+    <IntegrationCardShell
+      className={cn(!isDetected && 'opacity-80')}
+      icon={<AgentIcon agent={agentId} size={16} />}
+      name={label}
+      statusLabel={status.label}
+      statusTone={status.tone}
+      actions={rowActions}
     >
       {commandPreview}
-      {isDetected && cmdOpen ? (
-        <IntegrationCardDetails>
-          <AgentCommandOverrideInput
-            key={cmdOverride ?? defaultCmd}
-            defaultCmd={defaultCmd}
-            cmdOverride={cmdOverride}
-            onSaveOverride={onSaveOverride}
-          />
-          <AgentDefaultArgsInput
-            key={`${agentId}:${argsOverride}`}
-            defaultArgs={defaultArgs}
-            argsOverride={argsOverride}
-            onSaveArgs={onSaveArgs}
-          />
-          {defaultEnvSummary || envSummary ? (
-            <AgentDefaultEnvInput
-              key={`${agentId}:${envSummary}`}
-              defaultEnv={defaultEnv}
-              envOverride={envOverride}
-              onSaveEnv={onSaveEnv}
-            />
-          ) : null}
-          {sessionSourceHome ? (
-            <AgentSessionSourceHomeInput
-              key={`${agentId}:${sessionSourceHome.runtimeLabel}:${sessionSourceHome.value}`}
-              runtimeLabel={sessionSourceHome.runtimeLabel}
-              value={sessionSourceHome.value}
-              onSave={sessionSourceHome.onSave}
-            />
-          ) : null}
-          <p className="text-[11px] leading-snug text-muted-foreground">
-            {translate(
-              'auto.components.settings.AgentsPane.f9f127d664',
-              'Override the binary path or name, and edit the default launch arguments or environment for this agent.'
-            )}
-          </p>
-        </IntegrationCardDetails>
+      {isDetected ? (
+        <CollapsibleContent className="collapsible-height-content">
+          {overrideDetails}
+        </CollapsibleContent>
       ) : null}
     </IntegrationCardShell>
+  )
+
+  if (!isDetected) {
+    return shell
+  }
+
+  return (
+    <Collapsible open={cmdOpen} onOpenChange={setCmdOpen}>
+      {shell}
+    </Collapsible>
   )
 }
