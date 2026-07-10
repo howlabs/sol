@@ -1,16 +1,12 @@
 import { useState } from 'react'
-import { ChevronDown, ExternalLink } from '@/lib/icons'
+import { ExternalLink, Minus, Plus } from '@/lib/icons'
 import type { TuiAgent } from '../../../../shared/types'
 import { AgentIcon } from '@/lib/agent-catalog'
 import { Button } from '../ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
-import { IntegrationCardDetails } from './integration-card-shell'
-import {
-  resolveAgentRowStatusLabelKey,
-  resolveAgentRowStatusTone
-} from './agent-catalog-row-status'
+import { resolveAgentRowStatusLabelKey } from './agent-catalog-row-status'
 import {
   AgentSessionSourceHomeInput,
   type AgentSessionSourceHomeControl
@@ -43,25 +39,6 @@ export type AgentCatalogRowProps = {
   sessionSourceHome?: AgentSessionSourceHomeControl
 }
 
-const STATUS_TONE_CLASSES = {
-  connected: 'border-status-success-border bg-status-success-background text-status-success',
-  attention: 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300',
-  neutral: 'border-border bg-background text-muted-foreground'
-} as const
-
-function translateAgentStatusLabel(key: ReturnType<typeof resolveAgentRowStatusLabelKey>): string {
-  switch (key) {
-    case 'install':
-      return translate('auto.components.settings.AgentsPane.f95b5c79b8', 'Install')
-    case 'default':
-      return translate('auto.components.settings.AgentsPane.24e032fa34', 'Default')
-    case 'disabled':
-      return translate('auto.components.settings.AgentsPane.8dc0192e48', 'Disabled')
-    case 'onPath':
-      return translate('auto.components.settings.AgentsPane.onPath', 'On PATH')
-  }
-}
-
 function hasAgentLaunchOverrides(props: {
   cmdOverride: string | undefined
   argsOverride: string
@@ -89,8 +66,8 @@ function formatCommandLine(props: {
 }
 
 /**
- * Two-line list row (name + command) matching Integrations action density:
- * outline Install / ghost Configure — not icon-only chrome.
+ * Document-style agent row: hairline divider, no card chrome.
+ * Enable is primary; launch overrides open behind + / −.
  */
 export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element {
   const {
@@ -126,10 +103,6 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
   )
 
   const statusKey = resolveAgentRowStatusLabelKey({ isDetected, isEnabled, isDefault })
-  // Why: "On PATH" is the common case — badge only for Default / Disabled / Install.
-  const showStatusBadge = statusKey !== 'onPath'
-  const statusTone = resolveAgentRowStatusTone({ isDetected, isEnabled, isDefault })
-  const statusLabel = translateAgentStatusLabel(statusKey)
   const commandLine = formatCommandLine({
     defaultCmd,
     cmdOverride,
@@ -137,9 +110,23 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
     envSummary
   })
 
-  const configureLabel = open
-    ? translate('auto.components.settings.AgentsPane.doneConfiguring', 'Done')
-    : translate('auto.components.settings.AgentsPane.configureLaunch', 'Configure')
+  const metaLabel =
+    statusKey === 'default'
+      ? translate('auto.components.settings.AgentsPane.24e032fa34', 'Default')
+      : statusKey === 'disabled'
+        ? translate('auto.components.settings.AgentsPane.8dc0192e48', 'Disabled')
+        : null
+
+  const metaToneClass =
+    statusKey === 'default'
+      ? 'bg-status-success-background text-status-success'
+      : statusKey === 'disabled'
+        ? 'bg-muted text-muted-foreground'
+        : ''
+
+  const expandLabel = open
+    ? translate('auto.components.settings.AgentsPane.cea7d97be1', 'Collapse command override')
+    : translate('auto.components.settings.AgentsPane.dc4a2ffdc0', 'Expand command override')
 
   const actions = isDetected ? (
     <>
@@ -156,56 +143,30 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
         <Button
           type="button"
           variant="ghost"
-          size="sm"
-          className="h-7 gap-1 px-2 text-muted-foreground hover:text-foreground"
+          size="icon-sm"
+          aria-label={expandLabel}
+          className="size-7 text-muted-foreground hover:text-foreground"
         >
-          {configureLabel}
-          <ChevronDown
-            className={cn(
-              'size-3.5 transition-transform duration-200 ease-out motion-reduce:transition-none',
-              open && 'rotate-180'
-            )}
-          />
+          {open ? <Minus className="size-3.5" /> : <Plus className="size-3.5" />}
         </Button>
       </CollapsibleTrigger>
     </>
   ) : (
-    <Button variant="outline" size="sm" asChild className="h-7 gap-1.5">
+    <Button
+      variant="ghost"
+      size="sm"
+      asChild
+      className="h-7 gap-1.5 px-2 text-muted-foreground hover:text-foreground"
+    >
       <a href={homepageUrl} target="_blank" rel="noopener noreferrer">
-        <ExternalLink className="size-3.5" />
         {translate('auto.components.settings.AgentsPane.f95b5c79b8', 'Install')}
+        <ExternalLink className="size-3" />
       </a>
     </Button>
   )
 
-  const identity = (
-    <div className="flex min-w-0 flex-1 items-start gap-2.5">
-      <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md border border-border/50 bg-muted/30 text-muted-foreground [&_svg]:size-4">
-        <AgentIcon agent={agentId} size={16} />
-      </span>
-      <div className="min-w-0 flex-1 space-y-0.5">
-        <div className="flex min-w-0 items-center gap-2">
-          <p className="truncate text-xs font-medium leading-none text-foreground">{label}</p>
-          {showStatusBadge ? (
-            <span
-              className={cn(
-                'shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium leading-none',
-                STATUS_TONE_CLASSES[statusTone]
-              )}
-            >
-              {statusLabel}
-            </span>
-          ) : null}
-        </div>
-        <p className="truncate font-mono text-[11px] leading-snug text-muted-foreground">
-          {commandLine}
-        </p>
-      </div>
-    </div>
-  )
-
   const overrideFields = (
-    <IntegrationCardDetails className="space-y-2">
+    <div className="space-y-2.5 pb-1 pl-9">
       <AgentCommandOverrideInput
         key={cmdOverride ?? defaultCmd}
         defaultCmd={defaultCmd}
@@ -234,23 +195,39 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
           onSave={sessionSourceHome.onSave}
         />
       ) : null}
-      <p className="text-[11px] leading-snug text-muted-foreground">
-        {translate(
-          'auto.components.settings.AgentsPane.f9f127d664',
-          'Override the binary path or name, and edit the default launch arguments or environment for this agent.'
-        )}
-      </p>
-    </IntegrationCardDetails>
+    </div>
   )
 
   const row = (
-    <div className={cn('bg-transparent px-3 py-2.5', !isDetected && 'opacity-80')}>
-      <div className="flex items-center gap-2.5">
-        {identity}
-        <div className="flex shrink-0 items-center justify-end gap-1.5">{actions}</div>
+    <div
+      className={cn('border-b border-border/50 py-3 last:border-b-0', !isDetected && 'opacity-70')}
+    >
+      <div className="flex items-center gap-3">
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted/40 text-muted-foreground [&_svg]:size-4">
+          <AgentIcon agent={agentId} size={16} />
+        </span>
+        <div className="min-w-0 flex-1 space-y-0.5">
+          <div className="flex min-w-0 items-center gap-2">
+            <p className="truncate text-[13px] font-medium leading-none text-foreground">{label}</p>
+            {metaLabel ? (
+              <span
+                className={cn(
+                  'shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em]',
+                  metaToneClass
+                )}
+              >
+                {metaLabel}
+              </span>
+            ) : null}
+          </div>
+          <p className="truncate font-mono text-[11px] leading-relaxed text-muted-foreground">
+            {commandLine}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-1">{actions}</div>
       </div>
       {isDetected ? (
-        <CollapsibleContent className="collapsible-height-content">
+        <CollapsibleContent className="collapsible-height-content pt-3">
           {overrideFields}
         </CollapsibleContent>
       ) : null}
