@@ -21,6 +21,7 @@ import {
 import { getSettingOwnershipSummary } from './setting-ownership'
 import { translate } from '@/i18n/i18n'
 import { AgentPermissionsSetting } from './agents-permissions-setting'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 
 export { getAgentsPaneSearchEntries } from './agents-search'
 export { AgentAvailabilityControl } from './agent-availability-control'
@@ -44,8 +45,8 @@ type AgentsPaneProps = {
 }
 
 /**
- * Agents settings — Integrations grammar: flat sections, one card group per
- * list, house form controls. Launch defaults first; catalog last.
+ * Agents settings — three spaced bands (Launch / Session / Catalog) so the
+ * page reads as distinct blocks, not one tight stack.
  */
 export function AgentsPane({
   settings,
@@ -100,54 +101,62 @@ export function AgentsPane({
     buildAgentCatalogRowProps(agent, isDetected, catalogBindings)
 
   return (
-    <div className="space-y-1">
-      {/* Launch defaults — who starts, permission mode */}
-      <AgentDefaultAgentPicker
-        ownershipDescription={getSettingOwnershipSummary('agentLaunchDefaults').description}
-        isAutoDefault={isAutoDefault}
-        isBlankDefault={isBlankDefault}
-        enabledDetectedAgents={enabledDetectedAgents}
-        defaultAgent={defaultAgent}
-        onSelect={(id) => updateSettings({ defaultTuiAgent: id })}
-      />
-      <AgentPermissionsSetting
-        mode={agentPermissionMode}
-        onChange={(mode: Exclude<AgentPermissionMode, 'mixed'>) =>
-          updateSettings(applyAgentPermissionMode({ mode, agentDefaultArgs, agentDefaultEnv }))
-        }
-      />
-
-      {/* Session behavior — flat switch rows, no extra chrome */}
-      <AgentsPaneSessionSettings
-        settings={settings}
-        updateSettings={updateSettings}
-        refresh={refresh}
-        wslSupportedPlatform={wslSupportedPlatform}
-        wslAvailable={wslAvailable}
-        wslDistros={wslDistros}
-        wslCapabilitiesLoading={wslCapabilitiesLoading}
-      />
-      <AgentCacheTimerSection settings={settings} updateSettings={updateSettings} />
-
-      {/* Catalog — IntegrationCardGroup lists */}
-      {detectedAgents.length > 0 ? (
-        <AgentsCatalogSection
-          variant="installed"
-          agents={detectedAgents}
-          detectedCount={detectedAgents.length}
-          isRefreshing={isRefreshing}
-          onRefresh={() => void refresh()}
-          buildRowProps={rowProps}
+    <div className="space-y-6">
+      <section className="space-y-3">
+        <SettingsSubsectionHeader
+          title={translate('auto.components.settings.AgentsPane.launchSection', 'Launch')}
+          description={translate(
+            'auto.components.settings.AgentsPane.launchSectionDescription',
+            'Default agent for new terminals and how strictly permissions are applied.'
+          )}
         />
-      ) : null}
+        <div className="space-y-3">
+          <AgentDefaultAgentPicker
+            ownershipDescription={getSettingOwnershipSummary('agentLaunchDefaults').description}
+            isAutoDefault={isAutoDefault}
+            isBlankDefault={isBlankDefault}
+            enabledDetectedAgents={enabledDetectedAgents}
+            defaultAgent={defaultAgent}
+            onSelect={(id) => updateSettings({ defaultTuiAgent: id })}
+          />
+          <AgentPermissionsSetting
+            mode={agentPermissionMode}
+            onChange={(mode: Exclude<AgentPermissionMode, 'mixed'>) =>
+              updateSettings(applyAgentPermissionMode({ mode, agentDefaultArgs, agentDefaultEnv }))
+            }
+          />
+        </div>
+      </section>
 
-      {undetectedAgents.length > 0 ? (
-        <AgentsCatalogSection
-          variant="available"
-          agents={undetectedAgents}
-          buildRowProps={rowProps}
+      <section className="space-y-3">
+        <SettingsSubsectionHeader
+          title={translate('auto.components.settings.AgentsPane.sessionSection', 'Session')}
+          description={translate(
+            'auto.components.settings.AgentsPane.sessionSectionDescription',
+            'Runtime, hooks, tab titles, and keep-alive behavior while agents run.'
+          )}
         />
-      ) : null}
+        <div className="space-y-1">
+          <AgentsPaneSessionSettings
+            settings={settings}
+            updateSettings={updateSettings}
+            refresh={refresh}
+            wslSupportedPlatform={wslSupportedPlatform}
+            wslAvailable={wslAvailable}
+            wslDistros={wslDistros}
+            wslCapabilitiesLoading={wslCapabilitiesLoading}
+          />
+          <AgentCacheTimerSection settings={settings} updateSettings={updateSettings} />
+        </div>
+      </section>
+
+      <AgentsCatalogSection
+        installed={detectedAgents}
+        available={undetectedAgents}
+        isRefreshing={isRefreshing}
+        onRefresh={() => void refresh()}
+        buildRowProps={rowProps}
+      />
 
       {detectedIds === null ? (
         <p

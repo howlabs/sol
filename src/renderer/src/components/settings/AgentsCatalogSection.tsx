@@ -15,65 +15,54 @@ type CatalogAgent = {
 }
 
 type AgentsCatalogSectionProps = {
-  variant: 'installed' | 'available'
-  agents: readonly CatalogAgent[]
+  installed: readonly CatalogAgent[]
+  available: readonly CatalogAgent[]
   buildRowProps: (agent: CatalogAgent, isDetected: boolean) => AgentCatalogRowProps
-  detectedCount?: number
   isRefreshing?: boolean
   onRefresh?: () => void
 }
 
+/**
+ * One Agents list (Integrations-style): installed first, then available-to-install.
+ */
 export function AgentsCatalogSection({
-  variant,
-  agents,
+  installed,
+  available,
   buildRowProps,
-  detectedCount,
   isRefreshing,
   onRefresh
-}: AgentsCatalogSectionProps): React.JSX.Element {
-  const isInstalled = variant === 'installed'
-  const isDetected = isInstalled
+}: AgentsCatalogSectionProps): React.JSX.Element | null {
+  if (installed.length === 0 && available.length === 0) {
+    return null
+  }
 
   return (
-    <section className="space-y-1.5">
+    <section className="space-y-2">
       <SettingsSubsectionHeader
         title={
-          <span className={cn('flex items-center gap-2', !isInstalled && 'text-muted-foreground')}>
-            {isInstalled
-              ? translate('auto.components.settings.AgentsPane.02e0143be5', 'Installed')
-              : translate('auto.components.settings.AgentsPane.e8da2af684', 'Available to install')}
-            <SettingsBadge tone={isInstalled ? 'accent' : 'muted'}>
-              {detectedCount ?? agents.length}{' '}
-              {isInstalled
-                ? translate('auto.components.settings.AgentsPane.ed3e110e61', 'detected')
-                : translate('auto.components.settings.AgentsPane.024bd95089', 'agents')}
-            </SettingsBadge>
+          <span className="flex items-center gap-2">
+            {translate('auto.components.settings.AgentsPane.catalogTitle', 'Agents')}
+            {installed.length > 0 ? (
+              <SettingsBadge tone="accent">
+                {installed.length}{' '}
+                {translate('auto.components.settings.AgentsPane.ed3e110e61', 'detected')}
+              </SettingsBadge>
+            ) : null}
           </span>
         }
-        description={
-          isInstalled
-            ? translate(
-                'auto.components.settings.AgentsPane.installedDescription',
-                'Enable agents on PATH. Expand a row to override the launch command, args, or environment.'
-              )
-            : translate(
-                'auto.components.settings.AgentsPane.availableDescription',
-                'Not on PATH yet. Open docs to install, then Refresh under Installed.'
-              )
-        }
+        description={translate(
+          'auto.components.settings.AgentsPane.catalogDescription',
+          'Enable agents on PATH, install missing ones, and configure launch command, args, or environment.'
+        )}
         action={
-          isInstalled && onRefresh ? (
+          onRefresh ? (
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={onRefresh}
               disabled={isRefreshing}
-              title={translate(
-                'auto.components.settings.AgentsPane.13647f9f80',
-                'Re-read your shell PATH and re-detect installed agents'
-              )}
-              className="gap-1.5 text-muted-foreground hover:text-foreground"
+              className="h-7 gap-1.5"
             >
               <RefreshCw
                 className={cn(
@@ -88,11 +77,27 @@ export function AgentsCatalogSection({
           ) : undefined
         }
       />
-      <IntegrationCardGroup>
-        {agents.map((agent) => (
-          <AgentCatalogRow key={agent.id} {...buildRowProps(agent, isDetected)} />
-        ))}
-      </IntegrationCardGroup>
+
+      {installed.length > 0 ? (
+        <IntegrationCardGroup>
+          {installed.map((agent) => (
+            <AgentCatalogRow key={agent.id} {...buildRowProps(agent, true)} />
+          ))}
+        </IntegrationCardGroup>
+      ) : null}
+
+      {available.length > 0 ? (
+        <div className="space-y-1.5">
+          <p className="px-0.5 text-[11px] font-medium tracking-tight text-muted-foreground">
+            {translate('auto.components.settings.AgentsPane.e8da2af684', 'Available to install')}
+          </p>
+          <IntegrationCardGroup>
+            {available.map((agent) => (
+              <AgentCatalogRow key={agent.id} {...buildRowProps(agent, false)} />
+            ))}
+          </IntegrationCardGroup>
+        </div>
+      ) : null}
     </section>
   )
 }

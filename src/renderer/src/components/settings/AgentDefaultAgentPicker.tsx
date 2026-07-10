@@ -26,47 +26,53 @@ export function AgentDefaultAgentPicker({
   const toggleValue = resolveDefaultAgentToggleValue(defaultAgent, isAutoDefault, isBlankDefault)
 
   return (
-    <section className="space-y-1.5">
+    <section className="space-y-2">
       <SettingsSubsectionHeader
         title={translate('auto.components.settings.AgentsPane.385212c7a1', 'Default Agent')}
         description={ownershipDescription}
       />
-      <ToggleGroup
-        type="single"
-        variant="outline"
-        size="default"
-        className="flex h-auto w-full flex-wrap justify-start gap-1.5 motion-reduce:transition-none"
-        value={toggleValue}
-        onValueChange={(next) => {
-          if (!next || next === toggleValue) {
-            return
-          }
-          if (next === 'auto') {
-            onSelect(null)
-            return
-          }
-          if (next === 'blank') {
-            onSelect('blank')
-            return
-          }
-          onSelect(next as TuiAgent)
-        }}
-        aria-label={translate('auto.components.settings.AgentsPane.385212c7a1', 'Default Agent')}
-      >
-        <ToggleGroupItem value="auto">
-          {translate('auto.components.settings.AgentsPane.92033495ff', 'Auto')}
-        </ToggleGroupItem>
-        <ToggleGroupItem value="blank" className="gap-1.5">
-          <Terminal className="size-3.5" />
-          {translate('auto.components.settings.AgentsPane.110b74b022', 'No agent (blank terminal)')}
-        </ToggleGroupItem>
-        {enabledDetectedAgents.map((agent) => (
-          <ToggleGroupItem key={agent.id} value={agent.id} className="gap-1.5">
-            <AgentIcon agent={agent.id} size={14} />
-            {agent.label}
+      {/* Why: bordered surface groups the picker so it reads as a control panel, not loose chips. */}
+      <div className="rounded-lg border border-border/60 bg-card/20 p-2.5">
+        <ToggleGroup
+          type="single"
+          variant="outline"
+          size="default"
+          className="flex h-auto w-full flex-wrap justify-start gap-1.5 motion-reduce:transition-none"
+          value={toggleValue}
+          onValueChange={(next) => {
+            if (!next || next === toggleValue) {
+              return
+            }
+            if (next === 'auto') {
+              onSelect(null)
+              return
+            }
+            if (next === 'blank') {
+              onSelect('blank')
+              return
+            }
+            onSelect(next as TuiAgent)
+          }}
+          aria-label={translate('auto.components.settings.AgentsPane.385212c7a1', 'Default Agent')}
+        >
+          <ToggleGroupItem value="auto">
+            {translate('auto.components.settings.AgentsPane.92033495ff', 'Auto')}
           </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
+          <ToggleGroupItem value="blank" className="gap-1.5">
+            <Terminal className="size-3.5" />
+            {translate(
+              'auto.components.settings.AgentsPane.110b74b022',
+              'No agent (blank terminal)'
+            )}
+          </ToggleGroupItem>
+          {enabledDetectedAgents.map((agent) => (
+            <ToggleGroupItem key={agent.id} value={agent.id} className="gap-1.5">
+              <AgentIcon agent={agent.id} size={14} />
+              {agent.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      </div>
     </section>
   )
 }

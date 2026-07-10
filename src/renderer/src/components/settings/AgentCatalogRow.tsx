@@ -6,7 +6,7 @@ import { Button } from '../ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
-import { IntegrationCardDetails, IntegrationCardShell } from './integration-card-shell'
+import { IntegrationCardDetails } from './integration-card-shell'
 import {
   resolveAgentRowStatusLabelKey,
   resolveAgentRowStatusTone
@@ -43,6 +43,12 @@ export type AgentCatalogRowProps = {
   sessionSourceHome?: AgentSessionSourceHomeControl
 }
 
+const STATUS_TONE_CLASSES = {
+  connected: 'border-status-success-border bg-status-success-background text-status-success',
+  attention: 'border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+  neutral: 'border-border bg-background text-muted-foreground'
+} as const
+
 function translateAgentStatusLabel(key: ReturnType<typeof resolveAgentRowStatusLabelKey>): string {
   switch (key) {
     case 'install':
@@ -72,32 +78,19 @@ function hasAgentLaunchOverrides(props: {
   )
 }
 
-function AgentCommandPreviewLine(props: {
+function formatCommandLine(props: {
   defaultCmd: string
   cmdOverride: string | undefined
   argsOverride: string
   envSummary: string
-}): React.JSX.Element {
-  const { defaultCmd, cmdOverride, argsOverride, envSummary } = props
-  return (
-    <p className="truncate font-mono text-[11px] text-muted-foreground">
-      {cmdOverride ? (
-        <span>
-          <span className="text-muted-foreground/60 line-through">{defaultCmd}</span>
-          <span className="ml-1.5 text-foreground/80">{cmdOverride}</span>
-        </span>
-      ) : (
-        defaultCmd
-      )}
-      {argsOverride ? <span className="ml-1.5 text-foreground/70">{argsOverride}</span> : null}
-      {envSummary ? <span className="ml-1.5 text-foreground/60">{envSummary}</span> : null}
-    </p>
-  )
+}): string {
+  const cmd = props.cmdOverride?.trim() ? props.cmdOverride.trim() : props.defaultCmd
+  return [cmd, props.argsOverride.trim(), props.envSummary.trim()].filter(Boolean).join(' ')
 }
 
 /**
- * Flat Integrations-style agent row: status + switch + docs; launch overrides
- * open in one Collapsible panel (no nested accordion / hover chrome).
+ * Two-line list row (name + command) matching Integrations action density:
+ * outline Install / ghost Configure — not icon-only chrome.
  */
 export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element {
   const {
@@ -131,20 +124,24 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
       defaultEnv
     })
   )
+
+  const statusKey = resolveAgentRowStatusLabelKey({ isDetected, isEnabled, isDefault })
+  // Why: "On PATH" is the common case — badge only for Default / Disabled / Install.
+  const showStatusBadge = statusKey !== 'onPath'
   const statusTone = resolveAgentRowStatusTone({ isDetected, isEnabled, isDefault })
-  const statusLabel = translateAgentStatusLabel(
-    resolveAgentRowStatusLabelKey({ isDetected, isEnabled, isDefault })
-  )
+  const statusLabel = translateAgentStatusLabel(statusKey)
+  const commandLine = formatCommandLine({
+    defaultCmd,
+    cmdOverride,
+    argsOverride,
+    envSummary
+  })
 
-  const docsLabel = isDetected
-    ? translate('auto.components.settings.AgentsPane.fe4d630c94', 'Docs')
-    : translate('auto.components.settings.AgentsPane.f95b5c79b8', 'Install')
+  const configureLabel = open
+    ? translate('auto.components.settings.AgentsPane.doneConfiguring', 'Done')
+    : translate('auto.components.settings.AgentsPane.configureLaunch', 'Configure')
 
-  const expandLabel = open
-    ? translate('auto.components.settings.AgentsPane.cea7d97be1', 'Collapse command override')
-    : translate('auto.components.settings.AgentsPane.dc4a2ffdc0', 'Expand command override')
-
-  const actions = (
+  const actions = isDetected ? (
     <>
       <SettingsSwitch
         checked={isEnabled}
@@ -155,114 +152,118 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
           { value0: label }
         )}
       />
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        asChild
-        className="text-muted-foreground hover:text-foreground"
-      >
-        <a
-          href={homepageUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          title={docsLabel}
-          aria-label={docsLabel}
+      <CollapsibleTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="h-7 gap-1 px-2 text-muted-foreground hover:text-foreground"
         >
-          <ExternalLink className="size-3.5" />
-        </a>
-      </Button>
-      {isDetected ? (
-        <CollapsibleTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label={expandLabel}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <ChevronDown
-              className={cn(
-                'size-3.5 transition-transform duration-200 ease-out motion-reduce:transition-none',
-                open && 'rotate-180'
-              )}
-            />
-          </Button>
-        </CollapsibleTrigger>
-      ) : null}
+          {configureLabel}
+          <ChevronDown
+            className={cn(
+              'size-3.5 transition-transform duration-200 ease-out motion-reduce:transition-none',
+              open && 'rotate-180'
+            )}
+          />
+        </Button>
+      </CollapsibleTrigger>
     </>
+  ) : (
+    <Button variant="outline" size="sm" asChild className="h-7 gap-1.5">
+      <a href={homepageUrl} target="_blank" rel="noopener noreferrer">
+        <ExternalLink className="size-3.5" />
+        {translate('auto.components.settings.AgentsPane.f95b5c79b8', 'Install')}
+      </a>
+    </Button>
   )
 
-  const body = (
-    <>
-      <AgentCommandPreviewLine
+  const identity = (
+    <div className="flex min-w-0 flex-1 items-start gap-2.5">
+      <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md border border-border/50 bg-muted/30 text-muted-foreground [&_svg]:size-4">
+        <AgentIcon agent={agentId} size={16} />
+      </span>
+      <div className="min-w-0 flex-1 space-y-0.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <p className="truncate text-xs font-medium leading-none text-foreground">{label}</p>
+          {showStatusBadge ? (
+            <span
+              className={cn(
+                'shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium leading-none',
+                STATUS_TONE_CLASSES[statusTone]
+              )}
+            >
+              {statusLabel}
+            </span>
+          ) : null}
+        </div>
+        <p className="truncate font-mono text-[11px] leading-snug text-muted-foreground">
+          {commandLine}
+        </p>
+      </div>
+    </div>
+  )
+
+  const overrideFields = (
+    <IntegrationCardDetails className="space-y-2">
+      <AgentCommandOverrideInput
+        key={cmdOverride ?? defaultCmd}
         defaultCmd={defaultCmd}
         cmdOverride={cmdOverride}
-        argsOverride={argsOverride}
-        envSummary={envSummary}
+        onSaveOverride={onSaveOverride}
       />
-      {isDetected ? (
-        <CollapsibleContent className="collapsible-height-content">
-          <IntegrationCardDetails>
-            <AgentCommandOverrideInput
-              key={cmdOverride ?? defaultCmd}
-              defaultCmd={defaultCmd}
-              cmdOverride={cmdOverride}
-              onSaveOverride={onSaveOverride}
-            />
-            <AgentDefaultArgsInput
-              key={`${agentId}:${argsOverride}`}
-              defaultArgs={defaultArgs}
-              argsOverride={argsOverride}
-              onSaveArgs={onSaveArgs}
-            />
-            {defaultEnvSummary || envSummary ? (
-              <AgentDefaultEnvInput
-                key={`${agentId}:${envSummary}`}
-                defaultEnv={defaultEnv}
-                envOverride={envOverride}
-                onSaveEnv={onSaveEnv}
-              />
-            ) : null}
-            {sessionSourceHome ? (
-              <AgentSessionSourceHomeInput
-                key={`${agentId}:${sessionSourceHome.runtimeLabel}:${sessionSourceHome.value}`}
-                runtimeLabel={sessionSourceHome.runtimeLabel}
-                value={sessionSourceHome.value}
-                onSave={sessionSourceHome.onSave}
-              />
-            ) : null}
-            <p className="text-[11px] leading-snug text-muted-foreground">
-              {translate(
-                'auto.components.settings.AgentsPane.f9f127d664',
-                'Override the binary path or name, and edit the default launch arguments or environment for this agent.'
-              )}
-            </p>
-          </IntegrationCardDetails>
-        </CollapsibleContent>
+      <AgentDefaultArgsInput
+        key={`${agentId}:${argsOverride}`}
+        defaultArgs={defaultArgs}
+        argsOverride={argsOverride}
+        onSaveArgs={onSaveArgs}
+      />
+      {defaultEnvSummary || envSummary ? (
+        <AgentDefaultEnvInput
+          key={`${agentId}:${envSummary}`}
+          defaultEnv={defaultEnv}
+          envOverride={envOverride}
+          onSaveEnv={onSaveEnv}
+        />
       ) : null}
-    </>
+      {sessionSourceHome ? (
+        <AgentSessionSourceHomeInput
+          key={`${agentId}:${sessionSourceHome.runtimeLabel}:${sessionSourceHome.value}`}
+          runtimeLabel={sessionSourceHome.runtimeLabel}
+          value={sessionSourceHome.value}
+          onSave={sessionSourceHome.onSave}
+        />
+      ) : null}
+      <p className="text-[11px] leading-snug text-muted-foreground">
+        {translate(
+          'auto.components.settings.AgentsPane.f9f127d664',
+          'Override the binary path or name, and edit the default launch arguments or environment for this agent.'
+        )}
+      </p>
+    </IntegrationCardDetails>
   )
 
-  const shell = (
-    <IntegrationCardShell
-      className={cn(!isDetected && 'opacity-80')}
-      icon={<AgentIcon agent={agentId} size={16} />}
-      name={label}
-      statusLabel={statusLabel}
-      statusTone={statusTone}
-      actions={actions}
-    >
-      {body}
-    </IntegrationCardShell>
+  const row = (
+    <div className={cn('bg-transparent px-3 py-2.5', !isDetected && 'opacity-80')}>
+      <div className="flex items-center gap-2.5">
+        {identity}
+        <div className="flex shrink-0 items-center justify-end gap-1.5">{actions}</div>
+      </div>
+      {isDetected ? (
+        <CollapsibleContent className="collapsible-height-content">
+          {overrideFields}
+        </CollapsibleContent>
+      ) : null}
+    </div>
   )
 
   if (!isDetected) {
-    return shell
+    return row
   }
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      {shell}
+      {row}
     </Collapsible>
   )
 }
