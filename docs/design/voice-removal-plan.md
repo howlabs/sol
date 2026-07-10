@@ -32,7 +32,7 @@ Sol positions itself as a **minimal IDE for AI agent development** ([README.md](
 
 | Item | Rationale |
 |------|-----------|
-| **`developer-permissions` `microphone`** | Generic OS permission; may be reused by browser/computer-use. Only remove voice-specific **copy** in `developer-permissions-search.ts`. |
+| **`developer-permissions` `microphone`** | Generic OS permission; may be reused by browser flows. Only remove voice-specific **copy** in `developer-permissions-search.ts`. |
 | **i18n locale strings** | Dead keys are harmless; optional cleanup pass via locale scripts later. |
 | **User disk data** | Downloaded models under speech cache dir + `openai-speech-token.enc` — document optional manual cleanup; no migrator required for Sol fork. |
 | **E2E emoji fixture “Microphone”** | Unrelated table content in `terminal-emoji-table.md`. |

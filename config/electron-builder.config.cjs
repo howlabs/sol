@@ -1,5 +1,4 @@
 const { chmodSync, existsSync, readdirSync } = require('node:fs')
-const { execFileSync } = require('node:child_process')
 const { join, resolve } = require('node:path')
 const electronBuilderNativeRebuild = require('./scripts/electron-builder-native-rebuild.cjs')
 const { verifyPackagedDaemonEntryBoots } = require('./scripts/verify-packaged-daemon-entry.cjs')
@@ -130,9 +129,6 @@ module.exports = {
       // platform binaries (notably darwin-x64). child_process.execFile needs
       // the copied binary to be executable in packaged apps.
       chmodSync(join(resourcesDir, filename), 0o755)
-    }
-    if (context.electronPlatformName === 'darwin') {
-      await signMacComputerUseHelper(join(resourcesDir, 'Orca Computer Use.app'), context.packager)
     }
   },
   win: {
@@ -325,66 +321,4 @@ function chmodUnixCliLaunchers(resourcesDir, electronPlatformName) {
   }
 }
 
-async function signMacComputerUseHelper(helperAppPath, packager) {
-  if (!existsSync(helperAppPath)) {
-    if (isMacRelease) {
-      throw new Error(`Missing Orca Computer Use helper app at ${helperAppPath}`)
-    }
-    return
-  }
-  const codeSigningInfo =
-    isMacRelease && process.env.CSC_LINK && packager?.codeSigningInfo?.value
-      ? await packager.codeSigningInfo.value
-      : null
-  const identity =
-    process.env.ORCA_COMPUTER_MACOS_SIGN_IDENTITY ??
-    process.env.CSC_NAME ??
-    findInstalledMacSigningIdentity(codeSigningInfo?.keychainFile) ??
-    (isMacRelease ? null : '-')
-  if (!identity) {
-    throw new Error('Missing signing identity for Orca Computer Use helper app')
-  }
-  // Why: TCC grants attach to this nested app's code identity. Sign it before
-  // the outer Orca.app is sealed so production builds preserve that identity.
-  execFileSync('codesign', codesignArgs(identity, helperAppPath), { stdio: 'inherit' })
-  execFileSync('codesign', ['--verify', '--deep', '--strict', helperAppPath], {
-    stdio: 'inherit'
-  })
-}
 
-function codesignArgs(identity, targetPath) {
-  const args = ['--force', '--deep', '--sign', identity]
-  if (isMacRelease) {
-    args.push(
-      '--options',
-      'runtime',
-      '--timestamp',
-      '--entitlements',
-      resolve(__dirname, '../resources/build/entitlements.mac.plist')
-    )
-  }
-  args.push(targetPath)
-  return args
-}
-
-function findInstalledMacSigningIdentity(keychainFile) {
-  try {
-    const output = execFileSync(
-      'security',
-      ['find-identity', '-v', '-p', 'codesigning', ...(keychainFile ? [keychainFile] : [])],
-      {
-        encoding: 'utf8'
-      }
-    )
-    const releaseMatch =
-      output.match(/"([^"]*Developer ID Application:[^"]+)"/) ??
-      output.match(/"([^"]*Apple Distribution:[^"]+)"/)
-    if (releaseMatch?.[1]) {
-      return releaseMatch[1]
-    }
-    if (!isMacRelease) {
-      return output.match(/"([^"]*Apple Development:[^"]+)"/)?.[1] ?? null
-    }
-  } catch {}
-  return null
-}

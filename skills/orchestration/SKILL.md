@@ -10,8 +10,7 @@ description: >-
   supervise, monitor, wait for results, or coordinate a DAG. Use `orca-cli` for
   ordinary terminal control, lightweight terminal prompts, shell commands, Orca
   worktree management, reading or waiting on terminals, and automation of the
-  browser embedded inside Orca. Use Computer Use for browser windows, webviews,
-  Orca app UI, or desktop UI outside Orca's embedded browser.
+  browser embedded inside Orca.
 ---
 
 # Orca Inter-Agent Orchestration

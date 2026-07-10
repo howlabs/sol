@@ -135,7 +135,6 @@ export function supportsBrowserPageFlag(commandPath: string[]): boolean {
       'terminal',
       'file',
       'orchestration',
-      'computer',
       'note',
       'diagnostics',
       'linear'
@@ -173,7 +172,6 @@ export function isCommandGroup(commandPath: string[]): boolean {
         'dialog',
         'storage',
         'orchestration',
-        'computer',
         'agent',
         'environment',
         'diagnostics',

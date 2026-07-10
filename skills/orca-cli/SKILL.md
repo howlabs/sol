@@ -8,9 +8,7 @@ description: >-
   "read/wait/send Orca terminal", "terminal send", "full handoff", "handover",
   "give this to another agent", "another worktree", "Orca browser", or
   "control the browser inside Orca". Prefer this over raw `git worktree`, ad hoc
-  PTYs, Playwright, or Computer Use when the task touches Orca-managed state.
-  Use Computer Use for browser windows, webviews, or desktop UI outside Orca's
-  embedded browser.
+  PTYs, or Playwright when the task touches Orca-managed state.
 ---
 
 # Orca CLI
@@ -204,7 +202,7 @@ Use `--repo <selector>` for a new worktree per run, or `--workspace <selector>` 
 
 The built-in browser is Orca's embedded browser tab surface, scoped to Orca worktrees; it is not Chrome/Safari or desktop app UI.
 
-These commands control only Orca's embedded browser tabs. For external Chrome/Safari/webviews or Orca app chrome/settings, use the Computer Use skill/tool. If the user explicitly asks for Orca CLI desktop control, use `orca computer ...`; do not use browser commands for desktop UI.
+These commands control only Orca's embedded browser tabs. They do not drive external Chrome/Safari/webviews or Orca app chrome/settings.
 
 Use a snapshot-interact-re-snapshot loop:
 

@@ -15,11 +15,6 @@ const updateCapableCallers = new Map<string, readonly string[]>([
     'src/renderer/src/components/settings/OrchestrationSetupCard.tsx',
     ['ORCHESTRATION_SKILL_UPDATE_COMMAND', 'installedCommand={updateCommand}']
   ],
-  [['ORCHESTRATION_SKILL_UPDATE_COMMAND', 'installedCommand={updateCommand}']],
-  [
-    'src/renderer/src/components/settings/ComputerUseSkillSetupPanel.tsx',
-    ['COMPUTER_USE_SKILL_UPDATE_COMMAND', 'installedCommand={updateCommand}']
-  ],
   [
     'src/renderer/src/components/settings/EphemeralVmsPane.tsx',
     ['EPHEMERAL_VMS_SKILL_UPDATE_COMMAND', 'installedCommand={updateCommand}']
