@@ -1,5 +1,6 @@
 import { Info } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
+import { Button } from '../ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { SettingsSegmentedControl, SettingsSubsectionHeader } from './SettingsFormControls'
 import type { AgentPermissionMode } from '../../../../shared/tui-agent-permissions'
@@ -22,16 +23,18 @@ export function AgentPermissionsSetting({
             {translate('auto.components.settings.AgentsPane.agentPermissions', 'Agent Permissions')}
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon-sm"
                   aria-label={translate(
                     'auto.components.settings.AgentsPane.agentPermissionsInfo',
                     'Agent permissions info'
                   )}
-                  className="grid size-5 place-items-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <Info className="size-3.5" />
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent side="top" sideOffset={6}>
                 {translate(

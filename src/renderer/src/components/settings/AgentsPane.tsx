@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
-import type { GlobalSettings, TuiAgent } from '../../../../shared/types'
+import { LoaderCircle } from '@/lib/icons'
+import { cn } from '@/lib/utils'
+import type { GlobalSettings } from '../../../../shared/types'
 import { getAgentCatalog } from '@/lib/agent-catalog'
 import { useDetectedAgents } from '@/hooks/useDetectedAgents'
 import { AgentCacheTimerSection } from './AgentCacheTimerSection'
@@ -87,8 +89,7 @@ export function AgentsPane({
     disabledAgents,
     cmdOverrides,
     agentDefaultArgs,
-    agentDefaultEnv,
-    setDefault: (id: TuiAgent) => updateSettings({ defaultTuiAgent: id })
+    agentDefaultEnv
   }
 
   const rowProps = (agent: (typeof detectedAgents)[number], isDetected: boolean) =>
@@ -144,7 +145,15 @@ export function AgentsPane({
       ) : null}
 
       {detectedIds === null ? (
-        <p className="py-4 text-center text-sm text-muted-foreground">
+        <p
+          className="flex items-center justify-center gap-2 py-4 text-sm text-muted-foreground"
+          role="status"
+          aria-live="polite"
+        >
+          <LoaderCircle
+            className={cn('size-3.5 shrink-0 animate-spin motion-reduce:animate-none')}
+            aria-hidden
+          />
           {translate(
             'auto.components.settings.AgentsPane.d83834f5e6',
             'Detecting installed agents…'

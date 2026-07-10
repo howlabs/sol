@@ -35,7 +35,7 @@ export function AgentDefaultAgentPicker({
         type="single"
         variant="outline"
         size="default"
-        className="flex h-auto w-full flex-wrap justify-start gap-1.5"
+        className="flex h-auto w-full flex-wrap justify-start gap-1.5 motion-reduce:transition-none"
         value={toggleValue}
         onValueChange={(next) => {
           if (!next || next === toggleValue) {

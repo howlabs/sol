@@ -25,7 +25,6 @@ type AgentsCatalogBindings = {
   cmdOverrides: Record<string, string | undefined>
   agentDefaultArgs: Record<string, string | undefined>
   agentDefaultEnv: Record<string, Record<string, string> | undefined>
-  setDefault: (id: TuiAgent) => void
 }
 
 export function buildAgentCatalogRowProps(
@@ -40,8 +39,7 @@ export function buildAgentCatalogRowProps(
     disabledAgents,
     cmdOverrides,
     agentDefaultArgs,
-    agentDefaultEnv,
-    setDefault
+    agentDefaultEnv
   } = bindings
 
   return {
@@ -57,7 +55,6 @@ export function buildAgentCatalogRowProps(
     cmdOverride: isDetected ? cmdOverrides[agent.id] : undefined,
     argsOverride: resolveTuiAgentLaunchArgs(agent.id, agentDefaultArgs),
     envOverride: resolveTuiAgentLaunchEnv(agent.id, agentDefaultEnv),
-    onSetDefault: isDetected ? () => setDefault(agent.id) : () => {},
     onSetEnabled: (enabled: boolean) =>
       setAgentEnabledFromStore(settings, updateSettings, agent.id, enabled),
     onSaveOverride: isDetected

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Check, ChevronDown, ExternalLink } from '@/lib/icons'
+import { ChevronDown, ExternalLink } from '@/lib/icons'
 import type { TuiAgent } from '../../../../shared/types'
 import { AgentIcon } from '@/lib/agent-catalog'
 import { Button } from '../ui/button'
@@ -15,7 +15,7 @@ import {
   type AgentSessionSourceHomeControl
 } from './codex-session-source-home-control'
 import { stringifyAgentDefaultEnvDraft } from './agent-default-env-draft'
-import { AgentAvailabilityControl } from './agent-availability-control'
+import { SettingsSwitch } from './SettingsFormControls'
 import {
   AgentCommandOverrideInput,
   AgentDefaultArgsInput,
@@ -35,7 +35,6 @@ export type AgentCatalogRowProps = {
   cmdOverride: string | undefined
   argsOverride: string
   envOverride: Record<string, string>
-  onSetDefault: () => void
   onSetEnabled: (enabled: boolean) => void
   onSaveOverride: (value: string) => void
   onSaveArgs: (value: string) => void
@@ -86,7 +85,6 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
     cmdOverride,
     argsOverride,
     envOverride,
-    onSetDefault,
     onSetEnabled,
     onSaveOverride,
     onSaveArgs,
@@ -124,36 +122,21 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
       statusLabel={status.label}
       statusTone={status.tone}
       actions={
-        <div className="flex flex-wrap items-center justify-end gap-1.5">
-          <AgentAvailabilityControl
-            label={label}
-            isEnabled={isEnabled}
-            onSetEnabled={onSetEnabled}
+        <>
+          <SettingsSwitch
+            checked={isEnabled}
+            onChange={() => onSetEnabled(!isEnabled)}
+            ariaLabel={translate(
+              'auto.components.settings.AgentsPane.1c9a9679ec',
+              '{{value0}} availability',
+              { value0: label }
+            )}
           />
-          {isDetected && isEnabled ? (
-            <Button
-              type="button"
-              variant={isDefault ? 'secondary' : 'ghost'}
-              size="xs"
-              onClick={onSetDefault}
-              title={
-                isDefault
-                  ? translate('auto.components.settings.AgentsPane.d7625cf8b2', 'Default agent')
-                  : translate('auto.components.settings.AgentsPane.5f986a9b92', 'Set as default')
-              }
-              className="h-7 gap-1 text-xs"
-            >
-              {isDefault ? <Check className="size-3" /> : null}
-              {isDefault
-                ? translate('auto.components.settings.AgentsPane.24e032fa34', 'Default')
-                : translate('auto.components.settings.AgentsPane.959b67385b', 'Set default')}
-            </Button>
-          ) : null}
           <Button
             variant="ghost"
             size="icon-sm"
             asChild
-            className="size-7 text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground"
           >
             <a
               href={homepageUrl}
@@ -188,11 +171,14 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
               className="size-7 text-muted-foreground hover:text-foreground"
             >
               <ChevronDown
-                className={cn('size-3.5 transition-transform', cmdOpen && 'rotate-180')}
+                className={cn(
+                  'size-3.5 transition-transform duration-200 ease-out motion-reduce:transition-none',
+                  cmdOpen && 'rotate-180'
+                )}
               />
             </Button>
           ) : null}
-        </div>
+        </>
       }
     >
       {commandPreview}
