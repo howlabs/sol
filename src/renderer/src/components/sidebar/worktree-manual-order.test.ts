@@ -377,5 +377,3 @@ describe('buildManualOrderUpdatesForGroupDrop', () => {
     expect(Array.from(result.updates)).toEqual([['todo-b', { manualOrder: 1500 }]])
   })
 })
-
-

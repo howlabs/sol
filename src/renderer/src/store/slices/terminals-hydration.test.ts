@@ -336,7 +336,6 @@ describe('hydrateWorkspaceSession', () => {
     expect(store.getState().terminalLayoutsByTabId['tab-1']?.activeLeafId).toBe(liveLeftLeafId)
   })
 
-
   it('batches restored terminal reconnect wake hints into one store update', async () => {
     const store = createTestStore()
     const worktreeId = 'repo1::/wt-1'

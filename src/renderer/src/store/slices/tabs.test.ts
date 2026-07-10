@@ -1584,7 +1584,6 @@ describe('TabsSlice', () => {
       expect(groups[0].tabOrder).toEqual(['term-1', 'term-2', '/tmp/feature/src/main.ts'])
     })
 
-
     it('hydrates from unified format', () => {
       store.setState({
         worktreesByRepo: {

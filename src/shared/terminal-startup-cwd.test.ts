@@ -60,7 +60,6 @@ describe('resolveTerminalStartupCwd', () => {
     ).toBe('/repo/app-other')
   })
 
-
   it('falls back to the provider default when no workspace root is resolvable', () => {
     expect(
       resolveTerminalStartupCwdForWorkspace({
@@ -176,7 +175,6 @@ describe('resolveTerminalStartupCwd', () => {
       })
     ).toBe('/repo/app')
   })
-
 
   it('resolves renderer PTY cwd values against folder workspace keys', () => {
     expect(

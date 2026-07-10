@@ -50,8 +50,7 @@ vi.mock('../app-icon', () => ({
 
 vi.mock('../browser/browser-manager', () => ({
   browserManager: {
-    attachGuestPolicies: attachGuestPoliciesMock,
-    setDictationShortcutForwardingPredicate: vi.fn()
+    attachGuestPolicies: attachGuestPoliciesMock
   }
 }))
 
@@ -647,8 +646,6 @@ describe('createMainWindow', () => {
     expect(webContents.send).not.toHaveBeenCalledWith('ui:ctrlTabKeyDown', expect.anything())
     expect(webContents.send).not.toHaveBeenCalledWith('ui:switchRecentTab')
   })
-
-
 
   it('forwards ctrl/cmd+j to the worktree palette toggle event', () => {
     const windowHandlers: Record<string, (...args: any[]) => void> = {}

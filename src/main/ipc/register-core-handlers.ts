@@ -46,6 +46,7 @@ import { registerBrowserHandlers } from './browser'
 import { registerShellHandlers } from './shell'
 
 import { registerUIHandlers, setTrustedUIRendererWebContentsId } from './ui'
+
 import { registerCodexAccountHandlers } from './codex-accounts'
 import { registerAgentHookHandlers } from './agent-hooks'
 import { registerAgentTrustHandlers } from './agent-trust'

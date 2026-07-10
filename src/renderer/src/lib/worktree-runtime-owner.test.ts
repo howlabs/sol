@@ -47,7 +47,6 @@ describe('getSettingsForWorktreeRuntimeOwner', () => {
     })
   })
 
-
   it('routes folder workspaces to their project group runtime owner', () => {
     expect(getSettingsForWorktreeRuntimeOwner(state, 'folder:runtime-folder')).toEqual({
       activeRuntimeEnvironmentId: 'folder-env'

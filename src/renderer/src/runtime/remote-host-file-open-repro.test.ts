@@ -111,7 +111,6 @@ async function openRemoteFileInEditor() {
   })
 }
 
-
 describe('issue #6648: opening a remote-host file in the editor', () => {
   it('succeeds once the SSH repo is hydrated with its connectionId', async () => {
     useAppStore.setState({
@@ -173,4 +172,3 @@ describe('issue #6648: opening a remote-host file in the editor', () => {
     expect(shouldRetryFileLoadError(WORKTREE_OWNER_UNREACHABLE_ERROR)).toBe(false)
   })
 })
-

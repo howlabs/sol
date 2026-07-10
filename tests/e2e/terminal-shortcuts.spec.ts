@@ -565,7 +565,6 @@ test.describe('Terminal Shortcuts', () => {
       })
   })
 
-
   test('all terminal chords reach the PTY or fire their action', async ({
     orcaPage,
     electronApp

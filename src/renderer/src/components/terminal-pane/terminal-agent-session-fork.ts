@@ -46,16 +46,10 @@ function getUsableForkBase(
     | null
     | undefined,
   repo: { kind?: string } | null | undefined,
-  worktreeId: string
+  _worktreeId: string
 ): string | null {
   const branch = worktree?.branch?.trim()
-  if (
-    !branch ||
-    worktree?.isArchived ||
-    worktree?.isBare ||
-    !repo ||
-    repo.kind === 'folder'
-  ) {
+  if (!branch || worktree?.isArchived || worktree?.isBare || !repo || repo.kind === 'folder') {
     return null
   }
   return branch

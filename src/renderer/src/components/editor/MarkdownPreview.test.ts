@@ -5,7 +5,6 @@ import {
   deriveMarkdownPreviewSourceRoot,
   getMarkdownPreviewSourceRelativePath,
   findMarkdownPreviewOpenedEditFileId,
-  findMarkdownPreviewSourceOpenFile,
   getMarkdownPreviewAnchorScrollTop,
   resolveMarkdownPreviewSourceWorktree
 } from './MarkdownPreview'
@@ -50,7 +49,6 @@ describe('MarkdownPreview source link routing', () => {
     ).toBe(source)
   })
 
-
   it('derives Windows preview source relative paths case-insensitively', () => {
     expect(getMarkdownPreviewSourceRelativePath('c:\\repo\\docs\\note.md', 'C:\\Repo')).toBe(
       'docs/note.md'
@@ -72,7 +70,6 @@ describe('MarkdownPreview source link routing', () => {
       'C:/orca'
     )
   })
-
 
   it('uses the edit tab that openFile actually activated for line reveals', () => {
     const localEdit = {

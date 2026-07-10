@@ -356,9 +356,7 @@ test.describe('Terminal long table scroll restore repro', () => {
   }, testInfo: TestInfo) => {
     await waitForSessionReady(orcaPage)
     await orcaPage.evaluate(() => {
-      window.__store
-        ?.getState()
-        .markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
+      window.__store?.getState().markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
       ;(window as LongTableDebugWindow).__terminalPtyOutputDebug?.reset()
     })
     const firstWorktreeId = await waitForActiveWorktree(orcaPage)
@@ -423,9 +421,7 @@ test.describe('Terminal long table scroll restore repro', () => {
   }, testInfo: TestInfo) => {
     await waitForSessionReady(orcaPage)
     await orcaPage.evaluate(() => {
-      window.__store
-        ?.getState()
-        .markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
+      window.__store?.getState().markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
       ;(window as LongTableDebugWindow).__terminalPtyOutputDebug?.reset()
     })
     const firstWorktreeId = await waitForActiveWorktree(orcaPage)
@@ -501,9 +497,7 @@ test.describe('Terminal long table scroll restore repro', () => {
     await waitForSessionReady(orcaPage)
     await closeFeatureTips(orcaPage)
     await orcaPage.evaluate(() => {
-      window.__store
-        ?.getState()
-        .markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
+      window.__store?.getState().markFeatureTipsSeen(['orca-cli', 'cmd-j-palette'])
       ;(window as LongTableDebugWindow).__terminalPtyOutputDebug?.reset()
     })
     const firstWorktreeId = await waitForActiveWorktree(orcaPage)

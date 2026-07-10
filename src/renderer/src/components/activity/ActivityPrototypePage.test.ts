@@ -326,7 +326,6 @@ describe('buildActivityEvents', () => {
     ).toBe(true)
   })
 
-
   it('matches a custom-titled live thread by its current prompt', () => {
     const tab = { ...makeTab(), customTitle: 'Pinned agent title' }
     const entry = {

@@ -1,21 +1,15 @@
 import { EventEmitter } from 'node:events'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const {
-  handlers,
-  appExitMock,
-  appQuitMock,
-  appRelaunchMock,
-  spawnMock,
-  destroySystemTrayMock
-} = vi.hoisted(() => ({
-  handlers: new Map<string, (_event: unknown, args?: unknown) => unknown>(),
-  appExitMock: vi.fn(),
-  appQuitMock: vi.fn(),
-  appRelaunchMock: vi.fn(),
-  spawnMock: vi.fn(),
-  destroySystemTrayMock: vi.fn()
-}))
+const { handlers, appExitMock, appQuitMock, appRelaunchMock, spawnMock, destroySystemTrayMock } =
+  vi.hoisted(() => ({
+    handlers: new Map<string, (_event: unknown, args?: unknown) => unknown>(),
+    appExitMock: vi.fn(),
+    appQuitMock: vi.fn(),
+    appRelaunchMock: vi.fn(),
+    spawnMock: vi.fn(),
+    destroySystemTrayMock: vi.fn()
+  }))
 
 vi.mock('node:child_process', () => ({
   spawn: spawnMock

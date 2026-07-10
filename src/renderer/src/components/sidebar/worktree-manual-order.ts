@@ -230,5 +230,3 @@ export function buildManualOrderUpdatesForGroupDrop(args: {
     })
   }
 }
-
-

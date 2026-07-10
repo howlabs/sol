@@ -185,7 +185,6 @@ describe('applyWebSessionTabsSnapshot', () => {
     expect(shouldApplyWebSessionTabsSnapshot(snapshot, ENV)).toBe(true)
   })
 
-
   it('suppresses a tab the client is closing until the host confirms removal (no close flash)', () => {
     const surface = {
       type: 'terminal' as const,

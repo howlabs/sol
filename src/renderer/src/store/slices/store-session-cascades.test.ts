@@ -713,7 +713,6 @@ describe('hydrateBrowserSession', () => {
     expect(s.activeBrowserTabId).toBe('browser-1')
   })
 
-
   it('restores activeTabTypeByWorktree for browser worktrees when hydrateEditorSession was a no-op', () => {
     const store = createTestStore()
     const wt = 'repo1::/path/wt1'
@@ -2044,7 +2043,6 @@ describe('hydrateEditorSession', () => {
     expect(s.activeTabType).toBe('editor')
   })
 
-
   it('keeps same-path local and runtime legacy references on their original owners', () => {
     const store = createTestStore()
     const wt = 'repo1::/path/wt1'
@@ -2162,7 +2160,6 @@ describe('hydrateEditorSession', () => {
       })
     )
   })
-
 
   it('re-detects restored file languages instead of trusting stale session data', () => {
     const store = createTestStore()

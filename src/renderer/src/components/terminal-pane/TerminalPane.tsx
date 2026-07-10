@@ -849,8 +849,7 @@ export default function TerminalPane({
     })
   }, [openSpacePage, refreshWorkspaceSpace])
 
-  const quickCommandRepoId =
-    getRepoIdFromWorktreeId(worktreeId)
+  const quickCommandRepoId = getRepoIdFromWorktreeId(worktreeId)
   const quickCommandRepo = useRepoById(quickCommandRepoId)
   const quickCommandRepoLabel = quickCommandRepo
     ? quickCommandRepo.displayName || quickCommandRepo.path

@@ -9,6 +9,7 @@ import type {
   AgentType,
   MigrationUnsupportedPtyEntry
 } from './agent-status-types'
+
 import type { WorkspaceCleanupUIState } from './workspace-cleanup'
 import type { LargeDiffRenderLimit } from './large-diff-render-limit'
 import type { GitLabProjectSettings } from './gitlab-types'

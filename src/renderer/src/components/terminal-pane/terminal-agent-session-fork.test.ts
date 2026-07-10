@@ -433,7 +433,6 @@ describe('forkAgentSessionFromPane', () => {
     )
   })
 
-
   it('keeps context available when workspace creation fails', async () => {
     mockCreateWorktree.mockRejectedValueOnce(new Error('path already exists'))
     const { forkAgentSessionFromPane } = await import('./terminal-agent-session-fork')

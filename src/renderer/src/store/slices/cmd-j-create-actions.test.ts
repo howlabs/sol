@@ -97,7 +97,6 @@ describe('Cmd+J lifted creation actions', () => {
     expect(store.getState().browserTabsByWorktree['wt-1'] ?? []).toHaveLength(1)
   })
 
-
   it('does not fall back to a local terminal tab when paired-web creation fails', async () => {
     createWebRuntimeSessionTerminalMock.mockResolvedValue(false)
     const store = createTestStore()

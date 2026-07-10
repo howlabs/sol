@@ -5907,7 +5907,6 @@ describe('fetchAllWorktrees hydration-time purge (design §4.4)', () => {
       remote.id
     ])
   })
-
 })
 
 // Why: design §4.4 — purgeWorktreeTerminalState wipes every worktree-scoped
@@ -6042,8 +6041,6 @@ describe('purgeWorktreeTerminalState direct (design §4.4)', () => {
 
     expect(store.getState().tabsByWorktree).toBe(before)
   })
-
-
 })
 
 describe('markWorktreeVisited', () => {

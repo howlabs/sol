@@ -133,7 +133,6 @@ describe('contextual tour definitions', () => {
     ])
   })
 
-
   it('allows only workspace creation over its workspace composer modal', () => {
     const modalTours = (CONTEXTUAL_TOURS as readonly ContextualTour[]).filter(
       (tour) => tour.allowedActiveModals?.length

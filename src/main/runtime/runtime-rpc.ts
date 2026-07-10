@@ -767,7 +767,6 @@ export class OrcaRuntimeRpcServer {
           const connectionId = this.wsConnectionIds.get(ws)
           if (connectionId) {
             this.runtime.cleanupSubscriptionsForConnection(connectionId)
-            this.runtime.cancelMobileDictationForConnection(connectionId)
             this.binaryStreamHandlers.delete(connectionId)
             this.wsConnectionIds.delete(ws)
           }

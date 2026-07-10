@@ -882,7 +882,6 @@ describe('createEditorSlice openDiff', () => {
   })
 })
 
-
 describe('createEditorSlice split-group editor routing', () => {
   function openSourceFile(
     store: StoreApi<AppState>,
@@ -1714,7 +1713,6 @@ describe('createEditorSlice openMarkdownPreview', () => {
       })
     ])
   })
-
 
   it('uses the resolved active runtime owner when opening markdown previews', () => {
     const store = createEditorStore()
@@ -4023,7 +4021,6 @@ describe('createEditorSlice activateMarkdownLink', () => {
       matchLength: 0
     })
   })
-
 
   it('delegates external links to openHttpLink with the ctx worktreeId', async () => {
     const store = createEditorStore()

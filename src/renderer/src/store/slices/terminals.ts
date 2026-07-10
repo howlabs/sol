@@ -16,8 +16,7 @@ import type {
   AgentProviderSessionMetadata,
   SleepingAgentLaunchConfig
 } from '../../../../shared/agent-session-resume'
-import {
-  DEFAULT_REPO_BADGE_COLOR} from '../../../../shared/constants'
+import { DEFAULT_REPO_BADGE_COLOR } from '../../../../shared/constants'
 import { parseExecutionHostId, type ExecutionHostId } from '../../../../shared/execution-host'
 import {
   folderWorkspaceKey,

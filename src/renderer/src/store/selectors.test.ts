@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { Repo, TerminalTab, Worktree } from '../../../shared/types'
 import { toRuntimeExecutionHostId } from '../../../shared/execution-host'
-import type { AppState } from './types'
 import {
   getAllWorktreesFromState,
   getProjectHostSetupProjectionFromState,
@@ -54,8 +53,7 @@ function makeTerminalTab(args: { id: string; worktreeId: string; title: string }
 }
 
 describe('store selectors', () => {
-  beforeEach(() => {
-  })
+  beforeEach(() => {})
 
   it('deduplicates cached worktree snapshots without changing reference reuse', () => {
     const first = makeWorktree({ id: 'wt-1', repoId: 'repo-1', displayName: 'first' })
@@ -80,7 +78,6 @@ describe('store selectors', () => {
     expect(getAllWorktreesFromState(state)).toBe(allWorktrees)
     expect(getWorktreeMapFromState(state)).toBe(worktreeMap)
   })
-
 
   it('keeps active terminal chrome stable across title-only tab updates', () => {
     const activeTab = makeTerminalTab({
@@ -348,4 +345,3 @@ describe('store selectors', () => {
     )
   })
 })
-

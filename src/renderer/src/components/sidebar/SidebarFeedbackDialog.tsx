@@ -192,7 +192,6 @@ export function SidebarFeedbackDialog({
               )}
               <ExternalLink className="size-3.5" />
             </Button>
-
           </div>
         </div>
 

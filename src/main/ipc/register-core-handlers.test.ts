@@ -468,7 +468,6 @@ describe('registerCoreHandlers', () => {
     expect(setTrustedUIRendererWebContentsIdMock).toHaveBeenCalledWith(null)
     expect(registerBrowserHandlersMock).toHaveBeenCalled()
     expect(registerFilesystemWatcherHandlersMock).toHaveBeenCalled()
-
     await expect(
       aiVaultOptions.scanRuntimeAiVaultSessions(
         'env-123',

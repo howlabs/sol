@@ -2,15 +2,6 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { useAppStore } from '@/store'
 import { remapOpenEditorTabsForPathChange } from './remap-open-editor-tabs-for-path-change'
 
-function ownedEditorFileId(
-  filePath: string,
-  worktreeId: string,
-  runtimeEnvironmentId: string | null | undefined
-): string {
-  const runtimeKey = runtimeEnvironmentId?.trim() || 'local'
-  return `editor:${encodeURIComponent(worktreeId)}:${encodeURIComponent(runtimeKey)}:${encodeURIComponent(filePath)}`
-}
-
 describe('remapOpenEditorTabsForPathChange', () => {
   beforeEach(() => {
     useAppStore.setState(useAppStore.getInitialState(), true)
@@ -115,7 +106,6 @@ describe('remapOpenEditorTabsForPathChange', () => {
       markdownPreviewSourceFileId: remoteRemapped!.id
     })
   })
-
 
   it('clears the untitled marker when remapping a renamed new markdown file', () => {
     const state = useAppStore.getState()

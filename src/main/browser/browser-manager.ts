@@ -203,7 +203,6 @@ export class BrowserManager {
     number,
     { code: number; description: string; validatedUrl: string }
   >()
-
   private readonly pendingPermissionEventsByGuestId = new Map<number, PendingPermissionEvent[]>()
   private readonly pendingPopupEventsByGuestId = new Map<number, PendingPopupEvent[]>()
   private readonly pendingDownloadIdsByGuestId = new Map<number, string[]>()

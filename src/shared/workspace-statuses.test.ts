@@ -263,5 +263,4 @@ describe('workspace status visuals', () => {
       icon: 'circle-dot'
     })
   })
-
 })

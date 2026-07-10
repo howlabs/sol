@@ -488,8 +488,7 @@ function freshActivityLiveAgentState(
 }
 
 function standaloneActivityWorktree(worktreeId: string): Worktree {
-  const displayName =
-    'Standalone terminal'
+  const displayName = 'Standalone terminal'
   return {
     id: worktreeId,
     repoId: STANDALONE_ACTIVITY_WORKTREE_REPO_ID,

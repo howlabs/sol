@@ -266,7 +266,6 @@ export function useTerminalKeyboardShortcuts({
         return
       }
 
-
       // Why: the active pane's live PTY session decides whether Ctrl+Arrow should
       // pass through as native \e[1;5C/\e[1;5D or be translated to \eb/\ef.
       // Resolved lazily so session/runtime lookups stay off other keystrokes.

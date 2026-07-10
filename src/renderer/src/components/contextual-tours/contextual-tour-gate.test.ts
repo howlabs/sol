@@ -40,7 +40,6 @@ describe('contextual tour gate', () => {
     expect(decision).toEqual({ kind: 'blocked', reason: 'missing-start-target' })
   })
 
-
   it('returns null when selector lookup or measurement throws', () => {
     expect(
       getMeasurableContextualTourTarget('[', {

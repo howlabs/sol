@@ -42,7 +42,7 @@ export const getDeveloperPermissionsPaneSearchEntries = createLocalizedCatalog((
     ),
     description: translate(
       'auto.components.settings.developer.permissions.search.6eca1636b7',
-      'Allow transcription, webcam, and media capture tools.'
+      'Allow microphone, camera, and media capture tools.'
     ),
     keywords: [
       ...translateSearchKeyword(

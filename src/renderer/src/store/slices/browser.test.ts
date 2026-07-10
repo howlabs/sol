@@ -410,7 +410,6 @@ describe('createBrowserSlice annotations', () => {
   })
 })
 
-
 describe('createBrowserSlice closed browser workspaces', () => {
   it('reopens duplicate-URL browser pages on the originally active page', () => {
     const store = createTestStore()

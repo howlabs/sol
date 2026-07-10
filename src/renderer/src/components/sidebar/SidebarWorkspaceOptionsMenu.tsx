@@ -128,12 +128,7 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
               )}
         </TooltipContent>
       </Tooltip>
-      <DropdownMenuContent
-        side="right"
-        align="start"
-        sideOffset={8}
-        className="w-72 pb-2"
-      >
+      <DropdownMenuContent side="right" align="start" sideOffset={8} className="w-72 pb-2">
         {showHostScopeControls && (
           <SidebarHostScopeMenuSection
             hostOptionsCount={hostOptions.length}
@@ -165,9 +160,7 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
               <span className="text-[11px] font-medium text-muted-foreground">{sortLabel}</span>
             </span>
           </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent
-            className="w-44"
-          >
+          <DropdownMenuSubContent className="w-44">
             <DropdownMenuRadioGroup
               value={sortBy}
               onValueChange={(v) => setSortBy(v as typeof sortBy)}
@@ -217,9 +210,7 @@ const SidebarWorkspaceOptionsMenu = React.memo(function SidebarWorkspaceOptionsM
                 </span>
               </span>
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent
-              className="w-44"
-            >
+            <DropdownMenuSubContent className="w-44">
               <DropdownMenuRadioGroup
                 value={projectOrderBy}
                 onValueChange={(v) => setProjectOrderBy(v as typeof projectOrderBy)}

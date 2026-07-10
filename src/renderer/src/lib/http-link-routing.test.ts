@@ -76,7 +76,6 @@ describe('openHttpLink', () => {
     expect(createBrowserTabMock).not.toHaveBeenCalled()
   })
 
-
   it('routes to the system browser when openLinksInApp is off', () => {
     storeState.settings = { openLinksInApp: false }
 

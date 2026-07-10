@@ -43,7 +43,6 @@ function remoteRuntimeTransport(): Pick<
 }
 
 describe('isLocalWindowsConptyPaneForCtrlArrow', () => {
-
   it('keeps an already-launched local PowerShell pane local after store ownership changes', () => {
     const worktreeId = 'repo-1::C:\\repo'
     expect(

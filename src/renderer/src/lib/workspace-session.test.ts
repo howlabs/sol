@@ -118,7 +118,6 @@ describe('buildWorkspaceSessionPayload', () => {
     expect(payload.defaultTerminalTabsAppliedByWorktreeId).toEqual({ 'wt-1': true })
   })
 
-
   it('persists only edit-mode files and resets browser loading state', () => {
     const payload = buildWorkspaceSessionPayload(createSnapshot())
 

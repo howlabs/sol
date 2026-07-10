@@ -300,7 +300,6 @@ describe('resolveWindowShortcutAction', () => {
     ).toEqual({ type: 'toggleWorktreePalette' })
   })
 
-
   it('applies custom keybinding overrides to main-process shortcuts', () => {
     const overrides: KeybindingOverrides = {
       'worktree.quickOpen': ['Mod+Shift+O'],
@@ -526,7 +525,6 @@ describe('resolveWindowShortcutAction', () => {
       )
     ).toEqual({ type: 'worktreeHistoryNavigate', direction: 'back' })
   })
-
 
   it('rejects the history chord when Shift is also held', () => {
     expect(

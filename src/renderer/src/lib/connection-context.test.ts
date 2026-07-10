@@ -342,7 +342,6 @@ describe('getConnectionId', () => {
     expect(isWorktreeConnectionResolved(folderWorkspaceKey('folder-workspace-1'))).toBe(true)
   })
 
-
   it('keeps normalized same-path folder repo ambiguity when resolving files', () => {
     const workspaceKey = folderWorkspaceKey('folder-workspace-1')
     useAppStore.setState({

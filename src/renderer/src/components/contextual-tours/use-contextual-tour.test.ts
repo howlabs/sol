@@ -60,6 +60,4 @@ describe('createContextualTourInteractionSnapshot', () => {
     expect(snapshot.wasPreviouslyInteracted).toBe(false)
     await expect(snapshot.persisted).resolves.toBeUndefined()
   })
-
-
 })

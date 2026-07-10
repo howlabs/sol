@@ -1,13 +1,5 @@
 /* eslint-disable max-lines */
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState
-} from 'react'
+import { Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
 
 import {
@@ -1426,11 +1418,7 @@ function App(): React.JSX.Element {
       // Why: open the active worktree's inline title editor. Open/reveal it
       // first so the card is mounted and visible even when sidebar filters or
       // collapse state would otherwise hide it.
-      if (
-        workspaceChromeActive &&
-        matchShortcut('workspace.rename') &&
-        activeWorktreeId
-      ) {
+      if (workspaceChromeActive && matchShortcut('workspace.rename') && activeWorktreeId) {
         input.preventDefault()
         notifyTerminalCapture('workspace.rename')
         const store = useAppStore.getState()

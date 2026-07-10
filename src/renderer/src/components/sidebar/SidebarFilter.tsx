@@ -173,12 +173,7 @@ const SidebarFilter = React.memo(function SidebarFilter({
             : translate('auto.components.sidebar.SidebarFilter.f506a1262a', 'Filter workspaces')}
         </TooltipContent>
       </Tooltip>
-      <DropdownMenuContent
-        side={contentSide}
-        align="start"
-        sideOffset={8}
-        className="w-72"
-      >
+      <DropdownMenuContent side={contentSide} align="start" sideOffset={8} className="w-72">
         <FilterToggleRow
           icon={<Moon className="size-3.5" />}
           label={translate('auto.components.sidebar.SidebarFilter.638a2d221d', 'Hide sleeping')}

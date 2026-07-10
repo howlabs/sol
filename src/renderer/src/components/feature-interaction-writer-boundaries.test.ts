@@ -237,5 +237,4 @@ describe('feature interaction writer boundaries', () => {
       )
     ).not.toContain("recordFeatureInteraction('browser-annotations-sent-to-agent')")
   })
-
 })

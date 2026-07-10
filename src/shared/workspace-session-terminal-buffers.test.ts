@@ -228,7 +228,6 @@ describe('pruneLocalTerminalScrollbackBuffers', () => {
     expect(buffer).toHaveLength(TERMINAL_SCROLLBACK_SESSION_BUFFER_BYTE_LIMIT / 2)
   })
 
-
   it('treats orphaned layouts as local and prunes their buffers', () => {
     const result = pruneLocalTerminalScrollbackBuffers(
       makeSession({
