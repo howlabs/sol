@@ -1,15 +1,13 @@
 import type React from 'react'
-import { useState } from 'react'
 import type { GlobalSettings } from '../../../../shared/types'
 import {
   DEFAULT_EDITOR_AUTO_SAVE_DELAY_MS,
   MAX_EDITOR_AUTO_SAVE_DELAY_MS,
   MIN_EDITOR_AUTO_SAVE_DELAY_MS
 } from '../../../../shared/constants'
-import { clampNumber } from '@/lib/terminal-theme'
-import { Input } from '../ui/input'
 import { SearchableSetting } from './SearchableSetting'
 import {
+  NumberField,
   SettingsRow,
   SettingsSegmentedControl,
   SettingsSubsectionHeader,
@@ -18,6 +16,7 @@ import {
 import { translate } from '@/i18n/i18n'
 import { RichMarkdownSpellcheckSetting } from './RichMarkdownSpellcheckSetting'
 
+// Kept for GeneralPane.test draft-state coverage of async settings persistence.
 export type AutoSaveDelayDraftState = {
   sourceDelayMs: number
   draft: string
@@ -63,53 +62,8 @@ export function GeneralEditorSettingsSection({
   settings,
   updateSettings
 }: GeneralEditorSettingsSectionProps): React.JSX.Element {
-  const [autoSaveDelayDraftState, setAutoSaveDelayDraftState] = useState(() =>
-    createAutoSaveDelayDraftState(settings.editorAutoSaveDelayMs)
-  )
-
-  const resolvedAutoSaveDelayDraftState = resolveAutoSaveDelayDraftState(
-    autoSaveDelayDraftState,
-    settings.editorAutoSaveDelayMs
-  )
-  if (resolvedAutoSaveDelayDraftState !== autoSaveDelayDraftState) {
-    // Why: Settings can be updated outside this pane; reconcile drafts before
-    // paint so the visible input never lags behind the persisted value.
-    setAutoSaveDelayDraftState(resolvedAutoSaveDelayDraftState)
-  }
-  const autoSaveDelayDraft = resolvedAutoSaveDelayDraftState.draft
-
-  const updateAutoSaveDelayDraft = (draft: string): void => {
-    setAutoSaveDelayDraftState((current) =>
-      updateAutoSaveDelayDraftState(current, settings.editorAutoSaveDelayMs, draft)
-    )
-  }
-
-  const commitAutoSaveDelay = (): void => {
-    const trimmed = autoSaveDelayDraft.trim()
-    if (trimmed === '') {
-      setAutoSaveDelayDraftState(createAutoSaveDelayDraftState(settings.editorAutoSaveDelayMs))
-      return
-    }
-
-    const value = Number(trimmed)
-    if (!Number.isFinite(value)) {
-      setAutoSaveDelayDraftState(createAutoSaveDelayDraftState(settings.editorAutoSaveDelayMs))
-      return
-    }
-
-    const next = clampNumber(
-      Math.round(value),
-      MIN_EDITOR_AUTO_SAVE_DELAY_MS,
-      MAX_EDITOR_AUTO_SAVE_DELAY_MS
-    )
-    updateSettings({ editorAutoSaveDelayMs: next })
-    setAutoSaveDelayDraftState((current) =>
-      updateAutoSaveDelayDraftState(current, settings.editorAutoSaveDelayMs, String(next))
-    )
-  }
-
   return (
-    <section key="editor" className="space-y-3">
+    <section key="editor" className="space-y-1.5">
       <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.GeneralEditorSettingsSection.45c6e85c4d',
@@ -157,46 +111,25 @@ export function GeneralEditorSettingsSection({
         )}
         keywords={['autosave', 'delay', 'milliseconds']}
       >
-        <SettingsRow
+        <NumberField
           label={translate(
             'auto.components.settings.GeneralEditorSettingsSection.d6cf227ca0',
             'Auto Save Delay'
           )}
-          description={
-            <>
-              {translate(
-                'auto.components.settings.GeneralEditorSettingsSection.8112cd6dcf',
-                'How long Orca waits after your last edit before saving automatically. First launch defaults to'
-              )}{' '}
-              {DEFAULT_EDITOR_AUTO_SAVE_DELAY_MS}{' '}
-              {translate('auto.components.settings.GeneralEditorSettingsSection.fc5c5306ff', 'ms.')}
-            </>
-          }
-          control={
-            <div className="flex items-center gap-2">
-              <Input
-                type="number"
-                min={MIN_EDITOR_AUTO_SAVE_DELAY_MS}
-                max={MAX_EDITOR_AUTO_SAVE_DELAY_MS}
-                step={250}
-                value={autoSaveDelayDraft}
-                onChange={(e) => updateAutoSaveDelayDraft(e.target.value)}
-                onBlur={commitAutoSaveDelay}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    commitAutoSaveDelay()
-                  }
-                }}
-                className="number-input-clean w-28 text-right tabular-nums"
-              />
-              <span className="text-xs text-muted-foreground">
-                {translate(
-                  'auto.components.settings.GeneralEditorSettingsSection.a5db1d3975',
-                  'ms'
-                )}
-              </span>
-            </div>
-          }
+          description={translate(
+            'auto.components.settings.GeneralEditorSettingsSection.1bec6d8318',
+            'How long Orca waits after your last edit before saving automatically.'
+          )}
+          value={settings.editorAutoSaveDelayMs}
+          defaultValue={DEFAULT_EDITOR_AUTO_SAVE_DELAY_MS}
+          min={MIN_EDITOR_AUTO_SAVE_DELAY_MS}
+          max={MAX_EDITOR_AUTO_SAVE_DELAY_MS}
+          step={250}
+          suffix={translate(
+            'auto.components.settings.GeneralEditorSettingsSection.a5db1d3975',
+            'ms'
+          )}
+          onChange={(next) => updateSettings({ editorAutoSaveDelayMs: Math.round(next) })}
         />
       </SearchableSetting>
 
@@ -260,7 +193,7 @@ export function GeneralEditorSettingsSection({
         )}
         keywords={['diff', 'word wrap', 'wrap', 'markdown', 'long lines']}
       >
-        <SettingsRow
+        <SettingsSwitchRow
           label={translate(
             'auto.components.settings.GeneralEditorSettingsSection.8f1afdfbd8',
             'Diff Word Wrap'
@@ -269,32 +202,8 @@ export function GeneralEditorSettingsSection({
             'auto.components.settings.GeneralEditorSettingsSection.4aa4d9fb73',
             'Wrap long lines in diff editors instead of requiring horizontal scrolling.'
           )}
-          control={
-            <SettingsSegmentedControl
-              ariaLabel={translate(
-                'auto.components.settings.GeneralEditorSettingsSection.8f1afdfbd8',
-                'Diff Word Wrap'
-              )}
-              value={settings.diffWordWrap ? 'on' : 'off'}
-              onChange={(option) => updateSettings({ diffWordWrap: option === 'on' })}
-              options={[
-                {
-                  value: 'off',
-                  label: translate(
-                    'auto.components.settings.GeneralEditorSettingsSection.bf16ef0af2',
-                    'Off'
-                  )
-                },
-                {
-                  value: 'on',
-                  label: translate(
-                    'auto.components.settings.GeneralEditorSettingsSection.3f6892f307',
-                    'On'
-                  )
-                }
-              ]}
-            />
-          }
+          checked={settings.diffWordWrap}
+          onChange={() => updateSettings({ diffWordWrap: !settings.diffWordWrap })}
         />
       </SearchableSetting>
 

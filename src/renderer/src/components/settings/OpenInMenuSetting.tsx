@@ -289,11 +289,11 @@ export function OpenInMenuSetting({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0 flex-1 space-y-1">
-          <Label>
+        <div className="min-w-0 flex-1 space-y-0.5">
+          <Label className="select-text text-xs font-medium leading-none">
             {translate('auto.components.settings.OpenInMenuSetting.6ed52fe71e', 'Open In Apps')}
           </Label>
-          <p className="text-xs text-muted-foreground">
+          <p className="select-text text-[11px] leading-snug text-muted-foreground">
             {translate(
               'auto.components.settings.OpenInMenuSetting.9d0413817d',
               "Choose apps available from a workspace's Open in menu."
@@ -308,7 +308,7 @@ export function OpenInMenuSetting({
               variant="outline"
               size="sm"
               disabled={isAtLimit}
-              className="h-8 shrink-0 gap-1.5"
+              className="h-7 shrink-0 gap-1.5"
             >
               {translate('auto.components.settings.OpenInMenuSetting.e4064916aa', 'Add app')}
               <ChevronDown className="size-3.5" />

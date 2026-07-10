@@ -100,7 +100,7 @@ export function GeneralPane({
 
   const visibleSections = [
     matchesSettingsSearch(searchQuery, generalNavigationSearchEntries) ? (
-      <section key="navigation" className="space-y-3">
+      <section key="navigation" className="space-y-1.5">
         <SettingsSubsectionHeader
           title={translate('auto.components.settings.GeneralPane.d58fccfd84', 'Navigation')}
         />
@@ -149,7 +149,7 @@ export function GeneralPane({
       searchQuery,
       projectRuntimeSearchEntries
     ) ? (
-      <section key="project-runtime" className="space-y-3">
+      <section key="project-runtime" className="space-y-1.5">
         <SettingsSubsectionHeader
           title={translate(
             'auto.components.settings.GeneralPane.projectRuntime',
@@ -193,10 +193,10 @@ export function GeneralPane({
   ].filter(Boolean)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {visibleSections.map((section, index) => (
         <div key={index}>
-          {index > 0 ? <Separator className="mb-6" /> : null}
+          {index > 0 ? <Separator className="mb-4" /> : null}
           {section}
         </div>
       ))}

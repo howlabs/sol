@@ -16,7 +16,7 @@ export function GeneralWorkspaceSettingsSection({
   updateSettings
 }: GeneralWorkspaceSettingsSectionProps): React.JSX.Element {
   return (
-    <section key="workspace" className="space-y-3">
+    <section key="workspace" className="space-y-1.5">
       <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.GeneralWorkspaceSettingsSection.7511097c5d',

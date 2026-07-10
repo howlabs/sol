@@ -60,7 +60,7 @@ export function GeneralUpdateSettingsSection(): React.JSX.Element {
   }
 
   return (
-    <section key="updates" className="space-y-3">
+    <section key="updates" className="space-y-1.5">
       <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.GeneralUpdateSettingsSection.f2b1ccc12a',

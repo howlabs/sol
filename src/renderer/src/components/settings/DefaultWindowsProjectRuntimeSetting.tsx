@@ -46,7 +46,7 @@ export function DefaultWindowsProjectRuntimeSetting({
   }
 
   return (
-    <section className="space-y-3">
+    <section className="space-y-1.5">
       <SettingsRow
         label={translate(
           'auto.components.settings.DefaultWindowsProjectRuntimeSetting.defaultRuntime',
@@ -59,7 +59,7 @@ export function DefaultWindowsProjectRuntimeSetting({
           wslCapabilitiesLoading
         )}
         control={
-          <div className="flex w-52 flex-col items-stretch gap-2">
+          <div className="flex w-52 flex-col items-stretch gap-1.5">
             <SettingsSegmentedControl<DefaultRuntimeSegment>
               ariaLabel={translate(
                 'auto.components.settings.DefaultWindowsProjectRuntimeSetting.defaultRuntime',

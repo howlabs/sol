@@ -26,6 +26,10 @@ export function RecentTabOrderControl({
     >
       <SettingsRow
         label={translate('auto.components.settings.RecentTabOrderControl.7a546f2309', 'Tab Order')}
+        description={translate(
+          'auto.components.settings.RecentTabOrderControl.a867a0889f',
+          'Recent or tab strip.'
+        )}
         control={
           <Select
             value={ctrlTabOrderMode}
@@ -33,7 +37,7 @@ export function RecentTabOrderControl({
               void updateSettings({ ctrlTabOrderMode: value as CtrlTabOrderMode })
             }
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger size="sm" className="w-[180px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
