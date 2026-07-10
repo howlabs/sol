@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ChevronDown, ExternalLink } from '@/lib/icons'
 import type { TuiAgent } from '../../../../shared/types'
 import { AgentIcon } from '@/lib/agent-catalog'
 import { Button } from '../ui/button'
 import { ButtonGroup } from '../ui/button-group'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
+import { Separator } from '../ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
@@ -13,17 +14,15 @@ import {
   IntegrationCardShell,
   type IntegrationCardStatusTone
 } from './integration-card-shell'
-import {
-  AgentSessionSourceHomeInput,
-  type AgentSessionSourceHomeControl
-} from './codex-session-source-home-control'
+import type { AgentSessionSourceHomeControl } from './codex-session-source-home-control'
 import { stringifyAgentDefaultEnvDraft } from './agent-default-env-draft'
 import { SettingsSwitch } from './SettingsFormControls'
+import { AgentCatalogCommandPreview } from './agent-catalog-command-preview'
 import {
-  AgentCommandOverrideInput,
-  AgentDefaultArgsInput,
-  AgentDefaultEnvInput
-} from './agent-catalog-override-inputs'
+  AgentCatalogOverridesAccordion,
+  resolveAgentOverridesAccordionDefaultOpen
+} from './agent-catalog-overrides-accordion'
+import { SettingsTooltipIconButton } from './settings-tooltip-icon-button'
 
 export type AgentCatalogRowProps = {
   agentId: TuiAgent
@@ -102,66 +101,29 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
   )
   const status = resolveAgentRowStatus({ isDetected, isEnabled, isDefault })
 
-  const commandPreview = (
-    <p className="truncate font-mono text-[11px] text-muted-foreground">
-      {cmdOverride ? (
-        <span>
-          <span className="text-muted-foreground/60 line-through">{defaultCmd}</span>
-          <span className="ml-1.5 text-foreground/80">{cmdOverride}</span>
-        </span>
-      ) : (
-        defaultCmd
-      )}
-      {argsOverride ? <span className="ml-1.5 text-foreground/70">{argsOverride}</span> : null}
-      {envSummary ? <span className="ml-1.5 text-foreground/60">{envSummary}</span> : null}
-    </p>
+  const accordionDefaultOpen = useMemo(
+    () =>
+      resolveAgentOverridesAccordionDefaultOpen({
+        cmdOverride,
+        argsOverride,
+        defaultArgs,
+        envSummary,
+        defaultEnvSummary,
+        hasSessionHome: Boolean(sessionSourceHome)
+      }),
+    [argsOverride, cmdOverride, defaultArgs, defaultEnvSummary, envSummary, sessionSourceHome]
   )
 
   const docsLabel = isDetected
     ? translate('auto.components.settings.AgentsPane.fe4d630c94', 'Docs')
     : translate('auto.components.settings.AgentsPane.f95b5c79b8', 'Install')
 
-  const overrideDetails = (
-    <IntegrationCardDetails>
-      <AgentCommandOverrideInput
-        key={cmdOverride ?? defaultCmd}
-        defaultCmd={defaultCmd}
-        cmdOverride={cmdOverride}
-        onSaveOverride={onSaveOverride}
-      />
-      <AgentDefaultArgsInput
-        key={`${agentId}:${argsOverride}`}
-        defaultArgs={defaultArgs}
-        argsOverride={argsOverride}
-        onSaveArgs={onSaveArgs}
-      />
-      {defaultEnvSummary || envSummary ? (
-        <AgentDefaultEnvInput
-          key={`${agentId}:${envSummary}`}
-          defaultEnv={defaultEnv}
-          envOverride={envOverride}
-          onSaveEnv={onSaveEnv}
-        />
-      ) : null}
-      {sessionSourceHome ? (
-        <AgentSessionSourceHomeInput
-          key={`${agentId}:${sessionSourceHome.runtimeLabel}:${sessionSourceHome.value}`}
-          runtimeLabel={sessionSourceHome.runtimeLabel}
-          value={sessionSourceHome.value}
-          onSave={sessionSourceHome.onSave}
-        />
-      ) : null}
-      <p className="text-[11px] leading-snug text-muted-foreground">
-        {translate(
-          'auto.components.settings.AgentsPane.f9f127d664',
-          'Override the binary path or name, and edit the default launch arguments or environment for this agent.'
-        )}
-      </p>
-    </IntegrationCardDetails>
-  )
+  const expandLabel = cmdOpen
+    ? translate('auto.components.settings.AgentsPane.cea7d97be1', 'Collapse command override')
+    : translate('auto.components.settings.AgentsPane.dc4a2ffdc0', 'Expand command override')
 
   const rowActions = (
-    <>
+    <div className="flex shrink-0 items-center gap-1.5">
       <SettingsSwitch
         checked={isEnabled}
         onChange={() => onSetEnabled(!isEnabled)}
@@ -171,53 +133,97 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
           { value0: label }
         )}
       />
+      {isDetected ? <Separator orientation="vertical" className="h-5" /> : null}
       <ButtonGroup className="shrink-0">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon-sm"
-              asChild
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <a href={homepageUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="size-3.5" />
-              </a>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="top" sideOffset={6}>
-            {docsLabel}
-          </TooltipContent>
-        </Tooltip>
+        <SettingsTooltipIconButton tooltip={docsLabel} ariaLabel={docsLabel} href={homepageUrl}>
+          <ExternalLink className="size-3.5" />
+        </SettingsTooltipIconButton>
         {isDetected ? (
-          <CollapsibleTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon-sm"
-              aria-label={
-                cmdOpen
-                  ? translate(
-                      'auto.components.settings.AgentsPane.cea7d97be1',
-                      'Collapse command override'
-                    )
-                  : translate(
-                      'auto.components.settings.AgentsPane.dc4a2ffdc0',
-                      'Expand command override'
-                    )
-              }
-              className="size-7 text-muted-foreground hover:text-foreground"
-            >
-              <ChevronDown
-                className={cn(
-                  'size-3.5 transition-transform duration-200 ease-out motion-reduce:transition-none',
-                  cmdOpen && 'rotate-180'
-                )}
-              />
-            </Button>
-          </CollapsibleTrigger>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <CollapsibleTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label={expandLabel}
+                  className="size-7 text-muted-foreground hover:text-foreground"
+                >
+                  <ChevronDown
+                    className={cn(
+                      'size-3.5 transition-transform duration-200 ease-out motion-reduce:transition-none',
+                      cmdOpen && 'rotate-180'
+                    )}
+                  />
+                </Button>
+              </CollapsibleTrigger>
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={6}>
+              {expandLabel}
+            </TooltipContent>
+          </Tooltip>
         ) : null}
       </ButtonGroup>
+    </div>
+  )
+
+  const preview = (
+    <AgentCatalogCommandPreview
+      defaultCmd={defaultCmd}
+      cmdOverride={cmdOverride}
+      argsOverride={argsOverride}
+      envSummary={envSummary}
+      enableHoverCard={isDetected}
+    />
+  )
+
+  const overridePanel = (
+    <IntegrationCardDetails className="space-y-2">
+      <AgentCatalogOverridesAccordion
+        agentId={agentId}
+        defaultCmd={defaultCmd}
+        defaultArgs={defaultArgs}
+        defaultEnv={defaultEnv}
+        defaultEnvSummary={defaultEnvSummary}
+        cmdOverride={cmdOverride}
+        argsOverride={argsOverride}
+        envOverride={envOverride}
+        envSummary={envSummary}
+        onSaveOverride={onSaveOverride}
+        onSaveArgs={onSaveArgs}
+        onSaveEnv={onSaveEnv}
+        sessionSourceHome={sessionSourceHome}
+        defaultOpenSections={accordionDefaultOpen}
+      />
+      <p className="text-[11px] leading-snug text-muted-foreground">
+        {translate(
+          'auto.components.settings.AgentsPane.f9f127d664',
+          'Override the binary path or name, and edit the default launch arguments or environment for this agent.'
+        )}
+      </p>
+    </IntegrationCardDetails>
+  )
+
+  const shellBody = (
+    <>
+      {isDetected ? (
+        <CollapsibleTrigger
+          nativeButton={false}
+          className={cn(
+            'mt-1 w-full rounded-sm text-left outline-none',
+            'cursor-pointer hover:bg-muted/30 focus-visible:ring-2 focus-visible:ring-ring/50'
+          )}
+        >
+          {preview}
+        </CollapsibleTrigger>
+      ) : (
+        preview
+      )}
+      {isDetected ? (
+        <CollapsibleContent className="collapsible-height-content">
+          {overridePanel}
+        </CollapsibleContent>
+      ) : null}
     </>
   )
 
@@ -230,12 +236,7 @@ export function AgentCatalogRow(props: AgentCatalogRowProps): React.JSX.Element 
       statusTone={status.tone}
       actions={rowActions}
     >
-      {commandPreview}
-      {isDetected ? (
-        <CollapsibleContent className="collapsible-height-content">
-          {overrideDetails}
-        </CollapsibleContent>
-      ) : null}
+      {shellBody}
     </IntegrationCardShell>
   )
 
