@@ -97,8 +97,7 @@ describe('feature interactions', () => {
         browser: { firstInteractedAt: Number.NaN },
         automations: { firstInteractedAt: 200, interactionCount: 3 },
         'browser-grab': { firstInteractedAt: 250, interactionCount: 0 },
-        unknown: { firstInteractedAt: 200 },
-        'voice-dictation': { firstInteractedAt: 300 }
+        unknown: { firstInteractedAt: 200 }
       })
     ).toEqual({
       tasks: { firstInteractedAt: 100, interactionCount: 1 },
@@ -183,8 +182,7 @@ describe('feature interactions', () => {
         tasks: 'count_1',
         browser: 'count_1000_plus',
         automations: 'count_4',
-        unknown: 'count_1',
-        'voice-dictation': null
+        unknown: 'count_1'
       })
     ).toEqual({
       tasks: 'count_1',

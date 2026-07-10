@@ -24,6 +24,7 @@ describe('feature tips', () => {
 
   it('skips tips for features the user has already completed', () => {
     const tips = getOrderedUnseenFeatureTips({
+      // cmd-j is a seen-based tip with no feature completion, so mark it seen here.
       seenTipIds: new Set<FeatureTipId>(['cmd-j-palette']),
       completedTipIds: getCompletedFeatureTipIds({
         cliInstalled: true
@@ -45,15 +46,10 @@ describe('feature tips', () => {
   })
 
   it('normalizes persisted tip ids', () => {
-    expect(
-      normalizeFeatureTipIds([
-        'feature-tour',
-        'orca-cli',
-        'bogus',
-        'cmd-j-palette',
-        'voice-dictation'
-      ])
-    ).toEqual(['orca-cli', 'cmd-j-palette'])
+    expect(normalizeFeatureTipIds(['feature-tour', 'orca-cli', 'bogus', 'cmd-j-palette'])).toEqual([
+      'orca-cli',
+      'cmd-j-palette'
+    ])
   })
 
   it('describes the command palette tip as a passive acknowledgement', () => {

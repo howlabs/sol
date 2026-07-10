@@ -5056,7 +5056,7 @@ describe('Store', () => {
       store.updateUI({
         sidebarWidth: 400,
         showDotfilesByWorktree: { 'repo-1::/repo': false },
-        featureTipsSeenIds: ['orca-cli'],
+        featureTipsSeenIds: [],
         contextualToursSeenIds: ['tasks'],
         featureInteractions: {
           tasks: { firstInteractedAt: 100, interactionCount: 1 }
@@ -5070,7 +5070,7 @@ describe('Store', () => {
       store.updateUI({
         sidebarWidth: 400,
         showDotfilesByWorktree: { 'repo-1::/repo': false },
-        featureTipsSeenIds: ['orca-cli'],
+        featureTipsSeenIds: [],
         contextualToursSeenIds: ['tasks'],
         featureInteractions: {
           tasks: { firstInteractedAt: 100, interactionCount: 1 }
@@ -5233,7 +5233,7 @@ describe('Store', () => {
       worktreeMeta: {},
       settings: {},
       ui: {
-        featureTipsSeenIds: ['orca-cli', 'unknown-tip', 'orca-cli'],
+        featureTipsSeenIds: ['unknown-tip'],
         contextualToursSeenIds: ['tasks', 'unknown', 'tasks'] as never,
         featureInteractions: {
           tasks: { firstInteractedAt: 100 },
@@ -5248,7 +5248,7 @@ describe('Store', () => {
 
     const store = await createStore()
 
-    expect(store.getUI().featureTipsSeenIds).toEqual(['orca-cli'])
+    expect(store.getUI().featureTipsSeenIds).toEqual([])
     expect(store.getUI().contextualToursSeenIds).toEqual(['tasks'])
     expect(store.getUI().featureInteractions).toEqual({
       tasks: { firstInteractedAt: 100, interactionCount: 1 },
@@ -5315,10 +5315,10 @@ describe('Store', () => {
     const store = await createStore()
 
     store.updateUI({
-      featureTipsSeenIds: ['orca-cli', 'unknown-tip', 'orca-cli'] as never
+      featureTipsSeenIds: ['unknown-tip'] as never
     })
 
-    expect(store.getUI().featureTipsSeenIds).toEqual(['orca-cli'])
+    expect(store.getUI().featureTipsSeenIds).toEqual([])
   })
 
   it('recordFeatureInteraction increments from the current persisted UI state', async () => {

@@ -31,13 +31,6 @@ describe('resolveWindowShortcutAction', () => {
     for (const input of nonMacCases) {
       expect(resolveWindowShortcutAction(input, 'linux')).toBeNull()
     }
-
-    expect(
-      resolveWindowShortcutAction(
-        { code: 'KeyE', key: 'e', meta: false, control: true, alt: false, shift: false },
-        'linux'
-      )
-    ).toBeNull()
   })
 
   it('resolves the explicit window shortcut allowlist on macOS', () => {

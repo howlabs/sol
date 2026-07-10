@@ -26,7 +26,6 @@ import { LINEAR_METHODS } from './linear'
 import { LINEAR_AGENT_ACCESS_METHODS } from './linear-agent-access'
 import { JIRA_METHODS } from './jira'
 import { SSH_METHODS } from './ssh'
-
 import { CLIENT_UI_METHODS } from './client-ui'
 import { CLIENT_EVENT_METHODS } from './client-events'
 import { WORKSPACE_PORT_METHODS } from './workspace-ports'

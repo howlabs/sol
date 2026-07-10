@@ -13,7 +13,6 @@ import type {
 import { DEFAULT_STATUS_BAR_ITEMS } from './status-bar-defaults'
 import { DEFAULT_TERMINAL_FONT_WEIGHT } from './terminal-fonts'
 import { getDefaultTerminalQuickCommands } from './terminal-quick-commands'
-
 import { cloneDefaultWorkspaceStatuses } from './workspace-statuses'
 import { TASK_PROVIDERS } from './task-providers'
 import { DEFAULT_WORKTREE_CARD_PROPERTIES } from './worktree-card-properties'

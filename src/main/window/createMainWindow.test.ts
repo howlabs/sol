@@ -50,8 +50,7 @@ vi.mock('../app-icon', () => ({
 
 vi.mock('../browser/browser-manager', () => ({
   browserManager: {
-    attachGuestPolicies: attachGuestPoliciesMock,
-    setDictationShortcutForwardingPredicate: vi.fn()
+    attachGuestPolicies: attachGuestPoliciesMock
   }
 }))
 

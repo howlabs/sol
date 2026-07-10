@@ -6646,7 +6646,6 @@ export class OrcaRuntimeService {
 
   onClientDisconnected(clientId: string): void {
     this.revokeTerminalFileGrantsForClient(clientId)
-
     // (1) Cancel pending restore-debounce timers owned by this client.
     for (const [ptyId, entry] of this.pendingRestoreTimers) {
       if (entry.clientId === clientId) {

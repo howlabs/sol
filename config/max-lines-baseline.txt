@@ -2,7 +2,6 @@
 # This is a RATCHET: the list may only SHRINK. Do NOT add entries to get CI green —
 # split the oversized file instead (AGENTS.md → "Do Not Disable Max Lines").
 # Regenerate/prune: pnpm check:max-lines-ratchet --prune   (removes stale entries only)
-inline mobile/src/constants/marine-creatures.ts
 inline src/cli/handlers/automations.ts
 inline src/cli/handlers/orchestration.ts
 inline src/cli/help.ts
@@ -95,7 +94,6 @@ inline src/main/ipc/gitlab.ts
 inline src/main/ipc/linear.ts
 inline src/main/ipc/notifications.test.ts
 inline src/main/ipc/notifications.ts
-
 inline src/main/ipc/preflight.test.ts
 inline src/main/ipc/pty.test.ts
 inline src/main/ipc/pty.ts
@@ -153,13 +151,11 @@ inline src/main/runtime/rpc/terminal-multiplex.test.ts
 inline src/main/runtime/runtime-rpc.test.ts
 inline src/main/runtime/runtime-rpc.ts
 inline src/main/source-control/hosted-review-creation.ts
-
 inline src/main/ssh/ssh-channel-multiplexer.ts
 inline src/main/ssh/ssh-connection.test.ts
 inline src/main/ssh/ssh-connection.ts
 inline src/main/ssh/ssh-relay-deploy.ts
 inline src/main/ssh/ssh-relay-session.ts
-inline src/main/star-nag/service.test.ts
 inline src/main/text-generation/commit-message-text-generation.test.ts
 inline src/main/text-generation/commit-message-text-generation.ts
 inline src/main/updater.test.ts
@@ -205,9 +201,6 @@ inline src/renderer/src/components/editor/MonacoEditor.tsx
 inline src/renderer/src/components/editor/editor-autosave-controller.ts
 inline src/renderer/src/components/editor/ipynb-parse.ts
 inline src/renderer/src/components/editor/useEditorPanelContentState.ts
-inline src/renderer/src/components/feature-wall/BrowserAnimatedVisual.tsx
-inline src/renderer/src/components/feature-wall/EditorAnimatedVisual.tsx
-inline src/renderer/src/components/feature-wall/WorkbenchAnimatedVisual.tsx
 inline src/renderer/src/components/floating-terminal/FloatingTerminalPanel.test.tsx
 inline src/renderer/src/components/floating-terminal/FloatingTerminalPanel.tsx
 inline src/renderer/src/components/github-project/ProjectCell.tsx
@@ -215,7 +208,6 @@ inline src/renderer/src/components/github-project/ProjectPicker.tsx
 inline src/renderer/src/components/github-project/ProjectViewWrapper.tsx
 inline src/renderer/src/components/linear-project-view-surfaces.tsx
 inline src/renderer/src/components/new-workspace/SmartWorkspaceNameField.tsx
-inline src/renderer/src/components/onboarding/use-onboarding-flow.ts
 inline src/renderer/src/components/right-sidebar/ChecksPanel.tsx
 inline src/renderer/src/components/right-sidebar/FileExplorer.test.tsx
 inline src/renderer/src/components/right-sidebar/FileExplorer.tsx
@@ -337,22 +329,3 @@ inline src/shared/text-search.ts
 inline src/shared/types.ts
 inline tests/e2e/helpers/terminal.ts
 inline tests/e2e/terminal-panes.spec.ts
-mobile-config app/h/*/files/*.tsx
-mobile-config app/h/*/index.tsx
-mobile-config app/h/*/session/*.tsx
-mobile-config app/h/*/source-control/*.tsx
-mobile-config app/h/*/tasks.tsx
-mobile-config app/index.tsx
-mobile-config app/pair-scan.tsx
-mobile-config app/terminal-settings.tsx
-mobile-config app/troubleshoot.tsx
-mobile-config scripts/mock-server.ts
-mobile-config scripts/repro-terminal-colors.ts
-mobile-config scripts/repro-worktree-startup-stream.ts
-mobile-config src/browser/MobileBrowserPane.tsx
-mobile-config src/components/CustomKeyModal.tsx
-mobile-config src/components/NewWorktreeModal.tsx
-mobile-config src/components/mobile-rich-markdown-editor-html.ts
-mobile-config src/terminal/terminal-accessory-keys.ts
-mobile-config src/terminal/terminal-webview-html.ts
-mobile-config src/transport/rpc-client.ts

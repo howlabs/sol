@@ -28,6 +28,7 @@ Sol is an independent fork, split from [Orca](https://github.com/stablyai/orca).
 - Full native Linear/GitHub integrations
 - Design Mode, Computer Use, automation wall
 - Orca CLI orchestration, telemetry, community funnel
+- Voice dictation / on-device speech-to-text (sherpa-onnx)
 
 The lists above describe direction, not the exact state of every feature in the current build.
 

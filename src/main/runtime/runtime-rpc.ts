@@ -311,7 +311,6 @@ const MOBILE_RPC_METHOD_ALLOWLIST = new Set([
   'ssh.getState',
   'ssh.listRemovedTargetLabels',
   'ssh.listTargets',
-
   'stats.summary',
   'status.get',
   'agentTeams.prepareLaunch',

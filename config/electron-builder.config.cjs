@@ -25,7 +25,6 @@ const relayExtraResource = {
 const packagedRuntimeNodeModuleResources = createPackagedRuntimeNodeModuleResources()
 
 const commonExtraResources = [relayExtraResource, ...packagedRuntimeNodeModuleResources]
-
 /** @type {import('electron-builder').Configuration} */
 module.exports = {
   appId: 'com.stablyai.orca',
@@ -91,7 +90,7 @@ module.exports = {
     'node_modules/ws/**',
     'node_modules/tweetnacl/**',
     'node_modules/zod/**',
-    'node_modules/yaml/**'
+    'node_modules/yaml/**',
   ],
   afterPack: async (context) => {
     const resourcesDir =

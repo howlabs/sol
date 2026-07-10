@@ -219,12 +219,6 @@ export function createMainWindow(
   })()
 
   const settings = store?.getSettings()
-  browserManager.setDictationShortcutForwardingPredicate(() => {
-    // Why: focused webview guests do not expose a safe transcript insertion
-    // target yet. Let Cmd/Ctrl+E continue to the page instead of starting a
-    // dictation session whose final text would be dropped.
-    return false
-  })
   const blur = settings?.windowBackgroundBlur ?? false
   // Why: native blur requires platform-specific Electron APIs. macOS uses
   // vibrancy (needs transparent: true), Windows uses backgroundMaterial.
@@ -1164,7 +1158,6 @@ export function createMainWindow(
     ipcMain.removeListener(trafficLightChannel, onSyncTrafficLights)
     ipcMain.removeListener(minimizeChannel, onMinimize)
     ipcMain.removeListener(maximizeChannel, onMaximize)
-    browserManager.setDictationShortcutForwardingPredicate(null)
     ipcMain.removeListener(requestCloseChannel, onRequestClose)
     ipcMain.removeListener(popupMenuChannel, onPopupMenu)
     ipcMain.removeHandler(isMaximizedChannel)

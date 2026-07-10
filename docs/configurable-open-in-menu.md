@@ -7,7 +7,7 @@
 - Renderer calls `window.api.shell.openInExternalEditor(path)` with one argument only.
 - Preload/API types expose `openInExternalEditor(path: string)` only.
 - Main IPC `shell:openInExternalEditor` always launches hardcoded `code` (via `resolveCliCommand('code')`), validates absolute+exists path, and returns `{ ok: false, reason: 'not-absolute' | 'not-found' | 'launch-failed' }` on failure.
-- Settings persistence currently shallow-merges most fields. Only `notifications` and `telemetry` are deep-merged in main; renderer deep-merges `notifications`, `telemetry`, and `voice` locally.
+- Settings persistence currently shallow-merges most fields. Only `notifications` and `telemetry` are deep-merged in main; renderer deep-merges `notifications` and `telemetry` locally.
 - `settings:set` returns the merged settings object, but the renderer currently ignores that return value and applies its own optimistic merge.
 
 ## Goal

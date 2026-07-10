@@ -116,7 +116,7 @@ describe('suppressDevEducationForStore', () => {
         lastCompletedStep: 1
       },
       ui: {
-        featureTipsSeenIds: ['orca-cli'],
+        featureTipsSeenIds: [],
         contextualToursSeenIds: ['tasks'],
         featureInteractions: {
           tasks: { firstInteractedAt: 77, interactionCount: 3 }
