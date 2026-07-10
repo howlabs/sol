@@ -233,7 +233,7 @@ export default function TaskProjectSourceCombobox({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-[min(360px,calc(100vw-1rem))] min-w-[var(--radix-popover-trigger-width)] p-0"
+        className="w-[min(360px,calc(100vw-1rem))] min-w-[var(--anchor-width, var(--radix-popover-trigger-width))] p-0"
       >
         <Command shouldFilter={false} value={commandValue} onValueChange={setCommandValue}>
           <CommandInput

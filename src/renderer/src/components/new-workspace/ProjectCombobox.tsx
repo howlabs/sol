@@ -162,7 +162,7 @@ export default function ProjectCombobox({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-[var(--radix-popover-trigger-width)] min-w-[18rem] p-0"
+        className="w-[var(--anchor-width, var(--radix-popover-trigger-width))] min-w-[18rem] p-0"
         data-project-combobox-root="true"
         onOpenAutoFocus={(event) => {
           event.preventDefault()

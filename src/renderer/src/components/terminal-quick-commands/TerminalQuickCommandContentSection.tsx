@@ -88,7 +88,7 @@ export function TerminalQuickCommandContentSection({
                 side="bottom"
                 align="start"
                 sideOffset={4}
-                className="max-h-[min(20rem,var(--radix-select-content-available-height))] w-[--radix-select-trigger-width]"
+                className="max-h-[min(20rem,var(--available-height, var(--radix-select-content-available-height)))] w-[var(--anchor-width,var(--radix-select-trigger-width))]"
               >
                 {QUICK_COMMAND_AGENT_OPTIONS.map((entry) => {
                   const supported = supportsTerminalAgentQuickCommand(entry.id)

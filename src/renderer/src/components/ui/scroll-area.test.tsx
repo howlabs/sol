@@ -42,4 +42,28 @@ describe('ScrollArea sizing footgun', () => {
     expect(el).not.toBeNull()
     expect(el!.style.position).toBe('relative')
   })
+
+  it('merges root style while keeping position:relative and forwards viewportProps', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const root = createRoot(container)
+    roots.push(root)
+
+    await act(async () => {
+      root.render(
+        <ScrollArea
+          style={{ maxHeight: 'var(--available-height)' }}
+          viewportProps={{ style: { maxHeight: 'var(--available-height)' } }}
+        >
+          <div />
+        </ScrollArea>
+      )
+    })
+
+    const el = container.querySelector<HTMLElement>('[data-slot="scroll-area"]')
+    const viewport = container.querySelector<HTMLElement>('[data-slot="scroll-area-viewport"]')
+    expect(el?.style.position).toBe('relative')
+    expect(el?.style.maxHeight).toBe('var(--available-height)')
+    expect(viewport?.style.maxHeight).toBe('var(--available-height)')
+  })
 })

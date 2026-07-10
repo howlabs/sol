@@ -5,23 +5,41 @@ import { ScrollArea as ScrollAreaPrimitive } from '@base-ui/react/scroll-area'
 
 import { cn } from '@/lib/utils'
 
+type ScrollAreaProps = ScrollAreaPrimitive.Root.Props & {
+  /** Forwarded to the viewport (call sites clamp max-height here, not only on Root). */
+  viewportProps?: ScrollAreaPrimitive.Viewport.Props
+}
+
 function ScrollArea({
   className,
   children,
+  style,
+  viewportProps,
   ...props
-}: ScrollAreaPrimitive.Root.Props): React.JSX.Element {
+}: ScrollAreaProps): React.JSX.Element {
+  const {
+    className: viewportClassName,
+    style: viewportStyle,
+    ...viewportRest
+  } = viewportProps ?? {}
+
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
       // Why: match Radix ScrollArea Root's inline relative positioning so
       // absolute className on the root never wins unexpectedly (see test).
-      style={{ position: 'relative' }}
+      style={{ ...style, position: 'relative' }}
       className={cn('relative', className)}
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
         data-slot="scroll-area-viewport"
-        className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+        className={cn(
+          'size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+          viewportClassName
+        )}
+        style={viewportStyle}
+        {...viewportRest}
       >
         {children}
       </ScrollAreaPrimitive.Viewport>

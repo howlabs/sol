@@ -20,26 +20,28 @@ Target stack for app chrome (not Monaco/xterm content surfaces):
 | Dimension     | Target                         | Notes |
 | ------------- | ------------------------------ | ----- |
 | Visual style  | **shadcn Mira** (compact)      | Dense IDE/settings density |
-| Primitives    | **Base UI** via `base-mira`    | Replaces Radix over time |
+| Primitives    | **Base UI** via `base-mira`    | `@base-ui/react` |
 | Base color    | **Stone**                      | CSS variables in `main.css` |
-| Icons         | **Phosphor Icons**             | Replaces Lucide over time |
+| Icons         | **Phosphor Icons**             | via `@/lib/icons` |
 
-**Runtime progress:**
+**Runtime progress (A–E done):**
 
-- **Phase A done:** chrome tokens use **stone** (oklch) in `main.css`.
-- **Phase B done:** **Mira density** on shared controls (radius, button/input/select/tabs/settings rows).
-- **Phase C done:** icons via **`@/lib/icons`** → **Phosphor** (`regular` weight). Lucide package removed.
-- **Phase D done:** `components/ui` on **Base UI** (`@base-ui/react`). `radix-ui` package removed.
+- **Phase A:** chrome tokens use **stone** (oklch) in `main.css`.
+- **Phase B:** **Mira density** on shared controls (radius, button/input/select/tabs/settings rows).
+- **Phase C:** icons via **`@/lib/icons`** → **Phosphor** (`regular` weight). Lucide package removed.
+- **Phase D:** `components/ui` on **Base UI** (`@base-ui/react`). `radix-ui` package removed.
+- **Phase E:** dual positioner CSS vars (`--available-height` / `--anchor-width` with `--radix-*` fallbacks), open/pressed state selectors (`data-open` / `data-pressed`).
 
 `components.json` records the full target (`style: base-mira`, `baseColor: stone`, `iconLibrary: phosphor`).
 
 Phased plan, guardrails, and non-goals: [`docs/reference/design-system-migration.md`](./reference/design-system-migration.md).
 
-Until a layer is migrated:
+Rules for new UI:
 
-- Do **not** add new Lucide icons if Phosphor is already available for that surface; after Phase C starts, new icons must be Phosphor.
-- Do **not** import Radix directly from app features — only through `@/components/ui/*`.
-- Do **not** bulk-overwrite `components/ui` without a dedicated primitive migration PR.
+- Do **not** import Lucide or Phosphor ad hoc — use **`@/lib/icons`**.
+- Do **not** import Base UI or Radix from app features — only through `@/components/ui/*`.
+- Popover/select max-height and trigger width: use Base UI vars first (`--available-height`, `--anchor-width`); dual `--radix-*` fallbacks are fine.
+- Toggle selected styles must include **`data-pressed:`** (Base UI), not only `data-[state=on]:`.
 
 ## Source of truth
 

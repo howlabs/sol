@@ -401,7 +401,7 @@ export default function BrowserAddressBar({
         <PopoverContent
           align="start"
           sideOffset={4}
-          className="w-[var(--radix-popover-trigger-width)] p-0"
+          className="w-[var(--anchor-width, var(--radix-popover-trigger-width))] p-0"
           onOpenAutoFocus={(e) => {
             // Why: prevent the popover from stealing focus away from the
             // address bar input. The user is still typing; the popover is

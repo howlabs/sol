@@ -86,7 +86,7 @@ export function QuickCommandsScopeFilter({
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className="w-[min(320px,calc(100vw-1rem))] min-w-[var(--radix-popover-trigger-width)] p-0"
+          className="w-[min(320px,calc(100vw-1rem))] min-w-[var(--anchor-width, var(--radix-popover-trigger-width))] p-0"
         >
           <Command>
             <div className="border-b border-border">

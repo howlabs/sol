@@ -706,8 +706,8 @@ export function FontAutocomplete({
   }
   const popoverAvailableHeightStyle = {
     // Why: tailwind-merge rewrites this arbitrary max-height class on the
-    // ScrollArea root, so keep the Radix available-height clamp as inline style.
-    maxHeight: 'var(--radix-popover-content-available-height)'
+    // ScrollArea root, so keep the positioner available-height clamp as inline style.
+    maxHeight: 'var(--available-height, var(--radix-popover-content-available-height))'
   } as React.CSSProperties
 
   return (
@@ -843,7 +843,7 @@ export function FontAutocomplete({
           the whole settings pane, pushing the section content out of view. */}
         <PopoverContent
           align="start"
-          className="w-[var(--radix-popover-trigger-width)]"
+          className="w-[var(--anchor-width, var(--radix-popover-trigger-width))]"
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
           onInteractOutside={(e) => {

@@ -299,7 +299,7 @@ export default function AgentCombobox({
         <PopoverContent
           align="start"
           className={cn(
-            'w-[var(--radix-popover-trigger-width)] p-0',
+            'w-[var(--anchor-width, var(--radix-popover-trigger-width))] p-0',
             !allowNarrowTrigger && 'min-w-[18rem]'
           )}
           data-agent-combobox-root="true"

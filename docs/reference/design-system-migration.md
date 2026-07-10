@@ -1,6 +1,6 @@
 # Design system migration: Mira · Stone · Phosphor · Base UI
 
-Status: **Phases A–D landed** (stone + Mira density + Phosphor + Base UI primitives).
+Status: **Phases A–E landed** (stone + Mira density + Phosphor + Base UI + post-Base hardening).
 
 ## Target
 
@@ -30,11 +30,11 @@ Why this combo for Sol:
 | Artifact            | Role                                                                 |
 | ------------------- | -------------------------------------------------------------------- |
 | `components.json`   | **Target** for new shadcn CLI adds (`base-mira`, stone, phosphor)    |
-| `src/renderer/src/components/ui/*` | **Runtime** primitives (still Radix + Lucide until replaced) |
-| `src/renderer/src/assets/main.css` | Token source of truth; stone lands here first                |
+| `src/renderer/src/components/ui/*` | **Runtime** primitives (Base UI + Phosphor via `@/lib/icons`) |
+| `src/renderer/src/assets/main.css` | Token source of truth; stone + positioner/collapsible CSS vars |
 | `docs/STYLEGUIDE.md` | Visual/UX rules; documents target + “prefer house form grammar”    |
 
-Until a primitive is migrated, treat existing `ui/*` APIs as stable. App code should keep importing `@/components/ui/*` and house form controls in `SettingsFormControls.tsx`.
+Treat existing `ui/*` APIs as stable. App code should keep importing `@/components/ui/*` and house form controls in `SettingsFormControls.tsx`.
 
 ## Phased plan
 
@@ -70,19 +70,30 @@ Call sites keep Lucide icon **names** (`Loader2`, `ChevronDown`, …) for a stab
 4. Kept call-site compatibility shims: `asChild` → Base UI `render`, `delayDuration` → `delay`, `VisuallyHidden.Root` local reimplementation.
 5. Removed `radix-ui` package.
 
-Remaining polish (optional): tighten any residual `data-[state=*]` selectors still present in product CSS, and re-verify heavy dialog/menu flows in Electron.
+### Phase E — Base UI hardening (positioners + open/pressed) — **done**
+
+1. **Dual CSS variables** on product surfaces and `main.css`:
+   - `--available-height` / `--available-width` / `--anchor-width` / `--collapsible-panel-height` first
+   - `--radix-*` names kept as nested fallbacks for residual consumers
+2. **Open/closed state**: collapsible height animations accept both `data-open`/`data-closed` and `data-state=open|closed`.
+3. **Toggle pressed**: primitive + call-site selected styles accept `data-pressed` (and `aria-pressed` where already present) alongside `data-[state=on]`.
+4. **Modal recovery**: body `pointer-events` recovery watches Base UI `data-open` on dialog/sheet slots (still accepts `data-state=open`).
+5. **ScrollArea**: restored `viewportProps` + root style merge (`position: relative` always wins) so font autocomplete and other clamps reach the viewport.
+6. Tests updated for dual `maxHeight` on font autocomplete scroll areas.
 
 ## Guardrails
 
 - **One concern per PR** when possible (tokens **or** icons **or** one primitive family).
 - New UI code must use `@/components/ui/*` + STYLEGUIDE tokens — no new hex for chrome roles.
 - Settings forms: use `SettingsFormControls` first; do not invent parallel toggles/rows.
+- Positioned popovers/selects: prefer Base UI vars (`--available-height`, `--anchor-width`); keep `--radix-*` only as dual fallbacks.
+- Toggle selected chrome: include `data-pressed:` (Base UI) when overriding pressed styles; `data-[state=on]:` alone is insufficient.
 - Visual regression: Settings (General, Appearance, Accounts, Notifications, Integrations), command palette, dialogs, worktree sidebar.
 - Cross-platform: Windows/Linux/macOS; Electron + web client if both share renderer UI.
 
 ## Suggested next implementation PR
 
-Optional hardening: Electron smoke of command palette, context menus, select portals, and sheet drawers after Base UI; fix any remaining `data-state` vs `data-open` animation mismatches.
+Optional Electron smoke only: command palette, context menus, select portals, sheet drawers, and toggle groups after A–E. No further design-system phase planned.
 
 ## References
 

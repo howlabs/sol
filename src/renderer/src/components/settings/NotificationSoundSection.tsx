@@ -120,7 +120,10 @@ export function NotificationSoundSection({
                 )}
               />
             </SelectTrigger>
-            <SelectContent align="end" className="w-[--radix-select-trigger-width]">
+            <SelectContent
+              align="end"
+              className="w-[var(--anchor-width,var(--radix-select-trigger-width))]"
+            >
               {soundOptions.map((option) => {
                 const OptionIcon = option.icon
                 return (

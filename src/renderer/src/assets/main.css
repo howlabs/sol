@@ -518,15 +518,20 @@
   background-color: color-mix(in srgb, var(--foreground, #171717) 36%, transparent);
 }
 
+/* Phase E: Base UI positioners expose --available-height / --anchor-width;
+   keep Radix var names as fallbacks for any residual consumers. */
 [data-slot='popover-content'] {
-  max-height: var(--radix-popover-content-available-height);
+  max-height: var(--available-height, var(--radix-popover-content-available-height));
 }
 
-/* Radix owns the available-height variable on PopoverContent. Make that same
-   node scrollable so Chromium scrollbar hit-testing stays inside the layer. */
+/* Positioner owns available-height. Make that same node scrollable so
+   Chromium scrollbar hit-testing stays inside the layer. */
 .popover-scroll-content {
   color-scheme: dark;
-  max-height: min(15rem, var(--radix-popover-content-available-height, 15rem));
+  max-height: min(
+    15rem,
+    var(--available-height, var(--radix-popover-content-available-height, 15rem))
+  );
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -1490,11 +1495,14 @@
   overflow: hidden;
 }
 
-.collapsible-height-content[data-state='open'] {
+/* Phase E: Base UI uses data-open / data-closed; keep data-state for any leftover. */
+.collapsible-height-content[data-state='open'],
+.collapsible-height-content[data-open] {
   animation: collapsible-down 200ms ease-out;
 }
 
-.collapsible-height-content[data-state='closed'] {
+.collapsible-height-content[data-state='closed'],
+.collapsible-height-content[data-closed] {
   animation: collapsible-up 180ms ease-out;
 }
 
@@ -1505,14 +1513,14 @@
   }
 
   to {
-    height: var(--radix-collapsible-content-height);
+    height: var(--collapsible-panel-height, var(--radix-collapsible-content-height));
     opacity: 1;
   }
 }
 
 @keyframes collapsible-up {
   from {
-    height: var(--radix-collapsible-content-height);
+    height: var(--collapsible-panel-height, var(--radix-collapsible-content-height));
     opacity: 1;
   }
 

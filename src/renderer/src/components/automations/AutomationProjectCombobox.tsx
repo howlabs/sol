@@ -231,7 +231,7 @@ export default function AutomationProjectCombobox({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-[var(--radix-popover-trigger-width)] min-w-[16rem] p-0"
+        className="w-[var(--anchor-width, var(--radix-popover-trigger-width))] min-w-[16rem] p-0"
         onOpenAutoFocus={(event) => {
           event.preventDefault()
           focusSearchInput()
