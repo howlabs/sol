@@ -102,37 +102,29 @@ export function Field({
 }): React.JSX.Element {
   return (
     <div className={cn('min-w-0 space-y-1.5', className)}>
-      <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
-        {label}
-      </div>
+      <div className="text-[11px] text-muted-foreground">{label}</div>
       {children}
     </div>
   )
 }
 
+/** Quiet metric — same density as settings form labels, not marketing tiles. */
 export function Metric({ label, value }: { label: string; value: string }): React.JSX.Element {
   return (
-    <div className="min-w-0 rounded-lg border border-border/70 bg-card px-4 py-3.5">
-      <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
-        {label}
-      </div>
-      <div className="mt-2 truncate text-[15px] font-semibold tracking-tight text-foreground">
-        {value}
-      </div>
+    <div className="min-w-0 space-y-1">
+      <div className="text-[11px] text-muted-foreground">{label}</div>
+      <div className="truncate text-[13px] font-medium text-foreground">{value}</div>
     </div>
   )
 }
 
 /**
- * High-contrast list row: thick left rail when selected, roomy padding.
- * Intentionally different from prior muted card/stack styles.
+ * List row matching Agents/Task Sources: hairline rows, accent selection.
  */
 export function automationListItemClass(selected: boolean): string {
   return cn(
-    'group mb-0 block w-full border-b border-border/60 px-4 py-4 text-left transition-colors',
+    'w-full border-b border-border/50 px-3 py-2.5 text-left transition-colors',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40',
-    selected
-      ? 'border-l-4 border-l-foreground bg-background'
-      : 'border-l-4 border-l-transparent bg-transparent hover:bg-background/80'
+    selected ? 'bg-accent text-foreground' : 'hover:bg-muted/40'
   )
 }

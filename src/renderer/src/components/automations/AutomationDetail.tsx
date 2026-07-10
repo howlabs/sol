@@ -1,5 +1,5 @@
 import React from 'react'
-import { CalendarClock, Pencil, Pause, Play, Trash2 } from '@/lib/icons'
+import { Pencil, Pause, Play, Trash2 } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -59,8 +59,8 @@ function ToolbarIconButton({
       <TooltipTrigger asChild>
         <Button
           type="button"
-          variant="outline"
-          size="icon"
+          variant="ghost"
+          size="icon-sm"
           aria-label={label}
           onClick={onClick}
           className={className}
@@ -75,6 +75,9 @@ function ToolbarIconButton({
   )
 }
 
+/**
+ * Detail pane — Mira settings density: quiet header, flat metric grid, no tiles.
+ */
 export function AutomationDetail({
   automation,
   runs,
@@ -91,17 +94,8 @@ export function AutomationDetail({
 }: AutomationDetailProps): React.JSX.Element {
   if (!automation) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-3 px-10 text-center">
-        <div className="flex size-14 items-center justify-center rounded-2xl border border-border bg-muted/40 text-muted-foreground">
-          <CalendarClock className="size-7" />
-        </div>
-        <p className="text-lg font-semibold tracking-tight text-foreground">
-          {translate(
-            'auto.components.automations.AutomationDetail.emptyTitle',
-            'No automation selected'
-          )}
-        </p>
-        <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+      <div className="flex h-full items-center justify-center px-6 text-center">
+        <p className="max-w-sm text-[13px] leading-relaxed text-muted-foreground">
           {translate(
             'auto.components.automations.AutomationDetail.221916d93c',
             'Create an automation to start scheduling agent work.'
@@ -128,45 +122,39 @@ export function AutomationDetail({
   const runNowDisabled = runNowAvailability?.canRunNow === false
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
-      {/* Hero identity — large type, actions as a clear toolbar */}
-      <div className="flex flex-col gap-5 border-b border-border pb-8 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0 space-y-3">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
+      <div className="flex items-start justify-between gap-3 border-b border-border/50 pb-4">
+        <div className="min-w-0 space-y-1">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <h2 className="truncate text-sm font-semibold tracking-tight text-foreground">
               {automation.name}
             </h2>
-            <Badge
-              variant={automation.enabled ? 'default' : 'outline'}
-              className="h-6 rounded-md px-2 text-[11px] font-semibold uppercase tracking-wide"
-            >
+            <Badge variant={automation.enabled ? 'secondary' : 'outline'}>
               {automation.enabled
                 ? translate('auto.components.automations.AutomationDetail.eaa02014f8', 'Enabled')
                 : translate('auto.components.automations.AutomationDetail.b09b2384fd', 'Paused')}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">
-            <span className="text-foreground/80">{projectName}</span>
-            <span className="mx-1.5 text-border">/</span>
-            <span>{workspaceName}</span>
+          <p className="truncate text-[12px] text-muted-foreground">
+            {projectName} / {workspaceName}
           </p>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <AgentIcon agent={automation.agentId} size={18} />
-            <span className="font-medium text-foreground">{agentLabel}</span>
+          <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+            <AgentIcon agent={automation.agentId} size={14} />
+            <span>{agentLabel}</span>
           </div>
         </div>
-
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1">
           <Tooltip>
             <TooltipTrigger asChild>
               <span>
                 <Button
                   variant="default"
-                  className="h-10 gap-2 px-5 text-sm"
+                  size="sm"
+                  className="h-7 gap-1.5"
                   onClick={() => onRunNow(automation)}
                   disabled={runNowDisabled}
                 >
-                  <Play className="size-4" />
+                  <Play className="size-3.5" />
                   {translate('auto.components.automations.AutomationDetail.2fb1605beb', 'Run Now')}
                 </Button>
               </span>
@@ -184,7 +172,7 @@ export function AutomationDetail({
             )}
             onClick={() => onEdit(automation)}
           >
-            <Pencil className="size-4" />
+            <Pencil className="size-3.5" />
           </ToolbarIconButton>
           <ToolbarIconButton
             label={
@@ -200,7 +188,7 @@ export function AutomationDetail({
             }
             onClick={() => onToggle(automation)}
           >
-            {automation.enabled ? <Pause className="size-4" /> : <Play className="size-4" />}
+            {automation.enabled ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
           </ToolbarIconButton>
           <ToolbarIconButton
             label={translate(
@@ -208,29 +196,29 @@ export function AutomationDetail({
               'Delete automation'
             )}
             onClick={() => onDelete(automation)}
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="text-destructive hover:text-destructive"
           >
-            <Trash2 className="size-4" />
+            <Trash2 className="size-3.5" />
           </ToolbarIconButton>
         </div>
       </div>
 
       {automation.executionTargetType === 'ssh' ? (
-        <div className="rounded-lg border border-border bg-muted/40 px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
+        <p className="text-[12px] leading-relaxed text-muted-foreground">
           {translate(
             'auto.components.automations.AutomationDetail.dbef8dc110',
             'This SSH automation runs only while Orca can reach the SSH host. If reconnect needs interactive credentials or the host is unavailable, the run is recorded as skipped.'
           )}
-        </div>
+        </p>
       ) : null}
 
       {runNowAvailability?.canRunNow === false ? (
-        <div className="rounded-lg border border-border bg-muted/40 px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
+        <p className="text-[12px] leading-relaxed text-muted-foreground">
           {runNowAvailability.message}
-        </div>
+        </p>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-border/50 pt-4 sm:grid-cols-3">
         <Metric
           label={translate('auto.components.automations.AutomationDetail.18763ded26', 'Schedule')}
           value={formatAutomationSchedule(automation.rrule)}
@@ -294,14 +282,14 @@ export function AutomationDetail({
         />
       </div>
 
-      <section className="rounded-xl border border-border bg-muted/25 p-5">
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+      <div className="space-y-1.5 border-t border-border/50 pt-4">
+        <div className="text-[11px] text-muted-foreground">
           {translate('auto.components.automations.AutomationDetail.007c8ad874', 'Prompt')}
-        </h3>
-        <p className="mt-3 whitespace-pre-wrap text-[15px] leading-relaxed text-foreground">
+        </div>
+        <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-foreground">
           {automation.prompt}
         </p>
-      </section>
+      </div>
     </div>
   )
 }
