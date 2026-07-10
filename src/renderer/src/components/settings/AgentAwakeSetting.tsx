@@ -20,24 +20,22 @@ export function AgentAwakeSetting({
   const description = getAgentAwakeDescription()
 
   return (
-    <section className="space-y-1">
-      <SearchableSetting
-        title={title}
+    <SearchableSetting
+      title={title}
+      description={description}
+      keywords={getAgentAwakeSearchKeywords()}
+    >
+      <SettingsSwitchRow
+        label={title}
         description={description}
-        keywords={getAgentAwakeSearchKeywords()}
-      >
-        <SettingsSwitchRow
-          label={title}
-          description={description}
-          checked={settings.keepComputerAwakeWhileAgentsRun}
-          ariaLabel={title}
-          onChange={() =>
-            updateSettings({
-              keepComputerAwakeWhileAgentsRun: !settings.keepComputerAwakeWhileAgentsRun
-            })
-          }
-        />
-      </SearchableSetting>
-    </section>
+        checked={settings.keepComputerAwakeWhileAgentsRun}
+        ariaLabel={title}
+        onChange={() =>
+          updateSettings({
+            keepComputerAwakeWhileAgentsRun: !settings.keepComputerAwakeWhileAgentsRun
+          })
+        }
+      />
+    </SearchableSetting>
   )
 }
