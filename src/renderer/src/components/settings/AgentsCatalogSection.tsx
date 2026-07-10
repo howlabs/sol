@@ -1,7 +1,6 @@
 import { RefreshCw } from '@/lib/icons'
 import type { TuiAgent } from '../../../../shared/types'
 import { Button } from '../ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
 import { SettingsBadge, SettingsSubsectionHeader } from './SettingsFormControls'
@@ -51,36 +50,41 @@ export function AgentsCatalogSection({
             </SettingsBadge>
           </span>
         }
+        description={
+          isInstalled
+            ? translate(
+                'auto.components.settings.AgentsPane.installedDescription',
+                'Enable agents on PATH. Expand a row to override the launch command, args, or environment.'
+              )
+            : translate(
+                'auto.components.settings.AgentsPane.availableDescription',
+                'Not on PATH yet. Open docs to install, then Refresh under Installed.'
+              )
+        }
         action={
           isInstalled && onRefresh ? (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onRefresh}
-                  disabled={isRefreshing}
-                  className="gap-1.5 text-muted-foreground hover:text-foreground"
-                >
-                  <RefreshCw
-                    className={cn(
-                      'size-3.5',
-                      isRefreshing && 'animate-spin motion-reduce:animate-none'
-                    )}
-                  />
-                  {isRefreshing
-                    ? translate('auto.components.settings.AgentsPane.c9b33eb5c0', 'Refreshing…')
-                    : translate('auto.components.settings.AgentsPane.0d9e293a02', 'Refresh')}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top" sideOffset={6}>
-                {translate(
-                  'auto.components.settings.AgentsPane.13647f9f80',
-                  'Re-read your shell PATH and re-detect installed agents'
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              title={translate(
+                'auto.components.settings.AgentsPane.13647f9f80',
+                'Re-read your shell PATH and re-detect installed agents'
+              )}
+              className="gap-1.5 text-muted-foreground hover:text-foreground"
+            >
+              <RefreshCw
+                className={cn(
+                  'size-3.5',
+                  isRefreshing && 'animate-spin motion-reduce:animate-none'
                 )}
-              </TooltipContent>
-            </Tooltip>
+              />
+              {isRefreshing
+                ? translate('auto.components.settings.AgentsPane.c9b33eb5c0', 'Refreshing…')
+                : translate('auto.components.settings.AgentsPane.0d9e293a02', 'Refresh')}
+            </Button>
           ) : undefined
         }
       />

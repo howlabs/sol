@@ -43,6 +43,10 @@ type AgentsPaneProps = {
   wslCapabilitiesLoading?: boolean
 }
 
+/**
+ * Agents settings — Integrations grammar: flat sections, one card group per
+ * list, house form controls. Launch defaults first; catalog last.
+ */
 export function AgentsPane({
   settings,
   updateSettings,
@@ -97,6 +101,7 @@ export function AgentsPane({
 
   return (
     <div className="space-y-1">
+      {/* Launch defaults — who starts, permission mode */}
       <AgentDefaultAgentPicker
         ownershipDescription={getSettingOwnershipSummary('agentLaunchDefaults').description}
         isAutoDefault={isAutoDefault}
@@ -105,7 +110,14 @@ export function AgentsPane({
         defaultAgent={defaultAgent}
         onSelect={(id) => updateSettings({ defaultTuiAgent: id })}
       />
+      <AgentPermissionsSetting
+        mode={agentPermissionMode}
+        onChange={(mode: Exclude<AgentPermissionMode, 'mixed'>) =>
+          updateSettings(applyAgentPermissionMode({ mode, agentDefaultArgs, agentDefaultEnv }))
+        }
+      />
 
+      {/* Session behavior — flat switch rows, no extra chrome */}
       <AgentsPaneSessionSettings
         settings={settings}
         updateSettings={updateSettings}
@@ -115,16 +127,9 @@ export function AgentsPane({
         wslDistros={wslDistros}
         wslCapabilitiesLoading={wslCapabilitiesLoading}
       />
-
       <AgentCacheTimerSection settings={settings} updateSettings={updateSettings} />
 
-      <AgentPermissionsSetting
-        mode={agentPermissionMode}
-        onChange={(mode: Exclude<AgentPermissionMode, 'mixed'>) =>
-          updateSettings(applyAgentPermissionMode({ mode, agentDefaultArgs, agentDefaultEnv }))
-        }
-      />
-
+      {/* Catalog — IntegrationCardGroup lists */}
       {detectedAgents.length > 0 ? (
         <AgentsCatalogSection
           variant="installed"

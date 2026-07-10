@@ -12,14 +12,12 @@ type AgentCommandOverrideInputProps = {
   defaultCmd: string
   cmdOverride: string | undefined
   onSaveOverride: (value: string) => void
-  hideLabel?: boolean
 }
 
 export function AgentCommandOverrideInput({
   defaultCmd,
   cmdOverride,
-  onSaveOverride,
-  hideLabel
+  onSaveOverride
 }: AgentCommandOverrideInputProps): React.JSX.Element {
   const draftSeed = cmdOverride ?? defaultCmd
   const [cmdDraft, setCmdDraft] = useState(draftSeed)
@@ -37,7 +35,6 @@ export function AgentCommandOverrideInput({
   return (
     <SettingsInputWithResetRow
       label={translate('auto.components.settings.AgentsPane.2e45ca29b6', 'Command')}
-      hideLabel={hideLabel}
       value={cmdDraft}
       placeholder={defaultCmd}
       showReset={Boolean(cmdOverride)}
@@ -57,14 +54,12 @@ type AgentDefaultArgsInputProps = {
   defaultArgs: string
   argsOverride: string
   onSaveArgs: (value: string) => void
-  hideLabel?: boolean
 }
 
 export function AgentDefaultArgsInput({
   defaultArgs,
   argsOverride,
-  onSaveArgs,
-  hideLabel
+  onSaveArgs
 }: AgentDefaultArgsInputProps): React.JSX.Element {
   const draftSeed = argsOverride
   const [argsDraft, setArgsDraft] = useState(draftSeed)
@@ -76,7 +71,6 @@ export function AgentDefaultArgsInput({
   return (
     <SettingsInputWithResetRow
       label={translate('auto.components.settings.AgentsPane.cfb3f35775', 'Arguments')}
-      hideLabel={hideLabel}
       value={argsDraft}
       placeholder={
         defaultArgs ||
@@ -99,14 +93,12 @@ type AgentDefaultEnvInputProps = {
   defaultEnv: Record<string, string>
   envOverride: Record<string, string>
   onSaveEnv: (value: Record<string, string>) => void
-  hideLabel?: boolean
 }
 
 export function AgentDefaultEnvInput({
   defaultEnv,
   envOverride,
-  onSaveEnv,
-  hideLabel
+  onSaveEnv
 }: AgentDefaultEnvInputProps): React.JSX.Element {
   const defaultEnvText = stringifyAgentDefaultEnvDraft(defaultEnv)
   const draftSeed = stringifyAgentDefaultEnvDraft(envOverride)
@@ -126,7 +118,6 @@ export function AgentDefaultEnvInput({
   const field = (
     <SettingsInputWithResetRow
       label={translate('auto.components.settings.AgentsPane.8fbe1f37c1', 'Environment')}
-      hideLabel={hideLabel}
       value={envDraft}
       placeholder={
         defaultEnvText ||
