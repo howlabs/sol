@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { resolveAgentOverridesAccordionDefaultOpen } from './agent-catalog-overrides-accordion'
+import { resolveAgentOverridesAccordionDefaultOpen } from './agent-catalog-overrides-accordion-state'
 
 describe('resolveAgentOverridesAccordionDefaultOpen', () => {
   it('opens sections that differ from defaults', () => {
