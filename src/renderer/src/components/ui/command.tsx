@@ -25,8 +25,8 @@ function CommandDialog({
   title = 'Command Palette',
   description = 'Search for a command to run...',
   shouldFilter,
-  onOpenAutoFocus: _onOpenAutoFocus,
-  onCloseAutoFocus: _onCloseAutoFocus,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   contentClassName,
   overlayClassName,
   commandProps,
@@ -52,6 +52,8 @@ function CommandDialog({
           'top-[20%] w-[660px] max-w-[90vw] translate-y-0 gap-0 p-0 sm:max-w-[660px]',
           contentClassName
         )}
+        onOpenAutoFocus={onOpenAutoFocus as never}
+        onCloseAutoFocus={onCloseAutoFocus as never}
       >
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <DialogDescription className="sr-only">{description}</DialogDescription>

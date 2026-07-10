@@ -8,9 +8,35 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { translate } from '@/i18n/i18n'
+import {
+  applyRadixDismissHandlers,
+  mapRadixCloseAutoFocus,
+  mapRadixOpenAutoFocus,
+  PopupDismissProvider,
+  splitRadixContentCompatProps,
+  usePopupDismissRegistry,
+  useRegisterRadixDismissHandlers,
+  type RadixContentCompatProps
+} from './radix-popup-compat'
 
-function Sheet({ ...props }: SheetPrimitive.Root.Props): React.JSX.Element {
-  return <SheetPrimitive.Root data-slot="sheet" {...props} />
+function Sheet({ onOpenChange, ...props }: SheetPrimitive.Root.Props): React.JSX.Element {
+  const { registry, handlersRef } = usePopupDismissRegistry()
+
+  const handleOpenChange = React.useCallback<
+    NonNullable<SheetPrimitive.Root.Props['onOpenChange']>
+  >(
+    (open, details) => {
+      applyRadixDismissHandlers(handlersRef.current, open, details)
+      onOpenChange?.(open, details)
+    },
+    [handlersRef, onOpenChange]
+  )
+
+  return (
+    <PopupDismissProvider registry={registry}>
+      <SheetPrimitive.Root data-slot="sheet" onOpenChange={handleOpenChange} {...props} />
+    </PopupDismissProvider>
+  )
 }
 
 function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props): React.JSX.Element {
@@ -71,13 +97,19 @@ function SheetContent({
   overlayClassName,
   overlayStyle,
   style,
+  initialFocus,
+  finalFocus,
   ...props
 }: SheetPrimitive.Popup.Props &
-  VariantProps<typeof sheetContentVariants> & {
+  VariantProps<typeof sheetContentVariants> &
+  RadixContentCompatProps & {
     showCloseButton?: boolean
     overlayClassName?: string
     overlayStyle?: React.CSSProperties
   }): React.JSX.Element {
+  const { radix, rest } = splitRadixContentCompatProps(props)
+  useRegisterRadixDismissHandlers(radix)
+
   return (
     <SheetPortal>
       <SheetOverlay className={overlayClassName} style={overlayStyle} />
@@ -86,7 +118,19 @@ function SheetContent({
         data-side={side}
         className={cn(sheetContentVariants({ side }), className)}
         style={{ ...style, WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-        {...props}
+        initialFocus={
+          mapRadixOpenAutoFocus(
+            radix.onOpenAutoFocus,
+            initialFocus
+          ) as SheetPrimitive.Popup.Props['initialFocus']
+        }
+        finalFocus={
+          mapRadixCloseAutoFocus(
+            radix.onCloseAutoFocus,
+            finalFocus
+          ) as SheetPrimitive.Popup.Props['finalFocus']
+        }
+        {...rest}
       >
         {children}
         {showCloseButton ? (

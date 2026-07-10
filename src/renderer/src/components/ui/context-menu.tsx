@@ -5,9 +5,41 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from '@/lib/icons'
 import { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu'
 
 import { cn } from '@/lib/utils'
+import {
+  applyRadixDismissHandlers,
+  mapRadixCloseAutoFocus,
+  PopupDismissProvider,
+  splitRadixContentCompatProps,
+  usePopupDismissRegistry,
+  useRegisterRadixDismissHandlers,
+  type RadixContentCompatProps
+} from './radix-popup-compat'
 
-function ContextMenu({ ...props }: ContextMenuPrimitive.Root.Props): React.JSX.Element {
-  return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />
+function ContextMenu({
+  onOpenChange,
+  ...props
+}: ContextMenuPrimitive.Root.Props): React.JSX.Element {
+  const { registry, handlersRef } = usePopupDismissRegistry()
+
+  const handleOpenChange = React.useCallback<
+    NonNullable<ContextMenuPrimitive.Root.Props['onOpenChange']>
+  >(
+    (open, details) => {
+      applyRadixDismissHandlers(handlersRef.current, open, details)
+      onOpenChange?.(open, details)
+    },
+    [handlersRef, onOpenChange]
+  )
+
+  return (
+    <PopupDismissProvider registry={registry}>
+      <ContextMenuPrimitive.Root
+        data-slot="context-menu"
+        onOpenChange={handleOpenChange}
+        {...props}
+      />
+    </PopupDismissProvider>
+  )
 }
 
 function ContextMenuTrigger({
@@ -16,6 +48,7 @@ function ContextMenuTrigger({
   className,
   ...props
 }: ContextMenuPrimitive.Trigger.Props & { asChild?: boolean }): React.JSX.Element {
+  // Context menu trigger is a div region, not a native button control.
   if (asChild && React.isValidElement(children)) {
     return (
       <ContextMenuPrimitive.Trigger
@@ -62,12 +95,14 @@ function ContextMenuContent({
   side = 'right',
   sideOffset = 0,
   style,
+  finalFocus,
   ...props
 }: ContextMenuPrimitive.Popup.Props &
-  Pick<
-    ContextMenuPrimitive.Positioner.Props,
-    'align' | 'alignOffset' | 'side' | 'sideOffset'
-  >): React.JSX.Element {
+  Pick<ContextMenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> &
+  RadixContentCompatProps): React.JSX.Element {
+  const { radix, rest } = splitRadixContentCompatProps(props)
+  useRegisterRadixDismissHandlers(radix)
+
   return (
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Positioner
@@ -84,7 +119,13 @@ function ContextMenuContent({
             className
           )}
           style={{ ...style, WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-          {...props}
+          finalFocus={
+            mapRadixCloseAutoFocus(
+              radix.onCloseAutoFocus,
+              finalFocus
+            ) as ContextMenuPrimitive.Popup.Props['finalFocus']
+          }
+          {...rest}
         />
       </ContextMenuPrimitive.Positioner>
     </ContextMenuPrimitive.Portal>

@@ -7,9 +7,35 @@ import { XIcon } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { translate } from '@/i18n/i18n'
+import {
+  applyRadixDismissHandlers,
+  mapRadixCloseAutoFocus,
+  mapRadixOpenAutoFocus,
+  PopupDismissProvider,
+  splitRadixContentCompatProps,
+  usePopupDismissRegistry,
+  useRegisterRadixDismissHandlers,
+  type RadixContentCompatProps
+} from './radix-popup-compat'
 
-function Dialog({ ...props }: DialogPrimitive.Root.Props): React.JSX.Element {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+function Dialog({ onOpenChange, ...props }: DialogPrimitive.Root.Props): React.JSX.Element {
+  const { registry, handlersRef } = usePopupDismissRegistry()
+
+  const handleOpenChange = React.useCallback<
+    NonNullable<DialogPrimitive.Root.Props['onOpenChange']>
+  >(
+    (open, details) => {
+      applyRadixDismissHandlers(handlersRef.current, open, details)
+      onOpenChange?.(open, details)
+    },
+    [handlersRef, onOpenChange]
+  )
+
+  return (
+    <PopupDismissProvider registry={registry}>
+      <DialogPrimitive.Root data-slot="dialog" onOpenChange={handleOpenChange} {...props} />
+    </PopupDismissProvider>
+  )
 }
 
 function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props): React.JSX.Element {
@@ -45,11 +71,17 @@ function DialogContent({
   children,
   overlayClassName,
   showCloseButton = true,
+  initialFocus,
+  finalFocus,
   ...props
-}: DialogPrimitive.Popup.Props & {
-  overlayClassName?: string
-  showCloseButton?: boolean
-}): React.JSX.Element {
+}: DialogPrimitive.Popup.Props &
+  RadixContentCompatProps & {
+    overlayClassName?: string
+    showCloseButton?: boolean
+  }): React.JSX.Element {
+  const { radix, rest } = splitRadixContentCompatProps(props)
+  useRegisterRadixDismissHandlers(radix)
+
   return (
     <DialogPortal>
       <DialogOverlay className={overlayClassName} />
@@ -61,7 +93,19 @@ function DialogContent({
           'fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg border border-black/14 bg-background/96 p-6 text-foreground shadow-[0_20px_60px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl duration-100 outline-none dark:border-white/14 dark:bg-[rgba(23,23,23,0.96)] dark:shadow-[0_24px_72px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.06)] data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 sm:max-w-lg',
           className
         )}
-        {...props}
+        initialFocus={
+          mapRadixOpenAutoFocus(
+            radix.onOpenAutoFocus,
+            initialFocus
+          ) as DialogPrimitive.Popup.Props['initialFocus']
+        }
+        finalFocus={
+          mapRadixCloseAutoFocus(
+            radix.onCloseAutoFocus,
+            finalFocus
+          ) as DialogPrimitive.Popup.Props['finalFocus']
+        }
+        {...rest}
       >
         {children}
         {showCloseButton ? (

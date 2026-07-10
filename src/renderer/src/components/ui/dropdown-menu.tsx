@@ -5,9 +5,33 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from '@/lib/icons'
 import { Menu as MenuPrimitive } from '@base-ui/react/menu'
 
 import { cn } from '@/lib/utils'
+import {
+  applyRadixDismissHandlers,
+  mapRadixCloseAutoFocus,
+  nativeButtonForAsChild,
+  PopupDismissProvider,
+  splitRadixContentCompatProps,
+  usePopupDismissRegistry,
+  useRegisterRadixDismissHandlers,
+  type RadixContentCompatProps
+} from './radix-popup-compat'
 
-function DropdownMenu({ ...props }: MenuPrimitive.Root.Props): React.JSX.Element {
-  return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
+function DropdownMenu({ onOpenChange, ...props }: MenuPrimitive.Root.Props): React.JSX.Element {
+  const { registry, handlersRef } = usePopupDismissRegistry()
+
+  const handleOpenChange = React.useCallback<NonNullable<MenuPrimitive.Root.Props['onOpenChange']>>(
+    (open, details) => {
+      applyRadixDismissHandlers(handlersRef.current, open, details)
+      onOpenChange?.(open, details)
+    },
+    [handlersRef, onOpenChange]
+  )
+
+  return (
+    <PopupDismissProvider registry={registry}>
+      <MenuPrimitive.Root data-slot="dropdown-menu" onOpenChange={handleOpenChange} {...props} />
+    </PopupDismissProvider>
+  )
 }
 
 function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props): React.JSX.Element {
@@ -17,13 +41,16 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props): React.JSX
 function DropdownMenuTrigger({
   asChild,
   children,
+  nativeButton,
   ...props
 }: MenuPrimitive.Trigger.Props & { asChild?: boolean }): React.JSX.Element {
+  const resolvedNativeButton = nativeButtonForAsChild(asChild, children, nativeButton)
   if (asChild && React.isValidElement(children)) {
     return (
       <MenuPrimitive.Trigger
         data-slot="dropdown-menu-trigger"
         render={children as React.ReactElement}
+        nativeButton={resolvedNativeButton}
         {...props}
       />
     )
@@ -42,12 +69,14 @@ function DropdownMenuContent({
   alignOffset = 0,
   side = 'bottom',
   style,
+  finalFocus,
   ...props
 }: MenuPrimitive.Popup.Props &
-  Pick<
-    MenuPrimitive.Positioner.Props,
-    'align' | 'alignOffset' | 'side' | 'sideOffset'
-  >): React.JSX.Element {
+  Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> &
+  RadixContentCompatProps): React.JSX.Element {
+  const { radix, rest } = splitRadixContentCompatProps(props)
+  useRegisterRadixDismissHandlers(radix)
+
   return (
     <MenuPrimitive.Portal>
       <MenuPrimitive.Positioner
@@ -65,7 +94,13 @@ function DropdownMenuContent({
           )}
           // Why: Electron titlebar drag region captures clicks without no-drag.
           style={{ ...style, WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-          {...props}
+          finalFocus={
+            mapRadixCloseAutoFocus(
+              radix.onCloseAutoFocus,
+              finalFocus
+            ) as MenuPrimitive.Popup.Props['finalFocus']
+          }
+          {...rest}
         />
       </MenuPrimitive.Positioner>
     </MenuPrimitive.Portal>

@@ -1,6 +1,6 @@
 # Design system migration: Mira · Stone · Phosphor · Base UI
 
-Status: **Phases A–E landed** (stone + Mira density + Phosphor + Base UI + post-Base hardening).
+Status: **Phases A–F landed** (stone + Mira density + Phosphor + Base UI + hardening + Radix focus/dismiss shims).
 
 ## Target
 
@@ -81,6 +81,16 @@ Call sites keep Lucide icon **names** (`Loader2`, `ChevronDown`, …) for a stab
 5. **ScrollArea**: restored `viewportProps` + root style merge (`position: relative` always wins) so font autocomplete and other clamps reach the viewport.
 6. Tests updated for dual `maxHeight` on font autocomplete scroll areas.
 
+### Phase F — Radix focus/dismiss API shims (call-site compatibility) — **done**
+
+1. Shared helper `components/ui/radix-popup-compat.tsx`:
+   - `onOpenAutoFocus` / `onCloseAutoFocus` → Base UI `initialFocus` / `finalFocus` (respect `preventDefault`)
+   - `onInteractOutside` / `onPointerDownOutside` / `onFocusOutside` / `onEscapeKeyDown` → Root `onOpenChange` + `details.cancel()`
+2. Wired into **Popover**, **Dialog**, **Sheet**, **DropdownMenu**, **ContextMenu** content + roots.
+3. `asChild` triggers/anchors set `nativeButton={false}` when the child is not a native `<button>` (silences Base UI warnings; FontAutocomplete anchors).
+4. Command palette forwards open/close autofocus handlers to `DialogContent`.
+5. Terminal pane-title tooltip open styles accept `data-open` alongside Radix `data-state`.
+
 ## Guardrails
 
 - **One concern per PR** when possible (tokens **or** icons **or** one primitive family).
@@ -93,7 +103,7 @@ Call sites keep Lucide icon **names** (`Loader2`, `ChevronDown`, …) for a stab
 
 ## Suggested next implementation PR
 
-Optional Electron smoke only: command palette, context menus, select portals, sheet drawers, and toggle groups after A–E. No further design-system phase planned.
+Optional Electron smoke only: command palette, context menus, select portals, sheet drawers, and toggle groups after A–F. Prefer Base UI-native props (`initialFocus`, `finalFocus`, Root `onOpenChange` cancel) for **new** code; Radix-named shims remain for existing call sites.
 
 ## References
 

@@ -31,6 +31,7 @@ Target stack for app chrome (not Monaco/xterm content surfaces):
 - **Phase C:** icons via **`@/lib/icons`** → **Phosphor** (`regular` weight). Lucide package removed.
 - **Phase D:** `components/ui` on **Base UI** (`@base-ui/react`). `radix-ui` package removed.
 - **Phase E:** dual positioner CSS vars (`--available-height` / `--anchor-width` with `--radix-*` fallbacks), open/pressed state selectors (`data-open` / `data-pressed`).
+- **Phase F:** Radix focus/dismiss content props (`onOpenAutoFocus`, `onInteractOutside`, …) shimmed to Base UI on shared primitives.
 
 `components.json` records the full target (`style: base-mira`, `baseColor: stone`, `iconLibrary: phosphor`).
 
@@ -42,6 +43,7 @@ Rules for new UI:
 - Do **not** import Base UI or Radix from app features — only through `@/components/ui/*`.
 - Popover/select max-height and trigger width: use Base UI vars first (`--available-height`, `--anchor-width`); dual `--radix-*` fallbacks are fine.
 - Toggle selected styles must include **`data-pressed:`** (Base UI), not only `data-[state=on]:`.
+- Prefer Base UI focus/dismiss APIs for new code (`initialFocus` / `finalFocus` / Root `onOpenChange` + `cancel`). Existing Radix-named props still work via Phase F shims.
 
 ## Source of truth
 

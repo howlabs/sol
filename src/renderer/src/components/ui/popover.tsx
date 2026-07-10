@@ -5,21 +5,51 @@ import { Popover as PopoverPrimitive } from '@base-ui/react/popover'
 
 import { cn } from '@/lib/utils'
 import { updatePopoverContentRef } from './popover-content-ref'
+import {
+  applyRadixDismissHandlers,
+  mapRadixCloseAutoFocus,
+  mapRadixOpenAutoFocus,
+  nativeButtonForAsChild,
+  PopupDismissProvider,
+  splitRadixContentCompatProps,
+  usePopupDismissRegistry,
+  useRegisterRadixDismissHandlers,
+  type RadixContentCompatProps
+} from './radix-popup-compat'
 
-function Popover(props: PopoverPrimitive.Root.Props): React.JSX.Element {
-  return <PopoverPrimitive.Root data-slot="popover" {...props} />
+function Popover({ onOpenChange, ...props }: PopoverPrimitive.Root.Props): React.JSX.Element {
+  const { registry, handlersRef } = usePopupDismissRegistry()
+
+  const handleOpenChange = React.useCallback<
+    NonNullable<PopoverPrimitive.Root.Props['onOpenChange']>
+  >(
+    (open, details) => {
+      applyRadixDismissHandlers(handlersRef.current, open, details)
+      onOpenChange?.(open, details)
+    },
+    [handlersRef, onOpenChange]
+  )
+
+  return (
+    <PopupDismissProvider registry={registry}>
+      <PopoverPrimitive.Root data-slot="popover" onOpenChange={handleOpenChange} {...props} />
+    </PopupDismissProvider>
+  )
 }
 
 function PopoverTrigger({
   asChild,
   children,
+  nativeButton,
   ...props
 }: PopoverPrimitive.Trigger.Props & { asChild?: boolean }): React.JSX.Element {
+  const resolvedNativeButton = nativeButtonForAsChild(asChild, children, nativeButton)
   if (asChild && React.isValidElement(children)) {
     return (
       <PopoverPrimitive.Trigger
         data-slot="popover-trigger"
         render={children as React.ReactElement}
+        nativeButton={resolvedNativeButton}
         {...props}
       />
     )
@@ -34,20 +64,28 @@ function PopoverTrigger({
 function PopoverAnchor({
   asChild,
   children,
+  nativeButton,
   ...props
 }: PopoverPrimitive.Trigger.Props & { asChild?: boolean }): React.JSX.Element {
   // Base UI popover uses Trigger positioning; Anchor maps to a positioned trigger render.
+  // Why: FontAutocomplete anchors on a <div>; nativeButton must be false to avoid Base UI warnings.
+  const resolvedNativeButton = nativeButtonForAsChild(asChild, children, nativeButton) ?? false
   if (asChild && React.isValidElement(children)) {
     return (
       <PopoverPrimitive.Trigger
         data-slot="popover-anchor"
         render={children as React.ReactElement}
+        nativeButton={resolvedNativeButton}
         {...props}
       />
     )
   }
   return (
-    <PopoverPrimitive.Trigger data-slot="popover-anchor" {...props}>
+    <PopoverPrimitive.Trigger
+      data-slot="popover-anchor"
+      nativeButton={resolvedNativeButton}
+      {...props}
+    >
       {children}
     </PopoverPrimitive.Trigger>
   )
@@ -63,11 +101,17 @@ function PopoverContent({
   style,
   onWheel,
   ref: forwardedRef,
+  initialFocus,
+  finalFocus,
   ...props
 }: PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> & {
+  Pick<PopoverPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> &
+  RadixContentCompatProps & {
     portalContainer?: HTMLElement | null
   }): React.JSX.Element {
+  const { radix, rest } = splitRadixContentCompatProps(props)
+  useRegisterRadixDismissHandlers(radix)
+
   const wheelFrameIdsRef = React.useRef<Set<number>>(new Set())
 
   const cancelWheelFrames = React.useCallback(() => {
@@ -149,7 +193,19 @@ function PopoverContent({
             } as React.CSSProperties
           }
           onWheel={handleWheel}
-          {...props}
+          initialFocus={
+            mapRadixOpenAutoFocus(
+              radix.onOpenAutoFocus,
+              initialFocus
+            ) as PopoverPrimitive.Popup.Props['initialFocus']
+          }
+          finalFocus={
+            mapRadixCloseAutoFocus(
+              radix.onCloseAutoFocus,
+              finalFocus
+            ) as PopoverPrimitive.Popup.Props['finalFocus']
+          }
+          {...rest}
         />
       </PopoverPrimitive.Positioner>
     </PopoverPrimitive.Portal>
