@@ -1,24 +1,25 @@
-import * as React from 'react'
-import { Progress as ProgressPrimitive } from 'radix-ui'
+'use client'
+
+import type * as React from 'react'
+import { Progress as ProgressPrimitive } from '@base-ui/react/progress'
 
 import { cn } from '@/lib/utils'
 
-function Progress({
-  className,
-  value,
-  ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+/** Simple value bar — keeps the previous Radix Progress call shape (`value` only). */
+function Progress({ className, value, ...props }: ProgressPrimitive.Root.Props): React.JSX.Element {
   return (
     <ProgressPrimitive.Root
+      value={value}
       data-slot="progress"
       className={cn('relative h-2 w-full overflow-hidden rounded-full bg-primary/20', className)}
       {...props}
     >
-      <ProgressPrimitive.Indicator
-        data-slot="progress-indicator"
-        className="h-full w-full flex-1 bg-primary transition-all duration-300 ease-out"
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
-      />
+      <ProgressPrimitive.Track className="h-full w-full">
+        <ProgressPrimitive.Indicator
+          data-slot="progress-indicator"
+          className="h-full bg-primary transition-all duration-300 ease-out"
+        />
+      </ProgressPrimitive.Track>
     </ProgressPrimitive.Root>
   )
 }

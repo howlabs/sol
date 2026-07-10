@@ -7,6 +7,11 @@ import { ScrollArea } from './scroll-area'
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
+// Why: Base UI ScrollArea uses getAnimations(); happy-dom does not implement it.
+if (typeof Element !== 'undefined' && typeof Element.prototype.getAnimations !== 'function') {
+  Element.prototype.getAnimations = () => []
+}
+
 const roots: Root[] = []
 
 afterEach(() => {
@@ -17,9 +22,9 @@ afterEach(() => {
 })
 
 describe('ScrollArea sizing footgun', () => {
-  // Why: Radix Root's inline `position: relative` always beats an `absolute` class,
+  // Why: Root's inline `position: relative` always beats an `absolute` class,
   // so the ScrollArea must be sized by height (h-full), not absolute — locked here.
-  it('keeps Radix inline position:relative even when given an absolute className', async () => {
+  it('keeps Root inline position:relative even when given an absolute className', async () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
     const root = createRoot(container)

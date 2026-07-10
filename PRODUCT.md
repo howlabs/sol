@@ -35,6 +35,6 @@ Gradual chrome migration (see `docs/reference/design-system-migration.md`):
 - **Style:** shadcn **Mira** (compact, dense product UI)
 - **Base color:** **stone**
 - **Icons:** **Phosphor Icons** via `@/lib/icons` (Phase C done)
-- **Primitives:** **Base UI** (`base-mira` in `components.json`) — Phase D not started
+- **Primitives:** **Base UI** (`@base-ui/react`, `base-mira` in `components.json`) — Phase D done
 
-Phases A–C landed (stone + Mira density + Phosphor). Runtime still uses Radix under `components/ui`.
+Phases A–D landed (stone + Mira density + Phosphor + Base UI).

@@ -1,13 +1,13 @@
 # Design system migration: Mira · Stone · Phosphor · Base UI
 
-Status: **Phase A + B + C landed**. Phase D (Base UI) not started.
+Status: **Phases A–D landed** (stone + Mira density + Phosphor + Base UI primitives).
 
 ## Target
 
 | Dimension        | Runtime now                         | Target                                      |
 | ---------------- | ----------------------------------- | ------------------------------------------- |
-| shadcn visual style | Mira density on Radix primitives | **Mira** full (`base-mira`)                 |
-| Primitive library   | Radix (`radix-ui`)                | **Base UI** via shadcn `base-mira`          |
+| shadcn visual style | Mira density on Base UI            | **Mira** (`base-mira`)                      |
+| Primitive library   | **Base UI** (`@base-ui/react`)     | **Base UI** (done; `radix-ui` removed)      |
 | Base color          | **Stone** oklch in `main.css`     | **Stone** (done)                            |
 | Icons               | **`@/lib/icons` → Phosphor**      | **Phosphor** (done; Lucide names retained)  |
 
@@ -62,15 +62,15 @@ Until a primitive is migrated, treat existing `ui/*` APIs as stable. App code sh
 
 Call sites keep Lucide icon **names** (`Loader2`, `ChevronDown`, …) for a stable API; glyphs are Phosphor.
 
-### Phase D — Primitives: Base UI / `base-mira` (highest risk)
+### Phase D — Primitives: Base UI / `base-mira` (highest risk) — **done**
 
-1. Install Base UI deps required by shadcn base-mira.
-2. Re-add **one primitive at a time** with shadcn CLI (`button`, then `dialog`, then menus…), review API diffs vs Radix wrappers.
-3. Keep public exports (`Button`, `Dialog`, …) stable for app code; fix call sites only when APIs diverge.
-4. Pay special attention to: focus traps, portals in Electron, menu/context-menu, select, combobox/cmdk.
-5. Drop `radix-ui` when no `ui/*` import remains.
+1. Installed `@base-ui/react`.
+2. Migrated `src/renderer/src/components/ui/*` off `radix-ui` onto Base UI (button, dialog, sheet, select, menus, popover, tooltip, tabs, accordion, scroll-area, etc.).
+3. Preserved Sol-specific behavior: Electron `WebkitAppRegion: no-drag`, popover wheel shim, translucent floating surfaces, i18n close labels.
+4. Kept call-site compatibility shims: `asChild` → Base UI `render`, `delayDuration` → `delay`, `VisuallyHidden.Root` local reimplementation.
+5. Removed `radix-ui` package.
 
-Done when: `components/ui` is Base UI–backed; Radix is gone from renderer UI.
+Remaining polish (optional): tighten any residual `data-[state=*]` selectors still present in product CSS, and re-verify heavy dialog/menu flows in Electron.
 
 ## Guardrails
 
@@ -82,7 +82,7 @@ Done when: `components/ui` is Base UI–backed; Radix is gone from renderer UI.
 
 ## Suggested next implementation PR
 
-Phase D: re-add one shadcn `base-mira` primitive at a time (start with `button` / `dialog`), keep public exports stable, drop `radix-ui` only when `components/ui` is fully Base UI.
+Optional hardening: Electron smoke of command palette, context menus, select portals, and sheet drawers after Base UI; fix any remaining `data-state` vs `data-open` animation mismatches.
 
 ## References
 

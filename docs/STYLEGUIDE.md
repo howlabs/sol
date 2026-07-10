@@ -27,9 +27,9 @@ Target stack for app chrome (not Monaco/xterm content surfaces):
 **Runtime progress:**
 
 - **Phase A done:** chrome tokens use **stone** (oklch) in `main.css`.
-- **Phase B done:** **Mira density** on shared controls (radius, button/input/select/tabs/settings rows) while still on **Radix**.
+- **Phase B done:** **Mira density** on shared controls (radius, button/input/select/tabs/settings rows).
 - **Phase C done:** icons via **`@/lib/icons`** → **Phosphor** (`regular` weight). Lucide package removed.
-- **Not done:** Base UI primitives (Phase D).
+- **Phase D done:** `components/ui` on **Base UI** (`@base-ui/react`). `radix-ui` package removed.
 
 `components.json` records the full target (`style: base-mira`, `baseColor: stone`, `iconLibrary: phosphor`).
 
