@@ -232,6 +232,29 @@ export type RadixContentCompatProps = RadixDismissHandlers &
     onCloseAutoFocus?: RadixPreventableHandler
   }
 
+/**
+ * Radix MenuItem used `onSelect`; Base UI only fires `onClick` (unknown
+ * `onSelect` is ignored). Map so actions like "Project Settings" run again.
+ */
+export type RadixMenuSelectHandler = (event: RadixPreventableEvent) => void
+
+export function mapRadixMenuItemSelectToClick(args: {
+  onSelect?: RadixMenuSelectHandler
+  onClick?: React.MouseEventHandler<HTMLElement>
+}): React.MouseEventHandler<HTMLElement> | undefined {
+  const { onSelect, onClick } = args
+  if (!onSelect && !onClick) {
+    return undefined
+  }
+  return (domEvent) => {
+    onClick?.(domEvent)
+    if (!onSelect) {
+      return
+    }
+    onSelect(createRadixPreventableEvent(domEvent.nativeEvent, 'menuSelect'))
+  }
+}
+
 /** Strip Radix-only props so they never hit the DOM / Base UI unknown handlers. */
 export function splitRadixContentCompatProps<T extends Record<string, unknown>>(
   props: T

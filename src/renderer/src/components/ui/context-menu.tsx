@@ -8,11 +8,13 @@ import { cn } from '@/lib/utils'
 import {
   applyRadixDismissHandlers,
   mapRadixCloseAutoFocus,
+  mapRadixMenuItemSelectToClick,
   PopupDismissProvider,
   splitRadixContentCompatProps,
   usePopupDismissRegistry,
   useRegisterRadixDismissHandlers,
-  type RadixContentCompatProps
+  type RadixContentCompatProps,
+  type RadixMenuSelectHandler
 } from './radix-popup-compat'
 
 function ContextMenu({
@@ -174,10 +176,13 @@ function ContextMenuItem({
   className,
   inset,
   variant = 'default',
+  onSelect,
+  onClick,
   ...props
 }: ContextMenuPrimitive.Item.Props & {
   inset?: boolean
   variant?: 'default' | 'destructive'
+  onSelect?: RadixMenuSelectHandler
 }): React.JSX.Element {
   return (
     <ContextMenuPrimitive.Item
@@ -188,6 +193,7 @@ function ContextMenuItem({
         "group/context-menu-item relative flex min-h-7 cursor-default items-center gap-2 rounded-[7px] px-2 py-1 text-[12px] leading-5 font-[450] outline-hidden select-none focus:bg-black/8 focus:text-accent-foreground data-inset:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-white/14 dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 data-[variant=destructive]:*:[svg]:text-destructive",
         className
       )}
+      onClick={mapRadixMenuItemSelectToClick({ onSelect, onClick })}
       {...props}
     />
   )
@@ -197,8 +203,12 @@ function ContextMenuCheckboxItem({
   className,
   children,
   checked,
+  onSelect,
+  onClick,
   ...props
-}: ContextMenuPrimitive.CheckboxItem.Props): React.JSX.Element {
+}: ContextMenuPrimitive.CheckboxItem.Props & {
+  onSelect?: RadixMenuSelectHandler
+}): React.JSX.Element {
   return (
     <ContextMenuPrimitive.CheckboxItem
       data-slot="context-menu-checkbox-item"
@@ -207,6 +217,7 @@ function ContextMenuCheckboxItem({
         className
       )}
       checked={checked}
+      onClick={mapRadixMenuItemSelectToClick({ onSelect, onClick })}
       {...props}
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
@@ -222,8 +233,12 @@ function ContextMenuCheckboxItem({
 function ContextMenuRadioItem({
   className,
   children,
+  onSelect,
+  onClick,
   ...props
-}: ContextMenuPrimitive.RadioItem.Props): React.JSX.Element {
+}: ContextMenuPrimitive.RadioItem.Props & {
+  onSelect?: RadixMenuSelectHandler
+}): React.JSX.Element {
   return (
     <ContextMenuPrimitive.RadioItem
       data-slot="context-menu-radio-item"
@@ -231,6 +246,7 @@ function ContextMenuRadioItem({
         "relative flex min-h-7 cursor-default items-center gap-2 rounded-[7px] py-1 pr-2 pl-7 text-[12px] leading-5 font-[450] outline-hidden select-none focus:bg-black/8 focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-white/14 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
         className
       )}
+      onClick={mapRadixMenuItemSelectToClick({ onSelect, onClick })}
       {...props}
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">

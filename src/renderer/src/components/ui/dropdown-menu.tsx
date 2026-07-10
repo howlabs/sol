@@ -8,12 +8,14 @@ import { cn } from '@/lib/utils'
 import {
   applyRadixDismissHandlers,
   mapRadixCloseAutoFocus,
+  mapRadixMenuItemSelectToClick,
   nativeButtonForAsChild,
   PopupDismissProvider,
   splitRadixContentCompatProps,
   usePopupDismissRegistry,
   useRegisterRadixDismissHandlers,
-  type RadixContentCompatProps
+  type RadixContentCompatProps,
+  type RadixMenuSelectHandler
 } from './radix-popup-compat'
 
 function DropdownMenu({ onOpenChange, ...props }: MenuPrimitive.Root.Props): React.JSX.Element {
@@ -115,10 +117,14 @@ function DropdownMenuItem({
   className,
   inset,
   variant = 'default',
+  onSelect,
+  onClick,
   ...props
 }: MenuPrimitive.Item.Props & {
   inset?: boolean
   variant?: 'default' | 'destructive'
+  /** @deprecated Radix name — mapped to Base UI `onClick`. */
+  onSelect?: RadixMenuSelectHandler
 }): React.JSX.Element {
   return (
     <MenuPrimitive.Item
@@ -129,6 +135,7 @@ function DropdownMenuItem({
         "relative flex min-h-7 cursor-default items-center gap-2 rounded-[7px] px-2 py-1 text-[12px] leading-5 font-medium outline-hidden select-none focus:bg-black/8 focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 data-inset:pl-7 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:focus:bg-white/14 dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:*:[svg]:text-destructive!",
         className
       )}
+      onClick={mapRadixMenuItemSelectToClick({ onSelect, onClick })}
       {...props}
     />
   )
@@ -138,8 +145,12 @@ function DropdownMenuCheckboxItem({
   className,
   children,
   checked,
+  onSelect,
+  onClick,
   ...props
-}: MenuPrimitive.CheckboxItem.Props): React.JSX.Element {
+}: MenuPrimitive.CheckboxItem.Props & {
+  onSelect?: RadixMenuSelectHandler
+}): React.JSX.Element {
   return (
     <MenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
@@ -148,6 +159,7 @@ function DropdownMenuCheckboxItem({
         className
       )}
       checked={checked}
+      onClick={mapRadixMenuItemSelectToClick({ onSelect, onClick })}
       {...props}
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
@@ -167,8 +179,12 @@ function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props): R
 function DropdownMenuRadioItem({
   className,
   children,
+  onSelect,
+  onClick,
   ...props
-}: MenuPrimitive.RadioItem.Props): React.JSX.Element {
+}: MenuPrimitive.RadioItem.Props & {
+  onSelect?: RadixMenuSelectHandler
+}): React.JSX.Element {
   return (
     <MenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
@@ -176,6 +192,7 @@ function DropdownMenuRadioItem({
         "relative flex min-h-7 cursor-default items-center gap-2 rounded-[7px] py-1 pr-2 pl-7 text-[12px] leading-5 font-medium outline-hidden select-none focus:bg-black/8 focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 dark:focus:bg-white/14 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
         className
       )}
+      onClick={mapRadixMenuItemSelectToClick({ onSelect, onClick })}
       {...props}
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">

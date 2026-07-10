@@ -114,4 +114,19 @@ describe('radix-popup-compat', () => {
     event.preventDefault()
     expect(event.defaultPrevented).toBe(true)
   })
+
+  it('maps Radix onSelect to onClick for menu items', async () => {
+    const { mapRadixMenuItemSelectToClick } = await import('./radix-popup-compat')
+    const onSelect = vi.fn()
+    const onClick = vi.fn()
+    const handler = mapRadixMenuItemSelectToClick({ onSelect, onClick })
+    expect(handler).toEqual(expect.any(Function))
+    const native = new MouseEvent('click')
+    handler?.({
+      nativeEvent: native,
+      preventDefault: vi.fn()
+    } as unknown as React.MouseEvent<HTMLElement>)
+    expect(onClick).toHaveBeenCalledTimes(1)
+    expect(onSelect).toHaveBeenCalledTimes(1)
+  })
 })
