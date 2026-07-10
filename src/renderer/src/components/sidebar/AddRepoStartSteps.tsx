@@ -22,7 +22,7 @@ function AddRepoNestedScanProgressNotice({
   onStopNestedScan
 }: AddRepoNestedScanProgressNoticeProps): React.JSX.Element {
   return (
-    <div className="flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-xs text-muted-foreground">
+    <div className="flex items-center gap-2 rounded-md border border-border/60 bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
       <Loader2 className="size-3.5 shrink-0 animate-spin" />
       <span className="min-w-0 flex-1">{busyLabel}</span>
       {nestedScanInProgress && nestedScanId ? (
@@ -77,6 +77,10 @@ type AddRepoLocalStartStepProps = {
   onStopNestedScan: () => void
 }
 
+/**
+ * Start step aligned with Landing empty-state: one primary path, quiet
+ * alternate methods, document rows (no nested marketing cards).
+ */
 export function AddRepoLocalStartStep({
   repoCount,
   isSshLikely,
@@ -107,9 +111,7 @@ export function AddRepoLocalStartStep({
     browseHostKind
   })
 
-  // The white fill + ⏎ chip is a roving selection indicator, not a fixed "primary" badge:
-  // it follows keyboard focus so Enter always activates the highlighted action. Browse is
-  // autofocused on open, so it starts selected; Tab and ↑/↓ move the highlight.
+  // Why: ⏎ chip follows keyboard focus so Enter always activates the highlighted action.
   const [selectedKind, setSelectedKind] = useState<string | null>(primaryAction.kind)
 
   useEffect(() => {
@@ -122,7 +124,6 @@ export function AddRepoLocalStartStep({
     }
   }, [isAdding])
 
-  // ↑/↓ rove focus across the action buttons in visual order; focus drives the selection.
   const handleArrowNavigation = (event: React.KeyboardEvent<HTMLDivElement>): void => {
     if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
       return
@@ -152,63 +153,59 @@ export function AddRepoLocalStartStep({
 
   return (
     <>
-      <DialogHeader>
-        <DialogTitle>
+      <DialogHeader className="gap-1.5 space-y-0 text-left">
+        <DialogTitle className="text-[1.05rem] font-semibold tracking-tight">
           {translate('auto.components.sidebar.AddRepoStartSteps.d13757911c', 'Add a project')}
         </DialogTitle>
         {repoCount === 0 ? (
-          <DialogDescription>
-            {translate(
-              'auto.components.sidebar.AddRepoStartSteps.acf895cb42',
-              'Add a project to get started with Orca.'
-            )}
+          <DialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
+            {/* Why: same line as Landing empty-state so the modal feels like a continuation. */}
+            {translate('auto.components.Landing.cd21242762', 'Add a project to get started.')}
           </DialogDescription>
         ) : null}
       </DialogHeader>
 
       <div
-        className="space-y-3 pt-2"
+        className="space-y-5 pt-1"
         ref={actionsRef}
         onBlur={handleActionsBlur}
         onKeyDown={handleArrowNavigation}
       >
-        {hostSelector}
-        <AddRepoPrimaryStartAction
-          icon={primaryAction.icon}
-          title={primaryAction.title}
-          description={primaryAction.description}
-          disabled={isAdding}
-          selected={selectedKind === primaryAction.kind}
-          buttonRef={browseActionRef}
-          onClick={primaryAction.onClick}
-          onFocus={() => setSelectedKind(primaryAction.kind)}
-        />
+        {hostSelector ? <div className="space-y-1.5">{hostSelector}</div> : null}
 
-        {/* Keep secondary entry methods always visible so they stay discoverable without an extra click. */}
-        {/* Label clarifies the lighter-weight rows are alternate entry methods, not lesser features. */}
-        <div className="space-y-1.5">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            {translate('auto.components.sidebar.AddRepoStartSteps.87596c1446', 'Other ways to add')}
-          </p>
-          {/* Outline uses the `input` token (white-ish in dark mode) to match Browse's visible outline variant;
-              primary-foreground is near-black in dark mode and rendered the border invisible. */}
-          <div className="overflow-hidden rounded-md border border-input bg-background">
-            {secondaryActions.map((action, index) => (
-              <AddRepoSecondaryStartAction
-                key={action.kind}
-                icon={action.icon}
-                title={action.title}
-                description={action.description}
-                disabled={isAdding || Boolean(action.disabled)}
-                selected={selectedKind === action.kind}
-                onClick={action.onClick}
-                onFocus={() => setSelectedKind(action.kind)}
-                className={cn(
-                  index === 0 ? 'rounded-t-md' : 'border-t border-border/70',
-                  index === secondaryActions.length - 1 && 'rounded-b-md'
-                )}
-              />
-            ))}
+        <div className="space-y-2">
+          <AddRepoPrimaryStartAction
+            icon={primaryAction.icon}
+            title={primaryAction.title}
+            description={primaryAction.description}
+            disabled={isAdding}
+            selected={selectedKind === primaryAction.kind}
+            buttonRef={browseActionRef}
+            onClick={primaryAction.onClick}
+            onFocus={() => setSelectedKind(primaryAction.kind)}
+          />
+
+          <div className="space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+              {translate(
+                'auto.components.sidebar.AddRepoStartSteps.87596c1446',
+                'Other ways to add'
+              )}
+            </p>
+            <div className="border-t border-border/50">
+              {secondaryActions.map((action) => (
+                <AddRepoSecondaryStartAction
+                  key={action.kind}
+                  icon={action.icon}
+                  title={action.title}
+                  description={action.description}
+                  disabled={isAdding || Boolean(action.disabled)}
+                  selected={selectedKind === action.kind}
+                  onClick={action.onClick}
+                  onFocus={() => setSelectedKind(action.kind)}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -230,19 +227,17 @@ type AddRepoStartActionProps = {
   title: string
   description: string
   disabled: boolean
-  // Selected = keyboard-focused: renders the selection wash + trailing ⏎ chip so Enter's target is obvious.
   selected: boolean
   onClick: () => void
   onFocus: () => void
   buttonRef?: Ref<HTMLButtonElement>
 }
 
-// Shared trailing chip so the ⏎ glyph travels with the selected action across primary and secondary rows.
 const AddRepoEnterChip = (): React.JSX.Element => (
   <span aria-hidden="true" className="shrink-0">
     <ShortcutKeyCombo
       keys={['⏎']}
-      keyCapClassName="border-border/80 bg-background/70 text-muted-foreground"
+      keyCapClassName="min-w-6 border-border/60 bg-muted/40 px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground shadow-none"
     />
   </span>
 )
@@ -257,34 +252,40 @@ const AddRepoPrimaryStartAction = ({
   onFocus,
   buttonRef
 }: AddRepoStartActionProps): React.JSX.Element => (
-  // A neutral wash marks the roving keyboard selection without making the row
-  // read like the committed primary action.
+  // Why: primary path mirrors Landing Add Project — solid CTA, ⏎ only when focused.
   <Button
     ref={buttonRef}
     type="button"
-    variant="ghost"
+    variant={selected ? 'default' : 'outline'}
     onClick={onClick}
     onFocus={onFocus}
     disabled={disabled}
     data-add-repo-action
     className={cn(
-      'h-auto min-h-[3.75rem] w-full justify-start gap-3 whitespace-normal px-3 py-2.5 text-left',
+      'h-auto min-h-12 w-full justify-start gap-3 whitespace-normal px-3 py-3 text-left',
       selected
-        ? 'border border-ring bg-foreground/10 text-foreground focus-visible:border-ring focus-visible:ring-0 dark:bg-accent dark:text-accent-foreground'
-        : 'border border-border bg-background shadow-none dark:bg-background'
+        ? 'border-transparent focus-visible:ring-2 focus-visible:ring-ring/30'
+        : 'shadow-none'
     )}
   >
     <span
       className={cn(
         'grid size-7 shrink-0 place-items-center rounded-md',
-        selected ? 'bg-background/70 text-accent-foreground' : 'text-foreground'
+        selected
+          ? 'bg-primary-foreground/15 text-primary-foreground'
+          : 'bg-muted/50 text-foreground'
       )}
     >
       <Icon className="size-4" />
     </span>
     <span className="min-w-0 flex-1">
-      <span className="block text-sm font-medium leading-5">{title}</span>
-      <span className="mt-0.5 block text-xs font-normal leading-5 text-muted-foreground">
+      <span className="block text-[13px] font-medium leading-5">{title}</span>
+      <span
+        className={cn(
+          'mt-0.5 block text-[12px] font-normal leading-relaxed',
+          selected ? 'text-primary-foreground/80' : 'text-muted-foreground'
+        )}
+      >
         {description}
       </span>
     </span>
@@ -299,9 +300,8 @@ function AddRepoSecondaryStartAction({
   disabled,
   selected,
   onClick,
-  onFocus,
-  className
-}: AddRepoStartActionProps & { className?: string }): React.JSX.Element {
+  onFocus
+}: AddRepoStartActionProps): React.JSX.Element {
   return (
     <button
       type="button"
@@ -310,32 +310,25 @@ function AddRepoSecondaryStartAction({
       onClick={onClick}
       onFocus={onFocus}
       className={cn(
-        'flex min-h-[3.25rem] w-full items-center gap-3 border border-transparent px-3 py-2.5 text-left transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:cursor-default disabled:opacity-40',
-        className,
-        // Selected mirrors the primary card's neutral wash so the highlight moves between rows.
-        selected
-          ? 'border-ring bg-foreground/10 text-foreground focus-visible:ring-0 dark:bg-accent dark:text-accent-foreground'
-          : 'hover:bg-accent focus-visible:bg-accent focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/50'
+        'flex min-h-12 w-full items-center gap-3 border-b border-border/50 px-0.5 py-3 text-left transition-colors last:border-b-0',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40',
+        'disabled:pointer-events-none disabled:cursor-default disabled:opacity-40',
+        selected ? 'bg-muted/50 text-foreground' : 'hover:bg-muted/30'
       )}
     >
       <span
         className={cn(
           'grid size-7 shrink-0 place-items-center rounded-md',
-          selected ? 'bg-background/70 text-accent-foreground' : 'text-muted-foreground'
+          selected ? 'bg-muted text-foreground' : 'bg-muted/40 text-muted-foreground'
         )}
       >
         <Icon className="size-4" />
       </span>
       <span className="min-w-0 flex-1">
-        <span
-          className={cn(
-            'block text-sm font-medium leading-5',
-            selected ? 'text-accent-foreground' : 'text-foreground'
-          )}
-        >
-          {title}
+        <span className="block text-[13px] font-medium leading-5 text-foreground">{title}</span>
+        <span className="mt-0.5 block text-[12px] leading-relaxed text-muted-foreground">
+          {description}
         </span>
-        <span className="block text-xs leading-4 text-muted-foreground">{description}</span>
       </span>
       {selected ? <AddRepoEnterChip /> : null}
     </button>

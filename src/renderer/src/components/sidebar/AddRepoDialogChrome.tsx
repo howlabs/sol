@@ -21,8 +21,10 @@ export function AddRepoDialogChrome({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
-        className={`min-w-0 overflow-hidden sm:max-w-lg [&>*]:min-w-0 ${
-          step === 'nested' ? 'max-h-[calc(100vh-2rem)] grid-rows-[auto_auto_minmax(0,1fr)]' : ''
+        className={`min-w-0 overflow-hidden sm:max-w-sm [&>*]:min-w-0 ${
+          step === 'nested'
+            ? 'max-h-[calc(100vh-2rem)] sm:max-w-lg grid-rows-[auto_auto_minmax(0,1fr)]'
+            : ''
         }`}
       >
         <AddRepoStepIndicator step={step} isAdding={isAdding} onBack={onBack} />

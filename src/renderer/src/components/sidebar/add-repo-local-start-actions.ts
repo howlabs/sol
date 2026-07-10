@@ -60,7 +60,7 @@ export function getAddRepoLocalStartActions({
             )
           : translate(
               'auto.components.sidebar.add.repo.local.start.actions.fb4fc5380e',
-              'Local project, Git repo, or folder with many repos'
+              'Local project, Git repo, or multi-repo folder'
             ),
     onClick: onBrowse
   }

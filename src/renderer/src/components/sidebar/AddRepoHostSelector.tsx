@@ -50,18 +50,18 @@ export function AddRepoHostSelector({
     return null
   }
   return (
-    <div className="flex items-center gap-2 text-xs">
-      <span className="font-medium text-muted-foreground">
+    <div className="flex w-full items-center gap-3 text-[12px]">
+      <span className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
         {translate('auto.components.sidebar.AddRepoHostSelector.host', 'Host')}
       </span>
       <Popover open={open} onOpenChange={onOpenChange}>
         <PopoverTrigger asChild>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="h-7 min-w-0 max-w-[18rem] gap-1.5 rounded-md border border-border bg-muted/30 px-2 text-xs font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+            className="h-8 min-w-0 flex-1 gap-1.5 px-2.5 text-[13px] font-medium text-foreground shadow-none"
           >
             <span className="min-w-0 truncate">{selectedHost.label}</span>
             {selectedHost.health !== 'local' ? (

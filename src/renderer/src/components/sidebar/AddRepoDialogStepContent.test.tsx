@@ -262,7 +262,7 @@ describe('AddRepoDialogStepContent nested imports', () => {
 
     expect(html).toContain('Open project on SSH host')
     expect(html).toContain('Existing Git repository or folder on this SSH host')
-    expect(html).not.toContain('Local project, Git repo, or folder with many repos')
+    expect(html).not.toContain('Local project, Git repo, or multi-repo folder')
   })
 
   it('uses the standard add step for remote Orca server hosts', () => {
