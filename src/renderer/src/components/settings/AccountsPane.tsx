@@ -14,7 +14,7 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import { ExternalLink, HelpCircle, Loader2, Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { ExternalLink, HelpCircle, Loader2, Plus, RefreshCw, Trash2 } from '@/lib/icons'
 import { useAppStore } from '../../store'
 import {
   ClaudeIcon,

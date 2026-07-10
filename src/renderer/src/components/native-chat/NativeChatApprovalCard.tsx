@@ -1,4 +1,4 @@
-import { ShieldQuestion } from 'lucide-react'
+import { ShieldQuestion } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import type { ChatApproval } from './native-chat-interactive-prompt'
 

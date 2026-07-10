@@ -1,5 +1,5 @@
 import React from 'react'
-import { Info } from 'lucide-react'
+import { Info } from '@/lib/icons'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Field } from './automation-page-parts'

@@ -1,4 +1,4 @@
-import { ExternalLink, Github, Gitlab } from 'lucide-react'
+import { ExternalLink, Github, Gitlab } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { IntegrationCardShell } from './integration-card-shell'
 import { OpenRemoteServersButton } from './ProviderHostScopeControl'

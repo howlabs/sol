@@ -1,5 +1,5 @@
 import type React from 'react'
-import { Timer } from 'lucide-react'
+import { Timer } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import { useAppStore } from '../../store'
 import { Label } from '../ui/label'

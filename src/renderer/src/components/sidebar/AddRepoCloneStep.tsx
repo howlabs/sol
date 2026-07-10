@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Folder } from 'lucide-react'
+import { Folder } from '@/lib/icons'
 import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

@@ -45,7 +45,7 @@ import {
 } from '../diff-comments/diff-comment-popover-position'
 import { isLinuxUserAgent } from '../terminal-pane/pane-helpers'
 import { installEditorSaveShortcut } from './editor-shortcuts'
-import { Plus } from 'lucide-react'
+import { Plus } from '@/lib/icons'
 import {
   getMonacoMarkdownSelectionAnnotationTarget,
   type MonacoMarkdownSelectionAnnotationTarget

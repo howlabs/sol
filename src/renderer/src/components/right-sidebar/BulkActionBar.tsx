@@ -1,4 +1,4 @@
-import { Plus, Minus, X, Loader2 } from 'lucide-react'
+import { Plus, Minus, X, Loader2 } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { translate } from '@/i18n/i18n'
 

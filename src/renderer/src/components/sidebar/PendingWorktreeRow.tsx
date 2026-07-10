@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertTriangle, Loader2, X } from 'lucide-react'
+import { AlertTriangle, Loader2, X } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { cn } from '@/lib/utils'
 import {

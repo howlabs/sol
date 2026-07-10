@@ -28,7 +28,8 @@ Target stack for app chrome (not Monaco/xterm content surfaces):
 
 - **Phase A done:** chrome tokens use **stone** (oklch) in `main.css`.
 - **Phase B done:** **Mira density** on shared controls (radius, button/input/select/tabs/settings rows) while still on **Radix**.
-- **Not done:** Phosphor icons, Base UI primitives.
+- **Phase C done:** icons via **`@/lib/icons`** → **Phosphor** (`regular` weight). Lucide package removed.
+- **Not done:** Base UI primitives (Phase D).
 
 `components.json` records the full target (`style: base-mira`, `baseColor: stone`, `iconLibrary: phosphor`).
 
@@ -225,12 +226,13 @@ Tooltips exist to _name_ a control whose meaning isn't obvious from its appearan
 
 ### Icons
 
-Icons come from **`lucide-react`**. Don't import a second icon library.
+Icons come from **Phosphor** via the Lucide-compatible bridge at **`@/lib/icons`** (backed by `@phosphor-icons/react`). Do **not** import `lucide-react` or import Phosphor icons ad hoc from app features — use the bridge so names and default weight stay consistent.
 
-- **Default size:** `size-4` (16px). `Button` auto-applies this to any `<svg>` it contains via `[&_svg:not([class*='size-'])]:size-4`, so most call sites don't need to set a size on the icon.
+- **Import:** `import { Search, Loader2 } from '@/lib/icons'`
+- **Default weight:** `regular` (loaders use `bold` so the spinner reads at small sizes).
+- **Default size:** `size-4` (16px) via className. Icons default to `size="1em"` so Tailwind `size-*` classes control display size. Buttons apply `[&_svg:not([class*='size-'])]:size-3.5` (Mira density).
 - **`size-3` / `size-3.5`:** for metadata, captions, and dense list rows where 16px is too loud.
 - **`size-7`+:** for featured/empty-state hero icons only.
-- **Stroke width:** lucide's default 2px. Don't override per-icon.
 - **Color:** inherit from surrounding text — `text-muted-foreground` for secondary, `text-destructive` for destructive, etc. Don't apply a token to the SVG directly when the parent already carries the right color.
 - **Spinner:** the canonical loading icon is `<Loader2 className="size-4 animate-spin" />`. For 3s+ multi-step work, prefer a label that names the stage ("Cloning…" → "Installing…") over an unlabeled spinner. See _UX rule 1_.
 

@@ -1,5 +1,5 @@
 import { useState, type ComponentType, type ReactNode } from 'react'
-import { FolderOpen, Globe, Lightbulb, Loader2, Server } from 'lucide-react'
+import { FolderOpen, Globe, Lightbulb, Loader2, Server } from '@/lib/icons'
 import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

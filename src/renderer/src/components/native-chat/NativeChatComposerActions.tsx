@@ -1,4 +1,4 @@
-import { ArrowUp, Plus, Square } from 'lucide-react'
+import { ArrowUp, Plus, Square } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { translate } from '@/i18n/i18n'

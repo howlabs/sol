@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CircleStop, FolderOpen, Settings } from 'lucide-react'
+import { CircleStop, FolderOpen, Settings } from '@/lib/icons'
 import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

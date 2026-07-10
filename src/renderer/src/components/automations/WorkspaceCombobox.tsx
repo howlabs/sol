@@ -1,5 +1,5 @@
 import React from 'react'
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronsUpDown } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import {
   Command,

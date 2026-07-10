@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { CircleDot, Copy, Ellipsis, ExternalLink, MonitorUp, Pencil } from 'lucide-react'
+import { CircleDot, Copy, Ellipsis, ExternalLink, MonitorUp, Pencil } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 import {
   WorktreeCardDetailSection,

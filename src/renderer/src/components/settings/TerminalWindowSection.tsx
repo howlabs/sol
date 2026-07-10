@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { RotateCw } from 'lucide-react'
+import { RotateCw } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import { Button } from '../ui/button'
 import { Label } from '../ui/label'

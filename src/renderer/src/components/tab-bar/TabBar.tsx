@@ -14,7 +14,7 @@ import {
   Globe,
   Plus,
   TerminalSquare
-} from 'lucide-react'
+} from '@/lib/icons'
 import { toast } from 'sonner'
 import type {
   BrowserTab as BrowserTabState,

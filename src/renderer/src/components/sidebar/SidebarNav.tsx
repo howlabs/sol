@@ -1,5 +1,5 @@
 import React from 'react'
-import { Bell, CalendarClock, Search } from 'lucide-react'
+import { Bell, CalendarClock, Search } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { cn } from '@/lib/utils'
 import type { GlobalSettings } from '../../../../shared/types'

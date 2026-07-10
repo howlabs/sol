@@ -31,7 +31,7 @@ import {
   MessageSquare,
   Plus,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import type { Components } from 'react-markdown'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

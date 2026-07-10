@@ -1,5 +1,5 @@
 import type { JSX, Ref } from 'react'
-import { LoaderCircle, Trash2 } from 'lucide-react'
+import { LoaderCircle, Trash2 } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { translate } from '@/i18n/i18n'
 

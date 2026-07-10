@@ -9,7 +9,7 @@ import {
   MoreHorizontal,
   PanelLeft,
   PanelRight
-} from 'lucide-react'
+} from '@/lib/icons'
 import logo from '../../../resources/logo.svg'
 import { SYNC_FIT_PANES_EVENT, TOGGLE_TERMINAL_PANE_EXPAND_EVENT } from '@/constants/terminal'
 import { syncZoomCSSVar } from '@/lib/ui-zoom'

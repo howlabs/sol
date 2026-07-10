@@ -1,4 +1,4 @@
-import { Wrench } from 'lucide-react'
+import { Wrench } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 
 type DashboardAgentRowToolStepProps = {

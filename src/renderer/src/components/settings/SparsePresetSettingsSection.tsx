@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus } from '@/lib/icons'
 import type { SparsePreset } from '../../../../shared/types'
 import { useAppStore } from '../../store'
 import { parseSparsePresetDirectories } from '@/lib/sparse-preset-draft'

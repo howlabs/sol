@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useCallback, useRef, useState } from 'react'
-import { AlertTriangle, Check, Copy } from 'lucide-react'
+import { AlertTriangle, Check, Copy } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 
 export type QuickOpenInstallRgGuidanceParts = {

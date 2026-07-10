@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ChevronRight, X } from 'lucide-react'
+import { ChevronRight, X } from '@/lib/icons'
 
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'

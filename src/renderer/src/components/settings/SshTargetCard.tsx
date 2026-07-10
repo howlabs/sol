@@ -8,7 +8,7 @@ import {
   Server,
   ServerOff,
   Trash2
-} from 'lucide-react'
+} from '@/lib/icons'
 import {
   DEFAULT_SSH_RELAY_GRACE_PERIOD_SECONDS,
   type SshConnectionState,

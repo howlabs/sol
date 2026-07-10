@@ -11,7 +11,7 @@ import {
   ServerOff,
   Share2,
   Trash2
-} from 'lucide-react'
+} from '@/lib/icons'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useMountedRef } from '@/hooks/useMountedRef'

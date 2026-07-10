@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { GlobalSettings } from '../../../../shared/types'
 import { Button } from '../ui/button'
 import { Separator } from '../ui/separator'
-import { BellRing } from 'lucide-react'
+import { BellRing } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { NotificationSoundSection } from './NotificationSoundSection'
 import {

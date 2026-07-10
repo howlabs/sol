@@ -1,4 +1,4 @@
-import { Bookmark, LoaderCircle, Pencil, Trash2 } from 'lucide-react'
+import { Bookmark, LoaderCircle, Pencil, Trash2 } from '@/lib/icons'
 import type { SparsePreset } from '../../../../shared/types'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'

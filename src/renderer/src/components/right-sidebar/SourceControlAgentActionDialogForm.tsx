@@ -7,7 +7,7 @@ import {
   Settings,
   Sparkles,
   TriangleAlert
-} from 'lucide-react'
+} from '@/lib/icons'
 import AgentCombobox from '@/components/agent/AgentCombobox'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'

@@ -1,4 +1,4 @@
-import { CircleHelp } from 'lucide-react'
+import { CircleHelp } from '@/lib/icons'
 import { useState } from 'react'
 import type { NestedRepoScanResult } from '../../../../shared/types'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'

@@ -5,7 +5,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuItem
 } from '@/components/ui/dropdown-menu'
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Columns2 } from 'lucide-react'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Columns2 } from '@/lib/icons'
 import type { TabSplitDirection } from '../../store/slices/tabs'
 import { translate } from '@/i18n/i18n'
 import { canMoveTabToNewPaneColumn, moveTabToNewPaneColumn } from './tab-move-to-pane-column'

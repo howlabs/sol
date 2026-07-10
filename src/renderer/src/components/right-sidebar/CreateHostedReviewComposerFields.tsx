@@ -1,4 +1,4 @@
-import { ArrowDownUp, Check, ChevronDown, Sparkles, TriangleAlert } from 'lucide-react'
+import { ArrowDownUp, Check, ChevronDown, Sparkles, TriangleAlert } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
 import type { LocalizedHostedReviewCopy } from '@/i18n/hosted-review-localized-copy'

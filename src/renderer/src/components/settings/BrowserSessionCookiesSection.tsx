@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react'
+import { Plus } from '@/lib/icons'
 import type { BrowserSessionProfile } from '../../../../shared/types'
 import { Button } from '../ui/button'
 import { Label } from '../ui/label'

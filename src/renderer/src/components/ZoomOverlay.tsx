@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Search } from 'lucide-react'
+import { Search } from '@/lib/icons'
 import { ZOOM_LEVEL_CHANGED_EVENT } from '@/lib/zoom-events'
 import type { ZoomLevelChangedEventDetail } from '@/lib/zoom-events'
 

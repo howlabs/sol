@@ -1,4 +1,4 @@
-import { Import, Loader2, Trash2 } from 'lucide-react'
+import { Import, Loader2, Trash2 } from '@/lib/icons'
 import { toast } from 'sonner'
 import type { BrowserCookieImportSummary, BrowserSessionProfile } from '../../../../shared/types'
 import { Button } from '../ui/button'

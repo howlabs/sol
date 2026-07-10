@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertTriangle, RotateCw } from 'lucide-react'
+import { AlertTriangle, RotateCw } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { isLazyChunkLoadError } from '@/lib/lazy-with-retry'

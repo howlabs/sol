@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Copy, ExternalLink, Eye, Pencil } from 'lucide-react'
+import { Copy, ExternalLink, Eye, Pencil } from '@/lib/icons'
 import {
   DropdownMenu,
   DropdownMenuContent,

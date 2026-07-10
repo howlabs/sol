@@ -1,4 +1,4 @@
-import { AlertTriangle, Copy, Loader2, RefreshCw, Trash2 } from 'lucide-react'
+import { AlertTriangle, Copy, Loader2, RefreshCw, Trash2 } from '@/lib/icons'
 import type React from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'

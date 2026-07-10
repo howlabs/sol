@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import { Check, ChevronDown, KeyRound } from 'lucide-react'
+import { Check, ChevronDown, KeyRound } from '@/lib/icons'
 import type { LinearTeam, LinearWorkspace, LinearWorkspaceSelection } from '../../../shared/types'
 import { isClipboardTextByteLengthOverLimit } from '../../../shared/clipboard-text'
 import { Command, CommandInput, CommandItem, CommandList } from '@/components/ui/command'

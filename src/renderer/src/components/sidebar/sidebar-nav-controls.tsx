@@ -1,5 +1,5 @@
 import React from 'react'
-import { EyeOff } from 'lucide-react'
+import { EyeOff } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { ContextMenuContent, ContextMenuItem } from '@/components/ui/context-menu'
 import { translate } from '@/i18n/i18n'

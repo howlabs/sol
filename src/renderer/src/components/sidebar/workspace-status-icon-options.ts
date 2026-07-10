@@ -10,7 +10,7 @@ import {
   CirclePlay,
   Flag,
   Timer
-} from 'lucide-react'
+} from '@/lib/icons'
 import { createLocalizedCatalog } from '@/i18n/localized-catalog'
 import { translate } from '@/i18n/i18n'
 import {

@@ -1,4 +1,4 @@
-import { CornerDownLeft, Pencil, Trash } from 'lucide-react'
+import { CornerDownLeft, Pencil, Trash } from '@/lib/icons'
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { getDiffCommentLineLabel } from '@/lib/diff-comment-compat'

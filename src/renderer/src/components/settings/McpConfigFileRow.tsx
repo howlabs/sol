@@ -1,4 +1,4 @@
-import { AlertCircle, CheckCircle2 } from 'lucide-react'
+import { AlertCircle, CheckCircle2 } from '@/lib/icons'
 import type { McpConfigInspection } from '../../../../shared/mcp-config'
 import { Button } from '../ui/button'
 import { translate } from '@/i18n/i18n'

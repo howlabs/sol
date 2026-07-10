@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { ChevronDown, Loader2 } from 'lucide-react'
+import { ChevronDown, Loader2 } from '@/lib/icons'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import {

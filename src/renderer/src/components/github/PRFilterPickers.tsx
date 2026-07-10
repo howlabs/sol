@@ -2,7 +2,7 @@
 // stays under the per-file line cap and so each picker can be tested or reused
 // independently of the qualifier-mapping logic.
 import React, { useMemo, useState } from 'react'
-import { Check } from 'lucide-react'
+import { Check } from '@/lib/icons'
 import {
   Command,
   CommandEmpty,

@@ -14,7 +14,7 @@ import {
   Pilcrow,
   Quote,
   Strikethrough
-} from 'lucide-react'
+} from '@/lib/icons'
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'

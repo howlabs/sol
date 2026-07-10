@@ -13,7 +13,7 @@ import {
   Server,
   Box,
   Info
-} from 'lucide-react'
+} from '@/lib/icons'
 import { toast } from 'sonner'
 import { useAppStore } from '@/store'
 import { useActiveWorktree, useRepoById } from '@/store/selectors'

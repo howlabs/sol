@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '../ui/select'
-import { Upload } from 'lucide-react'
+import { Upload } from '@/lib/icons'
 import { getNotificationSoundOptions } from '@/components/notification-sound-options'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import { SettingsRow } from './SettingsFormControls'

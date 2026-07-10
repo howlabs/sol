@@ -1,4 +1,4 @@
-import { LoaderCircle, Save, X } from 'lucide-react'
+import { LoaderCircle, Save, X } from '@/lib/icons'
 import type { SparsePresetDirectoryParseResult } from '@/lib/sparse-preset-draft'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'

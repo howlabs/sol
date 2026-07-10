@@ -1,4 +1,4 @@
-import { CircleDot, LoaderCircle, Trash2 } from 'lucide-react'
+import { CircleDot, LoaderCircle, Trash2 } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { translate } from '@/i18n/i18n'
 

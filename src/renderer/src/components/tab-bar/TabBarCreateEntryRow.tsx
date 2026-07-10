@@ -1,5 +1,5 @@
 import React from 'react'
-import { FilePlus, FileText, Globe, Loader2, TerminalSquare } from 'lucide-react'
+import { FilePlus, FileText, Globe, Loader2, TerminalSquare } from '@/lib/icons'
 import { AgentIcon } from '@/lib/agent-catalog'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'

@@ -1,4 +1,4 @@
-import { Play } from 'lucide-react'
+import { Play } from '@/lib/icons'
 import type React from 'react'
 import type { OrcaHooks } from '../../../../shared/types'
 import { Button } from '../ui/button'

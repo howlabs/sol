@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { Loader2, Server, ServerOff } from 'lucide-react'
+import { Loader2, Server, ServerOff } from '@/lib/icons'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { useMountedRef } from '@/hooks/useMountedRef'

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowRightLeft, GitBranch, ListChecks, Workflow } from 'lucide-react'
+import { ArrowRightLeft, GitBranch, ListChecks, Workflow } from '@/lib/icons'
 import { ORCHESTRATION_SKILL_NAME } from '@/lib/agent-feature-install-commands'
 import {
   AGENT_SKILL_CLI_PREREQUISITE_NOTICE,

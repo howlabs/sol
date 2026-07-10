@@ -1,5 +1,5 @@
 import type React from 'react'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 
 type AppearanceSectionProps = {

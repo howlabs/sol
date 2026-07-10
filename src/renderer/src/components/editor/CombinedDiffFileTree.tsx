@@ -1,5 +1,5 @@
 import React from 'react'
-import { Check, Filter, PanelLeftClose, Search } from 'lucide-react'
+import { Check, Filter, PanelLeftClose, Search } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

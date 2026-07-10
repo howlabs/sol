@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useState } from 'react'
-import { Check, ChevronDown, Pencil, Trash2 } from 'lucide-react'
+import { Check, ChevronDown, Pencil, Trash2 } from '@/lib/icons'
 import type { GlobalSettings, OpenInApplication } from '../../../../shared/types'
 import { OPEN_IN_APPLICATIONS_MAX } from '../../../../shared/open-in-applications'
 import { Button } from '../ui/button'

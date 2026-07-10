@@ -1,4 +1,4 @@
-import { MessageSquare, TriangleAlert } from 'lucide-react'
+import { MessageSquare, TriangleAlert } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 import { formatAgentTypeLabel } from '@/lib/agent-status'
 import type { NativeChatSession } from '../../../../shared/native-chat-types'

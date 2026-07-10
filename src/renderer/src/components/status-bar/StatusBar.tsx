@@ -11,7 +11,7 @@ import {
   Loader2,
   RefreshCw,
   Server
-} from 'lucide-react'
+} from '@/lib/icons'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { lazyWithRetry } from '@/lib/lazy-with-retry'
 import { Button } from '@/components/ui/button'

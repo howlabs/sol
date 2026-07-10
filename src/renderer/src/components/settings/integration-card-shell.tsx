@@ -1,4 +1,4 @@
-import { LoaderCircle } from 'lucide-react'
+import { LoaderCircle } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { useIntegrationCardShellClass } from './integration-card-presentation'
 

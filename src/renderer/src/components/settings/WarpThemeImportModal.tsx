@@ -1,4 +1,4 @@
-import { FileUp, FolderOpen, Loader2 } from 'lucide-react'
+import { FileUp, FolderOpen, Loader2 } from '@/lib/icons'
 import type { WarpThemeImportPreviewTheme } from '../../../../shared/terminal-custom-themes'
 import { Button } from '../ui/button'
 import {

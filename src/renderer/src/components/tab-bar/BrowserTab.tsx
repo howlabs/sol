@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
-import { Globe, X, ExternalLink, Copy, Pin, PinOff, PanelRightClose } from 'lucide-react'
+import { Globe, X, ExternalLink, Copy, Pin, PinOff, PanelRightClose } from '@/lib/icons'
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -8,7 +8,7 @@ import {
   Pin,
   PinOff,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import {
   DropdownMenu,
   DropdownMenuContent,

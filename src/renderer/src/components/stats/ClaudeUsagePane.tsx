@@ -9,7 +9,7 @@ import {
   SlidersHorizontal,
   Sparkles,
   Waypoints
-} from 'lucide-react'
+} from '@/lib/icons'
 import type { ClaudeUsageRange, ClaudeUsageScope } from '../../../../shared/claude-usage-types'
 import { useAppStore } from '../../store'
 import { Button } from '../ui/button'

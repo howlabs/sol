@@ -49,7 +49,7 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
   DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => children
 }))
 
-vi.mock('lucide-react', () => ({
+vi.mock('@/lib/icons', () => ({
   ArrowDown: () => null,
   ArrowLeft: () => null,
   ArrowRight: () => null,

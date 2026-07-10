@@ -17,7 +17,7 @@ import {
   FileText,
   FileType,
   FileVideo
-} from 'lucide-react'
+} from '@/lib/icons'
 import { describe, expect, it } from 'vitest'
 import { getFileTypeIcon } from './file-type-icons'
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { Activity, CalendarDays, Coins, DatabaseZap, RefreshCw, Sparkles } from 'lucide-react'
+import { Activity, CalendarDays, Coins, DatabaseZap, RefreshCw, Sparkles } from '@/lib/icons'
 import { useAppStore } from '../../store'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'

@@ -1,6 +1,6 @@
 # Design system migration: Mira · Stone · Phosphor · Base UI
 
-Status: **Phase A + B landed** (stone tokens + Mira density). Phase C/D not started.
+Status: **Phase A + B + C landed**. Phase D (Base UI) not started.
 
 ## Target
 
@@ -9,7 +9,7 @@ Status: **Phase A + B landed** (stone tokens + Mira density). Phase C/D not star
 | shadcn visual style | Mira density on Radix primitives | **Mira** full (`base-mira`)                 |
 | Primitive library   | Radix (`radix-ui`)                | **Base UI** via shadcn `base-mira`          |
 | Base color          | **Stone** oklch in `main.css`     | **Stone** (done)                            |
-| Icons               | `lucide-react`                    | **Phosphor Icons** (`@phosphor-icons/react`) |
+| Icons               | **`@/lib/icons` → Phosphor**      | **Phosphor** (done; Lucide names retained)  |
 
 Why this combo for Sol:
 
@@ -52,15 +52,15 @@ Until a primitive is migrated, treat existing `ui/*` APIs as stable. App code sh
 3. Settings form grammar tightened (`SettingsRow`, switch, segmented control, subsection headers).
 4. Still on Radix primitives (no Base UI yet).
 
-### Phase C — Icons: Phosphor (mechanical, high surface area)
+### Phase C — Icons: Phosphor (mechanical, high surface area) — **done**
 
-1. Add `@phosphor-icons/react`.
-2. Prefer **one weight** app-wide for chrome (e.g. regular; bold only for active/emphasis).
-3. Migrate `src/renderer/src/components/ui/*` icons first (dialog close, etc.).
-4. Migrate product files in batches (settings → sidebar → rest). Codemod Lucide names → Phosphor equivalents; leave unmapped icons explicit.
-5. Remove `lucide-react` only when zero imports remain.
+1. Added `@phosphor-icons/react`.
+2. Default weight **`regular`** (loaders use **`bold`**).
+3. Generated Lucide-compatible bridge: `src/renderer/src/lib/icons.tsx` (~310 Lucide export names).
+4. Codemod rewrote app imports to `@/lib/icons` (~407 files); test mocks updated.
+5. Removed `lucide-react` dependency.
 
-Done when: no `lucide-react` in `src/`; STYLEGUIDE forbids new Lucide imports.
+Call sites keep Lucide icon **names** (`Loader2`, `ChevronDown`, …) for a stable API; glyphs are Phosphor.
 
 ### Phase D — Primitives: Base UI / `base-mira` (highest risk)
 
@@ -82,7 +82,7 @@ Done when: `components/ui` is Base UI–backed; Radix is gone from renderer UI.
 
 ## Suggested next implementation PR
 
-Phase C: add `@phosphor-icons/react`, migrate `components/ui` icons first, then batch product files. No Base UI until Phase D.
+Phase D: re-add one shadcn `base-mira` primitive at a time (start with `button` / `dialog`), keep public exports stable, drop `radix-ui` only when `components/ui` is fully Base UI.
 
 ## References
 

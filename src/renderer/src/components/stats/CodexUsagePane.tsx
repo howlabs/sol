@@ -8,7 +8,7 @@ import {
   RefreshCw,
   SlidersHorizontal,
   Sparkles
-} from 'lucide-react'
+} from '@/lib/icons'
 import type { CodexUsageRange, CodexUsageScope } from '../../../../shared/codex-usage-types'
 import { useAppStore } from '../../store'
 import { Button } from '../ui/button'

@@ -12,7 +12,7 @@ import {
   Save,
   Send,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import { toast } from 'sonner'
 import { VisuallyHidden } from 'radix-ui'
 

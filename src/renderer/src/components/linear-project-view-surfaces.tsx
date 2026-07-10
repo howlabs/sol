@@ -12,7 +12,7 @@ import {
   LoaderCircle,
   RefreshCw,
   UserRound
-} from 'lucide-react'
+} from '@/lib/icons'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

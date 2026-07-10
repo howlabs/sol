@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChevronDown, Code2, ExternalLink, FileText, FolderOpen, RefreshCw } from 'lucide-react'
+import { ChevronDown, Code2, ExternalLink, FileText, FolderOpen, RefreshCw } from '@/lib/icons'
 import { toast } from 'sonner'
 import { useAppStore } from '../../store'
 import { detectLanguage } from '../../lib/language-detect'

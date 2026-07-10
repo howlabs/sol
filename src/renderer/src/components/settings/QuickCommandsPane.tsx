@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus } from '@/lib/icons'
 import type { GlobalSettings, TerminalQuickCommand } from '../../../../shared/types'
 import { getTerminalQuickCommandScope } from '../../../../shared/terminal-quick-commands'
 import {

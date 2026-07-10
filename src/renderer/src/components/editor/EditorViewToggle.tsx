@@ -9,7 +9,7 @@ import {
   Pencil,
   Table as TableIcon,
   type LucideIcon
-} from 'lucide-react'
+} from '@/lib/icons'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import type { MarkdownViewMode } from '@/store/slices/editor'

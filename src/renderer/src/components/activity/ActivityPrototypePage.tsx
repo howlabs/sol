@@ -11,7 +11,7 @@ import {
   MoreVertical,
   Search,
   TerminalSquare
-} from 'lucide-react'
+} from '@/lib/icons'
 
 import { AgentStateDot, agentStateLabel } from '@/components/AgentStateDot'
 import { AgentIcon } from '@/lib/agent-catalog'

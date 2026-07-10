@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertCircle, CheckCircle2, LoaderCircle, Unlink } from 'lucide-react'
+import { AlertCircle, CheckCircle2, LoaderCircle, Unlink } from '@/lib/icons'
 import { LinearIcon } from '@/components/icons/LinearIcon'
 import { LinearApiKeyDialog } from '@/components/linear-api-key-dialog'
 import { Button } from '@/components/ui/button'

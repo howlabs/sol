@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ArrowLeft, BookOpen, Clock, FolderOpen, Loader2, RefreshCw, Search } from 'lucide-react'
+import { ArrowLeft, BookOpen, Clock, FolderOpen, Loader2, RefreshCw, Search } from '@/lib/icons'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

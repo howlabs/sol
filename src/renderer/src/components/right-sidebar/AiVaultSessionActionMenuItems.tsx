@@ -1,4 +1,4 @@
-import { Copy, FileJson, FolderOpen, LocateFixed, PanelTopOpen, Play } from 'lucide-react'
+import { Copy, FileJson, FolderOpen, LocateFixed, PanelTopOpen, Play } from '@/lib/icons'
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { ContextMenuItem, ContextMenuSeparator } from '@/components/ui/context-menu'
 import { translate } from '@/i18n/i18n'

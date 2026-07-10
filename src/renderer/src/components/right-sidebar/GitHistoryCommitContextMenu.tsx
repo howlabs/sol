@@ -1,5 +1,5 @@
 import type React from 'react'
-import { Copy, Globe, Hash, Sparkles } from 'lucide-react'
+import { Copy, Globe, Hash, Sparkles } from '@/lib/icons'
 import {
   ContextMenuContent,
   ContextMenuItem,

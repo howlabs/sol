@@ -18,7 +18,7 @@ import {
   Star,
   Trash2,
   Workflow
-} from 'lucide-react'
+} from '@/lib/icons'
 import CacheTimer, { usePromptCacheCountdownStartedAt } from './CacheTimer'
 import WorktreeContextMenu from './WorktreeContextMenu'
 import { SshDisconnectedDialog } from './SshDisconnectedDialog'

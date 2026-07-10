@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Info, Loader2, RotateCw } from 'lucide-react'
+import { Info, Loader2, RotateCw } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import { Button } from '../ui/button'

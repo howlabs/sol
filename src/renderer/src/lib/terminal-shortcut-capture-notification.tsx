@@ -1,4 +1,4 @@
-import { Keyboard } from 'lucide-react'
+import { Keyboard } from '@/lib/icons'
 import { toast } from 'sonner'
 import {
   formatKeybindingList,

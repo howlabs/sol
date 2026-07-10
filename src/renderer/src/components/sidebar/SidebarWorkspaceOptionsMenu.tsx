@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { SlidersHorizontal } from 'lucide-react'
+import { SlidersHorizontal } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { Button } from '@/components/ui/button'
 import {

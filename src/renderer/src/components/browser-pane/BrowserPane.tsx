@@ -42,7 +42,7 @@ import {
   SquareCode,
   Trash2,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { BrowserAnnotationSendMenuContent } from './BrowserAnnotationSendMenuContent'

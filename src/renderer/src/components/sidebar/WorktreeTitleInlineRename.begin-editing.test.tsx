@@ -35,7 +35,7 @@ vi.mock('react', async () => {
   }
 })
 
-vi.mock('lucide-react', () => ({
+vi.mock('@/lib/icons', () => ({
   LoaderCircle: function LoaderCircle(props: Record<string, unknown>) {
     return { type: 'LoaderCircle', props }
   }

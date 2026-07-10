@@ -1,4 +1,4 @@
-import { ChevronRight, Heading1, Heading2, Heading3, Heading4, Heading5 } from 'lucide-react'
+import { ChevronRight, Heading1, Heading2, Heading3, Heading4, Heading5 } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 import { icon, insertToggle, type SlashCommand } from './rich-markdown-slash-command-primitives'
 

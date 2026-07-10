@@ -8,7 +8,7 @@ import {
   RefreshCw,
   SlidersHorizontal,
   Sparkles
-} from 'lucide-react'
+} from '@/lib/icons'
 import type {
   OpenCodeUsageRange,
   OpenCodeUsageScope

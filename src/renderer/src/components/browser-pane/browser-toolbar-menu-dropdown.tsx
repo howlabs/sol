@@ -1,4 +1,4 @@
-import { Check, Ellipsis, Import, Monitor, Plus, Settings } from 'lucide-react'
+import { Check, Ellipsis, Import, Monitor, Plus, Settings } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,

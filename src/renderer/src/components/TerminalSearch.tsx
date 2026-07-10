@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { ChevronUp, ChevronDown, X, CaseSensitive, Regex } from 'lucide-react'
+import { ChevronUp, ChevronDown, X, CaseSensitive, Regex } from '@/lib/icons'
 import type { SearchAddon } from '@xterm/addon-search'
 import { Button } from '@/components/ui/button'
 import type { SearchState } from '@/components/terminal-pane/keyboard-handlers'

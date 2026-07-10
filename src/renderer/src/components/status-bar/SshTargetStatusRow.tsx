@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { AlertTriangle, Cloud, Loader2 } from 'lucide-react'
+import { AlertTriangle, Cloud, Loader2 } from '@/lib/icons'
 import { toast } from 'sonner'
 import { translate } from '@/i18n/i18n'
 import { useMountedRef } from '@/hooks/useMountedRef'

@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { AlertTriangle, HardDrive, Loader2, RefreshCw, X } from 'lucide-react'
+import { AlertTriangle, HardDrive, Loader2, RefreshCw, X } from '@/lib/icons'
 import { useAppStore } from '../../store'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'

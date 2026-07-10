@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import {
   Dialog,

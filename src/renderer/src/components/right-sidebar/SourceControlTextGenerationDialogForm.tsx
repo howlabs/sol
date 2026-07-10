@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { RefreshCw, Save, Sparkles, Terminal, TriangleAlert } from 'lucide-react'
+import { RefreshCw, Save, Sparkles, Terminal, TriangleAlert } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'

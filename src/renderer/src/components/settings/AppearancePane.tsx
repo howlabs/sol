@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useState } from 'react'
-import { AppWindow, PanelLeft, TerminalSquare } from 'lucide-react'
+import { AppWindow, PanelLeft, TerminalSquare } from '@/lib/icons'
 
 import type { GlobalSettings } from '../../../../shared/types'
 

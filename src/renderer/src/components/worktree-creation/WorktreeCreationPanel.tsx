@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertTriangle, GitBranch, Loader2, RotateCcw, X } from 'lucide-react'
+import { AlertTriangle, GitBranch, Loader2, RotateCcw, X } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { retryBackgroundWorktreeCreation } from '@/lib/worktree-creation-flow'
 import { getCreationProgressLabel } from '@/lib/pending-worktree-creation'

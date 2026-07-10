@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronRight, ChevronsUpDown, FolderPlus } from 'lucide-react'
+import { Check, ChevronRight, ChevronsUpDown, FolderPlus } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { Command, CommandInput, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'

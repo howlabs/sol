@@ -1,5 +1,5 @@
 import { useEffect, useId, useState, type Dispatch, type SetStateAction } from 'react'
-import { CircleStop, Loader2 } from 'lucide-react'
+import { CircleStop, Loader2 } from '@/lib/icons'
 import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

@@ -1,4 +1,4 @@
-import { ChevronRight, ExternalLink, GitMerge } from 'lucide-react'
+import { ChevronRight, ExternalLink, GitMerge } from '@/lib/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { openHttpLink } from '@/lib/http-link-routing'

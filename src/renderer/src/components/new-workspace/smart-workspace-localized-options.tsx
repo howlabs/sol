@@ -1,5 +1,5 @@
 import type React from 'react'
-import { CaseSensitive, GitBranch, Github, Gitlab, Sparkles } from 'lucide-react'
+import { CaseSensitive, GitBranch, Github, Gitlab, Sparkles } from '@/lib/icons'
 
 import { translate } from '@/i18n/i18n'
 import type { SmartNameMode } from './smart-workspace-source-results'

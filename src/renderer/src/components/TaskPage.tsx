@@ -38,7 +38,7 @@ import {
   FolderKanban,
   Tag,
   UserRound
-} from 'lucide-react'
+} from '@/lib/icons'
 import { toast } from 'sonner'
 
 import { useAppStore } from '@/store'

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { Check, ChevronsUpDown, FolderOpen } from 'lucide-react'
+import { Check, ChevronsUpDown, FolderOpen } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import {
   Command,

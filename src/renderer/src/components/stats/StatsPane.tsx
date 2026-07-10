@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BarChart3, Bot, Check, ChevronDown, Clock, GitPullRequest } from 'lucide-react'
+import { BarChart3, Bot, Check, ChevronDown, Clock, GitPullRequest } from '@/lib/icons'
 import { useAppStore } from '../../store'
 import { StatCard } from './StatCard'
 import { ClaudeUsagePane } from './ClaudeUsagePane'

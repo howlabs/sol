@@ -1,5 +1,5 @@
 import { useMemo, useRef } from 'react'
-import { Trash, Undo2 } from 'lucide-react'
+import { Trash, Undo2 } from '@/lib/icons'
 
 import { Button } from '@/components/ui/button'
 import {

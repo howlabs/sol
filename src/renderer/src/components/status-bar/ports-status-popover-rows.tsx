@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-import { Copy, ExternalLink, FolderOpen, Trash2 } from 'lucide-react'
+import { Copy, ExternalLink, FolderOpen, Trash2 } from '@/lib/icons'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'

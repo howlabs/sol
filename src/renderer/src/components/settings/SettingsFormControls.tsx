@@ -7,7 +7,7 @@ import { ScrollArea } from '../ui/scroll-area'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Popover, PopoverAnchor, PopoverContent } from '../ui/popover'
-import { Check, ChevronsUpDown, CircleX } from 'lucide-react'
+import { Check, ChevronsUpDown, CircleX } from '@/lib/icons'
 import { normalizeColor, type TerminalThemeOption } from '@/lib/terminal-theme'
 import { MAX_THEME_RESULTS } from './SettingsConstants'
 import {

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { GitBranch, Server } from 'lucide-react'
+import { GitBranch, Server } from '@/lib/icons'
 import {
   Command,
   CommandEmpty,

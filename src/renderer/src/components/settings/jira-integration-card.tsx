@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { AlertCircle, CheckCircle2, LoaderCircle, Unlink } from 'lucide-react'
+import { AlertCircle, CheckCircle2, LoaderCircle, Unlink } from '@/lib/icons'
 import { JiraConnectDialog } from '@/components/jira-connect-dialog'
 import { JiraIcon } from '@/components/icons/JiraIcon'
 import { Button } from '@/components/ui/button'

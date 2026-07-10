@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { Send } from 'lucide-react'
+import { Send } from '@/lib/icons'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import CommentMarkdown from '@/components/sidebar/CommentMarkdown'

@@ -14,7 +14,7 @@ import {
   LoaderCircle,
   Search,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'

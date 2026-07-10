@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
-import { FolderOpen, RotateCcw } from 'lucide-react'
+import { FolderOpen, RotateCcw } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import {
   getEffectiveHostSetting,

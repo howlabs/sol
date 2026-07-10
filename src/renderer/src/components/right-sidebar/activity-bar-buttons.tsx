@@ -1,5 +1,5 @@
 import React from 'react'
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal } from '@/lib/icons'
 import type { ActiveRightSidebarTab } from '@/store/slices/editor'
 import type { CheckStatus } from '../../../../shared/types'
 import { cn } from '@/lib/utils'

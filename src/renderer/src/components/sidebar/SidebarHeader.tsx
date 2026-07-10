@@ -1,5 +1,5 @@
 import React from 'react'
-import { FolderPlus, Plus } from 'lucide-react'
+import { FolderPlus, Plus } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'

@@ -1,4 +1,4 @@
-import { FileUp } from 'lucide-react'
+import { FileUp } from '@/lib/icons'
 import { Button } from '../ui/button'
 import type { UseWarpThemeImportReturn } from './useWarpThemeImport'
 import { translate } from '@/i18n/i18n'
