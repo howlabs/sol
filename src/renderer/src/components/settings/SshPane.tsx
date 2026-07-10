@@ -322,7 +322,7 @@ export function SshPane(_props: SshPaneProps): React.JSX.Element {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-1">
       {/* Header row */}
       <div className="flex items-center justify-between gap-3">
         <div className="space-y-0.5">

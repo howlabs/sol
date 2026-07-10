@@ -24,6 +24,7 @@ type SettingsSwitchProps = {
   onChange: () => void
   ariaLabel?: string
   ariaLabelledBy?: string
+  ariaDescribedBy?: string
   disabled?: boolean
 }
 
@@ -32,6 +33,7 @@ export function SettingsSwitch({
   onChange,
   ariaLabel,
   ariaLabelledBy,
+  ariaDescribedBy,
   disabled
 }: SettingsSwitchProps): React.JSX.Element {
   return (
@@ -41,6 +43,7 @@ export function SettingsSwitch({
       aria-checked={checked}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
+      aria-describedby={ariaDescribedBy}
       disabled={disabled}
       onClick={onChange}
       className={cn(

@@ -2,8 +2,7 @@ import { useRef, useState } from 'react'
 import { RotateCw } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import { Button } from '../ui/button'
-import { Label } from '../ui/label'
-import { ColorField, NumberField } from './SettingsFormControls'
+import { ColorField, NumberField, SettingsSwitchRow } from './SettingsFormControls'
 import { SearchableSetting } from './SearchableSetting'
 import { clampNumber } from '@/lib/terminal-theme'
 import { useMountedRef } from '@/hooks/useMountedRef'
@@ -46,7 +45,7 @@ export function TerminalWindowSection({
   }
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-1">
       <div className="space-y-1">
         <h3 className="text-sm font-semibold">
           {translate('auto.components.settings.TerminalWindowSection.b96ba13ed1', 'Window')}
@@ -104,40 +103,24 @@ export function TerminalWindowSection({
           keywords={['window', 'blur', 'background', 'transparency', 'vibrancy']}
           className="space-y-3 py-2"
         >
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-0.5">
-              <Label>
-                {translate(
-                  'auto.components.settings.TerminalWindowSection.2b82242f43',
-                  'Window Blur'
-                )}
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                {translate(
-                  'auto.components.settings.TerminalWindowSection.97950bb087',
-                  'Apply background blur to the terminal window. Requires restart.'
-                )}
-              </p>
-            </div>
-            <button
-              role="switch"
-              aria-checked={settings.windowBackgroundBlur ?? false}
-              onClick={() =>
-                updateSettings({ windowBackgroundBlur: !settings.windowBackgroundBlur })
-              }
-              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors ${
-                (settings.windowBackgroundBlur ?? false)
-                  ? 'bg-foreground'
-                  : 'bg-muted-foreground/30'
-              }`}
-            >
-              <span
-                className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-                  (settings.windowBackgroundBlur ?? false) ? 'translate-x-4' : 'translate-x-0.5'
-                }`}
-              />
-            </button>
-          </div>
+          <SettingsSwitchRow
+            label={translate(
+              'auto.components.settings.TerminalWindowSection.2b82242f43',
+              'Window Blur'
+            )}
+            ariaLabel={translate(
+              'auto.components.settings.TerminalWindowSection.2b82242f43',
+              'Window Blur'
+            )}
+            description={translate(
+              'auto.components.settings.TerminalWindowSection.97950bb087',
+              'Apply background blur to the terminal window. Requires restart.'
+            )}
+            checked={settings.windowBackgroundBlur ?? false}
+            onChange={() =>
+              updateSettings({ windowBackgroundBlur: !settings.windowBackgroundBlur })
+            }
+          />
 
           {blurPendingRestart ? (
             <div className="flex items-center justify-between gap-3 rounded-md border border-yellow-500/50 bg-yellow-500/10 px-3 py-2.5">
@@ -241,40 +224,23 @@ export function TerminalWindowSection({
             'Hide the mouse cursor when typing in the terminal.'
           )}
           keywords={['mouse', 'hide', 'typing', 'cursor']}
-          className="flex items-center justify-between gap-4 py-2"
         >
-          <div className="space-y-0.5">
-            {/* Why: helper text dropped per copy audit — near-verbatim restatement
-              of the label; the search index keeps the longer phrasing. */}
-            <Label>
-              {translate(
-                'auto.components.settings.TerminalWindowSection.3530908ef9',
-                'Hide Mouse While Typing'
-              )}
-            </Label>
-          </div>
-          <button
-            role="switch"
-            aria-checked={settings.terminalMouseHideWhileTyping ?? false}
-            onClick={() =>
+          <SettingsSwitchRow
+            label={translate(
+              'auto.components.settings.TerminalWindowSection.3530908ef9',
+              'Hide Mouse While Typing'
+            )}
+            ariaLabel={translate(
+              'auto.components.settings.TerminalWindowSection.3530908ef9',
+              'Hide Mouse While Typing'
+            )}
+            checked={settings.terminalMouseHideWhileTyping ?? false}
+            onChange={() =>
               updateSettings({
                 terminalMouseHideWhileTyping: !settings.terminalMouseHideWhileTyping
               })
             }
-            className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors ${
-              (settings.terminalMouseHideWhileTyping ?? false)
-                ? 'bg-foreground'
-                : 'bg-muted-foreground/30'
-            }`}
-          >
-            <span
-              className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-                (settings.terminalMouseHideWhileTyping ?? false)
-                  ? 'translate-x-4'
-                  : 'translate-x-0.5'
-              }`}
-            />
-          </button>
+          />
         </SearchableSetting>
 
         <SearchableSetting

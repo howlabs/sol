@@ -232,12 +232,12 @@ describe('AgentsPane', () => {
     })
 
     const keepAwakeTitle = getAgentAwakeTitle()
-    const keepAwakeSwitch = findSwitch(element, keepAwakeTitle)
-    expect(keepAwakeSwitch.props['aria-label']).toBe(keepAwakeTitle)
-    expect(keepAwakeSwitch.props['aria-checked']).toBe(false)
+    const keepAwakeSwitch = findSwitchRow(element, keepAwakeTitle)
+    expect(keepAwakeSwitch.props.ariaLabel).toBe(keepAwakeTitle)
+    expect(keepAwakeSwitch.props.checked).toBe(false)
 
-    const onClick = keepAwakeSwitch.props.onClick as () => void
-    onClick()
+    const onChange = keepAwakeSwitch.props.onChange as () => void
+    onChange()
 
     expect(updateSettings).toHaveBeenCalledWith({
       keepComputerAwakeWhileAgentsRun: true

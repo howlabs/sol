@@ -158,7 +158,7 @@ export function OrchestrationPane(): React.JSX.Element {
         onOpenChange={setSkillPromptOpen}
       />
 
-      <div className="space-y-4 border-t border-border/60 pt-6">
+      <div className="space-y-1 border-t border-border/60 pt-6">
         <div className="space-y-3">
           <h3 className="text-sm font-medium text-foreground">
             {translate('auto.components.settings.OrchestrationPane.ae79504732', 'How to use it')}

@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger
 } from '../ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import { SettingsSwitch } from '@/components/settings/SettingsFormControls'
 import { ClaudeUsageDetails } from './ClaudeUsageDetails'
 import { ClaudeUsageLoadingState } from './ClaudeUsageLoadingState'
 import { ShareUsageButton } from './ShareUsageButton'
@@ -103,19 +104,14 @@ export function ClaudeUsagePane(): React.JSX.Element {
               )}
             </p>
           </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={false}
-            aria-label={translate(
+          <SettingsSwitch
+            checked={false}
+            ariaLabel={translate(
               'auto.components.stats.ClaudeUsagePane.424cd50412',
               'Enable Claude usage analytics'
             )}
-            onClick={() => handleSetEnabled(true)}
-            className="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent bg-muted-foreground/30 transition-colors"
-          >
-            <span className="pointer-events-none block size-3.5 translate-x-0.5 rounded-full bg-background shadow-sm transition-transform" />
-          </button>
+            onChange={() => handleSetEnabled(true)}
+          />
         </div>
       </div>
     )
@@ -222,19 +218,14 @@ export function ClaudeUsagePane(): React.JSX.Element {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={true}
-            aria-label={translate(
+          <SettingsSwitch
+            checked
+            ariaLabel={translate(
               'auto.components.stats.ClaudeUsagePane.424cd50412',
               'Enable Claude usage analytics'
             )}
-            onClick={() => handleSetEnabled(false)}
-            className="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent bg-foreground transition-colors"
-          >
-            <span className="pointer-events-none block size-3.5 translate-x-4 rounded-full bg-background shadow-sm transition-transform" />
-          </button>
+            onChange={() => handleSetEnabled(false)}
+          />
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import type React from 'react'
 import type { GlobalSettings } from '../../../../shared/types'
 import { useAppStore } from '../../store'
-import { Separator } from '../ui/separator'
+
 import { CliSection } from './CliSection'
 import { GeneralEditorSettingsSection } from './GeneralEditorSettingsSection'
 import { GeneralUpdateSettingsSection } from './GeneralUpdateSettingsSection'
@@ -192,14 +192,5 @@ export function GeneralPane({
     ) : null
   ].filter(Boolean)
 
-  return (
-    <div className="space-y-4">
-      {visibleSections.map((section, index) => (
-        <div key={index}>
-          {index > 0 ? <Separator className="mb-4" /> : null}
-          {section}
-        </div>
-      ))}
-    </div>
-  )
+  return <div className="space-y-1">{visibleSections}</div>
 }

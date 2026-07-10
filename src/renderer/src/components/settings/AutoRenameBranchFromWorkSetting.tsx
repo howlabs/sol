@@ -20,6 +20,7 @@ import { Label } from '../ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { getAutoRenameBranchAdvancedSearchEntries } from './auto-rename-branch-search'
 import { SearchableSetting } from './SearchableSetting'
+import { SettingsSwitchRow } from './SettingsFormControls'
 import { matchesSettingsSearch, normalizeSettingsSearchQuery } from './settings-search'
 import { translate } from '@/i18n/i18n'
 
@@ -147,49 +148,41 @@ export function AutoRenameBranchFromWorkSetting({
       forceVisible={forceVisible || branchNamePromptDirty || advancedSearchOpen}
       className="space-y-3 py-2"
     >
-      <div ref={setSettingRootRef} className="flex items-center justify-between gap-4">
-        <div className="space-y-0.5">
-          <Label>
-            {translate(
-              'auto.components.settings.AutoRenameBranchFromWorkSetting.ef787db0e3',
-              'Auto-rename branch & worktree'
-            )}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AutoRenameBranchFromWorkSetting.12ea4a408d',
-              'When an agent starts working in a new workspace, Orca renames its auto-generated branch (e.g.'
-            )}
-            <code>
+      <div ref={setSettingRootRef}>
+        <SettingsSwitchRow
+          label={translate(
+            'auto.components.settings.AutoRenameBranchFromWorkSetting.ef787db0e3',
+            'Auto-rename branch & worktree'
+          )}
+          ariaLabel={translate(
+            'auto.components.settings.AutoRenameBranchFromWorkSetting.ef787db0e3',
+            'Auto-rename branch & worktree'
+          )}
+          description={
+            <>
               {translate(
-                'auto.components.settings.AutoRenameBranchFromWorkSetting.1626524572',
-                'Nautilus'
+                'auto.components.settings.AutoRenameBranchFromWorkSetting.12ea4a408d',
+                'When an agent starts working in a new workspace, Orca renames its auto-generated branch (e.g.'
               )}
-            </code>
-            {translate(
-              'auto.components.settings.AutoRenameBranchFromWorkSetting.d9b65054ef',
-              ') to a short name summarizing the task. Only branches Orca named itself are renamed, and never after they have been pushed.'
-            )}
-          </p>
-        </div>
-        <button
-          role="switch"
-          aria-checked={settings.autoRenameBranchFromWork}
-          onClick={() =>
+              <code>
+                {translate(
+                  'auto.components.settings.AutoRenameBranchFromWorkSetting.1626524572',
+                  'Nautilus'
+                )}
+              </code>
+              {translate(
+                'auto.components.settings.AutoRenameBranchFromWorkSetting.d9b65054ef',
+                ') to a short name summarizing the task. Only branches Orca named itself are renamed, and never after they have been pushed.'
+              )}
+            </>
+          }
+          checked={settings.autoRenameBranchFromWork}
+          onChange={() =>
             updateSettings({
               autoRenameBranchFromWork: !settings.autoRenameBranchFromWork
             })
           }
-          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors ${
-            settings.autoRenameBranchFromWork ? 'bg-foreground' : 'bg-muted-foreground/30'
-          }`}
-        >
-          <span
-            className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-              settings.autoRenameBranchFromWork ? 'translate-x-4' : 'translate-x-0.5'
-            }`}
-          />
-        </button>
+        />
       </div>
 
       <Collapsible open={advancedOpen} onOpenChange={setOptionsOpen}>

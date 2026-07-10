@@ -730,7 +730,7 @@ export function RuntimeEnvironmentsPane({
       title={searchEntry.title}
       description={searchEntry.description}
       keywords={searchEntry.keywords}
-      className="space-y-4 py-2"
+      className="space-y-1 py-2"
     >
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-3">

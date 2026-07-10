@@ -37,7 +37,7 @@ export function IntegrationsPane(): React.JSX.Element {
   // Why: section header already states purpose; list is two house groups with
   // per-provider search, matching General/Notifications filtering grammar.
   return (
-    <div className="space-y-4">
+    <div className="space-y-1">
       <section className="space-y-1.5">
         <SettingsSubsectionHeader
           title={translate('auto.components.settings.IntegrationsPane.codeHosts', 'Code hosts')}

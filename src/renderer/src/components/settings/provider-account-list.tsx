@@ -8,7 +8,7 @@ export function ProviderAccountList(props: {
 }): React.JSX.Element {
   return (
     <div
-      role="listbox"
+      role="radiogroup"
       className={cn(
         'overflow-hidden rounded-lg border border-border/60 divide-y divide-border/50',
         props.className
@@ -106,8 +106,6 @@ export function ProviderAccountRow(props: {
 
   return (
     <div
-      role="option"
-      aria-selected={props.active === true}
       data-active={props.active ? 'true' : undefined}
       className={cn(
         'flex min-h-9 w-full items-center gap-1.5 px-2 py-1',
@@ -117,6 +115,8 @@ export function ProviderAccountRow(props: {
     >
       <button
         type="button"
+        role="radio"
+        aria-checked={props.active === true}
         onClick={props.onSelect}
         disabled={props.disabled || !props.onSelect}
         className={cn(

@@ -22,6 +22,7 @@ import { useAppStore } from '../../store'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { SearchableSetting } from './SearchableSetting'
+import { SettingsSwitchRow } from './SettingsFormControls'
 import { SourceControlAiActionRecipeDefaults } from './SourceControlAiActionRecipeDefaults'
 import { matchesSettingsSearch } from './settings-search'
 import { getSettingOwnershipSummary } from './setting-ownership'
@@ -183,36 +184,23 @@ export function CommitMessageAiPane({
           'Adds action recipes for Source Control commit, pull request, branch-name, and fix actions.'
         )}
         keywords={['ai', 'commit', 'message', 'generate', 'agent', 'enabled']}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="space-y-1">
-          <Label>
-            {translate(
-              'auto.components.settings.CommitMessageAiPane.d5b45a3628',
-              'Show Source Control AI actions'
-            )}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.CommitMessageAiPane.2339a89104',
-              'Adds AI buttons that run the selected agent with the command template for that action.'
-            )}
-          </p>
-        </div>
-        <button
-          role="switch"
-          aria-checked={config.enabled}
-          onClick={onToggleEnabled}
-          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors ${
-            config.enabled ? 'bg-foreground' : 'bg-muted-foreground/30'
-          }`}
-        >
-          <span
-            className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-              config.enabled ? 'translate-x-4' : 'translate-x-0.5'
-            }`}
-          />
-        </button>
+        <SettingsSwitchRow
+          label={translate(
+            'auto.components.settings.CommitMessageAiPane.d5b45a3628',
+            'Show Source Control AI actions'
+          )}
+          ariaLabel={translate(
+            'auto.components.settings.CommitMessageAiPane.d5b45a3628',
+            'Show Source Control AI actions'
+          )}
+          description={translate(
+            'auto.components.settings.CommitMessageAiPane.2339a89104',
+            'Adds AI buttons that run the selected agent with the command template for that action.'
+          )}
+          checked={config.enabled}
+          onChange={onToggleEnabled}
+        />
       </SearchableSetting>
     )
   }
@@ -337,7 +325,7 @@ export function CommitMessageAiPane({
     <div
       id="source-control-ai-settings"
       data-settings-section="source-control-ai-settings"
-      className="space-y-4 border-t border-border/40 pt-4"
+      className="space-y-1 border-t border-border/40 pt-4"
     >
       <div className="space-y-0.5">
         <h3 className="text-sm font-semibold">

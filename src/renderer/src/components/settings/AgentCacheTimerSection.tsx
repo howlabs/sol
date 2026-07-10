@@ -6,7 +6,7 @@ import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { getAgentCacheTimerSearchEntries } from './agent-cache-timer-search'
 import { SearchableSetting } from './SearchableSetting'
-import { SettingsSubsectionHeader, SettingsSwitch } from './SettingsFormControls'
+import { SettingsSubsectionHeader, SettingsSwitchRow } from './SettingsFormControls'
 import { translate } from '@/i18n/i18n'
 
 type AgentCacheTimerSectionProps = {
@@ -19,7 +19,7 @@ export function AgentCacheTimerSection({
   updateSettings
 }: AgentCacheTimerSectionProps): React.JSX.Element {
   return (
-    <section className="space-y-4">
+    <section className="space-y-1.5">
       <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.AgentCacheTimerSection.a137f8854d',
@@ -45,29 +45,24 @@ export function AgentCacheTimerSection({
           entry.description ?? '',
           ...(entry.keywords ?? [])
         ])}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="min-w-0 flex-1 space-y-0.5">
-          <div className="flex items-center gap-2">
-            <Timer className="size-4 text-muted-foreground" />
-            <Label>
+        <SettingsSwitchRow
+          label={
+            <span className="inline-flex items-center gap-2">
+              <Timer className="size-4 text-muted-foreground" />
               {translate(
                 'auto.components.settings.AgentCacheTimerSection.b4e7302944',
                 'Cache Timer'
               )}
-            </Label>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AgentCacheTimerSection.487b176240',
-              'Show a countdown in the sidebar after a Claude agent becomes idle.'
-            )}
-          </p>
-        </div>
-        <SettingsSwitch
+            </span>
+          }
           ariaLabel={translate(
             'auto.components.settings.AgentCacheTimerSection.b4e7302944',
             'Cache Timer'
+          )}
+          description={translate(
+            'auto.components.settings.AgentCacheTimerSection.487b176240',
+            'Show a countdown in the sidebar after a Claude agent becomes idle.'
           )}
           checked={settings.promptCacheTimerEnabled}
           onChange={() => {

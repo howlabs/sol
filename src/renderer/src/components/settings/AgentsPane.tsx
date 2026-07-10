@@ -201,7 +201,7 @@ export function AgentPermissionsSetting({
 }: AgentPermissionsSettingProps): React.JSX.Element {
   const visibleMode: Exclude<AgentPermissionMode, 'mixed'> = mode === 'manual' ? 'manual' : 'yolo'
   return (
-    <section className="space-y-3">
+    <section className="space-y-1.5">
       <SettingsSubsectionHeader
         title={
           <span className="flex items-center gap-2">
@@ -776,8 +776,8 @@ export function AgentsPane({
   const isBlankDefault = defaultAgent === 'blank'
 
   return (
-    <div className="space-y-8">
-      <section className="space-y-4">
+    <div className="space-y-1">
+      <section className="space-y-1.5">
         <SettingsSubsectionHeader
           title={translate('auto.components.settings.AgentsPane.385212c7a1', 'Default Agent')}
           description={agentOwnership.description}
@@ -840,7 +840,7 @@ export function AgentsPane({
       <AgentPermissionsSetting mode={agentPermissionMode} onChange={saveAgentPermissionMode} />
 
       {detectedAgents.length > 0 && (
-        <section className="space-y-3">
+        <section className="space-y-1.5">
           <SettingsSubsectionHeader
             title={
               <span className="flex items-center gap-2">
@@ -905,7 +905,7 @@ export function AgentsPane({
       )}
 
       {undetectedAgents.length > 0 && (
-        <section className="space-y-3">
+        <section className="space-y-1.5">
           <SettingsSubsectionHeader
             title={
               <span className="flex items-center gap-2 text-muted-foreground">
@@ -966,7 +966,7 @@ export function AgentStatusHooksSetting({
 }: AgentsPaneProps): React.JSX.Element {
   const enabled = settings.agentStatusHooksEnabled !== false
   return (
-    <section className="space-y-3">
+    <section className="space-y-1.5">
       <SettingsSwitchRow
         label={getAgentStatusHooksTitle()}
         description={getAgentStatusHooksDescription()}
@@ -988,7 +988,7 @@ export function AgentGeneratedTabTitlesSetting({
 }: AgentsPaneProps): React.JSX.Element {
   const enabled = settings.tabAutoGenerateTitle === true
   return (
-    <section className="space-y-3">
+    <section className="space-y-1.5">
       <SettingsSwitchRow
         label={getAgentGeneratedTabTitlesTitle()}
         description={getAgentGeneratedTabTitlesDescription()}
