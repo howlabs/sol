@@ -54,7 +54,7 @@ export function AddRepoHostSelector({
   }
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       <p className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
         {translate('auto.components.sidebar.AddRepoHostSelector.host', 'Host')}
       </p>
@@ -65,7 +65,7 @@ export function AddRepoHostSelector({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="h-9 w-full justify-between gap-2 px-3 text-[13px] font-medium shadow-none"
+            className="h-11 w-full justify-between gap-2 px-4 text-[14px] font-medium shadow-none"
           >
             <span className="min-w-0 truncate text-left">{selectedHost.label}</span>
             <span className="flex shrink-0 items-center gap-1.5">

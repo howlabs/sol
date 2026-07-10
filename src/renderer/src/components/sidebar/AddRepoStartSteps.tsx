@@ -156,12 +156,12 @@ export function AddRepoLocalStartStep({
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <DialogHeader className="gap-1 space-y-0 text-left sm:text-left">
-        <DialogTitle className="text-base font-semibold tracking-tight text-foreground">
+    <div className="flex flex-col gap-6">
+      <DialogHeader className="gap-1.5 space-y-0 text-left sm:text-left">
+        <DialogTitle className="text-lg font-semibold tracking-tight text-foreground">
           {translate('auto.components.sidebar.AddRepoStartSteps.d13757911c', 'Add a project')}
         </DialogTitle>
-        <DialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
+        <DialogDescription className="text-sm leading-relaxed text-muted-foreground">
           {repoCount === 0
             ? translate('auto.components.Landing.cd21242762', 'Add a project to get started.')
             : translate(
@@ -175,7 +175,7 @@ export function AddRepoLocalStartStep({
 
       <div
         ref={actionsRef}
-        className="flex flex-col gap-2"
+        className="flex flex-col gap-3"
         onBlur={handleActionsBlur}
         onKeyDown={handleArrowNavigation}
       >
@@ -187,11 +187,8 @@ export function AddRepoLocalStartStep({
           buttonRef={browseActionRef}
           onFocus={() => setSelectedKind(primaryAction.kind)}
         />
-        <p className="-mt-0.5 px-0.5 text-[12px] leading-relaxed text-muted-foreground">
-          {primaryAction.description}
-        </p>
 
-        <div className="relative my-1 flex items-center gap-3">
+        <div className="relative my-0.5 flex items-center gap-3">
           <div className="h-px flex-1 bg-border/60" />
           <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
             {translate('auto.components.sidebar.AddRepoStartSteps.87596c1446', 'Other ways to add')}
@@ -267,13 +264,37 @@ function AddRepoPathButton({
       onClick={action.onClick}
       onFocus={onFocus}
       className={cn(
-        'h-10 w-full justify-start gap-2 px-3 text-[13px] font-medium shadow-none',
+        // Why: large hit targets — min ~48px secondary, taller primary with two-line copy.
+        'h-auto w-full justify-start gap-3 whitespace-normal px-4 text-left shadow-none',
+        isPrimary ? 'min-h-14 py-3.5' : 'min-h-12 py-3',
         !isPrimary && selected && 'border-ring bg-muted/40 ring-1 ring-ring/30',
         isPrimary && !selected && 'bg-background'
       )}
     >
-      <Icon className="size-3.5 shrink-0 opacity-80" />
-      <span className="min-w-0 flex-1 truncate text-left">{action.title}</span>
+      <span
+        className={cn(
+          'grid shrink-0 place-items-center rounded-md',
+          isPrimary ? 'size-9' : 'size-8',
+          selected && isPrimary
+            ? 'bg-primary-foreground/15 text-primary-foreground'
+            : 'bg-muted/50 text-foreground'
+        )}
+      >
+        <Icon className={cn(isPrimary ? 'size-4' : 'size-3.5', 'opacity-90')} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[15px] font-medium leading-snug">{action.title}</span>
+        {isPrimary || action.description ? (
+          <span
+            className={cn(
+              'mt-0.5 block text-[13px] font-normal leading-snug',
+              selected && isPrimary ? 'text-primary-foreground/80' : 'text-muted-foreground'
+            )}
+          >
+            {action.description}
+          </span>
+        ) : null}
+      </span>
       {selected ? <AddRepoEnterChip /> : null}
     </Button>
   )

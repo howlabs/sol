@@ -5,8 +5,8 @@ import { AddRepoStepIndicator } from './AddRepoStepIndicator'
 import { cn } from '@/lib/utils'
 
 /**
- * Flat dialog shell for Add Project — solid surface, tight width, no glass.
- * Nested import keeps a wider panel for the file list.
+ * Flat dialog shell for Add Project — solid surface, comfortable width for
+ * large hit targets (not a narrow square). Nested import stays wider.
  */
 export function AddRepoDialogChrome({
   children,
@@ -29,11 +29,11 @@ export function AddRepoDialogChrome({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
         className={cn(
-          'min-w-0 gap-5 overflow-hidden border-border bg-background p-5 shadow-none backdrop-blur-none [&>*]:min-w-0',
+          'min-w-0 gap-6 overflow-hidden border-border bg-background p-6 shadow-none backdrop-blur-none [&>*]:min-w-0 sm:rounded-xl',
           'dark:border-border dark:bg-background dark:shadow-none',
           isNested
-            ? 'max-h-[calc(100vh-2rem)] grid-rows-[auto_auto_minmax(0,1fr)] sm:max-w-lg'
-            : 'sm:max-w-[22rem]'
+            ? 'max-h-[calc(100vh-2rem)] grid-rows-[auto_auto_minmax(0,1fr)] sm:max-w-xl'
+            : 'sm:max-w-md'
         )}
       >
         <AddRepoStepIndicator step={step} isAdding={isAdding} onBack={onBack} />
