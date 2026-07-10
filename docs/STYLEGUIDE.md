@@ -11,6 +11,34 @@ When in doubt:
 - Reach for **muted/accent/border** before reaching for color.
 - Reach for **CSS variables** before hardcoding hex.
 - Match the nearest **shadcn primitive** before writing custom CSS.
+- Prefer house form controls in `SettingsFormControls.tsx` over one-off settings rows/toggles.
+
+## Design system target (migration in progress)
+
+Target stack for app chrome (not Monaco/xterm content surfaces):
+
+| Dimension     | Target                         | Notes |
+| ------------- | ------------------------------ | ----- |
+| Visual style  | **shadcn Mira** (compact)      | Dense IDE/settings density |
+| Primitives    | **Base UI** via `base-mira`    | Replaces Radix over time |
+| Base color    | **Stone**                      | CSS variables in `main.css` |
+| Icons         | **Phosphor Icons**             | Replaces Lucide over time |
+
+**Runtime progress:**
+
+- **Phase A done:** chrome tokens use **stone** (oklch) in `main.css`.
+- **Phase B done:** **Mira density** on shared controls (radius, button/input/select/tabs/settings rows) while still on **Radix**.
+- **Not done:** Phosphor icons, Base UI primitives.
+
+`components.json` records the full target (`style: base-mira`, `baseColor: stone`, `iconLibrary: phosphor`).
+
+Phased plan, guardrails, and non-goals: [`docs/design-system-migration.md`](./design-system-migration.md).
+
+Until a layer is migrated:
+
+- Do **not** add new Lucide icons if Phosphor is already available for that surface; after Phase C starts, new icons must be Phosphor.
+- Do **not** import Radix directly from app features — only through `@/components/ui/*`.
+- Do **not** bulk-overwrite `components/ui` without a dedicated primitive migration PR.
 
 ## Source of truth
 
@@ -19,6 +47,9 @@ When in doubt:
 | Color tokens                                  | `src/renderer/src/assets/main.css` (`:root`, `.dark`) |
 | Tailwind theme bindings                       | Same file, `@theme inline { … }` block                |
 | Component primitives                          | `src/renderer/src/components/ui/` (shadcn-style)      |
+| Settings form grammar                         | `src/renderer/src/components/settings/SettingsFormControls.tsx` |
+| shadcn CLI target config                      | `components.json`                                     |
+| Migration plan                                | `docs/design-system-migration.md`                     |
 | App typography / scrollbars / titlebar chrome | Same `main.css`                                       |
 
 Never hardcode a hex value in component code if a variable already covers it. If a new token is needed, add it to `main.css` (both `:root` and `.dark`), expose it in the `@theme inline` block, then use it.
@@ -88,13 +119,27 @@ This keeps light/dark parity automatic.
 - **Body letter-spacing:** `0.01em` (set globally on `body`). Don't override per component.
 - **Sizes:** Tailwind's default scale. Common sizes in this repo:
   - 11px (uppercase meta, sidebar headers, captions) — pair with `font-weight: 600` and `text-transform: uppercase` and `letter-spacing: 0.05em` for category labels.
-  - 12px (sub-text, paths, secondary content)
+  - 12px (`text-xs`) — control labels, Mira button default, paths, secondary content
   - 13px (sidebar items, dense list rows)
-  - 14px (default body, button text in `default` size)
+  - 14px (default body where density is not constrained)
 
 ## Radius
 
-`--radius: 0.625rem` (10px) is the base; the rest are computed (`--radius-sm` = 0.6×, `--radius-md` = 0.8×, `--radius-lg` = 1×, `--radius-xl` = 1.4×, etc.). Buttons and inputs use `rounded-md`; the `Card` primitive uses `rounded-xl`; badges use `rounded-full`. Match the existing primitive's radius rather than introducing a new one.
+`--radius: 0.5rem` (8px) is the Mira-aligned base; the rest are computed (`--radius-sm` = 0.6×, `--radius-md` = 0.8×, `--radius-lg` = 1×, `--radius-xl` = 1.4×, etc.). Buttons and inputs use `rounded-md`; the `Card` primitive uses `rounded-xl`; badges use `rounded-full`. Match the existing primitive's radius rather than introducing a new one.
+
+## Control density (Mira Phase B)
+
+Default control height is **compact**:
+
+| Control | Default height |
+| ------- | -------------- |
+| Button `default` | `h-7` (28px) |
+| Button `sm` / `xs` | `h-6` / `h-5` |
+| Input | `h-7` |
+| Select trigger | `h-7` (`sm` = `h-6`) |
+| Settings switch | `h-4` track |
+
+Prefer these sizes for settings and chrome. Only use larger sizes when the surface is marketing-like or a sparse empty state.
 
 ## Elevation & shadows
 

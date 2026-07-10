@@ -44,14 +44,14 @@ export function SettingsSwitch({
       disabled={disabled}
       onClick={onChange}
       className={cn(
-        'relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50',
+        'relative inline-flex h-4 w-7 shrink-0 cursor-pointer items-center rounded-full border border-transparent outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50',
         checked ? 'bg-foreground' : 'bg-muted-foreground/30'
       )}
     >
       <span
         className={cn(
-          'pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform',
-          checked ? 'translate-x-4' : 'translate-x-0.5'
+          'pointer-events-none block size-3 rounded-full bg-background shadow-sm transition-transform',
+          checked ? 'translate-x-3' : 'translate-x-0.5'
         )}
       />
     </button>
@@ -79,17 +79,19 @@ export function SettingsRow({
   return (
     <div
       className={cn(
-        'flex gap-4',
-        description ? 'py-3' : 'py-2.5',
+        'flex gap-3',
+        description ? 'py-2' : 'py-1.5',
         alignTop ? 'items-start' : 'items-center justify-between'
       )}
     >
-      <div className={cn('min-w-0 flex-1', description ? 'space-y-1' : 'space-y-0.5')}>
-        <Label id={labelId} className="select-text">
+      <div className={cn('min-w-0 flex-1', description ? 'space-y-0.5' : 'space-y-0')}>
+        <Label id={labelId} className="select-text text-xs font-medium leading-none">
           {label}
         </Label>
         {description ? (
-          <p className="select-text text-xs text-muted-foreground">{description}</p>
+          <p className="select-text text-[11px] leading-snug text-muted-foreground">
+            {description}
+          </p>
         ) : null}
       </div>
       <div className="shrink-0">{control}</div>
@@ -180,8 +182,8 @@ export function SettingsSegmentedControl<T extends string | number>({
               }
             }}
             className={cn(
-              'rounded-sm text-center outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
-              size === 'sm' ? 'px-2.5 py-0.5 text-xs' : 'px-3 py-1 text-sm',
+              'rounded-sm text-center outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/30',
+              size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-0.5 text-xs',
               equalWidth && 'flex-1',
               active
                 ? 'bg-accent font-medium text-accent-foreground'
@@ -242,10 +244,12 @@ export function SettingsSubsectionHeader({
   className
 }: SettingsSubsectionHeaderProps): React.JSX.Element {
   return (
-    <div className={cn('flex items-start justify-between gap-3', className)}>
-      <div className="min-w-0 space-y-1">
-        <h3 className="text-sm font-semibold tracking-tight">{title}</h3>
-        {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
+    <div className={cn('flex items-center justify-between gap-2', className)}>
+      <div className="min-w-0 space-y-0.5">
+        <h3 className="text-xs font-semibold tracking-tight">{title}</h3>
+        {description ? (
+          <p className="text-[11px] leading-snug text-muted-foreground">{description}</p>
+        ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
     </div>

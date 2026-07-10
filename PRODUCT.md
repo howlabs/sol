@@ -27,3 +27,14 @@ SaaS onboarding walls, nested card stacks, marketing fluff in settings, decorati
 3. One primary action per row/section.
 4. Progressive disclosure for setup details.
 5. Match `docs/STYLEGUIDE.md` tokens and shadcn primitives.
+
+## Design system target
+
+Gradual chrome migration (see `docs/design-system-migration.md`):
+
+- **Style:** shadcn **Mira** (compact, dense product UI)
+- **Base color:** **stone**
+- **Icons:** **Phosphor Icons**
+- **Primitives:** **Base UI** (`base-mira` in `components.json`)
+
+Runtime may lag the target until each migration phase lands.
