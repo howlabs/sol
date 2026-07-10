@@ -16,6 +16,7 @@ import {
 import type { AutomationTargetAvailability } from './automation-target-availability'
 import { getAutomationSourceDisplay } from './automation-source-display'
 import { translate } from '@/i18n/i18n'
+import { cn } from '@/lib/utils'
 
 type AutomationDetailProps = {
   automation: Automation | null
@@ -42,9 +43,11 @@ function DetailMetric({
   title?: string
 }): React.JSX.Element {
   return (
-    <div className="min-w-0">
-      <div className="text-[11px] font-medium uppercase text-muted-foreground">{label}</div>
-      <div className="mt-1 break-words text-sm font-medium" title={title}>
+    <div className="min-w-0 space-y-1">
+      <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
+        {label}
+      </div>
+      <div className="break-words text-[13px] font-medium text-foreground" title={title}>
         {value}
       </div>
     </div>
@@ -94,6 +97,10 @@ function ToolbarIconButton({
   )
 }
 
+/**
+ * Automation detail surface — flat document metrics, primary Run Now,
+ * no stacked card chrome.
+ */
 export function AutomationDetail({
   automation,
   runs,
@@ -110,11 +117,19 @@ export function AutomationDetail({
 }: AutomationDetailProps): React.JSX.Element {
   if (!automation) {
     return (
-      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-        {translate(
-          'auto.components.automations.AutomationDetail.221916d93c',
-          'Create an automation to start scheduling agent work.'
-        )}
+      <div className="flex h-full flex-col items-center justify-center gap-2 px-8 text-center">
+        <p className="text-sm font-medium text-foreground">
+          {translate(
+            'auto.components.automations.AutomationDetail.emptyTitle',
+            'No automation selected'
+          )}
+        </p>
+        <p className="max-w-sm text-[13px] leading-relaxed text-muted-foreground">
+          {translate(
+            'auto.components.automations.AutomationDetail.221916d93c',
+            'Create an automation to start scheduling agent work.'
+          )}
+        </p>
       </div>
     )
   }
@@ -135,32 +150,38 @@ export function AutomationDetail({
   const runNowDisabled = runNowAvailability?.canRunNow === false
 
   return (
-    <div className="flex w-full flex-col gap-4">
-      <div className="flex items-start justify-between gap-4 border-b border-border/50 pb-4">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h2 className="truncate text-lg font-semibold">{automation.name}</h2>
-            <Badge variant={automation.enabled ? 'secondary' : 'outline'}>
+    <div className="flex w-full flex-col gap-6">
+      <div className="flex items-start justify-between gap-4 border-b border-border/50 pb-5">
+        <div className="min-w-0 space-y-1.5">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <h2 className="truncate text-lg font-semibold tracking-tight text-foreground">
+              {automation.name}
+            </h2>
+            <Badge
+              variant={automation.enabled ? 'secondary' : 'outline'}
+              className="rounded-full text-[10px] uppercase tracking-[0.05em]"
+            >
               {automation.enabled
                 ? translate('auto.components.automations.AutomationDetail.eaa02014f8', 'Enabled')
                 : translate('auto.components.automations.AutomationDetail.b09b2384fd', 'Paused')}
             </Badge>
           </div>
-          <p className="mt-1 truncate text-sm text-muted-foreground">
+          <p className="truncate text-[13px] text-muted-foreground">
             {projectName} / {workspaceName}
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1.5">
           <Tooltip>
             <TooltipTrigger asChild>
               <span>
                 <Button
-                  variant="secondary"
+                  variant="default"
                   size="sm"
+                  className="h-8 gap-1.5 px-3"
                   onClick={() => onRunNow(automation)}
                   disabled={runNowDisabled}
                 >
-                  <Play className="size-4" />
+                  <Play className="size-3.5" />
                   {translate('auto.components.automations.AutomationDetail.2fb1605beb', 'Run Now')}
                 </Button>
               </span>
@@ -210,7 +231,7 @@ export function AutomationDetail({
       </div>
 
       {automation.executionTargetType === 'ssh' ? (
-        <div className="rounded-md border border-border/50 bg-muted/50 p-3 text-sm text-muted-foreground shadow-sm">
+        <div className="border border-border/50 bg-muted/30 px-4 py-3 text-[13px] leading-relaxed text-muted-foreground">
           {translate(
             'auto.components.automations.AutomationDetail.dbef8dc110',
             'This SSH automation runs only while Orca can reach the SSH host. If reconnect needs interactive credentials or the host is unavailable, the run is recorded as skipped.'
@@ -219,103 +240,122 @@ export function AutomationDetail({
       ) : null}
 
       {runNowAvailability?.canRunNow === false ? (
-        <div className="rounded-md border border-border/50 bg-muted/40 p-3 text-sm text-muted-foreground shadow-sm">
+        <div className="border border-border/50 bg-muted/30 px-4 py-3 text-[13px] leading-relaxed text-muted-foreground">
           {runNowAvailability.message}
         </div>
       ) : null}
 
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-5 rounded-md border border-border/50 bg-muted/30 px-4 py-3 shadow-sm">
-        <DetailMetric
-          label={translate('auto.components.automations.AutomationDetail.18763ded26', 'Schedule')}
-          value={formatAutomationSchedule(automation.rrule)}
-        />
-        <DetailMetric
-          label={translate('auto.components.automations.AutomationDetail.578ff46987', 'Next run')}
-          value={
-            automation.enabled
-              ? formatAutomationDateTimeWithRelative(automation.nextRunAt, now)
-              : 'Paused'
-          }
-        />
-        <DetailMetric
-          label={
-            automation.workspaceMode === 'new_per_run'
-              ? translate('auto.components.automations.AutomationDetail.2f8baf5360', 'Create from')
-              : translate('auto.components.automations.AutomationDetail.5405a09b1f', 'Run location')
-          }
-          value={runLocationLabel}
-        />
-        <DetailMetric
-          label={translate('auto.components.automations.AutomationDetail.15ea446b93', 'Session')}
-          value={automation.reuseSession ? 'Reuse live session' : 'Fresh each run'}
-        />
-        {sourceDisplay ? (
+      <section className="space-y-3">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+          {translate('auto.components.automations.AutomationDetail.scheduleSection', 'Schedule')}
+        </h3>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-x-6 gap-y-4 border-t border-border/50 pt-4">
           <DetailMetric
-            label={translate('auto.components.automations.AutomationDetail.29baf8f4c2', 'Source')}
-            value={sourceDisplay.label}
-            title={sourceDisplay.title}
+            label={translate('auto.components.automations.AutomationDetail.18763ded26', 'Schedule')}
+            value={formatAutomationSchedule(automation.rrule)}
           />
-        ) : null}
-        <DetailMetric
-          label={translate('auto.components.automations.AutomationDetail.620b22145e', 'Grace')}
-          value={formatGrace(automation.missedRunGraceMinutes)}
-        />
-        <DetailMetric
-          label={translate('auto.components.automations.AutomationDetail.e353ab9516', 'Precheck')}
-          value={
-            automation.precheck
-              ? `Enabled, ${formatAutomationPrecheckTimeout(automation.precheck.timeoutSeconds)}`
-              : 'None'
-          }
-        />
-        <div className="min-w-0">
-          <div className="text-[11px] font-medium uppercase text-muted-foreground">
-            {translate('auto.components.automations.AutomationDetail.2df8970cd5', 'Agent')}
-          </div>
-          <div className="mt-1 flex min-w-0 items-center gap-2 text-sm font-medium">
-            <AgentIcon agent={automation.agentId} size={16} />
-            <span className="truncate">{agentLabel}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-5 rounded-md border border-border/50 bg-muted/20 px-4 py-3 shadow-sm">
-        <DetailMetric
-          label={translate('auto.components.automations.AutomationDetail.a7c312430d', 'Last run')}
-          value={formatAutomationDateTimeWithRelative(automation.lastRunAt, now)}
-        />
-        <DetailMetric
-          label={translate('auto.components.automations.AutomationDetail.401f40ae79', 'Est. spend')}
-          value={formatAutomationCost(usageSummary.estimatedCostUsd)}
-        />
-        <DetailMetric
-          label={translate('auto.components.automations.AutomationDetail.449fc83bf7', 'Tokens')}
-          value={formatAutomationTokens(usageSummary.totalTokens)}
-        />
-        <DetailMetric
-          label={translate(
-            'auto.components.automations.AutomationDetail.a1d52c2189',
-            'Usage coverage'
-          )}
-          value={usageCoverage}
-        />
-      </div>
-
-      <div className="rounded-md border border-border/50 bg-muted/20 shadow-sm">
-        <div className="border-b border-border/50 px-3 py-2 text-sm font-medium">
-          {translate('auto.components.automations.AutomationDetail.007c8ad874', 'Prompt')}
-        </div>
-        <div className="px-3 py-3">
-          <div className="min-w-0">
-            <div className="text-[11px] font-medium uppercase text-muted-foreground">
-              {translate('auto.components.automations.AutomationDetail.007c8ad874', 'Prompt')}
+          <DetailMetric
+            label={translate('auto.components.automations.AutomationDetail.578ff46987', 'Next run')}
+            value={
+              automation.enabled
+                ? formatAutomationDateTimeWithRelative(automation.nextRunAt, now)
+                : 'Paused'
+            }
+          />
+          <DetailMetric
+            label={
+              automation.workspaceMode === 'new_per_run'
+                ? translate(
+                    'auto.components.automations.AutomationDetail.2f8baf5360',
+                    'Create from'
+                  )
+                : translate(
+                    'auto.components.automations.AutomationDetail.5405a09b1f',
+                    'Run location'
+                  )
+            }
+            value={runLocationLabel}
+          />
+          <DetailMetric
+            label={translate('auto.components.automations.AutomationDetail.15ea446b93', 'Session')}
+            value={automation.reuseSession ? 'Reuse live session' : 'Fresh each run'}
+          />
+          {sourceDisplay ? (
+            <DetailMetric
+              label={translate('auto.components.automations.AutomationDetail.29baf8f4c2', 'Source')}
+              value={sourceDisplay.label}
+              title={sourceDisplay.title}
+            />
+          ) : null}
+          <DetailMetric
+            label={translate('auto.components.automations.AutomationDetail.620b22145e', 'Grace')}
+            value={formatGrace(automation.missedRunGraceMinutes)}
+          />
+          <DetailMetric
+            label={translate('auto.components.automations.AutomationDetail.e353ab9516', 'Precheck')}
+            value={
+              automation.precheck
+                ? `Enabled, ${formatAutomationPrecheckTimeout(automation.precheck.timeoutSeconds)}`
+                : 'None'
+            }
+          />
+          <div className="min-w-0 space-y-1">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
+              {translate('auto.components.automations.AutomationDetail.2df8970cd5', 'Agent')}
             </div>
-            <p className="mt-1 line-clamp-4 whitespace-pre-wrap text-sm text-foreground">
-              {automation.prompt}
-            </p>
+            <div className="flex min-w-0 items-center gap-2 text-[13px] font-medium">
+              <AgentIcon agent={automation.agentId} size={16} />
+              <span className="truncate">{agentLabel}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <section className="space-y-3">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+          {translate('auto.components.automations.AutomationDetail.usageSection', 'Usage')}
+        </h3>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-x-6 gap-y-4 border-t border-border/50 pt-4">
+          <DetailMetric
+            label={translate('auto.components.automations.AutomationDetail.a7c312430d', 'Last run')}
+            value={formatAutomationDateTimeWithRelative(automation.lastRunAt, now)}
+          />
+          <DetailMetric
+            label={translate(
+              'auto.components.automations.AutomationDetail.401f40ae79',
+              'Est. spend'
+            )}
+            value={formatAutomationCost(usageSummary.estimatedCostUsd)}
+          />
+          <DetailMetric
+            label={translate('auto.components.automations.AutomationDetail.449fc83bf7', 'Tokens')}
+            value={formatAutomationTokens(usageSummary.totalTokens)}
+          />
+          <DetailMetric
+            label={translate(
+              'auto.components.automations.AutomationDetail.a1d52c2189',
+              'Usage coverage'
+            )}
+            value={usageCoverage}
+          />
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+          {translate('auto.components.automations.AutomationDetail.007c8ad874', 'Prompt')}
+        </h3>
+        <div className="border-t border-border/50 pt-4">
+          <p
+            className={cn(
+              'whitespace-pre-wrap text-[13px] leading-relaxed text-foreground',
+              'line-clamp-6'
+            )}
+          >
+            {automation.prompt}
+          </p>
+        </div>
+      </section>
     </div>
   )
 }

@@ -102,7 +102,9 @@ export function Field({
 }): React.JSX.Element {
   return (
     <div className={cn('min-w-0 space-y-1.5', className)}>
-      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
+        {label}
+      </div>
       {children}
     </div>
   )
@@ -110,9 +112,20 @@ export function Field({
 
 export function Metric({ label, value }: { label: string; value: string }): React.JSX.Element {
   return (
-    <div className="min-w-0 rounded-md border border-border p-3">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="mt-1 truncate text-sm font-medium">{value}</div>
+    <div className="min-w-0 space-y-1 border-b border-border/40 pb-3 last:border-b-0 sm:border-b-0 sm:pb-0">
+      <div className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
+        {label}
+      </div>
+      <div className="truncate text-[13px] font-medium text-foreground">{value}</div>
     </div>
+  )
+}
+
+/** Shared list-row chrome for Automations sidebar (document style, no card stack). */
+export function automationListItemClass(selected: boolean): string {
+  return cn(
+    'mb-0 grid w-full grid-cols-[minmax(0,1fr)_auto] gap-3 border-b border-border/50 px-3 py-3 text-left text-sm transition-colors',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40',
+    selected ? 'bg-accent text-foreground' : 'bg-transparent hover:bg-muted/40'
   )
 }
