@@ -84,7 +84,6 @@ export function TerminalQuickCommandContentSection({
                 />
               </SelectTrigger>
               <SelectContent
-                position="popper"
                 side="bottom"
                 align="start"
                 sideOffset={4}

@@ -19,6 +19,22 @@ export function NativeChatExperimentalSetting({
   const nativeChatEnabled = settings.experimentalNativeChat === true
   const openByDefault = settings.openAgentTabsInChatByDefault === true
   const defaultView: NativeChatDefaultView = openByDefault ? 'native-chat' : 'terminal-chat'
+  const defaultViewItems = [
+    {
+      value: 'terminal-chat' as const,
+      label: translate(
+        'auto.components.settings.ExperimentalPane.nativeChat.defaultViewTerminal',
+        'Terminal chat'
+      )
+    },
+    {
+      value: 'native-chat' as const,
+      label: translate(
+        'auto.components.settings.ExperimentalPane.nativeChat.defaultViewNative',
+        'Native chat'
+      )
+    }
+  ]
 
   return (
     <SearchableSetting
@@ -64,7 +80,11 @@ export function NativeChatExperimentalSetting({
           control={
             <Select
               value={defaultView}
-              onValueChange={(value: NativeChatDefaultView) => {
+              items={defaultViewItems}
+              onValueChange={(value) => {
+                if (value !== 'terminal-chat' && value !== 'native-chat') {
+                  return
+                }
                 updateSettings({
                   openAgentTabsInChatByDefault: value === 'native-chat'
                 })
@@ -80,19 +100,12 @@ export function NativeChatExperimentalSetting({
               >
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent position="popper" side="bottom" sideOffset={4} avoidCollisions={false}>
-                <SelectItem value="terminal-chat">
-                  {translate(
-                    'auto.components.settings.ExperimentalPane.nativeChat.defaultViewTerminal',
-                    'Terminal chat'
-                  )}
-                </SelectItem>
-                <SelectItem value="native-chat">
-                  {translate(
-                    'auto.components.settings.ExperimentalPane.nativeChat.defaultViewNative',
-                    'Native chat'
-                  )}
-                </SelectItem>
+              <SelectContent side="bottom" align="start" sideOffset={4}>
+                {defaultViewItems.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           }

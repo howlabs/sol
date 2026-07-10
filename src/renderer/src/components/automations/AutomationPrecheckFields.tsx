@@ -6,6 +6,7 @@ import {
   SelectValue
 } from '@/components/ui/select'
 import { Field } from './automation-page-parts'
+import { getPrecheckTimeoutSelectItems } from './automation-select-items'
 import type { AutomationDraft } from './AutomationEditorDialog'
 import { translate } from '@/i18n/i18n'
 
@@ -22,6 +23,8 @@ export function AutomationPrecheckFields({
   pickerTriggerClassName,
   onDraftChange
 }: AutomationPrecheckFieldsProps): React.JSX.Element {
+  const timeoutItems = getPrecheckTimeoutSelectItems()
+
   return (
     <>
       <Field
@@ -54,45 +57,24 @@ export function AutomationPrecheckFields({
       >
         <Select
           value={draft.precheckTimeoutSeconds}
+          items={timeoutItems}
           disabled={disabled}
           onValueChange={(precheckTimeoutSeconds) =>
-            onDraftChange((current) => ({ ...current, precheckTimeoutSeconds }))
+            onDraftChange((current) => ({
+              ...current,
+              precheckTimeoutSeconds: precheckTimeoutSeconds ?? current.precheckTimeoutSeconds
+            }))
           }
         >
           <SelectTrigger className={`w-full ${pickerTriggerClassName}`}>
             <SelectValue />
           </SelectTrigger>
-          <SelectContent position="popper" side="bottom" align="start" sideOffset={4}>
-            <SelectItem value="30">
-              {translate(
-                'auto.components.automations.AutomationPrecheckFields.51e28cdad9',
-                '30 sec'
-              )}
-            </SelectItem>
-            <SelectItem value="60">
-              {translate(
-                'auto.components.automations.AutomationPrecheckFields.c820119736',
-                '1 min'
-              )}
-            </SelectItem>
-            <SelectItem value="120">
-              {translate(
-                'auto.components.automations.AutomationPrecheckFields.d84d3765fd',
-                '2 min'
-              )}
-            </SelectItem>
-            <SelectItem value="300">
-              {translate(
-                'auto.components.automations.AutomationPrecheckFields.bf49585b3c',
-                '5 min'
-              )}
-            </SelectItem>
-            <SelectItem value="600">
-              {translate(
-                'auto.components.automations.AutomationPrecheckFields.d2a2ac89ac',
-                '10 min'
-              )}
-            </SelectItem>
+          <SelectContent side="bottom" align="start" sideOffset={4}>
+            {timeoutItems.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </Field>

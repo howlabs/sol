@@ -8,6 +8,13 @@ import { cn } from '@/lib/utils'
 
 const Select = SelectPrimitive.Root
 
+/**
+ * Why: Base UI defaults alignItemWithTrigger=true (popup overlaps trigger to
+ * align item text). That is wrong for full-width form selects — side/align are
+ * ignored and the menu looks broken. Form/product default is false.
+ */
+export const SELECT_CONTENT_DEFAULT_ALIGN_ITEM_WITH_TRIGGER = false
+
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props): React.JSX.Element {
   return (
     <SelectPrimitive.Group
@@ -61,9 +68,8 @@ function SelectContent({
   sideOffset = 4,
   align = 'center',
   alignOffset = 0,
-  alignItemWithTrigger = true,
+  alignItemWithTrigger = SELECT_CONTENT_DEFAULT_ALIGN_ITEM_WITH_TRIGGER,
   portalContainer,
-  position: _position,
   ...props
 }: SelectPrimitive.Popup.Props &
   Pick<
@@ -71,8 +77,6 @@ function SelectContent({
     'align' | 'alignOffset' | 'side' | 'sideOffset' | 'alignItemWithTrigger'
   > & {
     portalContainer?: HTMLElement | null
-    /** @deprecated Radix prop — ignored under Base UI. */
-    position?: 'item-aligned' | 'popper'
   }): React.JSX.Element {
   return (
     <SelectPrimitive.Portal container={portalContainer ?? undefined}>

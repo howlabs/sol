@@ -20,6 +20,13 @@ import {
 import type { AutomationDraft } from './AutomationEditorDialog'
 import { AutomationCustomCronPanel } from './AutomationCustomCronPanel'
 import { Field } from './automation-page-parts'
+import {
+  getScheduleDaySelectItems,
+  getScheduleHourSelectItems,
+  getScheduleMinuteSelectItems,
+  getSchedulePeriodSelectItems,
+  getSchedulePresetSelectItems
+} from './automation-select-items'
 import { translate } from '@/i18n/i18n'
 
 const FIELD_CONTROL_CLASS = 'border-input bg-input/30 shadow-xs dark:bg-input/30'
@@ -31,19 +38,6 @@ export const AUTOMATION_SCHEDULE_PRESET_OPTIONS = [
   ['weekly', 'Weekly'],
   ['custom', 'Custom cron']
 ] as const satisfies readonly [AutomationSchedulePreset, string][]
-
-const DAY_OPTIONS = [
-  ['0', 'Sunday'],
-  ['1', 'Monday'],
-  ['2', 'Tuesday'],
-  ['3', 'Wednesday'],
-  ['4', 'Thursday'],
-  ['5', 'Friday'],
-  ['6', 'Saturday']
-] as const
-const HOUR_OPTIONS = Array.from({ length: 12 }, (_, index) => String(index + 1))
-const MINUTE_OPTIONS = Array.from({ length: 60 }, (_, index) => String(index))
-const PERIOD_OPTIONS = ['AM', 'PM'] as const
 
 function parseTime(value: string): { hour: number; minute: number } {
   const [hour, minute] = value.split(':').map((part) => Number(part))
@@ -149,6 +143,11 @@ export function AutomationSchedulePicker({
     draft.preset === 'custom' &&
     customSchedule.length > 0 &&
     !validateAdvancedSchedule(customSchedule)
+  const presetItems = React.useMemo(() => getSchedulePresetSelectItems(), [])
+  const dayItems = React.useMemo(() => getScheduleDaySelectItems(), [])
+  const hourItems = React.useMemo(() => getScheduleHourSelectItems(), [])
+  const minuteItems = React.useMemo(() => getScheduleMinuteSelectItems(), [])
+  const periodItems = React.useMemo(() => getSchedulePeriodSelectItems(), [])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -180,20 +179,24 @@ export function AutomationSchedulePicker({
           >
             <Select
               value={draft.preset}
-              onValueChange={(preset) =>
+              items={presetItems}
+              onValueChange={(preset) => {
+                if (preset == null) {
+                  return
+                }
                 onDraftChange((current) => ({
                   ...current,
                   ...getSchedulePresetDraft(current, preset as AutomationSchedulePreset)
                 }))
-              }
+              }}
             >
               <SelectTrigger className={cn('w-full min-w-0', FIELD_CONTROL_CLASS)}>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                {AUTOMATION_SCHEDULE_PRESET_OPTIONS.map(([value, presetLabel]) => (
-                  <SelectItem key={value} value={value}>
-                    {presetLabel}
+              <SelectContent side="bottom" align="start">
+                {presetItems.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -217,17 +220,25 @@ export function AutomationSchedulePicker({
                 >
                   <Select
                     value={draft.dayOfWeek}
-                    onValueChange={(dayOfWeek) =>
-                      onDraftChange((current) => ({ ...current, dayOfWeek, scheduleWarning: null }))
-                    }
+                    items={dayItems}
+                    onValueChange={(dayOfWeek) => {
+                      if (dayOfWeek == null) {
+                        return
+                      }
+                      onDraftChange((current) => ({
+                        ...current,
+                        dayOfWeek,
+                        scheduleWarning: null
+                      }))
+                    }}
                   >
                     <SelectTrigger className={cn('w-full min-w-0', FIELD_CONTROL_CLASS)}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      {DAY_OPTIONS.map(([value, dayLabel]) => (
-                        <SelectItem key={value} value={value}>
-                          {dayLabel}
+                    <SelectContent side="bottom" align="start">
+                      {dayItems.map((item) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -243,21 +254,25 @@ export function AutomationSchedulePicker({
                 >
                   <Select
                     value={String(clockParts.minute)}
-                    onValueChange={(minute) =>
+                    items={minuteItems}
+                    onValueChange={(minute) => {
+                      if (minute == null) {
+                        return
+                      }
                       onDraftChange((current) => ({
                         ...current,
                         time: updateTimePart(current.time, { minute: Number(minute) }),
                         scheduleWarning: null
                       }))
-                    }
+                    }}
                   >
                     <SelectTrigger className={cn('w-full min-w-0', FIELD_CONTROL_CLASS)}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      {MINUTE_OPTIONS.map((minute) => (
-                        <SelectItem key={minute} value={minute}>
-                          :{minute.padStart(2, '0')}
+                    <SelectContent side="bottom" align="start">
+                      {minuteItems.map((item) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          :{item.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -273,13 +288,17 @@ export function AutomationSchedulePicker({
                   <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.8fr)] gap-2">
                     <Select
                       value={String(clockParts.hour12)}
-                      onValueChange={(hour12) =>
+                      items={hourItems}
+                      onValueChange={(hour12) => {
+                        if (hour12 == null) {
+                          return
+                        }
                         onDraftChange((current) => ({
                           ...current,
                           time: updateTimePart(current.time, { hour12: Number(hour12) }),
                           scheduleWarning: null
                         }))
-                      }
+                      }}
                     >
                       <SelectTrigger
                         aria-label={translate(
@@ -290,23 +309,27 @@ export function AutomationSchedulePicker({
                       >
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        {HOUR_OPTIONS.map((hour) => (
-                          <SelectItem key={hour} value={hour}>
-                            {hour}
+                      <SelectContent side="bottom" align="start">
+                        {hourItems.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                     <Select
                       value={String(clockParts.minute)}
-                      onValueChange={(minute) =>
+                      items={minuteItems}
+                      onValueChange={(minute) => {
+                        if (minute == null) {
+                          return
+                        }
                         onDraftChange((current) => ({
                           ...current,
                           time: updateTimePart(current.time, { minute: Number(minute) }),
                           scheduleWarning: null
                         }))
-                      }
+                      }}
                     >
                       <SelectTrigger
                         aria-label={translate(
@@ -317,23 +340,27 @@ export function AutomationSchedulePicker({
                       >
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        {MINUTE_OPTIONS.map((minute) => (
-                          <SelectItem key={minute} value={minute}>
-                            {minute.padStart(2, '0')}
+                      <SelectContent side="bottom" align="start">
+                        {minuteItems.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                     <Select
                       value={clockParts.period}
-                      onValueChange={(period) =>
+                      items={periodItems}
+                      onValueChange={(period) => {
+                        if (period == null) {
+                          return
+                        }
                         onDraftChange((current) => ({
                           ...current,
                           time: updateTimePart(current.time, { period: period as 'AM' | 'PM' }),
                           scheduleWarning: null
                         }))
-                      }
+                      }}
                     >
                       <SelectTrigger
                         aria-label={translate(
@@ -344,10 +371,10 @@ export function AutomationSchedulePicker({
                       >
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
-                        {PERIOD_OPTIONS.map((period) => (
-                          <SelectItem key={period} value={period}>
-                            {period}
+                      <SelectContent side="bottom" align="start">
+                        {periodItems.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
