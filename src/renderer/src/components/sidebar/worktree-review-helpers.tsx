@@ -1,4 +1,4 @@
-import { GitMerge } from 'lucide-react'
+import { GitMerge } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { PullRequestIcon } from './WorktreeCardHelpers'
 import type { WorktreeCardPrDisplay } from './worktree-card-pr-display'

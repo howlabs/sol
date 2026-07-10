@@ -44,6 +44,22 @@ export function RepositorySourceControlAiCustomCommand({
         </div>
         <Select
           value={mode}
+          items={[
+            {
+              value: CUSTOM_COMMAND_MODE_INHERIT,
+              label: translate(
+                'auto.components.settings.RepositorySourceControlAiCustomCommand.e56668c291',
+                'Use global'
+              )
+            },
+            {
+              value: CUSTOM_COMMAND_MODE_REPO,
+              label: translate(
+                'auto.components.settings.RepositorySourceControlAiCustomCommand.0704dd55cd',
+                'Repository command'
+              )
+            }
+          ]}
           onValueChange={(nextMode) => {
             // Why: CUSTOM_COMMAND_MODE_REPO pre-populates onChange from
             // source.customAgentCommand when this repo has no command yet; other modes clear.

@@ -179,8 +179,11 @@ describe('WorktreeCard quick actions', () => {
     )
 
     expect(markup).toContain('data-worktree-card-active="secondary"')
-    expect(markup).toContain('bg-sidebar-accent/45')
+    expect(markup).toContain('data-current="true"')
+    expect(markup).toContain('bg-worktree-sidebar-accent/45')
+    expect(markup).toContain('border-worktree-sidebar-ring/25')
     expect(markup).not.toContain('bg-black/[0.08]')
+    expect(markup).not.toContain('bg-sidebar-accent/45')
   })
 
   it('renders folder directory name in the detailed metadata row without a Folder badge', () => {

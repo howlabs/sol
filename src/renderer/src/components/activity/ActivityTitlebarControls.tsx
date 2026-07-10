@@ -1,4 +1,4 @@
-import { ArrowLeft, Bell } from 'lucide-react'
+import { ArrowLeft, Bell } from '@/lib/icons'
 
 import { useAppStore } from '@/store'
 import { Badge } from '@/components/ui/badge'

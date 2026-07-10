@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { Plus } from 'lucide-react'
+import { Plus } from '@/lib/icons'
 import { ActionButton } from './SourceControl'
 import { Button } from '@/components/ui/button'
 

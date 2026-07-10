@@ -10,7 +10,7 @@ import { getRepoKindLabel, isFolderRepo } from '../../../../shared/repo-kind'
 import { Button } from '../ui/button'
 import { Label } from '../ui/label'
 import { Separator } from '../ui/separator'
-import { Trash2 } from 'lucide-react'
+import { Trash2 } from '@/lib/icons'
 import { useShallow } from 'zustand/react/shallow'
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import { RepositoryHooksSection } from './RepositoryHooksSection'
@@ -199,7 +199,7 @@ export function RepositoryPane({
   // most-edited surface and should beat MCP/symlinks/sparse-presets.
   const visibleSections = [
     forceFullPaneForRepoMatch || matchesSettingsSearch(searchQuery, identityEntries) ? (
-      <section key="identity" className="relative space-y-8">
+      <section key="identity" className="relative space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1 pr-12">
             <h3 className="text-sm font-semibold">
@@ -367,9 +367,11 @@ export function RepositoryPane({
   ].filter(Boolean)
 
   return (
-    <div ref={setRepositoryPaneRootRef} className="space-y-8">
+    // Why: setup/skill-adjacent multi-section repo settings — section air uses
+    // space-y-6 max (STYLEGUIDE settings templates), not space-y-8+.
+    <div ref={setRepositoryPaneRootRef} className="space-y-6">
       {visibleSections.map((section, index) => (
-        <div key={index} className="space-y-8">
+        <div key={index} className="space-y-6">
           {index > 0 ? <Separator /> : null}
           {section}
         </div>

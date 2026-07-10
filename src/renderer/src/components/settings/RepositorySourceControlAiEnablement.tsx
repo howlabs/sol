@@ -50,6 +50,29 @@ export function RepositorySourceControlAiEnablement({
       </div>
       <Select
         value={enablementValue(value)}
+        items={[
+          {
+            value: 'inherit',
+            label: translate(
+              'auto.components.settings.RepositorySourceControlAiEnablement.62511a575d',
+              'Use global'
+            )
+          },
+          {
+            value: 'on',
+            label: translate(
+              'auto.components.settings.RepositorySourceControlAiEnablement.show',
+              'Show'
+            )
+          },
+          {
+            value: 'off',
+            label: translate(
+              'auto.components.settings.RepositorySourceControlAiEnablement.hide',
+              'Hide'
+            )
+          }
+        ]}
         onValueChange={(nextValue) => {
           onChange(nextValue === 'inherit' ? undefined : nextValue === 'on')
         }}

@@ -179,7 +179,6 @@ export default defineConfig({
         input: {
           index: resolve('src/main/index.ts'),
           'daemon-entry': resolve('src/main/daemon/daemon-entry.ts'),
-          'computer-sidecar': resolve('src/main/computer/sidecar-entry.ts'),
           'warp-theme-parser-worker': resolve('src/main/warp-themes/warp-theme-parser-worker.ts'),
           'file-watcher-worker': resolve('src/main/runtime/file-watcher-worker.ts'),
           // Why: forked with ELECTRON_RUN_AS_NODE so @parcel/watcher faults

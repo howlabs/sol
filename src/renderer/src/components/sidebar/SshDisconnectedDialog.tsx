@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Loader2, Server, ServerOff } from 'lucide-react'
+import { Loader2, Server, ServerOff } from '@/lib/icons'
 import {
   Dialog,
   DialogContent,

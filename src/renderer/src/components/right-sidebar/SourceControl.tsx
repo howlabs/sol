@@ -28,7 +28,7 @@ import {
   CircleCheck,
   MoreHorizontal,
   type LucideIcon
-} from 'lucide-react'
+} from '@/lib/icons'
 import { useAppStore } from '@/store'
 import {
   isSyncPushStageError,

@@ -14,7 +14,7 @@ import {
   LoaderCircle,
   Search,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
@@ -1534,10 +1534,12 @@ export default function SmartWorkspaceNameField({
           <PopoverContent
             align="start"
             sideOffset={4}
-            className="popover-scroll-content flex w-[var(--radix-popover-trigger-width)] flex-col p-0"
+            className="popover-scroll-content flex w-[var(--anchor-width)] flex-col p-0"
             // Why: this popover lives inside the create-workspace dialog; a
             // taller result list can cover the submit footer while typing.
-            style={{ maxHeight: 'min(var(--radix-popover-content-available-height,7rem),7rem)' }}
+            style={{
+              maxHeight: 'min(var(--available-height, 7rem),7rem)'
+            }}
             onOpenAutoFocus={(event) => event.preventDefault()}
             onPointerDownOutside={(event) => {
               // Why: the input is a PopoverAnchor, not a PopoverTrigger, so

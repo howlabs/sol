@@ -667,7 +667,9 @@ describe('WorktreeCard compact hover details', () => {
     expect(markup).not.toContain('data-worktree-card-meta-row=""')
     expect(markup).toContain('data-worktree-card-parent-content=""')
     expect(markup).toContain('items-center')
-    expect(markup).toContain('w-5 items-center')
+    // Why: status lane width is inline so pullback math and slot share one constant.
+    expect(markup).toContain('width:20px')
+    expect(markup).toContain('data-worktree-card-status-slot=""')
     expect(markup).toContain('text-[13px] leading-5')
   })
 

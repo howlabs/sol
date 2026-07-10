@@ -1,4 +1,4 @@
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronsUpDown } from '@/lib/icons'
 import type { Dispatch, SetStateAction } from 'react'
 import type { Repo } from '../../../../shared/types'
 import { Button } from '../ui/button'
@@ -86,7 +86,7 @@ export function QuickCommandsScopeFilter({
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className="w-[min(320px,calc(100vw-1rem))] min-w-[var(--radix-popover-trigger-width)] p-0"
+          className="w-[min(320px,calc(100vw-1rem))] min-w-[var(--anchor-width)] p-0"
         >
           <Command>
             <div className="border-b border-border">

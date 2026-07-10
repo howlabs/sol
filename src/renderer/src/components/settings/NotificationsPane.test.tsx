@@ -23,6 +23,19 @@ vi.mock('sonner', () => ({
   }
 }))
 
+vi.mock('@/store', () => ({
+  useAppStore: (
+    selector: (state: {
+      settingsSearchQuery: string
+      recordFeatureInteraction: (feature: string) => void
+    }) => unknown
+  ) =>
+    selector({
+      settingsSearchQuery: '',
+      recordFeatureInteraction: vi.fn()
+    })
+}))
+
 function createSettings(): GlobalSettings {
   return {
     notifications: {

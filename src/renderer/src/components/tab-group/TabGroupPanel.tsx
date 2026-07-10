@@ -1,7 +1,7 @@
 import { Suspense, useMemo } from 'react'
 import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
 import { useDroppable } from '@dnd-kit/core'
-import { Ellipsis, X } from 'lucide-react'
+import { Ellipsis, X } from '@/lib/icons'
 import { useAppStore } from '../../store'
 import {
   DropdownMenu,

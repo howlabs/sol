@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Send, Sparkles } from 'lucide-react'
+import { Send, Sparkles } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import type { AgentSendPopoverTargetMode } from '@/store/slices/ui'
 import {

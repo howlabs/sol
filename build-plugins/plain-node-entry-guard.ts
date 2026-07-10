@@ -12,12 +12,11 @@ import type { NormalizedOutputOptions, OutputBundle, OutputChunk, Plugin } from 
 // graph still resolves.
 
 // Entries executed as plain Node (ELECTRON_RUN_AS_NODE / no electron runtime):
-// forked daemon, parcel-watcher and computer sidecars, and the CLI-run
-// agent-hooks entry. require("electron") throws MODULE_NOT_FOUND in all of them.
+// forked daemon, parcel-watcher sidecar, and the CLI-run agent-hooks entry.
+// require("electron") throws MODULE_NOT_FOUND in all of them.
 const PLAIN_NODE_ENTRY_NAMES = [
   'daemon-entry',
   'parcel-watcher-process-entry',
-  'computer-sidecar',
   'agent-hooks/managed-agent-hook-controls'
 ] as const
 

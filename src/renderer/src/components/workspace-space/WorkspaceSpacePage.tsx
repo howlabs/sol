@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { ArrowLeft, HardDrive } from 'lucide-react'
+import { ArrowLeft, HardDrive } from '@/lib/icons'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { WorkspaceSpaceManagerPanel } from '../status-bar/WorkspaceSpaceManagerPanel'

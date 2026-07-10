@@ -17,7 +17,7 @@ import {
   PlugZap,
   Settings2,
   Server
-} from 'lucide-react'
+} from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -310,10 +310,7 @@ function WorkspaceRunTargetCombobox({
           <ChevronsUpDown className="size-3.5 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        className="w-[var(--radix-popover-trigger-width)] min-w-[18rem] p-0"
-      >
+      <PopoverContent align="start" className="w-[var(--anchor-width)] min-w-[18rem] p-0">
         <Command value={selectedValue}>
           <CommandList>
             <CommandEmpty>
@@ -1391,31 +1388,23 @@ export default function NewWorkspaceComposerCard({
         )}
       >
         {showCreateMultiple ? (
-          <button
-            type="button"
-            role="switch"
-            aria-checked={createMultiple}
-            onClick={() => onCreateMultipleChange?.(!createMultiple)}
-            className="group flex w-fit cursor-pointer items-center gap-2 rounded-md text-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-          >
-            <span
-              aria-hidden
-              className={cn(
-                'relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent transition-colors',
-                createMultiple ? 'bg-foreground' : 'bg-muted-foreground/30'
+          <div className="flex items-center gap-2">
+            <SettingsSwitch
+              checked={createMultiple}
+              onChange={() => onCreateMultipleChange?.(!createMultiple)}
+              ariaLabel={translate(
+                'auto.components.NewWorkspaceComposerCard.createMultiple',
+                'Create more'
               )}
+            />
+            <button
+              type="button"
+              className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              onClick={() => onCreateMultipleChange?.(!createMultiple)}
             >
-              <span
-                className={cn(
-                  'pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform',
-                  createMultiple ? 'translate-x-4' : 'translate-x-0.5'
-                )}
-              />
-            </span>
-            <span className="text-muted-foreground transition-colors group-hover:text-foreground">
               {translate('auto.components.NewWorkspaceComposerCard.createMultiple', 'Create more')}
-            </span>
-          </button>
+            </button>
+          </div>
         ) : null}
         <Button
           onClick={() => void onCreate()}

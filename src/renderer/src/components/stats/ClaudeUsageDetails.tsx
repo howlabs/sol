@@ -28,7 +28,7 @@ export function ClaudeUsageDetails({
     <>
       <ClaudeUsageDailyChart daily={daily} />
 
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className="grid gap-2 xl:grid-cols-2">
         <UsageBreakdownSection
           title={translate('auto.components.stats.ClaudeUsagePane.0f394c24e3', 'By model')}
           topLabel={translate('auto.components.stats.ClaudeUsagePane.c3fdbc5474', 'Top model:')}

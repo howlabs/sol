@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
-import { Check, Copy, Share2 } from 'lucide-react'
+import { Check, Copy, Share2 } from '@/lib/icons'
 import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'

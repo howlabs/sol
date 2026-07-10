@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { FolderPlus, Loader2 } from 'lucide-react'
+import { FolderPlus, Loader2 } from '@/lib/icons'
 import {
   Dialog,
   DialogContent,

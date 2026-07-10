@@ -444,10 +444,12 @@
 .pane-title-close:active,
 .pane-title-close[data-state='delayed-open'],
 .pane-title-close[data-state='instant-open'],
+.pane-title-close[data-open],
 .pane-title-split-trigger:hover,
 .pane-title-split-trigger:active,
 .pane-title-split-trigger[data-state='delayed-open'],
-.pane-title-split-trigger[data-state='instant-open'] {
+.pane-title-split-trigger[data-state='instant-open'],
+.pane-title-split-trigger[data-open] {
   background: transparent;
   color: var(--orca-pane-title-button-hover-fg, rgb(255 255 255 / 0.8));
 }

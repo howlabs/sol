@@ -1,5 +1,5 @@
 import React from 'react'
-import { EyeOff, Github, Gitlab, List } from 'lucide-react'
+import { EyeOff, Github, Gitlab, List } from '@/lib/icons'
 import { JiraIcon } from '@/components/icons/JiraIcon'
 import { LinearIcon } from '@/components/icons/LinearIcon'
 import {

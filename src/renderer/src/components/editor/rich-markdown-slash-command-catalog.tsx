@@ -8,7 +8,7 @@ import {
   Sigma,
   Table2,
   Workflow
-} from 'lucide-react'
+} from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 
 import {

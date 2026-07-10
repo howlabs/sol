@@ -38,9 +38,9 @@ describe('provider rate-limit panels account scope', () => {
 
     expect(markup).toContain(`Budget scope: ${LOCAL_HOST_LABEL}`)
     expect(markup).toContain(
-      'GitHub API budget is fetched from the CLI on this desktop client. Use Settings &gt; Remote Orca Servers &gt; Advanced to view server-owned budgets.'
+      'GitHub rate limits come from the CLI on this computer. View server budgets in Settings → Remote Orca Servers → Advanced.'
     )
-    expect(markup).toContain('Open Remote Servers')
+    expect(markup).toContain('Open remote servers')
   })
 
   it('shows the remote server scope for GitLab API budget', () => {
@@ -54,7 +54,7 @@ describe('provider rate-limit panels account scope', () => {
 
     expect(markup).toContain('Budget scope: Remote server: runtime-1')
     expect(markup).toContain(
-      'GitLab API budget is fetched from the CLI on this remote server. Use Settings &gt; Remote Orca Servers &gt; Advanced to view another default runtime budget.'
+      'GitLab rate limits come from the CLI on this remote server. Pick another runtime in Settings → Remote Orca Servers → Advanced.'
     )
   })
 })

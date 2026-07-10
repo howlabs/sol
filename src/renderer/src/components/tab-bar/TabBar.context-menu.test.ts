@@ -65,7 +65,7 @@ vi.mock('zustand/react/shallow', () => ({
   useShallow: (selector: unknown) => selector
 }))
 
-vi.mock('lucide-react', () => ({
+vi.mock('@/lib/icons', () => ({
   FilePlus: function FilePlus() {
     return null
   },

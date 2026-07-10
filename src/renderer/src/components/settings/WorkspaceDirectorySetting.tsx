@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react'
-import { FolderOpen, RotateCcw } from 'lucide-react'
+import { FolderOpen, RotateCcw } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import {
   getEffectiveHostSetting,
@@ -156,16 +156,24 @@ export function WorkspaceDirectorySetting({
       keywords={['workspace', 'folder', 'path', 'worktree', 'host', 'override']}
       className="space-y-2"
     >
-      <div className="flex items-center justify-between gap-2">
-        <Label htmlFor={inputId}>
-          {translate(
-            'auto.components.settings.GeneralWorkspaceSettingsSection.0e9fc0eadc',
-            'Workspace Directory'
-          )}
-        </Label>
-        {showScopePicker && (
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">
+      <div className="flex items-start justify-between gap-3 py-1.5">
+        <div className="min-w-0 flex-1 space-y-0.5">
+          <Label htmlFor={inputId} className="select-text text-xs font-medium leading-none">
+            {translate(
+              'auto.components.settings.GeneralWorkspaceSettingsSection.0e9fc0eadc',
+              'Workspace Directory'
+            )}
+          </Label>
+          <p className="select-text text-[11px] leading-snug text-muted-foreground">
+            {translate(
+              'auto.components.settings.GeneralWorkspaceSettingsSection.a246f5ce6f',
+              'Root directory where workspace folders are created.'
+            )}
+          </p>
+        </div>
+        {showScopePicker ? (
+          <div className="flex shrink-0 items-center gap-1.5">
+            <span className="text-[11px] text-muted-foreground">
               {translate(
                 'auto.components.settings.WorkspaceDirectorySetting.2b3c4d5e6f',
                 'Apply to'
@@ -173,6 +181,10 @@ export function WorkspaceDirectorySetting({
             </span>
             <Select
               value={activeScope}
+              items={choices.map((choice) => ({
+                value: choice.scope,
+                label: choice.label
+              }))}
               onValueChange={(next) => setScope(next as HostSettingScope)}
             >
               <SelectTrigger size="sm" className="h-7 w-44 text-xs">
@@ -187,7 +199,7 @@ export function WorkspaceDirectorySetting({
               </SelectContent>
             </Select>
           </div>
-        )}
+        ) : null}
       </div>
       <div className="flex gap-2">
         <Input

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ListFilter, Loader2, X } from 'lucide-react'
+import { ListFilter, Loader2, X } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { translate } from '@/i18n/i18n'
 

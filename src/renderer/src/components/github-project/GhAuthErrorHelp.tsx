@@ -9,7 +9,7 @@
  * is actually doing: env-shadow vs. plain missing-scope vs. not-installed.
  */
 import { useEffect, useState } from 'react'
-import { Copy, ExternalLink, RotateCw } from 'lucide-react'
+import { Copy, ExternalLink, RotateCw } from '@/lib/icons'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import type { GitHubProjectViewError } from '@/../../shared/github-project-types'

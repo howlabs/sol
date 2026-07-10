@@ -1,6 +1,6 @@
 /* oxlint-disable react-doctor/no-adjust-state-on-prop-change -- Why: dropdown visibility depends on DOM focus plus browser-history suggestions, so the close path is an imperative popover sync. */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Globe, Search } from 'lucide-react'
+import { Globe, Search } from '@/lib/icons'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command'
@@ -401,7 +401,7 @@ export default function BrowserAddressBar({
         <PopoverContent
           align="start"
           sideOffset={4}
-          className="w-[var(--radix-popover-trigger-width)] p-0"
+          className="w-[var(--anchor-width)] p-0"
           onOpenAutoFocus={(e) => {
             // Why: prevent the popover from stealing focus away from the
             // address bar input. The user is still typing; the popover is

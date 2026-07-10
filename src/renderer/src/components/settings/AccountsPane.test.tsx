@@ -51,23 +51,19 @@ describe('AccountsPane', () => {
     expect(markup).toContain('role="radio" aria-checked="true" disabled=""')
   })
 
-  it('keeps the runtime label inside the localized account copy', () => {
+  it('keeps the runtime label inside the localized Gemini credential copy', () => {
     const markup = renderPane(getDefaultSettings('/tmp'))
 
-    expect(markup).toContain('Showing accounts for this device. New accounts are added there.')
     expect(markup).toContain('authenticate with Google for this device. This uses credentials')
-    expect(markup).not.toContain('ShowingThis device')
     expect(markup).not.toContain('forThis device')
   })
 
-  it('localizes the runtime label before interpolating account copy', async () => {
+  it('localizes the runtime label before interpolating Gemini credential copy', async () => {
     await i18n.changeLanguage('es')
 
     const markup = renderPane(getDefaultSettings('/tmp'))
 
-    expect(markup).toMatch(
-      /Mostrando cuentas para [Ee]ste dispositivo\. Las nuevas cuentas se agregan allí\./
-    )
+    expect(markup).toMatch(/este dispositivo|Este dispositivo/i)
     expect(markup).not.toContain('This device')
   })
 })

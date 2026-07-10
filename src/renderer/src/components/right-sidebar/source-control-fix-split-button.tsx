@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ChevronDown, RefreshCw, SlidersHorizontal, Sparkle } from 'lucide-react'
+import { ChevronDown, RefreshCw, SlidersHorizontal, Sparkle } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,

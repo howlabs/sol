@@ -1,5 +1,5 @@
 import React from 'react'
-import { Ban, Plus, RotateCcw, Terminal } from 'lucide-react'
+import { Ban, Plus, RotateCcw, Terminal } from '@/lib/icons'
 import {
   isDigitIndexActionId,
   type KeybindingActionId,

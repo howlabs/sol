@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { Copy, type LucideIcon } from 'lucide-react'
+import { Copy, type LucideIcon } from '@/lib/icons'
 import { toast } from 'sonner'
 import { ORCHESTRATION_SKILL_NAME } from '@/lib/agent-feature-install-commands'
 import { Button } from '@/components/ui/button'

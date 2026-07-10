@@ -10,8 +10,8 @@ import {
   MessageSquare,
   Sparkles,
   Terminal
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+} from '@/lib/icons'
+import type { LucideIcon } from '@/lib/icons'
 import CommentMarkdown from '@/components/sidebar/CommentMarkdown'
 import { cn } from '@/lib/utils'
 import {

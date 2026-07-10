@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AlertTriangle, ExternalLink, FolderPlus, GitBranchPlus, X } from 'lucide-react'
+import { AlertTriangle, ExternalLink, FolderPlus, GitBranchPlus, X } from '@/lib/icons'
 import { useAppStore } from '../store'
 import { isGitRepoKind } from '../../../shared/repo-kind'
 import type { Repo } from '../../../shared/types'
@@ -10,6 +10,7 @@ import {
 } from './landing-preflight-dismissal'
 import { ShortcutKeyCombo } from './ShortcutKeyCombo'
 import { useShortcutKeyDetails, type ShortcutKeyComboDetails } from '@/hooks/useShortcutLabel'
+import { Button } from './ui/button'
 import logo from '../../../../resources/logo.svg'
 import { translate } from '@/i18n/i18n'
 import {
@@ -17,6 +18,7 @@ import {
   hasGitHubBackedProject,
   type PreflightIssue
 } from './landing-preflight-issues'
+import { cn } from '@/lib/utils'
 
 type ShortcutItem = {
   id: string
@@ -68,39 +70,61 @@ function PreflightBanner({
   }
 
   return (
-    // Why: cap width below the max-w-lg column so the card reads as part of the
-    // centered content stack instead of stretching edge-to-edge. The styleguide
-    // reserves color for true error state — these are soft setup nudges, so use
-    // the quiet muted/border surface, not an amber frame.
-    <div className="w-full max-w-sm space-y-1.5 rounded-lg border border-border bg-muted/40 p-3">
+    // Why: soft setup nudges — muted surface + hairline, not amber marketing cards.
+    <div className="w-full space-y-0 divide-y divide-border/50 rounded-lg border border-border/60 bg-muted/30 text-left">
       {visibleIssues.map((issue) => (
-        <div
-          key={issue.id}
-          className="flex items-start gap-3 rounded-md px-1 py-1.5 first:pt-0 last:pb-0"
-        >
-          <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-500/70" />
-          <div className="min-w-0 flex-1 space-y-0.5">
+        <div key={issue.id} className="flex items-start gap-3 px-3.5 py-3">
+          <AlertTriangle className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+          <div className="min-w-0 flex-1 space-y-1">
             <p className="text-[13px] font-medium leading-snug text-foreground">{issue.title}</p>
-            <p className="text-xs leading-snug text-muted-foreground">{issue.description}</p>
+            <p className="text-[12px] leading-relaxed text-muted-foreground">{issue.description}</p>
             <button
-              className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-primary underline-offset-4 hover:underline cursor-pointer"
+              type="button"
+              className="mt-0.5 inline-flex items-center gap-1 text-[12px] font-medium text-foreground underline-offset-4 hover:underline cursor-pointer"
               onClick={() => window.api.shell.openUrl(issue.fixUrl)}
             >
               {issue.fixLabel}
               <ExternalLink className="size-3" />
             </button>
           </div>
-          {issue.dismissible && (
+          {issue.dismissible ? (
             <button
-              className="-mr-1 -mt-0.5 shrink-0 rounded p-1 text-muted-foreground/70 transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
+              type="button"
+              className="-mr-1 -mt-0.5 shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground cursor-pointer"
               onClick={() => dismiss(issue)}
               aria-label={translate('auto.components.Landing.preflightDismiss', 'Dismiss')}
             >
               <X className="size-3.5" />
             </button>
-          )}
+          ) : null}
         </div>
       ))}
+    </div>
+  )
+}
+
+function LandingShortcuts({ items }: { items: readonly ShortcutItem[] }): React.JSX.Element {
+  return (
+    <div className="w-full border-t border-border/50 pt-6">
+      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+        {translate('auto.components.Landing.shortcutsLabel', 'Shortcuts')}
+      </p>
+      <ul className="space-y-2.5">
+        {items.map((shortcut) => (
+          <li
+            key={shortcut.id}
+            className="grid grid-cols-[1fr_auto] items-center gap-4 text-[13px]"
+          >
+            <span className="text-muted-foreground">{shortcut.action}</span>
+            <ShortcutKeyCombo
+              keys={shortcut.shortcut.keys}
+              doubleTap={shortcut.shortcut.doubleTap}
+              separatorClassName="mx-0.5 text-[10px] text-muted-foreground/80"
+              keyCapClassName="min-w-6 border-border/60 bg-muted/40 px-1.5 py-0.5 text-[11px] font-medium shadow-none"
+            />
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
@@ -190,46 +214,66 @@ export default function Landing(): React.JSX.Element {
     ]
   }, [createTargetLabel, createWorktreeShortcut, nextWorktreeShortcut, previousWorktreeShortcut])
 
+  const createLabel = `${translate('auto.components.Landing.76a95f7f47', 'Create')} ${createTargetLabel.toLowerCase()}`
+
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-background">
-      <div className="w-full max-w-lg px-6">
-        <div className="flex flex-col items-center gap-4 py-8">
-          <div
-            className="flex items-center justify-center size-20 rounded-2xl border border-border/80 shadow-lg shadow-black/40"
-            style={{ backgroundColor: '#12181e' }}
-          >
-            <img
-              src={logo}
-              alt={translate('auto.components.Landing.520304a067', 'Orca logo')}
-              className="size-12"
-            />
+      {/* Why: empty canvas should read as a quiet document, not a marketing hero. */}
+      <div className="w-full max-w-sm px-6">
+        <div className="flex flex-col items-center gap-8 py-10">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div
+              className={cn(
+                'flex size-16 items-center justify-center rounded-xl',
+                // Why: mark asset is white-fill; tile uses foreground so contrast
+                // holds in light/dark without a hard-coded hex plate.
+                'bg-foreground'
+              )}
+            >
+              <img
+                src={logo}
+                alt={translate('auto.components.Landing.520304a067', 'Orca logo')}
+                className="size-9 dark:invert"
+              />
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-[2rem] font-semibold tracking-[-0.03em] text-foreground">
+                {translate('auto.components.Landing.6ca6ff404e', 'ORCA')}
+              </h1>
+              <p className="text-[13px] leading-relaxed text-muted-foreground">
+                {canCreateWorktree
+                  ? translate(
+                      'auto.components.Landing.9c00bd4adf',
+                      'Select a workspace from the sidebar to begin.'
+                    )
+                  : translate(
+                      'auto.components.Landing.cd21242762',
+                      'Add a project to get started.'
+                    )}
+              </p>
+            </div>
           </div>
-          <h1 className="text-4xl font-bold text-foreground tracking-tight">
-            {translate('auto.components.Landing.6ca6ff404e', 'ORCA')}
-          </h1>
 
-          {preflightIssues.length > 0 && <PreflightBanner issues={preflightIssues} repos={repos} />}
+          {preflightIssues.length > 0 ? (
+            <PreflightBanner issues={preflightIssues} repos={repos} />
+          ) : null}
 
-          <p className="text-sm text-muted-foreground text-center">
-            {canCreateWorktree
-              ? translate(
-                  'auto.components.Landing.9c00bd4adf',
-                  'Select a workspace from the sidebar to begin.'
-                )
-              : translate('auto.components.Landing.cd21242762', 'Add a project to get started.')}
-          </p>
-
-          <div className="flex items-center justify-center gap-2.5 flex-wrap">
-            <button
-              className="inline-flex items-center gap-1.5 bg-secondary/70 border border-border/80 text-foreground font-medium text-sm px-4 py-2 rounded-md cursor-pointer hover:bg-accent transition-colors"
+          <div className="flex w-full flex-col gap-2">
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              className="h-9 w-full gap-1.5 text-[13px]"
               onClick={() => openModal('add-repo')}
             >
               <FolderPlus className="size-3.5" />
               {translate('auto.components.Landing.f9eaa9e12d', 'Add Project')}
-            </button>
-
-            <button
-              className="inline-flex items-center gap-1.5 bg-secondary/70 border border-border/80 text-foreground font-medium text-sm px-4 py-2 rounded-md transition-colors disabled:opacity-40 disabled:cursor-not-allowed enabled:cursor-pointer enabled:hover:bg-accent"
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="h-9 w-full gap-1.5 text-[13px]"
               disabled={!canCreateWorktree}
               title={
                 !canCreateWorktree
@@ -239,23 +283,11 @@ export default function Landing(): React.JSX.Element {
               onClick={() => openModal('new-workspace-composer', { telemetrySource: 'unknown' })}
             >
               <GitBranchPlus className="size-3.5" />
-              {translate('auto.components.Landing.76a95f7f47', 'Create')}{' '}
-              {createTargetLabel.toLowerCase()}
-            </button>
+              {createLabel}
+            </Button>
           </div>
 
-          <div className="mt-6 w-full max-w-xs space-y-2">
-            {shortcuts.map((shortcut) => (
-              <div key={shortcut.id} className="grid grid-cols-[1fr_auto] items-center gap-3">
-                <span className="text-sm text-muted-foreground">{shortcut.action}</span>
-                <ShortcutKeyCombo
-                  keys={shortcut.shortcut.keys}
-                  doubleTap={shortcut.shortcut.doubleTap}
-                  separatorClassName="mx-0.5 text-[10px] text-muted-foreground"
-                />
-              </div>
-            ))}
-          </div>
+          <LandingShortcuts items={shortcuts} />
         </div>
       </div>
     </div>

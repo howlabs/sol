@@ -3,13 +3,10 @@
 import { act } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { getExecutionHostLabel } from '../../../../shared/execution-host'
 import {
   GitHubIntegrationCard,
   GitLabIntegrationCard
 } from './cli-source-control-integration-cards'
-
-const LOCAL_HOST_LABEL = getExecutionHostLabel('local')
 
 type StoreState = {
   settings: { activeRuntimeEnvironmentId: string | null }
@@ -61,7 +58,7 @@ async function renderCard(card: React.ReactNode): Promise<HTMLDivElement> {
   return container
 }
 
-describe('CLI source-control integration card account scope', () => {
+describe('CLI source-control integration cards', () => {
   afterEach(async () => {
     if (root) {
       await act(async () => {
@@ -78,7 +75,7 @@ describe('CLI source-control integration card account scope', () => {
     mocks.preflight.refresh.mockClear()
   })
 
-  it('shows local-client ownership for connected GitHub CLI credentials', async () => {
+  it('shows GitHub status and opens remote servers', async () => {
     const openSettingsPage = vi.fn()
     const openSettingsTarget = vi.fn()
     mocks.store.current = {
@@ -91,13 +88,11 @@ describe('CLI source-control integration card account scope', () => {
 
     expect(rendered.textContent).toContain('GitHub')
     expect(rendered.textContent).toContain('Connected')
-    expect(rendered.textContent).toContain(`Account scope: ${LOCAL_HOST_LABEL}`)
-    expect(rendered.textContent).toContain(
-      'Credentials and account checks for this provider are owned by this desktop client. Use Settings > Remote Orca Servers > Advanced to edit server-owned credentials.'
-    )
+    expect(rendered.textContent).toContain('Check again')
+    expect(rendered.textContent).toContain('Open remote servers')
     await act(async () => {
       Array.from(rendered.querySelectorAll('button'))
-        .find((button) => button.textContent === 'Open Remote Servers')
+        .find((button) => button.textContent === 'Open remote servers')
         ?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
     })
 
@@ -109,7 +104,7 @@ describe('CLI source-control integration card account scope', () => {
     })
   })
 
-  it('shows remote-server ownership for GitLab CLI credential checks', async () => {
+  it('shows GitLab sign-in actions when not authenticated', async () => {
     mocks.store.current = {
       settings: { activeRuntimeEnvironmentId: 'runtime-1' },
       openSettingsPage: vi.fn(),
@@ -120,10 +115,8 @@ describe('CLI source-control integration card account scope', () => {
     const rendered = await renderCard(<GitLabIntegrationCard />)
 
     expect(rendered.textContent).toContain('GitLab')
-    expect(rendered.textContent).toContain('Account scope: Remote server: runtime-1')
-    expect(rendered.textContent).toContain(
-      'Credentials and account checks for this provider are owned by this remote server. Use Settings > Remote Orca Servers > Advanced to edit another default runtime scope.'
-    )
-    expect(rendered.textContent).toContain('glab auth login')
+    expect(rendered.textContent).toContain('Sign in required')
+    expect(rendered.textContent).toContain('Learn more')
+    expect(rendered.textContent).toContain('Check again')
   })
 })

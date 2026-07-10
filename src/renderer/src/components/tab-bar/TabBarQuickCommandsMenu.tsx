@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronDown, Play } from 'lucide-react'
+import { ChevronDown, Play } from '@/lib/icons'
 import {
   Command,
   CommandEmpty,

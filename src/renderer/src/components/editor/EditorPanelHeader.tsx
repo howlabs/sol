@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Columns2, Eye, FileText, ListTree, Rows2 } from 'lucide-react'
+import { Columns2, Eye, FileText, ListTree, Rows2 } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import type { OpenFile } from '@/store/slices/editor'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'

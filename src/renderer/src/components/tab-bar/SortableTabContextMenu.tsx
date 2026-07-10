@@ -7,7 +7,7 @@ import {
   SquareTerminal,
   X,
   ListX
-} from 'lucide-react'
+} from '@/lib/icons'
 import {
   DropdownMenu,
   DropdownMenuContent,

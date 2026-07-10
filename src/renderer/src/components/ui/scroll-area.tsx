@@ -1,38 +1,45 @@
+'use client'
+
 import * as React from 'react'
-import { ScrollArea as ScrollAreaPrimitive } from 'radix-ui'
+import { ScrollArea as ScrollAreaPrimitive } from '@base-ui/react/scroll-area'
 
 import { cn } from '@/lib/utils'
 
+type ScrollAreaProps = ScrollAreaPrimitive.Root.Props & {
+  /** Forwarded to the viewport (call sites clamp max-height here, not only on Root). */
+  viewportProps?: ScrollAreaPrimitive.Viewport.Props
+}
+
 function ScrollArea({
   className,
-  viewportClassName,
-  viewportRef,
-  viewportTabIndex,
-  viewportProps,
   children,
+  style,
+  viewportProps,
   ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.Root> & {
-  viewportClassName?: string
-  viewportRef?: React.Ref<HTMLDivElement>
-  /** Set e.g. -1 so the viewport can receive programmatic focus (explorer keyboard shortcuts after inline rename). */
-  viewportTabIndex?: number
-  viewportProps?: React.ComponentProps<typeof ScrollAreaPrimitive.Viewport>
-}) {
+}: ScrollAreaProps): React.JSX.Element {
+  const {
+    className: viewportClassName,
+    style: viewportStyle,
+    ...viewportRest
+  } = viewportProps ?? {}
+
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
+      // Why: match Radix ScrollArea Root's inline relative positioning so
+      // absolute className on the root never wins unexpectedly (see test).
+      style={{ ...style, position: 'relative' }}
       className={cn('relative', className)}
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
-        ref={viewportRef}
-        tabIndex={viewportTabIndex}
         data-slot="scroll-area-viewport"
         className={cn(
-          'size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1',
+          'size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
           viewportClassName
         )}
-        {...viewportProps}
+        style={viewportStyle}
+        {...viewportRest}
       >
         {children}
       </ScrollAreaPrimitive.Viewport>
@@ -46,24 +53,23 @@ function ScrollBar({
   className,
   orientation = 'vertical',
   ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>) {
+}: ScrollAreaPrimitive.Scrollbar.Props): React.JSX.Element {
   return (
-    <ScrollAreaPrimitive.ScrollAreaScrollbar
+    <ScrollAreaPrimitive.Scrollbar
       data-slot="scroll-area-scrollbar"
+      data-orientation={orientation}
       orientation={orientation}
       className={cn(
-        'flex touch-none p-px transition-colors select-none bg-transparent',
-        orientation === 'vertical' && 'h-full w-3 py-2 border-l border-l-transparent',
-        orientation === 'horizontal' && 'h-3 px-2 flex-col border-t border-t-transparent',
+        'flex touch-none p-px transition-colors select-none data-horizontal:h-2.5 data-horizontal:flex-col data-horizontal:border-t data-horizontal:border-t-transparent data-vertical:h-full data-vertical:w-2.5 data-vertical:border-l data-vertical:border-l-transparent',
         className
       )}
       {...props}
     >
-      <ScrollAreaPrimitive.ScrollAreaThumb
+      <ScrollAreaPrimitive.Thumb
         data-slot="scroll-area-thumb"
-        className="relative flex-1 rounded-full bg-muted-foreground/40 hover:bg-muted-foreground/60"
+        className="relative flex-1 rounded-full bg-border"
       />
-    </ScrollAreaPrimitive.ScrollAreaScrollbar>
+    </ScrollAreaPrimitive.Scrollbar>
   )
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, SquareChevronRight } from 'lucide-react'
+import { ChevronDown, SquareChevronRight } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
 import {

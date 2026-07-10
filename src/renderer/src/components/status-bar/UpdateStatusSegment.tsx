@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertCircle, CheckCircle2, Download } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Download } from '@/lib/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAppStore } from '../../store'
 import { translate } from '@/i18n/i18n'

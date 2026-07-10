@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Copy, Loader2, RefreshCw, Server } from 'lucide-react'
+import { ArrowRight, Check, Copy, Loader2, RefreshCw, Server } from '@/lib/icons'
 import type React from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -7,6 +7,7 @@ import { useAppStore } from '@/store'
 import { Button } from '../ui/button'
 import { AgentSkillSetupPanel } from './AgentSkillSetupPanel'
 import { EphemeralVmRecipeRow } from './EphemeralVmRecipeRow'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 import { translate } from '@/i18n/i18n'
 import {
   AGENT_SKILL_CLI_PREREQUISITE_NOTICE,
@@ -128,6 +129,7 @@ export function EphemeralVmsPane(): React.JSX.Element {
   const recipes = catalog.flatMap((entry) => entry.recipes.map((recipe) => ({ entry, recipe })))
 
   return (
+    // Why: setup/skill template — skill install + recipe list (STYLEGUIDE).
     <div className="space-y-6" data-settings-section="ephemeral-vms">
       <AgentSkillSetupPanel
         title={translate(
@@ -166,12 +168,12 @@ export function EphemeralVmsPane(): React.JSX.Element {
       />
 
       <div className="space-y-3 rounded-lg border border-border/60 bg-card/30 p-4">
-        <div className="text-sm font-medium">
-          {translate(
+        <SettingsSubsectionHeader
+          title={translate(
             'auto.components.settings.EphemeralVmsPane.whatTitle',
             'What the skill does, with you'
           )}
-        </div>
+        />
         <ul className="space-y-2">
           <WhatItem
             text={translate(
@@ -226,17 +228,14 @@ export function EphemeralVmsPane(): React.JSX.Element {
 
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0 space-y-0.5">
-            <div className="text-sm font-medium">
-              {translate('auto.components.settings.EphemeralVmsPane.recipes', 'Recipes')}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {translate(
-                'auto.components.settings.EphemeralVmsPane.recipesHelp',
-                'Recipes your agent adds to orca.yaml show up here, ready to launch a workspace on.'
-              )}
-            </p>
-          </div>
+          <SettingsSubsectionHeader
+            className="min-w-0 flex-1"
+            title={translate('auto.components.settings.EphemeralVmsPane.recipes', 'Recipes')}
+            description={translate(
+              'auto.components.settings.EphemeralVmsPane.recipesHelp',
+              'Recipes your agent adds to orca.yaml show up here, ready to launch a workspace on.'
+            )}
+          />
           <Button
             type="button"
             variant="outline"
@@ -254,7 +253,7 @@ export function EphemeralVmsPane(): React.JSX.Element {
 
         <div className="rounded-lg border border-border/50 bg-card/30">
           {recipes.length === 0 ? (
-            <div className="px-3 py-4 text-sm text-muted-foreground">
+            <div className="px-3 py-4 text-[11px] leading-snug text-muted-foreground">
               {isLoading
                 ? translate(
                     'auto.components.settings.EphemeralVmsPane.checking',

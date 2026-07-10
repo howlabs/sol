@@ -1,5 +1,5 @@
 import type React from 'react'
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal } from '@/lib/icons'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,

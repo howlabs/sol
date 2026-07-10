@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Check } from 'lucide-react'
+import { Check } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
 import { formatAskAnswer, type AskPrompt } from './native-chat-interactive-prompt'

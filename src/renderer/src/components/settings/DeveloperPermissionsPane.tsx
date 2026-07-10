@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   Usb,
   Workflow
-} from 'lucide-react'
+} from '@/lib/icons'
 import { toast } from 'sonner'
 import type {
   DeveloperPermissionId,
@@ -316,17 +316,18 @@ export function DeveloperPermissionsPane(): React.JSX.Element {
   }
 
   return (
-    <div className="space-y-5">
+    // Why: setup/skill template — macOS privacy grant list (STYLEGUIDE).
+    <div className="space-y-4">
       <div className="flex items-start justify-between gap-4 rounded-lg border border-border/60 bg-muted/25 px-4 py-3">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <ShieldCheck className="size-4" />
+        <div className="min-w-0 space-y-0.5">
+          <div className="flex items-center gap-2 text-xs font-semibold tracking-tight">
+            <ShieldCheck className="size-3.5 shrink-0" />
             {translate(
               'auto.components.settings.DeveloperPermissionsPane.6f011b9bf6',
               "Terminal tools inherit Orca's macOS privacy envelope."
             )}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[11px] leading-snug text-muted-foreground">
             {translate(
               'auto.components.settings.DeveloperPermissionsPane.6326a4c5cc',
               'Use these controls when a CLI, local app, or automation tool needs macOS privacy access. Orca does not ask at startup.'
@@ -350,7 +351,7 @@ export function DeveloperPermissionsPane(): React.JSX.Element {
                 <div className="mt-0.5 text-muted-foreground">{permission.icon}</div>
                 <div className="min-w-0 space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-medium">{permission.label}</span>
+                    <span className="text-xs font-medium">{permission.label}</span>
                     <span
                       className={`rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${statusClass(
                         status

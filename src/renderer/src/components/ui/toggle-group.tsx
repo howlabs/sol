@@ -2,7 +2,8 @@
 
 import * as React from 'react'
 import type { VariantProps } from 'class-variance-authority'
-import { ToggleGroup as ToggleGroupPrimitive } from 'radix-ui'
+import { Toggle as TogglePrimitive } from '@base-ui/react/toggle'
+import { ToggleGroup as ToggleGroupPrimitive } from '@base-ui/react/toggle-group'
 
 import { cn } from '@/lib/utils'
 import { toggleVariants } from '@/components/ui/toggle'
@@ -17,25 +18,80 @@ const ToggleGroupContext = React.createContext<
   spacing: 0
 })
 
+type ToggleGroupType = 'single' | 'multiple'
+
+type ToggleGroupProps = Omit<
+  ToggleGroupPrimitive.Props,
+  'value' | 'defaultValue' | 'onValueChange' | 'multiple'
+> &
+  VariantProps<typeof toggleVariants> & {
+    spacing?: number
+    /** Radix-compatible: single selection (default) or multi. Maps to Base UI `multiple`. */
+    type?: ToggleGroupType
+    value?: string | readonly string[]
+    defaultValue?: string | readonly string[]
+    /**
+     * Radix-compatible callback.
+     * - `type="single"`: string (selected value) or '' when cleared
+     * - `type="multiple"`: string[] of selected values
+     */
+    onValueChange?: (value: string | string[]) => void
+  }
+
+function toBaseUiValue(
+  value: string | readonly string[] | undefined
+): readonly string[] | undefined {
+  if (value === undefined) {
+    return undefined
+  }
+  if (Array.isArray(value)) {
+    return value
+  }
+  return value ? [value as string] : []
+}
+
 function ToggleGroup({
   className,
   variant,
   size,
   spacing = 0,
+  type = 'single',
+  value,
+  defaultValue,
+  onValueChange,
   children,
   ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Root> &
-  VariantProps<typeof toggleVariants> & {
-    spacing?: number
-  }) {
+}: ToggleGroupProps): React.JSX.Element {
   const contextValue = React.useMemo(() => ({ variant, size, spacing }), [variant, size, spacing])
+  const multiple = type === 'multiple'
+
+  // Why: Base UI ToggleGroup is always array-valued. Radix used type=single +
+  // string value (e.g. sidebar Group by). Bridge so selection + pressed styles work.
+  const handleValueChange = React.useCallback(
+    (groupValue: string[]) => {
+      if (!onValueChange) {
+        return
+      }
+      if (multiple) {
+        onValueChange(groupValue)
+        return
+      }
+      onValueChange(groupValue[0] ?? '')
+    },
+    [multiple, onValueChange]
+  )
 
   return (
-    <ToggleGroupPrimitive.Root
+    <ToggleGroupPrimitive
       data-slot="toggle-group"
       data-variant={variant}
       data-size={size}
       data-spacing={spacing}
+      data-type={type}
+      multiple={multiple}
+      value={toBaseUiValue(value)}
+      defaultValue={toBaseUiValue(defaultValue)}
+      onValueChange={handleValueChange}
       style={{ '--gap': spacing } as React.CSSProperties}
       className={cn(
         'group/toggle-group flex w-fit items-center gap-[--spacing(var(--gap))] rounded-md data-[spacing=default]:data-[variant=outline]:shadow-xs',
@@ -44,7 +100,7 @@ function ToggleGroup({
       {...props}
     >
       <ToggleGroupContext.Provider value={contextValue}>{children}</ToggleGroupContext.Provider>
-    </ToggleGroupPrimitive.Root>
+    </ToggleGroupPrimitive>
   )
 }
 
@@ -54,11 +110,11 @@ function ToggleGroupItem({
   variant,
   size,
   ...props
-}: React.ComponentProps<typeof ToggleGroupPrimitive.Item> & VariantProps<typeof toggleVariants>) {
+}: TogglePrimitive.Props & VariantProps<typeof toggleVariants>): React.JSX.Element {
   const context = React.useContext(ToggleGroupContext)
 
   return (
-    <ToggleGroupPrimitive.Item
+    <TogglePrimitive
       data-slot="toggle-group-item"
       data-variant={context.variant || variant}
       data-size={context.size || size}
@@ -75,7 +131,7 @@ function ToggleGroupItem({
       {...props}
     >
       {children}
-    </ToggleGroupPrimitive.Item>
+    </TogglePrimitive>
   )
 }
 

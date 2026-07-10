@@ -38,7 +38,7 @@ import {
   FolderKanban,
   Tag,
   UserRound
-} from 'lucide-react'
+} from '@/lib/icons'
 import { toast } from 'sonner'
 
 import { useAppStore } from '@/store'
@@ -12301,7 +12301,7 @@ export default function TaskPage(): React.JSX.Element {
                   </PopoverTrigger>
                   <PopoverContent
                     align="start"
-                    className="w-[var(--radix-popover-trigger-width)] min-w-[18rem] p-0"
+                    className="w-[var(--anchor-width)] min-w-[18rem] p-0"
                     onOpenAutoFocus={(event) => event.preventDefault()}
                   >
                     <Command

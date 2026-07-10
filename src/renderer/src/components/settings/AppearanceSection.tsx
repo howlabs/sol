@@ -1,5 +1,5 @@
 import type React from 'react'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 
 type AppearanceSectionProps = {
@@ -28,10 +28,12 @@ export function AppearanceSection({
 }: AppearanceSectionProps): React.JSX.Element {
   const contentId = `appearance-section-${id}`
   return (
+    // Why: SettingsSection already is the page card; a second bg-card shell
+    // stacks as card-in-card. Quiet list-row surface only — one border max.
     <div
       className={cn(
-        'overflow-hidden rounded-xl border border-border/50 bg-card transition-colors',
-        open && 'border-ring/40'
+        'overflow-hidden rounded-md border border-border/50 bg-muted/10 transition-colors',
+        open && 'border-border/70'
       )}
     >
       <button
@@ -39,20 +41,23 @@ export function AppearanceSection({
         aria-expanded={open}
         aria-controls={contentId}
         onClick={onToggle}
-        className="flex w-full items-center gap-3.5 px-4 py-3.5 text-left transition-colors hover:bg-accent/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+        className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition-colors hover:bg-accent/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
       >
-        <span className="grid size-8 shrink-0 place-items-center rounded-md bg-secondary text-foreground [&_svg]:size-4">
+        {/* Why: Mira density — size-7 tile matches Integrations/settings list rows. */}
+        <span className="grid size-7 shrink-0 place-items-center rounded-md bg-secondary text-foreground [&_svg]:size-3.5">
           {icon}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold">{title}</span>
+          <span className="block text-xs font-semibold tracking-tight">{title}</span>
           {!open ? (
-            <span className="block truncate text-xs text-muted-foreground">{summary}</span>
+            <span className="mt-0.5 block truncate text-[11px] leading-snug text-muted-foreground">
+              {summary}
+            </span>
           ) : null}
         </span>
         <ChevronRight
           className={cn(
-            'size-[18px] shrink-0 text-muted-foreground transition-transform',
+            'size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ease-out motion-reduce:transition-none',
             open && 'rotate-90 text-foreground'
           )}
         />
@@ -61,14 +66,15 @@ export function AppearanceSection({
         className={cn(
           'grid overflow-hidden transition-[grid-template-rows,opacity,border-color] duration-200 ease-out motion-reduce:transition-none',
           open
-            ? 'grid-rows-[1fr] border-t border-border/50 opacity-100'
+            ? 'grid-rows-[1fr] border-t border-border/40 opacity-100'
             : 'grid-rows-[0fr] border-t border-transparent opacity-0'
         )}
         aria-hidden={!open}
         inert={!open}
       >
         <div className="min-h-0 overflow-hidden">
-          <div id={contentId} role="region" className="px-4 pt-1 pb-4">
+          {/* Why: expanded body is flat list rows only — no nested card chrome. */}
+          <div id={contentId} role="region" className="px-3 pb-2.5 pt-1">
             {children}
           </div>
         </div>

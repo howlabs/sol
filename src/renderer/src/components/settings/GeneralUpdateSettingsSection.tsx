@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { Download, Loader2, RefreshCw } from 'lucide-react'
+import { Download, Loader2, RefreshCw } from '@/lib/icons'
 import { toast } from 'sonner'
 import { useAppStore } from '../../store'
 import { Button } from '../ui/button'
@@ -60,7 +60,7 @@ export function GeneralUpdateSettingsSection(): React.JSX.Element {
   }
 
   return (
-    <section key="updates" className="space-y-4">
+    <section key="updates" className="space-y-1.5">
       <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.GeneralUpdateSettingsSection.f2b1ccc12a',
@@ -83,9 +83,9 @@ export function GeneralUpdateSettingsSection(): React.JSX.Element {
           'Check for app updates and install a newer Orca version.'
         )}
         keywords={['update', 'version', 'release notes', 'download']}
-        className="space-y-3"
+        className="space-y-1.5"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -94,7 +94,7 @@ export function GeneralUpdateSettingsSection(): React.JSX.Element {
             onClick={(event) => window.api.updater.check(getUpdateCheckClickOptions(event))}
             title={updateCheckHint}
             disabled={updateStatus.state === 'checking' || updateStatus.state === 'downloading'}
-            className="gap-2"
+            className="gap-1.5"
           >
             {updateStatus.state === 'checking' ? (
               <Loader2 className="size-3.5 animate-spin" />
@@ -124,7 +124,7 @@ export function GeneralUpdateSettingsSection(): React.JSX.Element {
                   )
                 })
               }}
-              className="gap-2"
+              className="gap-1.5"
             >
               <Download className="size-3.5" />
               {translate(
@@ -134,7 +134,7 @@ export function GeneralUpdateSettingsSection(): React.JSX.Element {
               {updateStatus.version})
             </Button>
           ) : updateStatus.state === 'downloaded' ? (
-            <Button variant="default" size="sm" onClick={handleRestartToUpdate} className="gap-2">
+            <Button variant="default" size="sm" onClick={handleRestartToUpdate} className="gap-1.5">
               <Download className="size-3.5" />
               {translate(
                 'auto.components.settings.GeneralUpdateSettingsSection.f44299636f',
@@ -145,7 +145,7 @@ export function GeneralUpdateSettingsSection(): React.JSX.Element {
           ) : null}
         </div>
 
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[11px] leading-snug text-muted-foreground">
           {updateStatus.state === 'idle' &&
             translate(
               'auto.components.settings.GeneralUpdateSettingsSection.d69a09b672',

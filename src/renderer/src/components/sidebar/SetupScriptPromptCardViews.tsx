@@ -1,5 +1,5 @@
 import React from 'react'
-import { Check, Download, LoaderCircle, PackageCheck, RefreshCw, Settings, X } from 'lucide-react'
+import { Check, Download, LoaderCircle, PackageCheck, RefreshCw, Settings, X } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'

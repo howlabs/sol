@@ -21,7 +21,7 @@ import {
   SquareTerminal,
   Wrench,
   type LucideIcon
-} from 'lucide-react'
+} from '@/lib/icons'
 import type { RepoIcon } from '../../../../shared/repo-icon'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'

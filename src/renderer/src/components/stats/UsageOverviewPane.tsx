@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { Activity, CalendarDays, Coins, DatabaseZap, RefreshCw, Sparkles } from 'lucide-react'
+import { Activity, CalendarDays, Coins, DatabaseZap, RefreshCw, Sparkles } from '@/lib/icons'
 import { useAppStore } from '../../store'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -12,6 +12,8 @@ import {
   getRecentUsageDays
 } from './usage-overview-model'
 import { DailyIntensityGrid, ProviderUsageRow, TokenMixBar } from './usage-overview-sections'
+import { SettingsSubsectionHeader } from '@/components/settings/SettingsFormControls'
+import { USAGE_SUBPANEL_SHELL_CLASS } from './usage-panel-shell'
 import { translate } from '@/i18n/i18n'
 
 const RECENT_DAY_COUNT = 42
@@ -102,62 +104,59 @@ export function UsageOverviewPane(): React.JSX.Element {
     ])
   }
 
+  const overviewStatusLine = `${formatUpdatedAt(overview.lastUpdatedAt)}${
+    overview.hasPartialCost
+      ? translate(
+          'auto.components.stats.UsageOverviewPane.55c910f4f1',
+          ' • some model prices are unavailable'
+        )
+      : ''
+  }`
+
   return (
-    <div className="space-y-4" data-testid="usage-overview-pane">
-      <section className="rounded-lg border border-border/60 bg-card/30 p-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-foreground">
-              {translate('auto.components.stats.UsageOverviewPane.c760c481c5', 'Usage Overview')}
-            </h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {formatUpdatedAt(overview.lastUpdatedAt)}
-              {overview.hasPartialCost
-                ? translate(
-                    'auto.components.stats.UsageOverviewPane.55c910f4f1',
-                    '- some model prices are unavailable'
-                  )
-                : ''}
-            </p>
-          </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={handleRefresh}
-                disabled={!overview.hasAnyEnabledProvider || isScanning}
-                aria-label={translate(
-                  'auto.components.stats.UsageOverviewPane.e06d1baf5c',
-                  'Refresh usage overview'
-                )}
-              >
-                <RefreshCw className={`size-3.5 ${isScanning ? 'animate-spin' : ''}`} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={6}>
-              {translate('auto.components.stats.UsageOverviewPane.ca6bc5fded', 'Refresh')}
-            </TooltipContent>
-          </Tooltip>
-        </div>
+    <div className="space-y-1" data-testid="usage-overview-pane">
+      {/* Why: no outer USAGE panel card — SettingsSection is already the page
+          surface; KPI tiles + flat subblocks keep one card depth. */}
+      <section className={`${USAGE_SUBPANEL_SHELL_CLASS}`}>
+        <SettingsSubsectionHeader
+          title={translate('auto.components.stats.UsageOverviewPane.c760c481c5', 'Usage Overview')}
+          description={overviewStatusLine}
+          action={
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={handleRefresh}
+                  disabled={!overview.hasAnyEnabledProvider || isScanning}
+                  aria-label={translate(
+                    'auto.components.stats.UsageOverviewPane.e06d1baf5c',
+                    'Refresh usage overview'
+                  )}
+                >
+                  <RefreshCw className={`size-3.5 ${isScanning ? 'animate-spin' : ''}`} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={6}>
+                {translate('auto.components.stats.UsageOverviewPane.ca6bc5fded', 'Refresh')}
+              </TooltipContent>
+            </Tooltip>
+          }
+        />
 
         {!overview.hasAnyEnabledProvider ? (
-          <div className="mt-4 rounded-lg border border-dashed border-border/60 bg-card/30 px-4 py-5">
-            <div className="max-w-xl space-y-3">
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  {translate(
-                    'auto.components.stats.UsageOverviewPane.49405ccc8d',
-                    'Start tracking tokens'
-                  )}
-                </h4>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {translate(
-                    'auto.components.stats.UsageOverviewPane.6c00c46815',
-                    'Enable a provider to scan local agent logs and build the combined token ledger.'
-                  )}
-                </p>
-              </div>
+          <div className="rounded-md border border-dashed border-border/50 px-3 py-4">
+            <div className="max-w-xl space-y-2">
+              <SettingsSubsectionHeader
+                title={translate(
+                  'auto.components.stats.UsageOverviewPane.49405ccc8d',
+                  'Start tracking tokens'
+                )}
+                description={translate(
+                  'auto.components.stats.UsageOverviewPane.6c00c46815',
+                  'Enable a provider to scan local agent logs and build the combined token ledger.'
+                )}
+              />
               <div className="flex flex-wrap gap-2">
                 <Button
                   size="sm"
@@ -196,7 +195,7 @@ export function UsageOverviewPane(): React.JSX.Element {
           </div>
         ) : (
           <>
-            <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
               <StatCard
                 label={translate(
                   'auto.components.stats.UsageOverviewPane.3887b94ce5',
@@ -229,14 +228,14 @@ export function UsageOverviewPane(): React.JSX.Element {
             </div>
 
             {!overview.hasAnyData ? (
-              <div className="mt-4 rounded-lg border border-dashed border-border/60 bg-card/30 px-4 py-5 text-sm text-muted-foreground">
+              <p className="text-[11px] leading-snug text-muted-foreground">
                 {translate(
                   'auto.components.stats.UsageOverviewPane.60002bb22f',
                   'No local Claude, Codex, or OpenCode usage found yet. The overview will populate after the next agent session writes token logs.'
                 )}
-              </div>
+              </p>
             ) : (
-              <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+              <div className="grid gap-4 border-t border-border/40 pt-3 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
                 <DailyIntensityGrid days={recentDays} bestDay={overview.bestDay} />
                 <TokenMixBar overview={overview} />
               </div>
@@ -245,26 +244,19 @@ export function UsageOverviewPane(): React.JSX.Element {
         )}
       </section>
 
-      <section className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h4 className="text-sm font-semibold text-foreground">
-              {translate('auto.components.stats.UsageOverviewPane.33f7b043d2', 'Providers')}
-            </h4>
-            <p className="text-xs text-muted-foreground">
-              {overview.enabledProviderCount}{' '}
-              {translate('auto.components.stats.UsageOverviewPane.ecb0cd8a4c', 'enabled -')}
-              {overview.dataProviderCount}{' '}
-              {translate('auto.components.stats.UsageOverviewPane.444585cb41', 'with data')}
-            </p>
-          </div>
-          <Badge variant="outline" className="gap-1">
-            <Activity className="size-3" />
-            {overview.sessions.toLocaleString()}{' '}
-            {translate('auto.components.stats.UsageOverviewPane.22ed1b7669', 'sessions')}
-          </Badge>
-        </div>
-        <div className="grid gap-3 xl:grid-cols-2">
+      <section className="space-y-1.5">
+        <SettingsSubsectionHeader
+          title={translate('auto.components.stats.UsageOverviewPane.33f7b043d2', 'Providers')}
+          description={`${overview.enabledProviderCount} ${translate('auto.components.stats.UsageOverviewPane.ecb0cd8a4c', 'enabled ·')} ${overview.dataProviderCount} ${translate('auto.components.stats.UsageOverviewPane.444585cb41', 'with data')}`}
+          action={
+            <Badge variant="outline" className="h-5 gap-1 text-[10px]">
+              <Activity className="size-3" />
+              {overview.sessions.toLocaleString()}{' '}
+              {translate('auto.components.stats.UsageOverviewPane.22ed1b7669', 'sessions')}
+            </Badge>
+          }
+        />
+        <div className="grid gap-2 xl:grid-cols-2">
           {overview.providers.map((provider) => (
             <ProviderUsageRow
               key={provider.id}

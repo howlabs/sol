@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { FolderOpen, Globe, Monitor, Plus } from 'lucide-react'
+import { FolderOpen, Globe, Monitor, Plus } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 
 export type AddRepoLocalStartActionHandlers = {
@@ -21,6 +21,10 @@ export type AddRepoLocalStartAction = {
   onClick: () => void
 }
 
+/**
+ * Ordered entry paths for Add Project. Browse is always first; secondary order
+ * prefers SSH when the user looks SSH-likely.
+ */
 export function getAddRepoLocalStartActions({
   isSshLikely,
   onBrowse,
@@ -34,8 +38,8 @@ export function getAddRepoLocalStartActions({
   primaryAction: AddRepoLocalStartAction
   secondaryActions: AddRepoLocalStartAction[]
 } {
-  const primaryAction = {
-    kind: 'browse' as const,
+  const primaryAction: AddRepoLocalStartAction = {
+    kind: 'browse',
     icon: FolderOpen,
     title:
       browseHostKind === 'ssh'
@@ -59,14 +63,14 @@ export function getAddRepoLocalStartActions({
               'Existing Git repository or folder on this host'
             )
           : translate(
-              'auto.components.sidebar.add.repo.local.start.actions.fb4fc5380e',
-              'Local project, Git repo, or folder with many repos'
+              'auto.components.sidebar.add.repo.local.start.actions.browseLocalShort',
+              'Open a local Git repo or project folder'
             ),
     onClick: onBrowse
   }
 
-  const remote = {
-    kind: 'remote' as const,
+  const remote: AddRepoLocalStartAction = {
+    kind: 'remote',
     icon: Monitor,
     title: translate(
       'auto.components.sidebar.add.repo.local.start.actions.3d162cc76f',
@@ -78,8 +82,9 @@ export function getAddRepoLocalStartActions({
     ),
     onClick: onOpenRemoteStep
   }
-  const clone = {
-    kind: 'clone' as const,
+
+  const clone: AddRepoLocalStartAction = {
+    kind: 'clone',
     icon: Globe,
     title: translate(
       'auto.components.sidebar.add.repo.local.start.actions.7edb8ebe24',
@@ -91,8 +96,9 @@ export function getAddRepoLocalStartActions({
     ),
     onClick: onOpenCloneStep
   }
-  const create = {
-    kind: 'create' as const,
+
+  const create: AddRepoLocalStartAction = {
+    kind: 'create',
     icon: Plus,
     title: translate(
       'auto.components.sidebar.add.repo.local.start.actions.c709860596',

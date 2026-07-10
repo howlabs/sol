@@ -1,5 +1,5 @@
 import React from 'react'
-import { List, ListTree, MessageSquare, MoreHorizontal, RefreshCw, Settings2 } from 'lucide-react'
+import { List, ListTree, MessageSquare, MoreHorizontal, RefreshCw, Settings2 } from '@/lib/icons'
 import type { SourceControlViewMode } from '../../../../shared/types'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'

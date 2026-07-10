@@ -24,7 +24,7 @@ import {
   ZoomIn,
   ZoomOut,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import type {
   AgentStatusEntry,
   MigrationUnsupportedPtyEntry

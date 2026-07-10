@@ -1,7 +1,7 @@
 import type React from 'react'
 import type { GlobalSettings } from '../../../../shared/types'
 import { useAppStore } from '../../store'
-import { Separator } from '../ui/separator'
+
 import { CliSection } from './CliSection'
 import { GeneralEditorSettingsSection } from './GeneralEditorSettingsSection'
 import { GeneralUpdateSettingsSection } from './GeneralUpdateSettingsSection'
@@ -100,7 +100,7 @@ export function GeneralPane({
 
   const visibleSections = [
     matchesSettingsSearch(searchQuery, generalNavigationSearchEntries) ? (
-      <section key="navigation" className="space-y-4">
+      <section key="navigation" className="space-y-1.5">
         <SettingsSubsectionHeader
           title={translate('auto.components.settings.GeneralPane.d58fccfd84', 'Navigation')}
         />
@@ -149,7 +149,7 @@ export function GeneralPane({
       searchQuery,
       projectRuntimeSearchEntries
     ) ? (
-      <section key="project-runtime" className="space-y-4">
+      <section key="project-runtime" className="space-y-1.5">
         <SettingsSubsectionHeader
           title={translate(
             'auto.components.settings.GeneralPane.projectRuntime',
@@ -192,14 +192,5 @@ export function GeneralPane({
     ) : null
   ].filter(Boolean)
 
-  return (
-    <div className="space-y-6">
-      {visibleSections.map((section, index) => (
-        <div key={index} className="space-y-6">
-          {index > 0 ? <Separator /> : null}
-          {section}
-        </div>
-      ))}
-    </div>
-  )
+  return <div className="space-y-1">{visibleSections}</div>
 }

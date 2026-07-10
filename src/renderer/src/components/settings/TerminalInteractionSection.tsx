@@ -1,5 +1,5 @@
 import type { GlobalSettings } from '../../../../shared/types'
-import { RotateCcw } from 'lucide-react'
+import { RotateCcw } from '@/lib/icons'
 import { Slider } from '../ui/slider'
 import { Button } from '../ui/button'
 import { Label } from '../ui/label'

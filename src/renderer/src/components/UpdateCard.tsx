@@ -7,7 +7,7 @@ import { useAppStore } from '../store'
 import { Card } from './ui/card'
 import { Button } from './ui/button'
 import { Progress } from './ui/progress'
-import { AlertCircle, Check, Loader2, Minus, Network, RotateCw, X } from 'lucide-react'
+import { AlertCircle, Check, Loader2, Minus, Network, RotateCw, X } from '@/lib/icons'
 import type { ChangelogData } from '../../../shared/types'
 import { translate } from '@/i18n/i18n'
 

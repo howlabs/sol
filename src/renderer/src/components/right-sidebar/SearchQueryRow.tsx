@@ -1,5 +1,5 @@
 import React from 'react'
-import { Search as SearchIcon, CaseSensitive, WholeWord, Regex, X, Loader2 } from 'lucide-react'
+import { Search as SearchIcon, CaseSensitive, WholeWord, Regex, X, Loader2 } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { ToggleButton } from './SearchResultItems'
 import { translate } from '@/i18n/i18n'

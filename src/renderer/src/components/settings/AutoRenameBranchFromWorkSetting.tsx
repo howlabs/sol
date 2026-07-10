@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import type {
   SourceControlAiSettingsPatch,
@@ -20,6 +20,7 @@ import { Label } from '../ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { getAutoRenameBranchAdvancedSearchEntries } from './auto-rename-branch-search'
 import { SearchableSetting } from './SearchableSetting'
+import { SettingsSwitchRow } from './SettingsFormControls'
 import { matchesSettingsSearch, normalizeSettingsSearchQuery } from './settings-search'
 import { translate } from '@/i18n/i18n'
 
@@ -145,81 +146,75 @@ export function AutoRenameBranchFromWorkSetting({
         'slug'
       ]}
       forceVisible={forceVisible || branchNamePromptDirty || advancedSearchOpen}
-      className="space-y-3 py-2"
     >
-      <div ref={setSettingRootRef} className="flex items-center justify-between gap-4">
-        <div className="space-y-0.5">
-          <Label>
-            {translate(
-              'auto.components.settings.AutoRenameBranchFromWorkSetting.ef787db0e3',
-              'Auto-rename branch & worktree'
-            )}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AutoRenameBranchFromWorkSetting.12ea4a408d',
-              'When an agent starts working in a new workspace, Orca renames its auto-generated branch (e.g.'
-            )}
-            <code>
+      <div ref={setSettingRootRef} className="space-y-1">
+        <SettingsSwitchRow
+          label={translate(
+            'auto.components.settings.AutoRenameBranchFromWorkSetting.ef787db0e3',
+            'Auto-rename branch & worktree'
+          )}
+          ariaLabel={translate(
+            'auto.components.settings.AutoRenameBranchFromWorkSetting.ef787db0e3',
+            'Auto-rename branch & worktree'
+          )}
+          description={
+            <>
               {translate(
-                'auto.components.settings.AutoRenameBranchFromWorkSetting.1626524572',
-                'Nautilus'
+                'auto.components.settings.AutoRenameBranchFromWorkSetting.12ea4a408d',
+                'When an agent starts working in a new workspace, Orca renames its auto-generated branch (e.g.'
               )}
-            </code>
-            {translate(
-              'auto.components.settings.AutoRenameBranchFromWorkSetting.d9b65054ef',
-              ') to a short name summarizing the task. Only branches Orca named itself are renamed, and never after they have been pushed.'
-            )}
-          </p>
-        </div>
-        <button
-          role="switch"
-          aria-checked={settings.autoRenameBranchFromWork}
-          onClick={() =>
+              <code>
+                {translate(
+                  'auto.components.settings.AutoRenameBranchFromWorkSetting.1626524572',
+                  'Nautilus'
+                )}
+              </code>
+              {translate(
+                'auto.components.settings.AutoRenameBranchFromWorkSetting.d9b65054ef',
+                ') to a short name summarizing the task. Only branches Orca named itself are renamed, and never after they have been pushed.'
+              )}
+            </>
+          }
+          checked={settings.autoRenameBranchFromWork}
+          onChange={() =>
             updateSettings({
               autoRenameBranchFromWork: !settings.autoRenameBranchFromWork
             })
           }
-          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors ${
-            settings.autoRenameBranchFromWork ? 'bg-foreground' : 'bg-muted-foreground/30'
-          }`}
-        >
-          <span
-            className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-              settings.autoRenameBranchFromWork ? 'translate-x-4' : 'translate-x-0.5'
-            }`}
-          />
-        </button>
-      </div>
+        />
 
-      <Collapsible open={advancedOpen} onOpenChange={setOptionsOpen}>
-        <CollapsibleTrigger asChild>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="-ml-2 h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
-          >
-            {translate(
-              'auto.components.settings.AutoRenameBranchFromWorkSetting.e784ea62dc',
-              'Advanced'
-            )}
-            <ChevronDown
-              className={cn('size-3.5 transition-transform', advancedOpen && 'rotate-180')}
-            />
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="mt-2 space-y-3 rounded-md border border-border/60 bg-muted/20 px-3 py-3">
-            <div className="space-y-2">
+        <Collapsible open={advancedOpen} onOpenChange={setOptionsOpen}>
+          <CollapsibleTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="-ml-2 h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+            >
+              {translate(
+                'auto.components.settings.AutoRenameBranchFromWorkSetting.e784ea62dc',
+                'Advanced'
+              )}
+              <ChevronDown
+                className={cn('size-3.5 transition-transform', advancedOpen && 'rotate-180')}
+              />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            {/* Why: SettingsSection is already the page card — one quiet list
+                surface for the advanced draft, not a nested bg-muted panel. */}
+            <div className="mt-1.5 space-y-1.5 rounded-md border border-border/50 bg-muted/15 px-3 py-2.5">
               <div className="space-y-0.5">
-                <Label htmlFor="git-auto-rename-branch-name-template">
+                <Label
+                  htmlFor="git-auto-rename-branch-name-template"
+                  className="text-xs font-medium"
+                >
                   {translate(
                     'auto.components.settings.AutoRenameBranchFromWorkSetting.a869d0edd8',
                     'Branch name command template'
                   )}
                 </Label>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[11px] leading-snug text-muted-foreground">
                   {translate(
                     'auto.components.settings.AutoRenameBranchFromWorkSetting.9241b59bf5',
                     'Use'
@@ -362,9 +357,9 @@ export function AutoRenameBranchFromWorkSetting({
                 </div>
               </div>
             </div>
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
     </SearchableSetting>
   )
 }

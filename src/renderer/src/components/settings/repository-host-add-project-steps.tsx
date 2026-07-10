@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { ArrowLeft, Download, FolderOpen, Plus } from 'lucide-react'
+import { ArrowLeft, Download, FolderOpen, Plus } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
@@ -109,6 +109,16 @@ export function HostSetupExistingFolderStep({
         />
         <Select
           value={setupKind}
+          items={[
+            {
+              value: 'git',
+              label: translate('auto.components.settings.RepositoryPane.setupKindGit', 'Git repo')
+            },
+            {
+              value: 'folder',
+              label: translate('auto.components.settings.RepositoryPane.setupKindFolder', 'Folder')
+            }
+          ]}
           onValueChange={(value) => onKindChange(value as 'git' | 'folder')}
         >
           <SelectTrigger className="h-9 text-xs">

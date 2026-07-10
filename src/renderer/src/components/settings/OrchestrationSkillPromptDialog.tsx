@@ -1,4 +1,4 @@
-import { Copy } from 'lucide-react'
+import { Copy } from '@/lib/icons'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {

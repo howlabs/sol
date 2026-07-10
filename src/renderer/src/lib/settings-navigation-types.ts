@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import type { LucideProps } from 'lucide-react'
+import type { LucideProps } from '@/lib/icons'
 import type { SettingsSearchEntry } from '@/components/settings/settings-search'
 
 export type SettingsNavIcon = ComponentType<LucideProps>

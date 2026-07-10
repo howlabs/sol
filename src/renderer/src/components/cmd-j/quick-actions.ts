@@ -1,5 +1,5 @@
-import { FileText, FolderPlus, Globe, Play, SquareTerminal, Trash2 } from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
+import { FileText, FolderPlus, Globe, Play, SquareTerminal, Trash2 } from '@/lib/icons'
+import type { LucideIcon } from '@/lib/icons'
 import type { CmdJQuickActionAvailability, CmdJQuickActionContext } from './quick-action-context'
 import {
   getCurrentWorkspaceActionAvailability,

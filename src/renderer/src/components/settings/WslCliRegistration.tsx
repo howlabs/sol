@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { RefreshCw } from 'lucide-react'
+import { RefreshCw } from '@/lib/icons'
 import { toast } from 'sonner'
 import type { CliInstallStatus } from '../../../../shared/cli-install-types'
 import { useWindowsTerminalCapabilities } from '@/lib/windows-terminal-capabilities'
@@ -14,6 +14,7 @@ import {
   DialogTitle
 } from '../ui/dialog'
 import { Label } from '../ui/label'
+import { SettingsSwitch } from './SettingsFormControls'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import { translate } from '@/i18n/i18n'
 
@@ -187,21 +188,15 @@ export function WslCliRegistration({
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <button
-              role="switch"
-              aria-checked={isEnabled}
+            <SettingsSwitch
+              checked={isEnabled}
               disabled={loading || !isSupported || busyAction !== null}
-              onClick={() => setDialogOpen(true)}
-              className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent transition-colors ${
-                isEnabled ? 'bg-foreground' : 'bg-muted-foreground/30'
-              } ${loading || !isSupported || busyAction !== null ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
-            >
-              <span
-                className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-                  isEnabled ? 'translate-x-4' : 'translate-x-0.5'
-                }`}
-              />
-            </button>
+              ariaLabel={translate(
+                'auto.components.settings.WslCliRegistration.d9c6880dbd',
+                'WSL shell command'
+              )}
+              onChange={() => setDialogOpen(true)}
+            />
           </div>
         </div>
 

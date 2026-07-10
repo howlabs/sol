@@ -1,5 +1,5 @@
 import React from 'react'
-import { Copy, ExternalLink } from 'lucide-react'
+import { Copy, ExternalLink } from '@/lib/icons'
 import {
   DropdownMenu,
   DropdownMenuContent,

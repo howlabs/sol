@@ -23,7 +23,7 @@ import {
   FileVideo,
   Smartphone,
   type LucideIcon
-} from 'lucide-react'
+} from '@/lib/icons'
 
 const FILE_ICON_BY_NAME: Record<string, LucideIcon> = {
   '.babelrc': FileSliders,

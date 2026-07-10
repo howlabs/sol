@@ -1,10 +1,9 @@
 import * as React from 'react'
-import type { Popover as PopoverPrimitive } from 'radix-ui'
 
-type PopoverContentRef = React.ComponentProps<typeof PopoverPrimitive.Content>['ref']
+type PopoverContentRef = React.Ref<HTMLDivElement> | undefined
 
 export function updatePopoverContentRef(
-  forwardedRef: PopoverContentRef | undefined,
+  forwardedRef: PopoverContentRef,
   node: HTMLDivElement | null,
   cancelWheelFrames: () => void
 ): (() => void) | undefined {
@@ -20,7 +19,7 @@ export function updatePopoverContentRef(
 
   if (typeof forwardedRef === 'function') {
     const cleanup = forwardedRef(node)
-    // Why: React callback refs may return cleanup; wrapping the Radix ref must
+    // Why: React callback refs may return cleanup; wrapping the ref must
     // preserve that cleanup instead of replacing it with a null callback.
     return () => {
       cancelWheelFrames()

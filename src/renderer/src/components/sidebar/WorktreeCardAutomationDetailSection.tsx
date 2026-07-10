@@ -1,5 +1,5 @@
 import React from 'react'
-import { CalendarClock, PlayCircle } from 'lucide-react'
+import { CalendarClock, PlayCircle } from '@/lib/icons'
 import type { ExecutionHostId } from '../../../../shared/execution-host'
 import type { AutomationWorkspaceProvenance } from '../../../../shared/types'
 import {

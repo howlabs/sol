@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { Copy, ExternalLink, Eye, FolderOpen } from 'lucide-react'
+import { Copy, ExternalLink, Eye, FolderOpen } from '@/lib/icons'
 import {
   ContextMenu,
   ContextMenuContent,

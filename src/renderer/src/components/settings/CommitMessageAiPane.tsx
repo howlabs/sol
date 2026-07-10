@@ -20,8 +20,8 @@ import { getCommitMessageModelDiscoveryHostKeyForScope } from '../../../../share
 import { getRuntimeGitScope } from '../../runtime/runtime-git-client'
 import { useAppStore } from '../../store'
 import { Input } from '../ui/input'
-import { Label } from '../ui/label'
 import { SearchableSetting } from './SearchableSetting'
+import { SettingsRow, SettingsSubsectionHeader, SettingsSwitchRow } from './SettingsFormControls'
 import { SourceControlAiActionRecipeDefaults } from './SourceControlAiActionRecipeDefaults'
 import { matchesSettingsSearch } from './settings-search'
 import { getSettingOwnershipSummary } from './setting-ownership'
@@ -183,36 +183,23 @@ export function CommitMessageAiPane({
           'Adds action recipes for Source Control commit, pull request, branch-name, and fix actions.'
         )}
         keywords={['ai', 'commit', 'message', 'generate', 'agent', 'enabled']}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="space-y-1">
-          <Label>
-            {translate(
-              'auto.components.settings.CommitMessageAiPane.d5b45a3628',
-              'Show Source Control AI actions'
-            )}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.CommitMessageAiPane.2339a89104',
-              'Adds AI buttons that run the selected agent with the command template for that action.'
-            )}
-          </p>
-        </div>
-        <button
-          role="switch"
-          aria-checked={config.enabled}
-          onClick={onToggleEnabled}
-          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors ${
-            config.enabled ? 'bg-foreground' : 'bg-muted-foreground/30'
-          }`}
-        >
-          <span
-            className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-              config.enabled ? 'translate-x-4' : 'translate-x-0.5'
-            }`}
-          />
-        </button>
+        <SettingsSwitchRow
+          label={translate(
+            'auto.components.settings.CommitMessageAiPane.d5b45a3628',
+            'Show Source Control AI actions'
+          )}
+          ariaLabel={translate(
+            'auto.components.settings.CommitMessageAiPane.d5b45a3628',
+            'Show Source Control AI actions'
+          )}
+          description={translate(
+            'auto.components.settings.CommitMessageAiPane.2339a89104',
+            'Adds AI buttons that run the selected agent with the command template for that action.'
+          )}
+          checked={config.enabled}
+          onChange={onToggleEnabled}
+        />
       </SearchableSetting>
     )
   }
@@ -263,38 +250,43 @@ export function CommitMessageAiPane({
           'Command line Orca runs when a text recipe uses Custom command.'
         )}
         keywords={['custom', 'command', 'cli', 'binary', 'prompt', 'placeholder']}
-        className="space-y-2 py-2"
       >
-        <div className="space-y-0.5">
-          <Label htmlFor="source-control-ai-custom-command">
-            {translate('auto.components.settings.CommitMessageAiPane.47e45cbd5a', 'Custom command')}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.CommitMessageAiPane.4f722a5f53',
-              'Used by commit-message, pull-request, and branch-name recipes that select Custom command. Use'
-            )}
-            <code className="font-mono">
-              {translate('auto.components.settings.CommitMessageAiPane.b8b6fd55b4', '{prompt}')}
-            </code>{' '}
-            {translate(
-              'auto.components.settings.CommitMessageAiPane.3f1b26cc91',
-              'to pass the command input as an argument; otherwise Orca pipes it on stdin.'
-            )}
-          </p>
-        </div>
-        <Input
-          id="source-control-ai-custom-command"
-          spellCheck={false}
-          autoCorrect="off"
-          autoCapitalize="off"
-          value={config.customAgentCommand}
-          onChange={(event) => onCustomCommandChange(event.target.value)}
-          placeholder={translate(
-            'auto.components.settings.CommitMessageAiPane.15b60d54b2',
-            'e.g. ollama run llama3.1 {prompt}'
+        <SettingsRow
+          label={translate(
+            'auto.components.settings.CommitMessageAiPane.47e45cbd5a',
+            'Custom command'
           )}
-          className="h-8 font-mono text-xs"
+          description={
+            <>
+              {translate(
+                'auto.components.settings.CommitMessageAiPane.4f722a5f53',
+                'Used by commit-message, pull-request, and branch-name recipes that select Custom command. Use'
+              )}
+              <code className="font-mono">
+                {translate('auto.components.settings.CommitMessageAiPane.b8b6fd55b4', '{prompt}')}
+              </code>{' '}
+              {translate(
+                'auto.components.settings.CommitMessageAiPane.3f1b26cc91',
+                'to pass the command input as an argument; otherwise Orca pipes it on stdin.'
+              )}
+            </>
+          }
+          alignTop
+          control={
+            <Input
+              id="source-control-ai-custom-command"
+              spellCheck={false}
+              autoCorrect="off"
+              autoCapitalize="off"
+              value={config.customAgentCommand}
+              onChange={(event) => onCustomCommandChange(event.target.value)}
+              placeholder={translate(
+                'auto.components.settings.CommitMessageAiPane.15b60d54b2',
+                'e.g. ollama run llama3.1 {prompt}'
+              )}
+              className="h-7 w-56 font-mono text-xs"
+            />
+          }
         />
       </SearchableSetting>
     )
@@ -337,17 +329,15 @@ export function CommitMessageAiPane({
     <div
       id="source-control-ai-settings"
       data-settings-section="source-control-ai-settings"
-      className="space-y-4 border-t border-border/40 pt-4"
+      className="space-y-1 border-t border-border/40 pt-3"
     >
-      <div className="space-y-0.5">
-        <h3 className="text-sm font-semibold">
-          {translate(
-            'auto.components.settings.CommitMessageAiPane.ad66ff886d',
-            'Source Control AI defaults'
-          )}
-        </h3>
-        <p className="text-xs text-muted-foreground">{ownership.description}</p>
-      </div>
+      <SettingsSubsectionHeader
+        title={translate(
+          'auto.components.settings.CommitMessageAiPane.ad66ff886d',
+          'Source Control AI defaults'
+        )}
+        description={ownership.description}
+      />
       {sections}
     </div>
   )

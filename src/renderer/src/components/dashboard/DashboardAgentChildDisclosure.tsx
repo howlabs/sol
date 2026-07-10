@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { translate } from '@/i18n/i18n'
 

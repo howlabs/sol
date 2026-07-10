@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import { normalizeProxyBypassRules, normalizeProxyUrl } from '../../../../shared/network-proxy'
 import { cn } from '@/lib/utils'
@@ -253,7 +253,7 @@ export function AdvancedNetworkSettingsSection({
             />
           </Button>
         </CollapsibleTrigger>
-        <CollapsibleContent>
+        <CollapsibleContent className="collapsible-height-content">
           <div className="mt-2 space-y-4 rounded-md border border-border/60 bg-muted/20 px-3 py-3">
             <div className="space-y-2">
               <Label htmlFor="settings-http-proxy-url">

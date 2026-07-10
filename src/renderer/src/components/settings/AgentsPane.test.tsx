@@ -95,19 +95,6 @@ function visit(node: unknown, cb: (node: ReactElementLike) => void): void {
   }
 }
 
-function findSwitch(node: unknown, ariaLabel: string): ReactElementLike {
-  let found: ReactElementLike | null = null
-  visit(node, (entry) => {
-    if (entry.props.role === 'switch' && entry.props['aria-label'] === ariaLabel) {
-      found = entry
-    }
-  })
-  if (!found) {
-    throw new Error('switch not found')
-  }
-  return found
-}
-
 function findSwitchRow(node: unknown, ariaLabel: string): ReactElementLike {
   let found: ReactElementLike | null = null
   visit(node, (entry) => {
@@ -150,12 +137,25 @@ describe('AgentsPane', () => {
     })
   })
 
-  it('renders the keep-awake toggle from settings', () => {
+  it('keeps session preferences collapsed until expanded (setup/skill shell)', () => {
     const markup = renderPane(getDefaultSettings('/tmp'))
 
+    // Why: session switches live behind a collapsible so the main Agents surface
+    // stays default agent + catalog; assert shell, not closed-panel contents.
+    expect(markup).toContain('Session preferences')
+    expect(markup).toContain('aria-label="Show session preferences"')
+    expect(markup).not.toContain('Keep computer awake while agents are working')
     expect(markup).not.toContain('Agent location')
-    expect(markup).not.toContain('Agent runtime')
-    expect(markup).not.toContain('aria-label="Agent runtime"')
+  })
+
+  it('renders the keep-awake toggle in session settings content', () => {
+    const markup = renderToStaticMarkup(
+      React.createElement(AgentAwakeSetting, {
+        settings: getDefaultSettings('/tmp'),
+        updateSettings: vi.fn()
+      })
+    )
+
     expect(markup).toContain('Keep computer awake while agents are working')
     expect(markup).toContain(
       'Keeps this computer and display awake while agents are working. Orca also asks this device to stay awake when the lid is closed, subject to its power policy.'
@@ -163,13 +163,19 @@ describe('AgentsPane', () => {
     expect(markup).toContain('aria-checked="false"')
   })
 
-  it('renders the agent runtime control on Windows-class hosts', () => {
-    const markup = renderPane(
-      {
-        ...getDefaultSettings('/tmp'),
-        localWindowsRuntimeDefault: { kind: 'wsl', distro: 'Ubuntu' }
-      },
-      { wslSupportedPlatform: true, wslAvailable: true, wslDistros: ['Ubuntu'] }
+  it('renders the agent runtime control on Windows-class hosts in session settings', () => {
+    const markup = renderToStaticMarkup(
+      React.createElement(AgentRuntimeSetting, {
+        settings: {
+          ...getDefaultSettings('/tmp'),
+          localWindowsRuntimeDefault: { kind: 'wsl', distro: 'Ubuntu' }
+        },
+        updateSettings: vi.fn(),
+        refresh: vi.fn(),
+        wslSupportedPlatform: true,
+        wslAvailable: true,
+        wslDistros: ['Ubuntu']
+      })
     )
 
     expect(markup).not.toContain('Agent location')
@@ -179,16 +185,20 @@ describe('AgentsPane', () => {
   })
 
   it('hides the WSL agent location controls on platforms without WSL support', () => {
-    const markup = renderPane({
-      ...getDefaultSettings('/tmp'),
-      localAgentRuntime: 'wsl',
-      terminalWindowsShell: 'wsl.exe'
-    })
+    const markup = renderToStaticMarkup(
+      React.createElement(AgentRuntimeSetting, {
+        settings: {
+          ...getDefaultSettings('/tmp'),
+          localAgentRuntime: 'wsl',
+          terminalWindowsShell: 'wsl.exe'
+        },
+        updateSettings: vi.fn(),
+        refresh: vi.fn()
+      })
+    )
 
     expect(markup).not.toContain('Agent location')
     expect(markup).not.toContain('aria-label="Agent location"')
-    expect(markup).not.toContain('Agent runtime')
-    expect(markup).not.toContain('aria-label="Agent runtime"')
     expect(markup).not.toContain('WSL is not available on this machine.')
   })
 
@@ -232,12 +242,12 @@ describe('AgentsPane', () => {
     })
 
     const keepAwakeTitle = getAgentAwakeTitle()
-    const keepAwakeSwitch = findSwitch(element, keepAwakeTitle)
-    expect(keepAwakeSwitch.props['aria-label']).toBe(keepAwakeTitle)
-    expect(keepAwakeSwitch.props['aria-checked']).toBe(false)
+    const keepAwakeSwitch = findSwitchRow(element, keepAwakeTitle)
+    expect(keepAwakeSwitch.props.ariaLabel).toBe(keepAwakeTitle)
+    expect(keepAwakeSwitch.props.checked).toBe(false)
 
-    const onClick = keepAwakeSwitch.props.onClick as () => void
-    onClick()
+    const onChange = keepAwakeSwitch.props.onChange as () => void
+    onChange()
 
     expect(updateSettings).toHaveBeenCalledWith({
       keepComputerAwakeWhileAgentsRun: true
@@ -317,7 +327,16 @@ describe('AgentsPane', () => {
   it('applies the selected agent permission mode from settings without a mixed segment', () => {
     const onChange = vi.fn()
     const element = AgentPermissionsSetting({ mode: 'mixed', onChange })
-    const props = element.props.children.props.action.props as {
+    // Section children: SettingsSubsectionHeader + SettingsSegmentedControl
+    const children = element.props.children as ReactElementLike[]
+    const segmented = children.find(
+      (child) =>
+        child &&
+        typeof child === 'object' &&
+        'props' in child &&
+        Array.isArray((child as ReactElementLike).props.options)
+    ) as ReactElementLike
+    const props = segmented.props as {
       value: 'yolo'
       onChange: (value: 'yolo' | 'manual' | 'mixed') => void
       options: { value: string }[]
@@ -347,15 +366,17 @@ describe('AgentsPane', () => {
     expect(matchesSettingsSearch('cursor-agent', getAgentsPaneSearchEntries())).toBe(true)
   })
 
-  it('renders per-agent availability as labeled status choices without row explanation copy', () => {
+  it('renders per-agent availability as a house switch without row explanation copy', () => {
     const markup = renderPane({
       ...getDefaultSettings('/tmp'),
       disabledTuiAgents: ['claude']
     })
 
+    // Why: catalog rows use SettingsSwitch (aria-label + aria-checked), not
+    // segmented Enabled/Disabled labels.
     expect(markup).toContain('aria-label="Claude availability"')
-    expect(markup).toContain('Enabled')
-    expect(markup).toContain('Disabled')
+    expect(markup).toContain('role="switch"')
+    expect(markup).toContain('aria-checked="false"')
     expect(markup).not.toContain('Shown in launch and default choices.')
     expect(markup).not.toContain('Install to use in launch and default choices.')
     expect(markup).not.toContain('Hidden from launch and default choices.')

@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2 } from '@/lib/icons'
 import type {
   Repo,
   TerminalQuickCommand,

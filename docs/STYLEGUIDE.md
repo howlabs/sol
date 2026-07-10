@@ -11,6 +11,39 @@ When in doubt:
 - Reach for **muted/accent/border** before reaching for color.
 - Reach for **CSS variables** before hardcoding hex.
 - Match the nearest **shadcn primitive** before writing custom CSS.
+- Prefer house form controls in `SettingsFormControls.tsx` over one-off settings rows/toggles.
+
+## Design system target (migration in progress)
+
+Target stack for app chrome (not Monaco/xterm content surfaces):
+
+| Dimension     | Target                         | Notes |
+| ------------- | ------------------------------ | ----- |
+| Visual style  | **shadcn Mira** (compact)      | Dense IDE/settings density |
+| Primitives    | **Base UI** via `base-mira`    | `@base-ui/react` |
+| Base color    | **Stone**                      | CSS variables in `main.css` |
+| Icons         | **Phosphor Icons**             | via `@/lib/icons` |
+
+**Runtime progress (A–E done):**
+
+- **Phase A:** chrome tokens use **stone** (oklch) in `main.css`.
+- **Phase B:** **Mira density** on shared controls (radius, button/input/select/tabs/settings rows).
+- **Phase C:** icons via **`@/lib/icons`** → **Phosphor** (`regular` weight). Lucide package removed.
+- **Phase D:** `components/ui` on **Base UI** (`@base-ui/react`). `radix-ui` package removed.
+- **Phase E:** positioner CSS vars (`--available-height` / `--anchor-width` / `--collapsible-panel-height`), open/pressed state selectors (`data-open` / `data-pressed`). Dead `--radix-*` CSS fallbacks removed once producers were Base UI only.
+- **Phase F done:** Radix focus/dismiss content props (`onOpenAutoFocus`, `onInteractOutside`, …) shimmed to Base UI on shared primitives (`radix-popup-compat`).
+
+`components.json` records the full target (`style: base-mira`, `baseColor: stone`, `iconLibrary: phosphor`).
+
+Phased plan, guardrails, and non-goals: [`docs/reference/design-system-migration.md`](./reference/design-system-migration.md).
+
+Rules for new UI:
+
+- Do **not** import Lucide or Phosphor ad hoc — use **`@/lib/icons`**.
+- Do **not** import Base UI or Radix from app features — only through `@/components/ui/*`.
+- Popover/select max-height and trigger width: use Base UI vars only (`--available-height`, `--anchor-width`). Do not add new `--radix-*` fallbacks.
+- Toggle selected styles must include **`data-pressed:`** (Base UI), not only `data-[state=on]:`.
+- Prefer Base UI focus/dismiss APIs for new code (`initialFocus` / `finalFocus` / Root `onOpenChange` + `cancel`). Existing Radix-named props still work via Phase F shims.
 
 ## Source of truth
 
@@ -19,9 +52,30 @@ When in doubt:
 | Color tokens                                  | `src/renderer/src/assets/main.css` (`:root`, `.dark`) |
 | Tailwind theme bindings                       | Same file, `@theme inline { … }` block                |
 | Component primitives                          | `src/renderer/src/components/ui/` (shadcn-style)      |
+| Settings form grammar                         | `src/renderer/src/components/settings/SettingsFormControls.tsx` |
+| shadcn CLI target config                      | `components.json`                                     |
+| Migration plan                                | `docs/reference/design-system-migration.md`           |
 | App typography / scrollbars / titlebar chrome | Same `main.css`                                       |
 
 Never hardcode a hex value in component code if a variable already covers it. If a new token is needed, add it to `main.css` (both `:root` and `.dark`), expose it in the `@theme inline` block, then use it.
+
+## Settings pane templates
+
+Every Settings content pane (body under `SettingsSection`) must pick **one** layout template. Do not invent a fourth spacing/title scale.
+
+| Template | Use when | Density / chrome | Headers & rows |
+| -------- | -------- | ---------------- | -------------- |
+| **form-list** | Toggle/input/select rows, preference lists (General, Advanced, Notifications, Git rows, Privacy, Input, …) | Root stack **`space-y-1`**; subsection blocks **`space-y-1.5`** | `SettingsSubsectionHeader` + `SettingsRow` / `SettingsSwitchRow` / house selects. No one-off `text-sm font-medium` section titles. |
+| **collection / accordion** | Grouped cards or expanders (Appearance sections, Integrations cards, Tasks providers, Accounts provider blocks) | Root **`space-y-1`** between groups; cards `rounded-lg border border-border/60 bg-card/30` (or `integration-card-shell`) | Accordion titles match compact `text-xs font-semibold` + optional `text-[11px]` summary. Prefer house switches/rows inside expanded bodies. |
+| **setup / skill** | Install/setup flows, multi-step skill panels, orchestration onboarding (Ephemeral VMs skill, Orchestration, Agent skill terminals, Developer Permissions grant lists) | Root **`space-y-4`–`space-y-6`** only (never `space-y-8`+ / `space-y-10` without a short in-code “Why: setup/skill template” comment). Inner cards may use `p-3`/`p-4` | May use short prose + primary CTAs; still prefer `SettingsSubsectionHeader` scale (`text-xs` title / `11px` description) over `text-sm` ad-hoc headers when labeling a block. |
+
+### Rules for all templates
+
+- **Page chrome** stays on `SettingsSection` (`h2` + description + body card). Do not re-create a second page-level title inside the pane.
+- **`SearchableSetting`** is search metadata only — it does **not** render title/description. Visible labels come from `SettingsSubsectionHeader`, `SettingsRow`, accordion rows, or card chrome.
+- **Easter-egg / quiet controls** (e.g. Appearance App Icon carousel): keep `SearchableSetting` title/description for search; **do not** stack a formal `SettingsSubsectionHeader` that duplicates that copy.
+- **Do not** use extreme root gaps (`space-y-8`, `space-y-10`) on form-list or collection panes. If a setup/skill pane needs air, cap at `space-y-6` and document the template in a one-line Why comment.
+- Prefer `SettingsFormControls` over bespoke label/switch markup. New Settings UI must match one of the three templates above.
 
 ## Color roles
 
@@ -69,6 +123,8 @@ A common point of drift. Use these conventions for any list-style row (worktrees
 - **Hover:** `bg-accent` (in the worktree sidebar, `bg-sidebar-accent`).
 - **Keyboard-selected (cmdk highlight):** `data-[selected=true]:bg-accent` plus a `border-border` outline so the active row stays visible while the user types. The `data-selected` attribute is set by `cmdk` automatically.
 - **Persistent "current" / "active" row** (e.g. the worktree the user is viewing): also `bg-accent`, _plus_ a `data-current="true"` attribute so CSS or future styling can distinguish it from the cmdk highlight.
+- **Worktree left rail paint:** use `worktree-sidebar-*` tokens (`bg-worktree-sidebar-accent`, hover `/60`, ring `worktree-sidebar-ring`) — not generic `sidebar-*` — for row backgrounds and rings on that rail (including Settings nav when it reuses the rail surface).
+- **Worktree card current:** a persistent current worktree may set `data-current="true"` and/or `data-worktree-card-active` (alongside or instead of only relying on class names).
 - **Don't:** hardcode `bg-[#ededed]` / `bg-[#333333]` or invent a "selected" color. The accent token already adapts to light/dark and matches the rest of the app.
 
 ### Color mixing
@@ -88,13 +144,27 @@ This keeps light/dark parity automatic.
 - **Body letter-spacing:** `0.01em` (set globally on `body`). Don't override per component.
 - **Sizes:** Tailwind's default scale. Common sizes in this repo:
   - 11px (uppercase meta, sidebar headers, captions) — pair with `font-weight: 600` and `text-transform: uppercase` and `letter-spacing: 0.05em` for category labels.
-  - 12px (sub-text, paths, secondary content)
+  - 12px (`text-xs`) — control labels, Mira button default, paths, secondary content
   - 13px (sidebar items, dense list rows)
-  - 14px (default body, button text in `default` size)
+  - 14px (default body where density is not constrained)
 
 ## Radius
 
-`--radius: 0.625rem` (10px) is the base; the rest are computed (`--radius-sm` = 0.6×, `--radius-md` = 0.8×, `--radius-lg` = 1×, `--radius-xl` = 1.4×, etc.). Buttons and inputs use `rounded-md`; the `Card` primitive uses `rounded-xl`; badges use `rounded-full`. Match the existing primitive's radius rather than introducing a new one.
+`--radius: 0.5rem` (8px) is the Mira-aligned base; the rest are computed (`--radius-sm` = 0.6×, `--radius-md` = 0.8×, `--radius-lg` = 1×, `--radius-xl` = 1.4×, etc.). Buttons and inputs use `rounded-md`; the `Card` primitive uses `rounded-xl`; badges use `rounded-full`. Match the existing primitive's radius rather than introducing a new one.
+
+## Control density (Mira Phase B)
+
+Default control height is **compact**:
+
+| Control | Default height |
+| ------- | -------------- |
+| Button `default` | `h-7` (28px) |
+| Button `sm` / `xs` | `h-6` / `h-5` |
+| Input | `h-7` |
+| Select trigger | `h-7` (`sm` = `h-6`) |
+| Settings switch | `h-4` track |
+
+Prefer these sizes for settings and chrome. Only use larger sizes when the surface is marketing-like or a sparse empty state.
 
 ## Elevation & shadows
 
@@ -180,12 +250,13 @@ Tooltips exist to _name_ a control whose meaning isn't obvious from its appearan
 
 ### Icons
 
-Icons come from **`lucide-react`**. Don't import a second icon library.
+Icons come from **Phosphor** via the Lucide-compatible bridge at **`@/lib/icons`** (backed by `@phosphor-icons/react`). Do **not** import `lucide-react` or import Phosphor icons ad hoc from app features — use the bridge so names and default weight stay consistent.
 
-- **Default size:** `size-4` (16px). `Button` auto-applies this to any `<svg>` it contains via `[&_svg:not([class*='size-'])]:size-4`, so most call sites don't need to set a size on the icon.
+- **Import:** `import { Search, Loader2 } from '@/lib/icons'`
+- **Default weight:** `regular` (loaders use `bold` so the spinner reads at small sizes).
+- **Default size:** `size-4` (16px) via className. Icons default to `size="1em"` so Tailwind `size-*` classes control display size. Buttons apply `[&_svg:not([class*='size-'])]:size-3.5` (Mira density).
 - **`size-3` / `size-3.5`:** for metadata, captions, and dense list rows where 16px is too loud.
 - **`size-7`+:** for featured/empty-state hero icons only.
-- **Stroke width:** lucide's default 2px. Don't override per-icon.
 - **Color:** inherit from surrounding text — `text-muted-foreground` for secondary, `text-destructive` for destructive, etc. Don't apply a token to the SVG directly when the parent already carries the right color.
 - **Spinner:** the canonical loading icon is `<Loader2 className="size-4 animate-spin" />`. For 3s+ multi-step work, prefer a label that names the stage ("Cloning…" → "Installing…") over an unlabeled spinner. See _UX rule 1_.
 

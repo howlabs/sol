@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import type { Editor } from '@tiptap/react'
-import { ExternalLink, Pencil, Unlink } from 'lucide-react'
+import { ExternalLink, Pencil, Unlink } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 
 export type LinkBubbleState = {

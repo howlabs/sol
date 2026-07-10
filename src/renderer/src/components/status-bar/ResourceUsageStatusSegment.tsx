@@ -15,7 +15,7 @@ import {
   Terminal,
   Trash2,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'

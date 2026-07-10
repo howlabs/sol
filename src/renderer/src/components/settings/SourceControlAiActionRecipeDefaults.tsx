@@ -14,7 +14,7 @@ import {
   setSourceControlActionDefault,
   type SourceControlActionId
 } from '../../../../shared/source-control-ai-actions'
-import { Label } from '../ui/label'
+
 import { useAppStore } from '@/store'
 import { useRepos } from '@/store/selectors'
 import {
@@ -22,6 +22,7 @@ import {
   type SourceControlActionRecipeOverrideSummary
 } from '@/lib/source-control-launch-agent-selection'
 import { SearchableSetting } from './SearchableSetting'
+import { SettingsSubsectionHeader } from './SettingsFormControls'
 import { getRepositorySourceControlAiActionRecipeSectionId } from './repository-settings-targets'
 import { matchesSettingsSearch } from './settings-search'
 import { SourceControlActionRecipeRow } from './SourceControlActionRecipeRow'
@@ -181,18 +182,17 @@ export function SourceControlAiActionRecipeDefaults({
       title={ACTION_RECIPES_SEARCH_ENTRY.title}
       description={ACTION_RECIPES_SEARCH_ENTRY.description}
       keywords={ACTION_RECIPES_SEARCH_ENTRY.keywords}
-      className="space-y-3 px-1 py-2"
     >
-      <div className="space-y-0.5">
-        <Label>{ACTION_RECIPES_SEARCH_ENTRY.title}</Label>
-        <p className="text-xs text-muted-foreground">
-          {translate(
+      {/* Why: SearchableSetting is search-only — visible subsection title uses
+          house form-list header, not a nested card or ad-hoc text-sm Label. */}
+      <div className="space-y-1.5">
+        <SettingsSubsectionHeader
+          title={ACTION_RECIPES_SEARCH_ENTRY.title}
+          description={translate(
             'auto.components.settings.SourceControlAiActionRecipeDefaults.bf84dea6af',
             'Use variables only when you want Orca to inject context. Leave the agent as default to follow your normal agent preference.'
           )}
-        </p>
-      </div>
-      <div className="space-y-3">
+        />
         {SOURCE_CONTROL_ACTION_IDS.map((actionId) => {
           const recipe = config.actions?.[actionId]
           const selectedAgent = recipe?.agentId ?? null

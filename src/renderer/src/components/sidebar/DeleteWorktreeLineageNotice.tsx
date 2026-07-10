@@ -1,4 +1,4 @@
-import { Workflow } from 'lucide-react'
+import { Workflow } from '@/lib/icons'
 import type { JSX } from 'react'
 import type { Worktree } from '../../../../shared/types'
 import { DeleteWorktreeDirtyChangeHint } from './DeleteWorktreeDirtyChangeHint'

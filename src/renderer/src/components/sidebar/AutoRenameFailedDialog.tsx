@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { AlertCircle, Check, Copy } from 'lucide-react'
+import { AlertCircle, Check, Copy } from '@/lib/icons'
 import {
   Dialog,
   DialogContent,

@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { LoaderCircle, Lock } from 'lucide-react'
+import { LoaderCircle, Lock } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import { Button } from '@/components/ui/button'

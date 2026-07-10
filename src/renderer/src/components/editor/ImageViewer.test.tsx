@@ -38,7 +38,7 @@ vi.mock('react', async () => {
   }
 })
 
-vi.mock('lucide-react', () => ({
+vi.mock('@/lib/icons', () => ({
   Image: function Image(props: Record<string, unknown>) {
     return { type: 'Image', props }
   },

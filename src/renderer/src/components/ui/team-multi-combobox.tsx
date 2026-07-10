@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronsUpDown } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -142,7 +142,7 @@ export default function TeamMultiCombobox({
         align="start"
         // Why: team filter triggers can collapse in narrow toolbars; the menu
         // needs room for names and keys while still fitting small viewports.
-        className="w-[min(320px,calc(100vw-1rem))] min-w-[var(--radix-popover-trigger-width)] p-0"
+        className="w-[min(320px,calc(100vw-1rem))] min-w-[var(--anchor-width)] p-0"
       >
         <Command shouldFilter={false} value={commandValue} onValueChange={setCommandValue}>
           <CommandInput

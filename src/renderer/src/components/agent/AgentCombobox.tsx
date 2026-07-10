@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { ArrowRight, Check, ChevronsUpDown, Star, Terminal } from 'lucide-react'
+import { ArrowRight, Check, ChevronsUpDown, Star, Terminal } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -298,10 +298,7 @@ export default function AgentCombobox({
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className={cn(
-            'w-[var(--radix-popover-trigger-width)] p-0',
-            !allowNarrowTrigger && 'min-w-[18rem]'
-          )}
+          className={cn('w-[var(--anchor-width)] p-0', !allowNarrowTrigger && 'min-w-[18rem]')}
           data-agent-combobox-root="true"
           onOpenAutoFocus={(event) => {
             event.preventDefault()

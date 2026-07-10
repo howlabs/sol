@@ -1,5 +1,5 @@
 import React from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2 } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 
 type FileExplorerTreeStatusProps = {

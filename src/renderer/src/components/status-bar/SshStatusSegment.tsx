@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-import { AlertTriangle, Loader2, MonitorSmartphone, Server, ServerOff } from 'lucide-react'
+import { AlertTriangle, Loader2, MonitorSmartphone, Server, ServerOff } from '@/lib/icons'
 import { toast } from 'sonner'
 import {
   DropdownMenu,

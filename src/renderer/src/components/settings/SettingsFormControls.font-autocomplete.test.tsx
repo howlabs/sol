@@ -10,6 +10,11 @@ vi.mock('@/i18n/i18n', () => ({
   translate: (_key: string, defaultValue: string) => defaultValue
 }))
 
+// Why: Base UI ScrollArea uses getAnimations(); happy-dom does not implement it.
+if (typeof Element !== 'undefined' && typeof Element.prototype.getAnimations !== 'function') {
+  Element.prototype.getAnimations = () => []
+}
+
 describe('FontAutocomplete', () => {
   let container: HTMLDivElement
   let root: Root
@@ -156,10 +161,8 @@ describe('FontAutocomplete', () => {
       getInput().focus()
     })
 
-    expect(getScrollArea().style.maxHeight).toBe('var(--radix-popover-content-available-height)')
-    expect(getScrollAreaViewport().style.maxHeight).toBe(
-      'var(--radix-popover-content-available-height)'
-    )
+    expect(getScrollArea().style.maxHeight).toBe('var(--available-height)')
+    expect(getScrollAreaViewport().style.maxHeight).toBe('var(--available-height)')
   })
 
   it('keeps typed searches filtered even after the value updates', async () => {

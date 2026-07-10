@@ -179,7 +179,7 @@ export function BrowserPane({ settings, updateSettings }: BrowserPaneProps): Rea
   }
 
   return (
-    <div ref={setBrowserPaneRootNode} className="space-y-6">
+    <div ref={setBrowserPaneRootNode} className="space-y-1">
       {showBrowserUse ? <BrowserUseSetup onConfigureMoreBrowsers={scrollToSessionCookies} /> : null}
 
       {showHomePage ? (

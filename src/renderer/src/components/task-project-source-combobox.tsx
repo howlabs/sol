@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronRight, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronRight, ChevronsUpDown } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { Command, CommandInput, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -233,7 +233,7 @@ export default function TaskProjectSourceCombobox({
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-[min(360px,calc(100vw-1rem))] min-w-[var(--radix-popover-trigger-width)] p-0"
+        className="w-[min(360px,calc(100vw-1rem))] min-w-[var(--anchor-width)] p-0"
       >
         <Command shouldFilter={false} value={commandValue} onValueChange={setCommandValue}>
           <CommandInput

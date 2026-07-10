@@ -1,4 +1,4 @@
-import { Info } from 'lucide-react'
+import { Info } from '@/lib/icons'
 import {
   Select,
   SelectContent,
@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Field } from './automation-page-parts'
+import { getMissedRunGraceSelectItems } from './automation-select-items'
 import type { AutomationDraft } from './AutomationEditorDialog'
 import { translate } from '@/i18n/i18n'
 
@@ -24,6 +25,8 @@ export function AutomationMissedRunGraceField({
   pickerTriggerClassName,
   onDraftChange
 }: AutomationMissedRunGraceFieldProps): React.JSX.Element {
+  const items = getMissedRunGraceSelectItems()
+
   return (
     <Field
       label={
@@ -57,57 +60,24 @@ export function AutomationMissedRunGraceField({
     >
       <Select
         value={draft.missedRunGraceMinutes}
+        items={items}
         disabled={disabled}
         onValueChange={(missedRunGraceMinutes) =>
-          onDraftChange((current) => ({ ...current, missedRunGraceMinutes }))
+          onDraftChange((current) => ({
+            ...current,
+            missedRunGraceMinutes: missedRunGraceMinutes ?? current.missedRunGraceMinutes
+          }))
         }
       >
         <SelectTrigger className={`w-full ${pickerTriggerClassName}`}>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent position="popper" side="bottom" align="start" sideOffset={4}>
-          <SelectItem value="0">
-            {translate(
-              'auto.components.automations.AutomationMissedRunGraceField.529dc6c0b7',
-              'No grace'
-            )}
-          </SelectItem>
-          <SelectItem value="30">
-            {translate(
-              'auto.components.automations.AutomationMissedRunGraceField.e5ad263ae5',
-              '30 minutes'
-            )}
-          </SelectItem>
-          <SelectItem value="60">
-            {translate(
-              'auto.components.automations.AutomationMissedRunGraceField.521f77cd58',
-              '1 hour'
-            )}
-          </SelectItem>
-          <SelectItem value="180">
-            {translate(
-              'auto.components.automations.AutomationMissedRunGraceField.2dc9ee84d0',
-              '3 hours'
-            )}
-          </SelectItem>
-          <SelectItem value="720">
-            {translate(
-              'auto.components.automations.AutomationMissedRunGraceField.ba50e2a230',
-              '12 hours'
-            )}
-          </SelectItem>
-          <SelectItem value="1440">
-            {translate(
-              'auto.components.automations.AutomationMissedRunGraceField.adbab51feb',
-              '24 hours'
-            )}
-          </SelectItem>
-          <SelectItem value="2880">
-            {translate(
-              'auto.components.automations.AutomationMissedRunGraceField.0f4459e91d',
-              '48 hours'
-            )}
-          </SelectItem>
+        <SelectContent side="bottom" align="start" sideOffset={4}>
+          {items.map((item) => (
+            <SelectItem key={item.value} value={item.value}>
+              {item.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </Field>

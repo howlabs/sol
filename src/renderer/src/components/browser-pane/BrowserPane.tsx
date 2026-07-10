@@ -42,7 +42,7 @@ import {
   SquareCode,
   Trash2,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { BrowserAnnotationSendMenuContent } from './BrowserAnnotationSendMenuContent'
@@ -412,7 +412,7 @@ function PendingBrowserAnnotationCard({
         collisionBoundary={portalContainer ?? undefined}
         collisionPadding={12}
         portalContainer={portalContainer}
-        className="z-40 w-[22rem] max-w-[calc(var(--radix-popover-content-available-width)-1rem)] p-3 shadow-[0_10px_24px_rgba(0,0,0,0.18)]"
+        className="z-40 w-[22rem] max-w-[calc(var(--available-width)-1rem)] p-3 shadow-[0_10px_24px_rgba(0,0,0,0.18)]"
         aria-label={translate(
           'auto.components.browser.pane.BrowserPane.b472c5fe03',
           'Add browser annotation'
@@ -489,7 +489,7 @@ function PendingBrowserAnnotationCard({
                   key={option.value}
                   value={option.value}
                   aria-label={option.label}
-                  className="gap-1.5 text-xs data-[state=on]:border-foreground/20 data-[state=on]:bg-foreground/10 data-[state=on]:text-foreground data-[state=on]:shadow-xs data-[state=on]:hover:bg-foreground/15 data-[state=on]:hover:text-foreground"
+                  className="gap-1.5 text-xs data-pressed:border-foreground/20 data-pressed:bg-foreground/10 data-pressed:text-foreground data-pressed:shadow-xs data-pressed:hover:bg-foreground/15 data-pressed:hover:text-foreground data-[state=on]:border-foreground/20 data-[state=on]:bg-foreground/10 data-[state=on]:text-foreground data-[state=on]:shadow-xs data-[state=on]:hover:bg-foreground/15 data-[state=on]:hover:text-foreground"
                 >
                   <Icon className="size-3.5" />
                   <span>{option.label}</span>

@@ -1,4 +1,4 @@
-import { Check, Clipboard, Eye, FileText, Loader2, Trash2, UploadCloud, X } from 'lucide-react'
+import { Check, Clipboard, Eye, FileText, Loader2, Trash2, UploadCloud, X } from '@/lib/icons'
 import type {
   DiagnosticsBundlePayload,
   DiagnosticsStatusPayload

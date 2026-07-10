@@ -27,7 +27,7 @@ import {
   TextCursorInput,
   UserCog,
   Wrench
-} from 'lucide-react'
+} from '@/lib/icons'
 import type { Repo } from '../../../shared/types'
 import { getRepoKindLabel } from '../../../shared/repo-kind'
 import { useAppStore } from '@/store'

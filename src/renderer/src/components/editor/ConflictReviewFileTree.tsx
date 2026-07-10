@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChevronDown, Folder, FolderOpen, PanelLeftClose } from 'lucide-react'
+import { ChevronDown, Folder, FolderOpen, PanelLeftClose } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { getFileTypeIcon } from '@/lib/file-type-icons'
 import { cn } from '@/lib/utils'

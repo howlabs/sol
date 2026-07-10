@@ -2,7 +2,7 @@ import type { GlobalSettings, SourceControlGroupOrder } from '../../../../shared
 import type { SourceControlAiSettingsPatch } from '../../../../shared/source-control-ai-types'
 import { DEFAULT_SOURCE_CONTROL_GROUP_ORDER } from '../../../../shared/source-control-group-order'
 import { Input } from '../ui/input'
-import { Label } from '../ui/label'
+
 import { useAppStore } from '../../store'
 import { getGitPaneSearchEntries } from './git-search'
 import { SearchableSetting } from './SearchableSetting'
@@ -18,7 +18,9 @@ import {
   getKeepLocalMainUpToDateTitle
 } from './keep-local-main-up-to-date-setting'
 import { translate } from '@/i18n/i18n'
-import { SettingsRow, SettingsSegmentedControl } from './SettingsFormControls'
+import { SettingsRow, SettingsSegmentedControl, SettingsSwitchRow } from './SettingsFormControls'
+
+type BranchPrefixOption = GlobalSettings['branchPrefix']
 
 export { getGitPaneSearchEntries }
 
@@ -165,56 +167,62 @@ export function GitPane({
           'Prefix added to branch names when creating worktrees.'
         )}
         keywords={['branch naming', 'git username', 'custom']}
-        className="space-y-3"
       >
-        <div className="space-y-0.5">
-          <Label>{translate('auto.components.settings.GitPane.330f584b50', 'Branch Prefix')}</Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
+        <div className="space-y-1.5">
+          <SettingsRow
+            label={translate('auto.components.settings.GitPane.330f584b50', 'Branch Prefix')}
+            description={translate(
               'auto.components.settings.GitPane.1ec5c91e1d',
               'Choose whether branch names use your Git username, a custom prefix, or no prefix.'
             )}
-          </p>
-        </div>
-        <div className="flex w-fit gap-1 rounded-md border border-border/50 p-1">
-          {(['git-username', 'custom', 'none'] as const).map((option) => (
-            <button
-              key={option}
-              onClick={() => updateSettings({ branchPrefix: option })}
-              className={`rounded-sm px-3 py-1 text-sm transition-colors ${
-                settings.branchPrefix === option
-                  ? 'bg-accent font-medium text-accent-foreground'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {option === 'git-username'
-                ? translate('auto.components.settings.GitPane.a182c5125e', 'Git Username')
-                : option === 'custom'
-                  ? translate('auto.components.settings.GitPane.1f32ba27a6', 'Custom')
-                  : translate('auto.components.settings.GitPane.3d172725cc', 'None')}
-            </button>
-          ))}
-        </div>
-        {(settings.branchPrefix === 'custom' || settings.branchPrefix === 'git-username') && (
-          <Input
-            value={
-              settings.branchPrefix === 'git-username'
-                ? displayedGitUsername
-                : settings.branchPrefixCustom
+            alignTop
+            control={
+              <SettingsSegmentedControl<BranchPrefixOption>
+                value={settings.branchPrefix}
+                onChange={(option) => updateSettings({ branchPrefix: option })}
+                ariaLabel={translate(
+                  'auto.components.settings.GitPane.330f584b50',
+                  'Branch Prefix'
+                )}
+                size="sm"
+                options={[
+                  {
+                    value: 'git-username',
+                    label: translate('auto.components.settings.GitPane.a182c5125e', 'Git Username')
+                  },
+                  {
+                    value: 'custom',
+                    label: translate('auto.components.settings.GitPane.1f32ba27a6', 'Custom')
+                  },
+                  {
+                    value: 'none',
+                    label: translate('auto.components.settings.GitPane.3d172725cc', 'None')
+                  }
+                ]}
+              />
             }
-            onChange={(e) => updateSettings({ branchPrefixCustom: e.target.value })}
-            placeholder={
-              settings.branchPrefix === 'git-username'
-                ? translate(
-                    'auto.components.settings.GitPane.aefa1ecb59',
-                    'No git username configured'
-                  )
-                : translate('auto.components.settings.GitPane.b559bf9899', 'e.g. feature')
-            }
-            className="max-w-xs"
-            readOnly={settings.branchPrefix === 'git-username'}
           />
-        )}
+          {settings.branchPrefix === 'custom' || settings.branchPrefix === 'git-username' ? (
+            <Input
+              value={
+                settings.branchPrefix === 'git-username'
+                  ? displayedGitUsername
+                  : settings.branchPrefixCustom
+              }
+              onChange={(e) => updateSettings({ branchPrefixCustom: e.target.value })}
+              placeholder={
+                settings.branchPrefix === 'git-username'
+                  ? translate(
+                      'auto.components.settings.GitPane.aefa1ecb59',
+                      'No git username configured'
+                    )
+                  : translate('auto.components.settings.GitPane.b559bf9899', 'e.g. feature')
+              }
+              className="h-7 max-w-xs text-xs"
+              readOnly={settings.branchPrefix === 'git-username'}
+            />
+          ) : null}
+        </div>
       </SearchableSetting>
     ) : null,
     matchesSettingsSearch(searchQuery, {
@@ -228,48 +236,39 @@ export function GitPane({
         title={keepLocalMainUpToDateTitle}
         description={KEEP_LOCAL_MAIN_UP_TO_DATE_DESCRIPTION}
         keywords={KEEP_LOCAL_MAIN_UP_TO_DATE_KEYWORDS}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="space-y-0.5">
-          <Label>{keepLocalMainUpToDateTitle}</Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.GitPane.976afc6b3e',
-              'When you create a workspace, Orca refreshes the remote base and safely fast-forwards your matching local branch, such as'
-            )}
-            <code>{translate('auto.components.settings.GitPane.ffba483bae', 'main')}</code>{' '}
-            {translate('auto.components.settings.GitPane.5bf885be48', 'or')}
-            <code>{translate('auto.components.settings.GitPane.3ae3de8898', 'master')}</code>
-            {translate('auto.components.settings.GitPane.db3a127eb1', '. This keeps commands like')}
-            <code>
-              {translate('auto.components.settings.GitPane.d072a12995', 'git diff main...HEAD')}
-            </code>{' '}
-            {translate(
-              'auto.components.settings.GitPane.36e3de3619',
-              'from comparing against stale history. Orca skips the update if that branch has uncommitted changes or local-only commits.'
-            )}
-          </p>
-        </div>
-        <button
-          role="switch"
-          aria-checked={settings.refreshLocalBaseRefOnWorktreeCreate}
-          onClick={() =>
+        <SettingsSwitchRow
+          label={keepLocalMainUpToDateTitle}
+          ariaLabel={keepLocalMainUpToDateTitle}
+          description={
+            <>
+              {translate(
+                'auto.components.settings.GitPane.976afc6b3e',
+                'When you create a workspace, Orca refreshes the remote base and safely fast-forwards your matching local branch, such as'
+              )}
+              <code>{translate('auto.components.settings.GitPane.ffba483bae', 'main')}</code>{' '}
+              {translate('auto.components.settings.GitPane.5bf885be48', 'or')}
+              <code>{translate('auto.components.settings.GitPane.3ae3de8898', 'master')}</code>
+              {translate(
+                'auto.components.settings.GitPane.db3a127eb1',
+                '. This keeps commands like'
+              )}
+              <code>
+                {translate('auto.components.settings.GitPane.d072a12995', 'git diff main...HEAD')}
+              </code>{' '}
+              {translate(
+                'auto.components.settings.GitPane.36e3de3619',
+                'from comparing against stale history. Orca skips the update if that branch has uncommitted changes or local-only commits.'
+              )}
+            </>
+          }
+          checked={settings.refreshLocalBaseRefOnWorktreeCreate}
+          onChange={() =>
             updateSettings({
               refreshLocalBaseRefOnWorktreeCreate: !settings.refreshLocalBaseRefOnWorktreeCreate
             })
           }
-          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors ${
-            settings.refreshLocalBaseRefOnWorktreeCreate
-              ? 'bg-foreground'
-              : 'bg-muted-foreground/30'
-          }`}
-        >
-          <span
-            className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-              settings.refreshLocalBaseRefOnWorktreeCreate ? 'translate-x-4' : 'translate-x-0.5'
-            }`}
-          />
-        </button>
+        />
       </SearchableSetting>
     ) : null,
     matchesSettingsSearch(searchQuery, {
@@ -333,40 +332,24 @@ export function GitPane({
           'Add Orca attribution to commits, PRs, and issues.'
         )}
         keywords={['github', 'gh', 'pr', 'issue', 'co-author', 'coauthored', 'attribution', 'orca']}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="space-y-0.5">
-          <Label>
-            {translate('auto.components.settings.GitPane.e02ea23a32', 'Orca Attribution')}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.GitPane.d2eede4c54',
-              'Add Orca attribution to commits, PRs, and issues.'
-            )}
-          </p>
-        </div>
-        <button
-          role="switch"
-          aria-checked={settings.enableGitHubAttribution}
-          onClick={() =>
+        <SettingsSwitchRow
+          label={translate('auto.components.settings.GitPane.e02ea23a32', 'Orca Attribution')}
+          ariaLabel={translate('auto.components.settings.GitPane.e02ea23a32', 'Orca Attribution')}
+          description={translate(
+            'auto.components.settings.GitPane.d2eede4c54',
+            'Add Orca attribution to commits, PRs, and issues.'
+          )}
+          checked={settings.enableGitHubAttribution}
+          onChange={() =>
             updateSettings({
               enableGitHubAttribution: !settings.enableGitHubAttribution
             })
           }
-          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors ${
-            settings.enableGitHubAttribution ? 'bg-foreground' : 'bg-muted-foreground/30'
-          }`}
-        >
-          <span
-            className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-              settings.enableGitHubAttribution ? 'translate-x-4' : 'translate-x-0.5'
-            }`}
-          />
-        </button>
+        />
       </SearchableSetting>
     ) : null
   ].filter(Boolean)
 
-  return <div className="space-y-4">{visibleSections}</div>
+  return <div className="space-y-1">{visibleSections}</div>
 }

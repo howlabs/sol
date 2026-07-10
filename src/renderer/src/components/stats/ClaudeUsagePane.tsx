@@ -9,7 +9,7 @@ import {
   SlidersHorizontal,
   Sparkles,
   Waypoints
-} from 'lucide-react'
+} from '@/lib/icons'
 import type { ClaudeUsageRange, ClaudeUsageScope } from '../../../../shared/claude-usage-types'
 import { useAppStore } from '../../store'
 import { Button } from '../ui/button'
@@ -23,6 +23,11 @@ import {
   DropdownMenuTrigger
 } from '../ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import {
+  SettingsSubsectionHeader,
+  SettingsSwitch
+} from '@/components/settings/SettingsFormControls'
+import { USAGE_PANEL_SHELL_CLASS } from './usage-panel-shell'
 import { ClaudeUsageDetails } from './ClaudeUsageDetails'
 import { ClaudeUsageLoadingState } from './ClaudeUsageLoadingState'
 import { ShareUsageButton } from './ShareUsageButton'
@@ -87,36 +92,27 @@ export function ClaudeUsagePane(): React.JSX.Element {
 
   if (!scanState?.enabled) {
     return (
-      <div className="rounded-lg border border-border/60 bg-card/40 p-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-foreground">
-              {translate(
-                'auto.components.stats.ClaudeUsagePane.6afacbee37',
-                'Claude Usage Tracking'
+      <div className={USAGE_PANEL_SHELL_CLASS}>
+        <SettingsSubsectionHeader
+          title={translate(
+            'auto.components.stats.ClaudeUsagePane.6afacbee37',
+            'Claude Usage Tracking'
+          )}
+          description={translate(
+            'auto.components.stats.ClaudeUsagePane.0cb1a36d7d',
+            'Reads local Claude usage logs to show token, model, and session stats.'
+          )}
+          action={
+            <SettingsSwitch
+              checked={false}
+              ariaLabel={translate(
+                'auto.components.stats.ClaudeUsagePane.424cd50412',
+                'Enable Claude usage analytics'
               )}
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              {translate(
-                'auto.components.stats.ClaudeUsagePane.0cb1a36d7d',
-                'Reads local Claude usage logs to show token, model, and session stats.'
-              )}
-            </p>
-          </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={false}
-            aria-label={translate(
-              'auto.components.stats.ClaudeUsagePane.424cd50412',
-              'Enable Claude usage analytics'
-            )}
-            onClick={() => handleSetEnabled(true)}
-            className="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent bg-muted-foreground/30 transition-colors"
-          >
-            <span className="pointer-events-none block size-3.5 translate-x-0.5 rounded-full bg-background shadow-sm transition-transform" />
-          </button>
-        </div>
+              onChange={() => handleSetEnabled(true)}
+            />
+          }
+        />
       </div>
     )
   }
@@ -127,133 +123,132 @@ export function ClaudeUsagePane(): React.JSX.Element {
 
   const hasAnyData = summary?.hasAnyClaudeData ?? scanState.hasAnyClaudeData
 
+  const scanStatusLine = `${formatUpdatedAt(scanState.lastScanCompletedAt)}${
+    scanState.lastScanError
+      ? translate(
+          'auto.components.stats.ClaudeUsagePane.2d41fd45c6',
+          ' • Last scan error: {{value0}}',
+          { value0: scanState.lastScanError }
+        )
+      : ''
+  }`
+
   return (
-    <div className="space-y-4 rounded-lg border border-border/60 bg-card/30 p-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-semibold text-foreground">
-            {translate('auto.components.stats.ClaudeUsagePane.6afacbee37', 'Claude Usage Tracking')}
-          </h3>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {formatUpdatedAt(scanState.lastScanCompletedAt)}
-            {scanState.lastScanError
-              ? translate(
-                  'auto.components.stats.ClaudeUsagePane.2d41fd45c6',
-                  ' • Last scan error: {{value0}}',
-                  { value0: scanState.lastScanError }
-                )
-              : ''}
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2 self-start">
-          {summary && daily.length > 0 && (
-            <ShareUsageButton provider="claude" summary={summary} daily={daily} range={range} />
-          )}
-          <DropdownMenu>
+    <div className={USAGE_PANEL_SHELL_CLASS}>
+      <SettingsSubsectionHeader
+        title={translate(
+          'auto.components.stats.ClaudeUsagePane.6afacbee37',
+          'Claude Usage Tracking'
+        )}
+        description={scanStatusLine}
+        action={
+          <div className="flex shrink-0 items-center gap-2">
+            {summary && daily.length > 0 && (
+              <ShareUsageButton provider="claude" summary={summary} daily={daily} range={range} />
+            )}
+            <DropdownMenu>
+              <TooltipProvider delayDuration={250}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        aria-label={translate(
+                          'auto.components.stats.ClaudeUsagePane.e9bf9fce0e',
+                          'Claude usage options'
+                        )}
+                      >
+                        <SlidersHorizontal className="size-3.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" sideOffset={6}>
+                    {translate('auto.components.stats.ClaudeUsagePane.dd29209b21', 'Filters')}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <DropdownMenuContent align="end" className="w-60">
+                <DropdownMenuLabel>
+                  {translate('auto.components.stats.ClaudeUsagePane.f61cffb9c8', 'Scope')}
+                </DropdownMenuLabel>
+                <DropdownMenuRadioGroup
+                  value={scope}
+                  onValueChange={(value) => void setClaudeUsageScope(value as ClaudeUsageScope)}
+                >
+                  {SCOPE_OPTIONS.map((option) => (
+                    <DropdownMenuRadioItem key={option.value} value={option.value}>
+                      {option.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>
+                  {translate('auto.components.stats.ClaudeUsagePane.505be9aac4', 'Range')}
+                </DropdownMenuLabel>
+                <DropdownMenuRadioGroup
+                  value={range}
+                  onValueChange={(value) => void setClaudeUsageRange(value as ClaudeUsageRange)}
+                >
+                  {RANGE_OPTIONS.map((option) => (
+                    <DropdownMenuRadioItem key={option} value={option}>
+                      {RANGE_LABELS[option]}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <TooltipProvider delayDuration={250}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      aria-label={translate(
-                        'auto.components.stats.ClaudeUsagePane.e9bf9fce0e',
-                        'Claude usage options'
-                      )}
-                    >
-                      <SlidersHorizontal className="size-3.5" />
-                    </Button>
-                  </DropdownMenuTrigger>
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={() => void refreshClaudeUsage()}
+                    disabled={scanState.isScanning}
+                    aria-label={translate(
+                      'auto.components.stats.ClaudeUsagePane.c5b9b344d0',
+                      'Refresh Claude usage'
+                    )}
+                  >
+                    <RefreshCw
+                      className={`size-3.5 ${scanState.isScanning ? 'animate-spin' : ''}`}
+                    />
+                  </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" sideOffset={6}>
-                  {translate('auto.components.stats.ClaudeUsagePane.dd29209b21', 'Filters')}
+                  {translate('auto.components.stats.ClaudeUsagePane.8d18bbb771', 'Refresh')}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <DropdownMenuContent align="end" className="w-60">
-              <DropdownMenuLabel>
-                {translate('auto.components.stats.ClaudeUsagePane.f61cffb9c8', 'Scope')}
-              </DropdownMenuLabel>
-              <DropdownMenuRadioGroup
-                value={scope}
-                onValueChange={(value) => void setClaudeUsageScope(value as ClaudeUsageScope)}
-              >
-                {SCOPE_OPTIONS.map((option) => (
-                  <DropdownMenuRadioItem key={option.value} value={option.value}>
-                    {option.label}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>
-                {translate('auto.components.stats.ClaudeUsagePane.505be9aac4', 'Range')}
-              </DropdownMenuLabel>
-              <DropdownMenuRadioGroup
-                value={range}
-                onValueChange={(value) => void setClaudeUsageRange(value as ClaudeUsageRange)}
-              >
-                {RANGE_OPTIONS.map((option) => (
-                  <DropdownMenuRadioItem key={option} value={option}>
-                    {RANGE_LABELS[option]}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <TooltipProvider delayDuration={250}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  onClick={() => void refreshClaudeUsage()}
-                  disabled={scanState.isScanning}
-                  aria-label={translate(
-                    'auto.components.stats.ClaudeUsagePane.c5b9b344d0',
-                    'Refresh Claude usage'
-                  )}
-                >
-                  <RefreshCw className={`size-3.5 ${scanState.isScanning ? 'animate-spin' : ''}`} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" sideOffset={6}>
-                {translate('auto.components.stats.ClaudeUsagePane.8d18bbb771', 'Refresh')}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={true}
-            aria-label={translate(
-              'auto.components.stats.ClaudeUsagePane.424cd50412',
-              'Enable Claude usage analytics'
-            )}
-            onClick={() => handleSetEnabled(false)}
-            className="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent bg-foreground transition-colors"
-          >
-            <span className="pointer-events-none block size-3.5 translate-x-4 rounded-full bg-background shadow-sm transition-transform" />
-          </button>
-        </div>
-      </div>
+            <SettingsSwitch
+              checked
+              ariaLabel={translate(
+                'auto.components.stats.ClaudeUsagePane.424cd50412',
+                'Enable Claude usage analytics'
+              )}
+              onChange={() => handleSetEnabled(false)}
+            />
+          </div>
+        }
+      />
 
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[11px] text-muted-foreground">
           {SCOPE_OPTIONS.find((option) => option.value === scope)?.label} • {RANGE_LABELS[range]}
         </p>
       </div>
 
       {!hasAnyData ? (
-        <div className="rounded-lg border border-dashed border-border/60 bg-card/30 px-4 py-6 text-sm text-muted-foreground">
+        <p className="text-[11px] leading-snug text-muted-foreground">
           {translate(
             'auto.components.stats.ClaudeUsagePane.7dde9331fd',
             'No local Claude usage found yet for this scope.'
           )}
-        </div>
+        </p>
       ) : (
         <>
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
             <StatCard
               label={translate('auto.components.stats.ClaudeUsagePane.ea71fae8fc', 'Input tokens')}
               value={formatTokens(summary?.inputTokens ?? 0)}

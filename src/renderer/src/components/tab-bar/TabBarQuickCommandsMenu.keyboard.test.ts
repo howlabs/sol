@@ -97,7 +97,7 @@ vi.mock('@/i18n/i18n', () => ({
   translate: (_key: string, fallback: string) => fallback
 }))
 
-vi.mock('lucide-react', () => ({
+vi.mock('@/lib/icons', () => ({
   ChevronDown: () => null,
   Play: () => null,
   Plus: () => null

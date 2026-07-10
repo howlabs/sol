@@ -12,9 +12,9 @@ import {
   Save,
   Send,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import { toast } from 'sonner'
-import { VisuallyHidden } from 'radix-ui'
+import { VisuallyHidden } from '@/components/ui/visually-hidden'
 
 import CommentMarkdown from '@/components/sidebar/CommentMarkdown'
 import { JiraIcon } from '@/components/icons/JiraIcon'

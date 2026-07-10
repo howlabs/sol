@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Slot } from 'radix-ui'
 
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
@@ -26,7 +25,7 @@ function ButtonGroup({
   className,
   orientation,
   ...props
-}: React.ComponentProps<'div'> & VariantProps<typeof buttonGroupVariants>) {
+}: React.ComponentProps<'div'> & VariantProps<typeof buttonGroupVariants>): React.JSX.Element {
   return (
     <div
       role="group"
@@ -41,20 +40,27 @@ function ButtonGroup({
 function ButtonGroupText({
   className,
   asChild = false,
+  children,
   ...props
 }: React.ComponentProps<'div'> & {
   asChild?: boolean
-}) {
-  const Comp = asChild ? Slot.Root : 'div'
+}): React.JSX.Element {
+  const classes = cn(
+    "flex items-center gap-2 rounded-md border bg-muted px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+    className
+  )
+
+  if (asChild && React.isValidElement<{ className?: string }>(children)) {
+    return React.cloneElement(children, {
+      ...props,
+      className: cn(classes, children.props.className)
+    })
+  }
 
   return (
-    <Comp
-      className={cn(
-        "flex items-center gap-2 rounded-md border bg-muted px-4 text-sm font-medium shadow-xs [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
-        className
-      )}
-      {...props}
-    />
+    <div className={classes} {...props}>
+      {children}
+    </div>
   )
 }
 
@@ -62,7 +68,7 @@ function ButtonGroupSeparator({
   className,
   orientation = 'vertical',
   ...props
-}: React.ComponentProps<typeof Separator>) {
+}: React.ComponentProps<typeof Separator>): React.JSX.Element {
   return (
     <Separator
       data-slot="button-group-separator"

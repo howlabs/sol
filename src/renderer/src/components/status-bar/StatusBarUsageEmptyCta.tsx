@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { BarChart3, EyeOff } from 'lucide-react'
+import { BarChart3, EyeOff } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'

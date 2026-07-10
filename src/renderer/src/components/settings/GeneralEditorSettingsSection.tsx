@@ -1,16 +1,14 @@
 import type React from 'react'
-import { useState } from 'react'
 import type { GlobalSettings } from '../../../../shared/types'
 import {
   DEFAULT_EDITOR_AUTO_SAVE_DELAY_MS,
   MAX_EDITOR_AUTO_SAVE_DELAY_MS,
   MIN_EDITOR_AUTO_SAVE_DELAY_MS
 } from '../../../../shared/constants'
-import { clampNumber } from '@/lib/terminal-theme'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
 import { SearchableSetting } from './SearchableSetting'
 import {
+  NumberField,
+  SettingsRow,
   SettingsSegmentedControl,
   SettingsSubsectionHeader,
   SettingsSwitchRow
@@ -18,6 +16,7 @@ import {
 import { translate } from '@/i18n/i18n'
 import { RichMarkdownSpellcheckSetting } from './RichMarkdownSpellcheckSetting'
 
+// Kept for GeneralPane.test draft-state coverage of async settings persistence.
 export type AutoSaveDelayDraftState = {
   sourceDelayMs: number
   draft: string
@@ -63,53 +62,8 @@ export function GeneralEditorSettingsSection({
   settings,
   updateSettings
 }: GeneralEditorSettingsSectionProps): React.JSX.Element {
-  const [autoSaveDelayDraftState, setAutoSaveDelayDraftState] = useState(() =>
-    createAutoSaveDelayDraftState(settings.editorAutoSaveDelayMs)
-  )
-
-  const resolvedAutoSaveDelayDraftState = resolveAutoSaveDelayDraftState(
-    autoSaveDelayDraftState,
-    settings.editorAutoSaveDelayMs
-  )
-  if (resolvedAutoSaveDelayDraftState !== autoSaveDelayDraftState) {
-    // Why: Settings can be updated outside this pane; reconcile drafts before
-    // paint so the visible input never lags behind the persisted value.
-    setAutoSaveDelayDraftState(resolvedAutoSaveDelayDraftState)
-  }
-  const autoSaveDelayDraft = resolvedAutoSaveDelayDraftState.draft
-
-  const updateAutoSaveDelayDraft = (draft: string): void => {
-    setAutoSaveDelayDraftState((current) =>
-      updateAutoSaveDelayDraftState(current, settings.editorAutoSaveDelayMs, draft)
-    )
-  }
-
-  const commitAutoSaveDelay = (): void => {
-    const trimmed = autoSaveDelayDraft.trim()
-    if (trimmed === '') {
-      setAutoSaveDelayDraftState(createAutoSaveDelayDraftState(settings.editorAutoSaveDelayMs))
-      return
-    }
-
-    const value = Number(trimmed)
-    if (!Number.isFinite(value)) {
-      setAutoSaveDelayDraftState(createAutoSaveDelayDraftState(settings.editorAutoSaveDelayMs))
-      return
-    }
-
-    const next = clampNumber(
-      Math.round(value),
-      MIN_EDITOR_AUTO_SAVE_DELAY_MS,
-      MAX_EDITOR_AUTO_SAVE_DELAY_MS
-    )
-    updateSettings({ editorAutoSaveDelayMs: next })
-    setAutoSaveDelayDraftState((current) =>
-      updateAutoSaveDelayDraftState(current, settings.editorAutoSaveDelayMs, String(next))
-    )
-  }
-
   return (
-    <section key="editor" className="space-y-4">
+    <section key="editor" className="space-y-1.5">
       <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.GeneralEditorSettingsSection.45c6e85c4d',
@@ -156,44 +110,27 @@ export function GeneralEditorSettingsSection({
           'How long Orca waits after your last edit before saving automatically.'
         )}
         keywords={['autosave', 'delay', 'milliseconds']}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="min-w-0 flex-1 space-y-0.5">
-          <Label>
-            {translate(
-              'auto.components.settings.GeneralEditorSettingsSection.d6cf227ca0',
-              'Auto Save Delay'
-            )}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.GeneralEditorSettingsSection.8112cd6dcf',
-              'How long Orca waits after your last edit before saving automatically. First launch defaults to'
-            )}
-            {DEFAULT_EDITOR_AUTO_SAVE_DELAY_MS}{' '}
-            {translate('auto.components.settings.GeneralEditorSettingsSection.fc5c5306ff', 'ms.')}
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Input
-            type="number"
-            min={MIN_EDITOR_AUTO_SAVE_DELAY_MS}
-            max={MAX_EDITOR_AUTO_SAVE_DELAY_MS}
-            step={250}
-            value={autoSaveDelayDraft}
-            onChange={(e) => updateAutoSaveDelayDraft(e.target.value)}
-            onBlur={commitAutoSaveDelay}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                commitAutoSaveDelay()
-              }
-            }}
-            className="number-input-clean w-28 text-right tabular-nums"
-          />
-          <span className="text-xs text-muted-foreground">
-            {translate('auto.components.settings.GeneralEditorSettingsSection.a5db1d3975', 'ms')}
-          </span>
-        </div>
+        <NumberField
+          label={translate(
+            'auto.components.settings.GeneralEditorSettingsSection.d6cf227ca0',
+            'Auto Save Delay'
+          )}
+          description={translate(
+            'auto.components.settings.GeneralEditorSettingsSection.1bec6d8318',
+            'How long Orca waits after your last edit before saving automatically.'
+          )}
+          value={settings.editorAutoSaveDelayMs}
+          defaultValue={DEFAULT_EDITOR_AUTO_SAVE_DELAY_MS}
+          min={MIN_EDITOR_AUTO_SAVE_DELAY_MS}
+          max={MAX_EDITOR_AUTO_SAVE_DELAY_MS}
+          step={250}
+          suffix={translate(
+            'auto.components.settings.GeneralEditorSettingsSection.a5db1d3975',
+            'ms'
+          )}
+          onChange={(next) => updateSettings({ editorAutoSaveDelayMs: Math.round(next) })}
+        />
       </SearchableSetting>
 
       <SearchableSetting
@@ -206,45 +143,42 @@ export function GeneralEditorSettingsSection({
           'Preferred presentation format for showing git diffs by default.'
         )}
         keywords={['diff', 'view', 'inline', 'side-by-side', 'split']}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="min-w-0 flex-1 space-y-0.5">
-          <Label>
-            {translate(
-              'auto.components.settings.GeneralEditorSettingsSection.7311f67ee7',
-              'Default Diff View'
-            )}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.GeneralEditorSettingsSection.b492397d34',
-              'Preferred presentation format for showing git diffs by default.'
-            )}
-          </p>
-        </div>
-        <SettingsSegmentedControl
-          ariaLabel={translate(
+        <SettingsRow
+          label={translate(
             'auto.components.settings.GeneralEditorSettingsSection.7311f67ee7',
             'Default Diff View'
           )}
-          value={settings.diffDefaultView}
-          onChange={(option) => updateSettings({ diffDefaultView: option })}
-          options={[
-            {
-              value: 'inline',
-              label: translate(
-                'auto.components.settings.GeneralEditorSettingsSection.05b6df93b3',
-                'Inline'
-              )
-            },
-            {
-              value: 'side-by-side',
-              label: translate(
-                'auto.components.settings.GeneralEditorSettingsSection.12cbc0d0d6',
-                'Side-by-side'
-              )
-            }
-          ]}
+          description={translate(
+            'auto.components.settings.GeneralEditorSettingsSection.b492397d34',
+            'Preferred presentation format for showing git diffs by default.'
+          )}
+          control={
+            <SettingsSegmentedControl
+              ariaLabel={translate(
+                'auto.components.settings.GeneralEditorSettingsSection.7311f67ee7',
+                'Default Diff View'
+              )}
+              value={settings.diffDefaultView}
+              onChange={(option) => updateSettings({ diffDefaultView: option })}
+              options={[
+                {
+                  value: 'inline',
+                  label: translate(
+                    'auto.components.settings.GeneralEditorSettingsSection.05b6df93b3',
+                    'Inline'
+                  )
+                },
+                {
+                  value: 'side-by-side',
+                  label: translate(
+                    'auto.components.settings.GeneralEditorSettingsSection.12cbc0d0d6',
+                    'Side-by-side'
+                  )
+                }
+              ]}
+            />
+          }
         />
       </SearchableSetting>
 
@@ -258,45 +192,18 @@ export function GeneralEditorSettingsSection({
           'Wrap long lines in diff editors instead of requiring horizontal scrolling.'
         )}
         keywords={['diff', 'word wrap', 'wrap', 'markdown', 'long lines']}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="min-w-0 flex-1 space-y-0.5">
-          <Label>
-            {translate(
-              'auto.components.settings.GeneralEditorSettingsSection.8f1afdfbd8',
-              'Diff Word Wrap'
-            )}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.GeneralEditorSettingsSection.4aa4d9fb73',
-              'Wrap long lines in diff editors instead of requiring horizontal scrolling.'
-            )}
-          </p>
-        </div>
-        <SettingsSegmentedControl
-          ariaLabel={translate(
+        <SettingsSwitchRow
+          label={translate(
             'auto.components.settings.GeneralEditorSettingsSection.8f1afdfbd8',
             'Diff Word Wrap'
           )}
-          value={settings.diffWordWrap ? 'on' : 'off'}
-          onChange={(option) => updateSettings({ diffWordWrap: option === 'on' })}
-          options={[
-            {
-              value: 'off',
-              label: translate(
-                'auto.components.settings.GeneralEditorSettingsSection.bf16ef0af2',
-                'Off'
-              )
-            },
-            {
-              value: 'on',
-              label: translate(
-                'auto.components.settings.GeneralEditorSettingsSection.3f6892f307',
-                'On'
-              )
-            }
-          ]}
+          description={translate(
+            'auto.components.settings.GeneralEditorSettingsSection.4aa4d9fb73',
+            'Wrap long lines in diff editors instead of requiring horizontal scrolling.'
+          )}
+          checked={settings.diffWordWrap}
+          onChange={() => updateSettings({ diffWordWrap: !settings.diffWordWrap })}
         />
       </SearchableSetting>
 
@@ -310,47 +217,44 @@ export function GeneralEditorSettingsSection({
           'Show or hide the file tree when opening combined diff views.'
         )}
         keywords={['diff', 'tree', 'file tree', 'combined diff', 'sidebar']}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="min-w-0 flex-1 space-y-0.5">
-          <Label>
-            {translate(
-              'auto.components.settings.GeneralEditorSettingsSection.1de48ad940',
-              'Default Diff File Tree'
-            )}
-          </Label>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.GeneralEditorSettingsSection.1b87897af9',
-              'Show or hide the file tree when opening combined diff views.'
-            )}
-          </p>
-        </div>
-        <SettingsSegmentedControl
-          ariaLabel={translate(
+        <SettingsRow
+          label={translate(
             'auto.components.settings.GeneralEditorSettingsSection.1de48ad940',
             'Default Diff File Tree'
           )}
-          value={settings.combinedDiffFileTreeVisibleByDefault ? 'shown' : 'hidden'}
-          onChange={(option) =>
-            updateSettings({ combinedDiffFileTreeVisibleByDefault: option === 'shown' })
+          description={translate(
+            'auto.components.settings.GeneralEditorSettingsSection.1b87897af9',
+            'Show or hide the file tree when opening combined diff views.'
+          )}
+          control={
+            <SettingsSegmentedControl
+              ariaLabel={translate(
+                'auto.components.settings.GeneralEditorSettingsSection.1de48ad940',
+                'Default Diff File Tree'
+              )}
+              value={settings.combinedDiffFileTreeVisibleByDefault ? 'shown' : 'hidden'}
+              onChange={(option) =>
+                updateSettings({ combinedDiffFileTreeVisibleByDefault: option === 'shown' })
+              }
+              options={[
+                {
+                  value: 'shown',
+                  label: translate(
+                    'auto.components.settings.GeneralEditorSettingsSection.73a09aad63',
+                    'Shown'
+                  )
+                },
+                {
+                  value: 'hidden',
+                  label: translate(
+                    'auto.components.settings.GeneralEditorSettingsSection.5a1ea6eaa2',
+                    'Hidden'
+                  )
+                }
+              ]}
+            />
           }
-          options={[
-            {
-              value: 'shown',
-              label: translate(
-                'auto.components.settings.GeneralEditorSettingsSection.73a09aad63',
-                'Shown'
-              )
-            },
-            {
-              value: 'hidden',
-              label: translate(
-                'auto.components.settings.GeneralEditorSettingsSection.5a1ea6eaa2',
-                'Hidden'
-              )
-            }
-          ]}
         />
       </SearchableSetting>
 

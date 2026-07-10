@@ -1,4 +1,4 @@
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle } from '@/lib/icons'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import {
@@ -9,6 +9,7 @@ import {
   type UsageProviderOverview
 } from './usage-overview-model'
 import { translate } from '@/i18n/i18n'
+import { USAGE_LIST_ITEM_CLASS, USAGE_SUBPANEL_SHELL_CLASS } from './usage-panel-shell'
 
 const INTENSITY_CLASS: Record<UsageOverviewDailyPoint['intensity'], string> = {
   0: 'border-border/60 bg-muted/40',
@@ -59,13 +60,13 @@ export function TokenMixBar({ overview }: { overview: UsageOverviewModel }): Rea
   const mixTotal = segments.reduce((sum, segment) => sum + segment.value, 0)
 
   return (
-    <section className="rounded-lg border border-border/60 bg-card/40 p-4">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div>
-          <h4 className="text-sm font-semibold text-foreground">
+    <section className={`${USAGE_SUBPANEL_SHELL_CLASS} space-y-1.5`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 space-y-0.5">
+          <h4 className="text-xs font-semibold tracking-tight text-foreground">
             {translate('auto.components.stats.usage.overview.sections.4ff104da47', 'Token mix')}
           </h4>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[11px] leading-snug text-muted-foreground">
             {translate(
               'auto.components.stats.usage.overview.sections.3bc4a01b24',
               'Combined input, output, and cache tokens across enabled providers.'
@@ -107,7 +108,7 @@ export function TokenMixBar({ overview }: { overview: UsageOverviewModel }): Rea
         <div className="h-3 rounded-full border border-dashed border-border/60 bg-muted/40" />
       )}
 
-      <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-3">
+      <div className="grid gap-2 text-[11px] text-muted-foreground sm:grid-cols-3">
         {segments.map((segment) => (
           <div key={segment.key} className="flex min-w-0 items-center gap-2">
             <span className={`size-2 shrink-0 rounded-full ${segment.className}`} />
@@ -129,16 +130,16 @@ export function DailyIntensityGrid({
   bestDay: UsageOverviewDailyPoint | null
 }): React.JSX.Element {
   return (
-    <section className="rounded-lg border border-border/60 bg-card/40 p-4">
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div>
-          <h4 className="text-sm font-semibold text-foreground">
+    <section className={`${USAGE_SUBPANEL_SHELL_CLASS} space-y-1.5`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 space-y-0.5">
+          <h4 className="text-xs font-semibold tracking-tight text-foreground">
             {translate(
               'auto.components.stats.usage.overview.sections.69e2b50427',
               'Daily intensity'
             )}
           </h4>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[11px] leading-snug text-muted-foreground">
             {translate(
               'auto.components.stats.usage.overview.sections.f28ff1f852',
               'Recent combined Claude, Codex, and OpenCode token activity.'
@@ -173,7 +174,7 @@ export function DailyIntensityGrid({
         ))}
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-3 text-xs text-muted-foreground">
+      <div className="flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
         <span>{formatDayLabel(days[0]?.day ?? '')}</span>
         <span>{translate('auto.components.stats.usage.overview.sections.1dd166c920', 'Less')}</span>
         <div className="flex items-center gap-1" aria-hidden>
@@ -205,14 +206,16 @@ export function ProviderUsageRow({
   const statusVariant = provider.enabled ? 'secondary' : 'outline'
 
   return (
-    <div className="rounded-lg border border-border/60 bg-card/40 p-3">
+    <div className={USAGE_LIST_ITEM_CLASS}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex min-w-0 items-center gap-2">
-            <h5 className="truncate text-sm font-semibold text-foreground">{provider.label}</h5>
+            <h5 className="truncate text-xs font-semibold tracking-tight text-foreground">
+              {provider.label}
+            </h5>
             <Badge variant={statusVariant}>{status}</Badge>
           </div>
-          <p className="mt-1 truncate text-xs text-muted-foreground">
+          <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
             {provider.topModel ??
               translate('auto.components.stats.usage.overview.sections.3de9bf87fc', 'No model yet')}
             {provider.topProject ? ` - ${provider.topProject}` : ''}
@@ -225,7 +228,7 @@ export function ProviderUsageRow({
         ) : null}
       </div>
 
-      <div className="mt-3 grid gap-2 text-xs text-muted-foreground sm:grid-cols-3">
+      <div className="mt-2 grid gap-2 text-[11px] text-muted-foreground sm:grid-cols-3">
         <span>
           {formatUsageTokens(provider.totalTokens)}{' '}
           {translate('auto.components.stats.usage.overview.sections.6762f6a682', 'tokens')}

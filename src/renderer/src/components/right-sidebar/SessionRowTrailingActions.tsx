@@ -1,5 +1,5 @@
 import type React from 'react'
-import { ChevronDown, LocateFixed, MoreHorizontal, PanelTopOpen, Play } from 'lucide-react'
+import { ChevronDown, LocateFixed, MoreHorizontal, PanelTopOpen, Play } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import {

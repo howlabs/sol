@@ -9,26 +9,12 @@ import type {
   CodexRateLimitAccountsState,
   GlobalSettings
 } from '../../../../shared/types'
-import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
-import { Separator } from '../ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-import {
-  AlertTriangle,
-  ExternalLink,
-  HelpCircle,
-  Loader2,
-  Lock,
-  LockOpen,
-  Plus,
-  RefreshCw,
-  ShieldCheck,
-  Trash2,
-  X
-} from 'lucide-react'
+import { ExternalLink, HelpCircle, Loader2, Plus, RefreshCw, Trash2 } from '@/lib/icons'
 import { useAppStore } from '../../store'
 import {
   ClaudeIcon,
@@ -48,7 +34,7 @@ import {
   getAccountsPaneSearchEntries
 } from './accounts-search'
 import { SearchableSetting } from './SearchableSetting'
-import { SettingsRow, SettingsSegmentedControl } from './SettingsFormControls'
+import { SettingsRow, SettingsSegmentedControl, SettingsSwitch } from './SettingsFormControls'
 import { matchesSettingsSearch } from './settings-search'
 import { markLiveCodexSessionsForRestart } from '@/lib/codex-session-restart'
 import {
@@ -60,30 +46,18 @@ import {
   DialogTitle
 } from '../ui/dialog'
 import { getCodexAccountAuthWarning } from './codex-account-auth-warning'
+import {
+  ProviderAccountList,
+  ProviderAccountRow,
+  ProviderAccountStatusBadge,
+  ProviderSectionHeader
+} from './provider-account-list'
 import { translate } from '@/i18n/i18n'
-import { cn } from '@/lib/utils'
 
 export { getAccountsPaneSearchEntries }
 
 const EMPTY_WSL_DISTROS: string[] = []
 const MINIMAX_CONSOLE_URL = 'https://platform.minimax.io/console/usage'
-
-function formatMiniMaxRelativeRefresh(updatedAt: number, now: number): string {
-  const diffMs = Math.max(0, now - updatedAt)
-  if (diffMs < 60_000) {
-    return translate('auto.components.settings.AccountsPane.3a30aaf526', 'just now')
-  }
-  const formatter = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' })
-  const minutes = Math.round(diffMs / 60_000)
-  if (minutes < 60) {
-    return formatter.format(-minutes, 'minute')
-  }
-  const hours = Math.round(minutes / 60)
-  if (hours < 24) {
-    return formatter.format(-hours, 'hour')
-  }
-  return formatter.format(-Math.round(hours / 24), 'day')
-}
 
 function MiniMaxCookieHelpPopover(): React.JSX.Element {
   const steps = [
@@ -204,24 +178,6 @@ function getClaudeAccountLabel(
   return state.accounts.find((account) => account.id === accountId)?.email ?? 'Claude account'
 }
 
-function getCodexAccountRuntimeLabel(
-  account: CodexRateLimitAccountsState['accounts'][number]
-): string {
-  if (account.managedHomeRuntime === 'wsl') {
-    return account.wslDistro ? `WSL ${account.wslDistro}` : 'WSL'
-  }
-  return getHostRuntimeLabel()
-}
-
-function getClaudeAccountRuntimeLabel(
-  account: ClaudeRateLimitAccountsState['accounts'][number]
-): string {
-  if (account.managedAuthRuntime === 'wsl') {
-    return account.wslDistro ? `WSL ${account.wslDistro}` : 'WSL'
-  }
-  return getHostRuntimeLabel()
-}
-
 function getCodexAccountErrorDescription(error: unknown): string {
   const message = String((error as Error)?.message ?? error)
     .replace(/^Error occurred in handler for 'codexAccounts:[^']+':\s*/i, '')
@@ -337,13 +293,18 @@ export function AccountsPane({
   const searchQuery = useAppStore((s) => s.settingsSearchQuery)
   const codexRateLimits = useAppStore((s) => s.rateLimits.codex)
   const codexRateLimitTarget = useAppStore((s) => s.rateLimits.codexTarget)
-  const miniMaxRateLimits = useAppStore((s) => s.rateLimits.minimax)
   const recordFeatureInteraction = useAppStore((s) => s.recordFeatureInteraction)
   const fetchSettings = useAppStore((s) => s.fetchSettings)
   const recordedOpenCodeSettingEditsRef = useRef<Set<'cookie' | 'workspaceId'>>(new Set())
   const [miniMaxCookieDraft, setMiniMaxCookieDraft] = useState('')
+  const [miniMaxGroupDraft, setMiniMaxGroupDraft] = useState('')
+  const [miniMaxModelsDraft, setMiniMaxModelsDraft] = useState('')
   const [miniMaxConfigured, setMiniMaxConfigured] = useState(false)
   const [miniMaxCredentialBusy, setMiniMaxCredentialBusy] = useState(false)
+  const [openCodeDialogOpen, setOpenCodeDialogOpen] = useState(false)
+  const [miniMaxDialogOpen, setMiniMaxDialogOpen] = useState(false)
+  const [openCodeCookieDraft, setOpenCodeCookieDraft] = useState('')
+  const [openCodeWorkspaceDraft, setOpenCodeWorkspaceDraft] = useState('')
   const accountRuntime = getSelectedAccountRuntime(
     settings,
     wslSupportedPlatform,
@@ -415,12 +376,12 @@ export function AccountsPane({
     }
   }
 
-  const saveMiniMaxCookie = async (): Promise<void> => {
+  const saveMiniMaxCookie = async (): Promise<boolean> => {
     if (!miniMaxCookieDraft.trim()) {
       toast.error(
         translate('auto.components.settings.AccountsPane.2f24f244a4', 'MiniMax cookie is required.')
       )
-      return
+      return false
     }
     setMiniMaxCredentialBusy(true)
     try {
@@ -439,6 +400,7 @@ export function AccountsPane({
       toast.success(
         translate('auto.components.settings.AccountsPane.8d61637a77', 'MiniMax cookie saved.')
       )
+      return true
     } catch (error) {
       toast.error(
         translate(
@@ -447,9 +409,46 @@ export function AccountsPane({
         ),
         { description: String((error as Error)?.message ?? error) }
       )
+      return false
     } finally {
       setMiniMaxCredentialBusy(false)
     }
+  }
+
+  const openMiniMaxDialog = (): void => {
+    setMiniMaxCookieDraft('')
+    setMiniMaxGroupDraft(settings.minimaxGroupId)
+    setMiniMaxModelsDraft(settings.minimaxUsageModels)
+    setMiniMaxDialogOpen(true)
+  }
+
+  const saveMiniMaxDialog = async (): Promise<void> => {
+    const cookie = miniMaxCookieDraft.trim()
+    if (!miniMaxConfigured && !cookie) {
+      toast.error(
+        translate('auto.components.settings.AccountsPane.2f24f244a4', 'MiniMax cookie is required.')
+      )
+      return
+    }
+    updateSettings({
+      minimaxGroupId: miniMaxGroupDraft.trim(),
+      minimaxUsageModels: miniMaxModelsDraft.trim()
+    })
+    if (cookie) {
+      const ok = await saveMiniMaxCookie()
+      if (!ok) {
+        return
+      }
+    } else {
+      recordFeatureInteraction('usage-tracking')
+      toast.success(
+        translate(
+          'auto.components.settings.AccountsPane.minimaxSettingsSaved',
+          'MiniMax settings saved.'
+        )
+      )
+    }
+    setMiniMaxDialogOpen(false)
   }
 
   const clearMiniMaxCookie = async (): Promise<void> => {
@@ -541,15 +540,6 @@ export function AccountsPane({
     await fetchSettings()
   }
 
-  const formatAccountTimestamp = (timestamp: number): string => {
-    return new Date(timestamp).toLocaleString(undefined, {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
-    })
-  }
-
   const accountRuntimeControls = wslSupportedPlatform ? (
     <SearchableSetting
       title={translate('auto.components.settings.AccountsPane.f54b4fbd71', 'Account Location')}
@@ -600,6 +590,16 @@ export function AccountsPane({
             {wslSupportedPlatform && accountRuntime.runtime === 'wsl' ? (
               <Select
                 value={accountRuntime.wslDistro ?? '__default__'}
+                items={[
+                  {
+                    value: '__default__',
+                    label: translate(
+                      'auto.components.settings.AccountsPane.2358ac71d2',
+                      'WSL default'
+                    )
+                  },
+                  ...wslDistros.map((distro) => ({ value: distro, label: distro }))
+                ]}
                 onValueChange={(value) =>
                   updateSettings({
                     localAccountRuntime: 'wsl',
@@ -736,25 +736,12 @@ export function AccountsPane({
   const visibleSections = [
     wslSupportedPlatform &&
     matchesSettingsSearch(searchQuery, getAccountsLocationSearchEntries()) ? (
-      <section key="account-runtime" id="accounts-runtime" className="space-y-3 scroll-mt-6">
+      <section key="account-runtime" id="accounts-runtime" className="scroll-mt-6">
         {accountRuntimeControls}
       </section>
     ) : null,
     matchesSettingsSearch(searchQuery, getAccountsClaudeSearchEntries()) ? (
-      <section key="claude-accounts" id="accounts-claude" className="space-y-4 scroll-mt-6">
-        <div className="space-y-1">
-          <h3 className="flex items-center gap-2 text-sm font-semibold">
-            <ClaudeIcon size={16} />
-            {translate('auto.components.settings.AccountsPane.26ef4b55be', 'Claude')}
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AccountsPane.72b36ea174',
-              'Optional. Orca can use your normal Claude login; add accounts only if you want quick switching without moving chat sessions.'
-            )}
-          </p>
-        </div>
-
+      <section key="claude-accounts" id="accounts-claude" className="scroll-mt-6">
         <SearchableSetting
           title={translate('auto.components.settings.AccountsPane.8bbfd74556', 'Claude Accounts')}
           description={translate(
@@ -762,63 +749,54 @@ export function AccountsPane({
             'Optional account switcher for the shared Claude auth files.'
           )}
           keywords={['claude', 'account', 'rate limit', 'status bar', 'quota']}
-          className="space-y-3 py-2"
+          className="space-y-1.5"
         >
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-0.5">
-              <Label>
-                {translate('auto.components.settings.AccountsPane.94d351af4a', 'Accounts')}
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                {translate(
-                  'auto.components.settings.AccountsPane.c0a52abfc5',
-                  'Showing accounts for {{value0}}. New accounts are added there.',
-                  { value0: accountRuntimeSentenceLabel }
-                )}
-              </p>
-            </div>
-            <div className="flex shrink-0 items-center gap-1.5">
-              <Button
-                variant="outline"
-                size="xs"
-                onClick={() =>
-                  void runClaudeAccountAction('adding', () =>
-                    window.api.claudeAccounts.add({
-                      runtime: accountRuntime.runtime,
-                      wslDistro: accountRuntime.wslDistro
-                    })
-                  )
-                }
-                disabled={
-                  claudeAction !== 'idle' || wslCapabilitiesLoading || accountRuntimeUnavailable
-                }
-                className="gap-1.5"
-              >
-                {claudeAction === 'adding' ? (
-                  <Loader2 className="size-3 animate-spin" />
-                ) : (
-                  <Plus className="size-3" />
-                )}
-                {translate('auto.components.settings.AccountsPane.b0e948a4f9', 'Add Account')}
-              </Button>
-              {claudeAction === 'adding' ? (
+          <ProviderSectionHeader
+            icon={<ClaudeIcon size={14} />}
+            title={translate('auto.components.settings.AccountsPane.26ef4b55be', 'Claude')}
+            action={
+              <div className="flex items-center gap-1">
                 <Button
-                  variant="ghost"
-                  size="xs"
-                  onClick={() => void window.api.claudeAccounts.cancelPendingLogin()}
-                  className="gap-1.5 text-muted-foreground hover:text-foreground"
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    void runClaudeAccountAction('adding', () =>
+                      window.api.claudeAccounts.add({
+                        runtime: accountRuntime.runtime,
+                        wslDistro: accountRuntime.wslDistro
+                      })
+                    )
+                  }
+                  disabled={
+                    claudeAction !== 'idle' || wslCapabilitiesLoading || accountRuntimeUnavailable
+                  }
+                  className="gap-1.5"
                 >
-                  <X className="size-3" />
-                  {translate('auto.components.settings.AccountsPane.dbb9626ed1', 'Cancel')}
+                  {claudeAction === 'adding' ? (
+                    <Loader2 className="size-3.5 animate-spin" />
+                  ) : (
+                    <Plus className="size-3.5" />
+                  )}
+                  {translate('auto.components.settings.AccountsPane.b0e948a4f9', 'Add')}
                 </Button>
-              ) : null}
-            </div>
-          </div>
+                {claudeAction === 'adding' ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => void window.api.claudeAccounts.cancelPendingLogin()}
+                  >
+                    {translate('auto.components.settings.AccountsPane.dbb9626ed1', 'Cancel')}
+                  </Button>
+                ) : null}
+              </div>
+            }
+          />
 
-          <div className="space-y-2">
-            <button
-              type="button"
-              onClick={() =>
+          <ProviderAccountList>
+            <ProviderAccountRow
+              active={activeClaudeAccountId === null}
+              disabled={claudeAction !== 'idle' || accountRuntimeUnavailable}
+              onSelect={() =>
                 void runClaudeAccountAction('select:system', () =>
                   window.api.claudeAccounts.select({
                     accountId: null,
@@ -827,170 +805,89 @@ export function AccountsPane({
                   })
                 )
               }
-              disabled={claudeAction !== 'idle' || accountRuntimeUnavailable}
-              className={`flex w-full items-center justify-between gap-3 rounded-md border px-3 py-2.5 text-left transition-colors ${
-                activeClaudeAccountId === null
-                  ? 'border-foreground/20 bg-accent/15'
-                  : 'border-border/70 hover:border-border hover:bg-accent/8'
-              } disabled:cursor-default disabled:opacity-100`}
-            >
-              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <div className="flex min-w-0 items-center gap-2">
-                  <span className="truncate text-sm font-medium">
-                    {translate(
-                      'auto.components.settings.AccountsPane.f2a265f8c7',
-                      'System default'
-                    )}
-                  </span>
-                  {activeClaudeAccountId === null ? (
-                    <Badge
-                      variant="outline"
-                      className="h-4 shrink-0 rounded px-1.5 text-[10px] font-medium leading-none text-foreground/80"
-                    >
-                      {translate('auto.components.settings.AccountsPane.e74831fb6b', 'Active')}
-                    </Badge>
-                  ) : null}
-                </div>
-                <span className="truncate text-[11px] text-muted-foreground">
-                  {translate(
-                    'auto.components.settings.AccountsPane.e05d0ff737',
-                    'Use your current {{value0}} Claude login.',
-                    { value0: accountRuntimeSentenceLabel }
-                  )}
-                </span>
-              </div>
-            </button>
-            {visibleClaudeAccounts.length === 0 ? (
-              <div className="rounded-md border border-dashed border-border/70 px-3 py-4 text-xs text-muted-foreground">
-                {translate(
-                  'auto.components.settings.AccountsPane.3fe7862418',
-                  "No managed Claude accounts for {{value0}}. Orca will use that environment's system default Claude login until you add one here.",
-                  { value0: accountRuntimeSentenceLabel }
-                )}
-              </div>
-            ) : (
-              visibleClaudeAccounts.map((account) => {
-                const isActive = activeClaudeAccountId === account.id
-                const isReauthing = claudeAction === `reauth:${account.id}`
-                const isBusy = claudeAction !== 'idle' || accountRuntimeUnavailable
+              title={translate(
+                'auto.components.settings.AccountsPane.f2a265f8c7',
+                'System default'
+              )}
+            />
+            {visibleClaudeAccounts.map((account) => {
+              const isActive = activeClaudeAccountId === account.id
+              const isReauthing = claudeAction === `reauth:${account.id}`
+              const isBusy = claudeAction !== 'idle' || accountRuntimeUnavailable
 
-                return (
-                  <div
-                    key={account.id}
-                    className={`flex w-full items-center justify-between gap-3 rounded-md border px-3 py-2.5 text-left transition-colors ${
-                      isActive
-                        ? 'border-foreground/20 bg-accent/15'
-                        : 'border-border/70 hover:border-border hover:bg-accent/8'
-                    }`}
-                  >
-                    <div className="flex w-full items-center justify-between gap-3 max-md:flex-col max-md:items-start">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          void runClaudeAccountAction(`select:${account.id}`, () =>
-                            window.api.claudeAccounts.select({
-                              accountId: account.id,
-                              runtime: account.managedAuthRuntime ?? 'host',
-                              wslDistro: account.wslDistro ?? null
-                            })
+              return (
+                <ProviderAccountRow
+                  key={account.id}
+                  active={isActive}
+                  disabled={isBusy}
+                  onSelect={() =>
+                    void runClaudeAccountAction(`select:${account.id}`, () =>
+                      window.api.claudeAccounts.select({
+                        accountId: account.id,
+                        runtime: account.managedAuthRuntime ?? 'host',
+                        wslDistro: account.wslDistro ?? null
+                      })
+                    )
+                  }
+                  title={account.email}
+                  actions={
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        title={translate(
+                          'auto.components.settings.AccountsPane.8a0f870153',
+                          'Re-authenticate'
+                        )}
+                        aria-label={translate(
+                          'auto.components.settings.AccountsPane.8a0f870153',
+                          'Re-authenticate'
+                        )}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          void runClaudeAccountAction(`reauth:${account.id}`, () =>
+                            window.api.claudeAccounts.reauthenticate({ accountId: account.id })
                           )
-                        }
+                        }}
                         disabled={isBusy}
-                        className="flex min-w-0 flex-1 flex-col gap-0.5 text-left disabled:cursor-default"
                       >
-                        <div className="flex min-w-0 items-center gap-2">
-                          <span className="truncate text-sm font-medium">{account.email}</span>
-                          <Badge
-                            variant="outline"
-                            className="h-4 shrink-0 rounded px-1.5 text-[10px] font-medium leading-none text-foreground/70"
-                          >
-                            {getClaudeAccountRuntimeLabel(account)}
-                          </Badge>
-                          {isActive ? (
-                            <Badge
-                              variant="outline"
-                              className="h-4 shrink-0 rounded px-1.5 text-[10px] font-medium leading-none text-foreground/80"
-                            >
-                              {translate(
-                                'auto.components.settings.AccountsPane.e74831fb6b',
-                                'Active'
-                              )}
-                            </Badge>
-                          ) : null}
-                        </div>
-                        <span className="truncate text-[11px] text-muted-foreground">
-                          {account.organizationName
-                            ? `${account.organizationName} · ${formatAccountTimestamp(account.lastAuthenticatedAt)}`
-                            : formatAccountTimestamp(account.lastAuthenticatedAt)}
-                        </span>
-                      </button>
-                      <div className="flex shrink-0 items-center justify-end gap-1 max-md:w-full max-md:flex-wrap">
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            void runClaudeAccountAction(`reauth:${account.id}`, () =>
-                              window.api.claudeAccounts.reauthenticate({ accountId: account.id })
-                            )
-                          }}
-                          disabled={isBusy}
-                          className="h-6 px-2 text-muted-foreground hover:text-foreground"
-                        >
-                          {isReauthing ? (
-                            <Loader2 className="size-3 animate-spin" />
-                          ) : (
-                            <RefreshCw className="size-3" />
-                          )}
-                          {translate(
-                            'auto.components.settings.AccountsPane.8a0f870153',
-                            'Re-authenticate'
-                          )}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            setRemoveClaudeAccountId(account.id)
-                          }}
-                          disabled={isBusy}
-                          className="h-6 px-2 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="size-3" />
-                          {translate('auto.components.settings.AccountsPane.db209ee572', 'Remove')}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })
-            )}
-          </div>
+                        {isReauthing ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <RefreshCw className="size-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        title={translate(
+                          'auto.components.settings.AccountsPane.db209ee572',
+                          'Remove'
+                        )}
+                        aria-label={translate(
+                          'auto.components.settings.AccountsPane.db209ee572',
+                          'Remove'
+                        )}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          setRemoveClaudeAccountId(account.id)
+                        }}
+                        disabled={isBusy}
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </>
+                  }
+                />
+              )
+            })}
+          </ProviderAccountList>
         </SearchableSetting>
       </section>
     ) : null,
     matchesSettingsSearch(searchQuery, getAccountsCodexSearchEntries()) ? (
-      <section key="codex-accounts" id="accounts-codex" className="space-y-4 scroll-mt-6">
-        <div className="space-y-1">
-          <h3 className="flex items-center gap-2 text-sm font-semibold">
-            <OpenAIIcon size={16} />
-            {translate('auto.components.settings.AccountsPane.ef91cfa06b', 'Codex')}
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AccountsPane.cedfab35ab',
-              'Optional. Orca can use your normal Codex login; add accounts only if you want quick switching in Orca.'
-            )}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AccountsPane.340d6f7a85',
-              'Each account keeps its own local sign-in context in Orca. Account auth stays on this device.'
-            )}
-          </p>
-        </div>
-
+      <section key="codex-accounts" id="accounts-codex" className="scroll-mt-6">
         <SearchableSetting
           title={translate('auto.components.settings.AccountsPane.3180536c7a', 'Codex Accounts')}
           description={translate(
@@ -1007,71 +904,44 @@ export function AccountsPane({
             entry.description ?? '',
             ...(entry.keywords ?? [])
           ])}
-          className="space-y-3 py-2"
+          className="space-y-1.5"
         >
-          {/* Why: Settings deep-links can target this subsection directly from
-          the status-bar account switcher. Keeping a stable DOM anchor here
-          avoids dumping the user at the top of Accounts and making them hunt
-          for the actual Codex account controls. */}
-          {activeCodexAuthWarning ? (
-            <div className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-xs text-destructive">
-              <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-              <span>
-                {activeCodexAccountId
-                  ? translate(
-                      'auto.components.settings.AccountsPane.75ca9b718e',
-                      'Codex reported that the active account needs a fresh sign-in. Re-authenticate it before starting new Codex sessions.'
-                    )
-                  : translate(
-                      'auto.components.settings.AccountsPane.e4a28e8894',
-                      'Codex reported that the {{value0}} login needs a fresh sign-in. Sign in again before starting new Codex sessions.',
-                      { value0: accountRuntimeSentenceLabel }
-                    )}
-              </span>
-            </div>
-          ) : null}
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-0.5">
-              <Label>
-                {translate('auto.components.settings.AccountsPane.94d351af4a', 'Accounts')}
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                {translate(
-                  'auto.components.settings.AccountsPane.c0a52abfc5',
-                  'Showing accounts for {{value0}}. New accounts are added there.',
-                  { value0: accountRuntimeSentenceLabel }
+          <ProviderSectionHeader
+            icon={<OpenAIIcon size={14} />}
+            title={translate('auto.components.settings.AccountsPane.ef91cfa06b', 'Codex')}
+            action={
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  void runCodexAccountAction('adding', () =>
+                    window.api.codexAccounts.add({
+                      runtime: accountRuntime.runtime,
+                      wslDistro: accountRuntime.wslDistro
+                    })
+                  )
+                }
+                disabled={
+                  codexAction !== 'idle' || wslCapabilitiesLoading || accountRuntimeUnavailable
+                }
+                className="gap-1.5"
+              >
+                {codexAction === 'adding' ? (
+                  <Loader2 className="size-3.5 animate-spin" />
+                ) : (
+                  <Plus className="size-3.5" />
                 )}
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="xs"
-              onClick={() =>
-                void runCodexAccountAction('adding', () =>
-                  window.api.codexAccounts.add({
-                    runtime: accountRuntime.runtime,
-                    wslDistro: accountRuntime.wslDistro
-                  })
-                )
-              }
-              disabled={
-                codexAction !== 'idle' || wslCapabilitiesLoading || accountRuntimeUnavailable
-              }
-              className="gap-1.5"
-            >
-              {codexAction === 'adding' ? (
-                <Loader2 className="size-3 animate-spin" />
-              ) : (
-                <Plus className="size-3" />
-              )}
-              {translate('auto.components.settings.AccountsPane.b0e948a4f9', 'Add Account')}
-            </Button>
-          </div>
+                {translate('auto.components.settings.AccountsPane.b0e948a4f9', 'Add')}
+              </Button>
+            }
+          />
 
-          <div className="space-y-2">
-            <button
-              type="button"
-              onClick={() =>
+          <ProviderAccountList>
+            <ProviderAccountRow
+              active={activeCodexAccountId === null}
+              danger={systemCodexNeedsReauthentication}
+              disabled={codexAction !== 'idle' || accountRuntimeUnavailable}
+              onSelect={() =>
                 void runCodexAccountAction('select:system', () =>
                   window.api.codexAccounts.select({
                     accountId: null,
@@ -1080,234 +950,120 @@ export function AccountsPane({
                   })
                 )
               }
-              disabled={codexAction !== 'idle' || accountRuntimeUnavailable}
-              className={`flex w-full items-center justify-between gap-3 rounded-md border px-3 py-2.5 text-left transition-colors ${
-                systemCodexNeedsReauthentication
-                  ? 'border-destructive/50 bg-destructive/5'
-                  : activeCodexAccountId === null
-                    ? 'border-foreground/20 bg-accent/15'
-                    : 'border-border/70 hover:border-border hover:bg-accent/8'
-              } disabled:cursor-default disabled:opacity-100`}
-            >
-              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <div className="flex min-w-0 items-center gap-2">
-                  <span className="truncate text-sm font-medium">
-                    {translate(
-                      'auto.components.settings.AccountsPane.f2a265f8c7',
-                      'System default'
-                    )}
-                  </span>
-                  {activeCodexAccountId === null ? (
-                    <Badge
-                      variant="outline"
-                      className="h-4 shrink-0 rounded px-1.5 text-[10px] font-medium leading-none text-foreground/80"
-                    >
-                      {translate('auto.components.settings.AccountsPane.e74831fb6b', 'Active')}
-                    </Badge>
-                  ) : null}
-                  {systemCodexNeedsReauthentication ? (
-                    <Badge
-                      variant="destructive"
-                      className="h-4 shrink-0 rounded px-1.5 text-[10px] font-medium leading-none"
-                    >
-                      {translate(
-                        'auto.components.settings.AccountsPane.93c47b333a',
-                        'Needs sign-in'
-                      )}
-                    </Badge>
-                  ) : null}
-                </div>
-                <span
-                  className={`truncate text-[11px] ${
-                    systemCodexNeedsReauthentication ? 'text-destructive' : 'text-muted-foreground'
-                  }`}
-                >
-                  {systemCodexNeedsReauthentication
-                    ? translate(
-                        'auto.components.settings.AccountsPane.fd62f37c24',
-                        'Codex reported this {{value0}} login is out of date.',
-                        { value0: accountRuntimeSentenceLabel }
-                      )
-                    : translate(
-                        'auto.components.settings.AccountsPane.fcc4093fc1',
-                        'Use your current {{value0}} Codex login.',
-                        { value0: accountRuntimeSentenceLabel }
-                      )}
-                </span>
-              </div>
-            </button>
-            {visibleCodexAccounts.length === 0 ? (
-              <div className="rounded-md border border-dashed border-border/70 px-3 py-4 text-xs text-muted-foreground">
-                {translate(
-                  'auto.components.settings.AccountsPane.b4c9450319',
-                  "No managed Codex accounts for {{value0}}. Orca will use that environment's system default Codex login until you add one here.",
-                  { value0: accountRuntimeSentenceLabel }
-                )}
-              </div>
-            ) : (
-              visibleCodexAccounts.map((account) => {
-                const isActive = activeCodexAccountId === account.id
-                const accountAuthWarning = getCodexAccountAuthWarning({
-                  limits: codexRateLimits,
-                  target: codexRateLimitTarget,
-                  runtime: accountRuntime,
-                  activeAccountId: activeCodexAccountId,
-                  accountId: account.id
-                })
-                const needsReauthentication = Boolean(accountAuthWarning)
-                const isReauthing = codexAction === `reauth:${account.id}`
-                const isRemoving = codexAction === `remove:${account.id}`
-                const isBusy = codexAction !== 'idle' || accountRuntimeUnavailable
-
-                return (
-                  <div
-                    key={account.id}
-                    className={`flex w-full items-center justify-between gap-3 rounded-md border px-3 py-2.5 text-left transition-colors ${
-                      needsReauthentication
-                        ? 'border-destructive/50 bg-destructive/5'
-                        : isActive
-                          ? 'border-foreground/20 bg-accent/15'
-                          : 'border-border/70 hover:border-border hover:bg-accent/8'
-                    }`}
-                  >
-                    <div className="flex w-full items-center justify-between gap-3 max-md:flex-col max-md:items-start">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          void runCodexAccountAction(`select:${account.id}`, () =>
-                            window.api.codexAccounts.select({
-                              accountId: account.id,
-                              runtime: account.managedHomeRuntime ?? 'host',
-                              wslDistro: account.wslDistro ?? null
-                            })
-                          )
-                        }
-                        disabled={isBusy}
-                        className="flex min-w-0 flex-1 flex-col gap-0.5 text-left disabled:cursor-default"
-                      >
-                        <div className="flex min-w-0 items-center gap-2">
-                          <span className="truncate text-sm font-medium">{account.email}</span>
-                          <Badge
-                            variant="outline"
-                            className="h-4 shrink-0 rounded px-1.5 text-[10px] font-medium leading-none text-foreground/70"
-                          >
-                            {getCodexAccountRuntimeLabel(account)}
-                          </Badge>
-                          {isActive ? (
-                            <Badge
-                              variant="outline"
-                              className="h-4 shrink-0 rounded px-1.5 text-[10px] font-medium leading-none text-foreground/80"
-                            >
-                              {translate(
-                                'auto.components.settings.AccountsPane.e74831fb6b',
-                                'Active'
-                              )}
-                            </Badge>
-                          ) : null}
-                          {needsReauthentication ? (
-                            <Badge
-                              variant="destructive"
-                              className="h-4 shrink-0 rounded px-1.5 text-[10px] font-medium leading-none"
-                            >
-                              {translate(
-                                'auto.components.settings.AccountsPane.589eba1eee',
-                                'Needs re-auth'
-                              )}
-                            </Badge>
-                          ) : null}
-                        </div>
-                        <div
-                          className={`flex min-w-0 items-center gap-1.5 text-[11px] max-sm:flex-wrap ${
-                            needsReauthentication ? 'text-destructive' : 'text-muted-foreground'
-                          }`}
-                        >
-                          {needsReauthentication ? (
-                            <span className="truncate">
-                              {translate(
-                                'auto.components.settings.AccountsPane.3d245ef7d9',
-                                'Codex reported this sign-in is out of date'
-                              )}
-                            </span>
-                          ) : account.workspaceLabel ? (
-                            <span className="truncate">{account.workspaceLabel}</span>
-                          ) : null}
-                          {needsReauthentication || account.workspaceLabel ? (
-                            <span className="shrink-0 opacity-50">•</span>
-                          ) : null}
-                          <span className="shrink-0">
-                            {formatAccountTimestamp(account.lastAuthenticatedAt)}
-                          </span>
-                        </div>
-                      </button>
-
-                      <div className="flex shrink-0 items-center justify-end gap-1 max-md:w-full max-md:flex-wrap">
-                        {/* Why: selecting an account is the primary action in this row.
-                        Keeping maintenance actions visually lighter prevents re-auth/remove
-                        controls from overpowering the selection affordance in a dense list. */}
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            void runCodexAccountAction(`reauth:${account.id}`, () =>
-                              window.api.codexAccounts.reauthenticate({ accountId: account.id })
-                            )
-                          }}
-                          disabled={isBusy}
-                          className="h-6 px-2 text-muted-foreground hover:text-foreground"
-                        >
-                          {isReauthing ? (
-                            <Loader2 className="size-3 animate-spin" />
-                          ) : (
-                            <RefreshCw className="size-3" />
-                          )}
-                          {translate(
-                            'auto.components.settings.AccountsPane.8a0f870153',
-                            'Re-authenticate'
-                          )}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            setRemoveAccountId(account.id)
-                          }}
-                          disabled={isBusy}
-                          className="h-6 px-2 text-muted-foreground hover:text-destructive"
-                        >
-                          {isRemoving ? (
-                            <Loader2 className="size-3 animate-spin" />
-                          ) : (
-                            <Trash2 className="size-3" />
-                          )}
-                          {translate('auto.components.settings.AccountsPane.db209ee572', 'Remove')}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )
+              title={translate(
+                'auto.components.settings.AccountsPane.f2a265f8c7',
+                'System default'
+              )}
+              badges={
+                systemCodexNeedsReauthentication ? (
+                  <ProviderAccountStatusBadge kind="danger">
+                    {translate('auto.components.settings.AccountsPane.93c47b333a', 'Needs sign-in')}
+                  </ProviderAccountStatusBadge>
+                ) : null
+              }
+            />
+            {visibleCodexAccounts.map((account) => {
+              const isActive = activeCodexAccountId === account.id
+              const accountAuthWarning = getCodexAccountAuthWarning({
+                limits: codexRateLimits,
+                target: codexRateLimitTarget,
+                runtime: accountRuntime,
+                activeAccountId: activeCodexAccountId,
+                accountId: account.id
               })
-            )}
-          </div>
+              const needsReauthentication = Boolean(accountAuthWarning)
+              const isReauthing = codexAction === `reauth:${account.id}`
+              const isRemoving = codexAction === `remove:${account.id}`
+              const isBusy = codexAction !== 'idle' || accountRuntimeUnavailable
+
+              return (
+                <ProviderAccountRow
+                  key={account.id}
+                  active={isActive}
+                  danger={needsReauthentication}
+                  disabled={isBusy}
+                  onSelect={() =>
+                    void runCodexAccountAction(`select:${account.id}`, () =>
+                      window.api.codexAccounts.select({
+                        accountId: account.id,
+                        runtime: account.managedHomeRuntime ?? 'host',
+                        wslDistro: account.wslDistro ?? null
+                      })
+                    )
+                  }
+                  title={account.email}
+                  badges={
+                    needsReauthentication ? (
+                      <ProviderAccountStatusBadge kind="danger">
+                        {translate(
+                          'auto.components.settings.AccountsPane.589eba1eee',
+                          'Needs re-auth'
+                        )}
+                      </ProviderAccountStatusBadge>
+                    ) : null
+                  }
+                  actions={
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        title={translate(
+                          'auto.components.settings.AccountsPane.8a0f870153',
+                          'Re-authenticate'
+                        )}
+                        aria-label={translate(
+                          'auto.components.settings.AccountsPane.8a0f870153',
+                          'Re-authenticate'
+                        )}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          void runCodexAccountAction(`reauth:${account.id}`, () =>
+                            window.api.codexAccounts.reauthenticate({ accountId: account.id })
+                          )
+                        }}
+                        disabled={isBusy}
+                      >
+                        {isReauthing ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <RefreshCw className="size-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        title={translate(
+                          'auto.components.settings.AccountsPane.db209ee572',
+                          'Remove'
+                        )}
+                        aria-label={translate(
+                          'auto.components.settings.AccountsPane.db209ee572',
+                          'Remove'
+                        )}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          setRemoveAccountId(account.id)
+                        }}
+                        disabled={isBusy}
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        {isRemoving ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="size-4" />
+                        )}
+                      </Button>
+                    </>
+                  }
+                />
+              )
+            })}
+          </ProviderAccountList>
         </SearchableSetting>
       </section>
     ) : null,
     matchesSettingsSearch(searchQuery, getAccountsGeminiSearchEntries()) ? (
-      <section key="gemini" id="accounts-gemini" className="space-y-4 scroll-mt-6">
-        <div className="space-y-1">
-          <h3 className="flex items-center gap-2 text-sm font-semibold">
-            <GeminiIcon size={16} />
-            {translate('auto.components.settings.AccountsPane.0c64dc2a64', 'Gemini')}
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AccountsPane.973741a871',
-              'Configure Gemini provider settings.'
-            )}
-          </p>
-        </div>
-
+      <section key="gemini" id="accounts-gemini" className="scroll-mt-6">
         <SearchableSetting
           title={translate(
             'auto.components.settings.AccountsPane.0c7f915b01',
@@ -1326,422 +1082,168 @@ export function AccountsPane({
             'rate limit',
             'status bar'
           ]}
-          className="flex items-center justify-between gap-4 py-2"
+          className="space-y-1.5"
         >
-          <div className="space-y-0.5">
-            <Label>
-              {translate(
-                'auto.components.settings.AccountsPane.96f3649526',
-                'Use Gemini CLI credentials (experimental)'
-              )}
-            </Label>
-            <p className="text-xs text-muted-foreground">
-              {translate(
-                'auto.components.settings.AccountsPane.c2aee76420',
-                'Extracts OAuth credentials from your local Gemini CLI installation to authenticate with Google for {{value0}}. This uses credentials issued to the Gemini CLI app, not Orca. May break if Google updates the CLI. Use at your own risk.',
-                { value0: accountRuntimeSentenceLabel }
-              )}
-            </p>
-          </div>
-          <button
-            role="switch"
-            aria-checked={settings.geminiCliOAuthEnabled}
-            onClick={() => {
-              recordFeatureInteraction('usage-tracking')
-              updateSettings({
-                geminiCliOAuthEnabled: !settings.geminiCliOAuthEnabled
-              })
-            }}
-            className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent transition-colors ${
-              settings.geminiCliOAuthEnabled ? 'bg-foreground' : 'bg-muted-foreground/30'
-            }`}
-          >
-            <span
-              className={`pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform ${
-                settings.geminiCliOAuthEnabled ? 'translate-x-4' : 'translate-x-0.5'
-              }`}
-            />
-          </button>
+          <ProviderSectionHeader
+            icon={<GeminiIcon size={14} />}
+            title={translate('auto.components.settings.AccountsPane.0c64dc2a64', 'Gemini')}
+            action={
+              <SettingsSwitch
+                checked={settings.geminiCliOAuthEnabled}
+                ariaLabel={translate(
+                  'auto.components.settings.AccountsPane.96f3649526',
+                  'Use Gemini CLI credentials (experimental)'
+                )}
+                onChange={() => {
+                  recordFeatureInteraction('usage-tracking')
+                  updateSettings({
+                    geminiCliOAuthEnabled: !settings.geminiCliOAuthEnabled
+                  })
+                }}
+              />
+            }
+          />
+          {/* Keep runtime label in DOM for i18n interpolation tests / a11y context. */}
+          <p className="sr-only">
+            {translate(
+              'auto.components.settings.AccountsPane.c2aee76420',
+              'Extracts OAuth credentials from your local Gemini CLI installation to authenticate with Google for {{value0}}. This uses credentials issued to the Gemini CLI app, not Orca. May break if Google updates the CLI. Use at your own risk.',
+              { value0: accountRuntimeSentenceLabel }
+            )}
+          </p>
         </SearchableSetting>
       </section>
     ) : null,
     matchesSettingsSearch(searchQuery, getAccountsOpencodeSearchEntries()) ? (
-      <section key="opencode-go" id="accounts-opencode-go" className="space-y-4 scroll-mt-6">
-        <div className="space-y-1">
-          <h3 className="flex items-center gap-2 text-sm font-semibold">
-            <OpenCodeGoIcon size={16} />
-            {translate('auto.components.settings.AccountsPane.4ac10b4d08', 'OpenCode Go')}
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AccountsPane.ea631977b5',
-              'Configure OpenCode Go provider settings.'
-            )}
-          </p>
-        </div>
-
+      <section key="opencode-go" id="accounts-opencode-go" className="scroll-mt-6">
         <SearchableSetting
-          title={translate(
-            'auto.components.settings.AccountsPane.36223200ac',
-            'OpenCode Go Session Cookie'
-          )}
+          title={translate('auto.components.settings.AccountsPane.4ac10b4d08', 'OpenCode Go')}
           description={translate(
             'auto.components.settings.AccountsPane.b2b1aa936d',
             'Paste your opencode.ai session cookie for rate limit fetching.'
           )}
-          keywords={['opencode', 'cookie', 'session', 'rate limit', 'status bar']}
-          className="space-y-2"
+          keywords={[
+            'opencode',
+            'cookie',
+            'session',
+            'workspace',
+            'rate limit',
+            'status bar',
+            ...getAccountsOpencodeSearchEntries().flatMap((e) => e.keywords ?? [])
+          ]}
+          className="space-y-1.5"
         >
-          <Label>
-            {translate(
-              'auto.components.settings.AccountsPane.67e3c33670',
-              'OpenCode Go session cookie'
-            )}
-          </Label>
-          <div className="flex gap-2">
-            <Input
-              type="password"
-              value={settings.opencodeSessionCookie}
-              onChange={(e) => {
-                recordOpenCodeSettingEdit('cookie')
-                updateSettings({ opencodeSessionCookie: e.target.value })
-              }}
-              placeholder={translate(
-                'auto.components.settings.AccountsPane.a7e38affcd',
-                'Fe26.2**… token or auth=Fe26.2**… header'
-              )}
-              spellCheck={false}
-              className="flex-1 text-xs"
-            />
-            {settings.opencodeSessionCookie && (
-              <Button
-                variant="ghost"
-                size="xs"
-                onClick={() => {
-                  recordFeatureInteraction('usage-tracking')
-                  updateSettings({ opencodeSessionCookie: '' })
-                }}
-                className="h-7 shrink-0 text-xs text-muted-foreground hover:text-foreground"
-              >
-                {translate('auto.components.settings.AccountsPane.b398b834c9', 'Clear')}
-              </Button>
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AccountsPane.0023cc336e',
-              'Paste either the raw token value (e.g.'
-            )}
-            <code className="text-xs">
-              {translate('auto.components.settings.AccountsPane.922b51e02d', 'Fe26.2**…')}
-            </code>
-            {translate(
-              'auto.components.settings.AccountsPane.338820326a',
-              ') or the full cookie header (e.g.'
-            )}
-            <code className="text-xs">
-              {translate('auto.components.settings.AccountsPane.8951c5309f', 'auth=Fe26.2**…')}
-            </code>
-            {translate(
-              'auto.components.settings.AccountsPane.7ce0e1907c',
-              "). Find it in your browser's DevTools → Network → any opencode.ai request → Cookie header. OpenCode Go auth is web-based and shared across Windows and WSL terminals."
-            )}
-          </p>
-        </SearchableSetting>
-
-        <SearchableSetting
-          title={translate(
-            'auto.components.settings.AccountsPane.02cb127710',
-            'OpenCode Go Workspace ID'
-          )}
-          description={translate(
-            'auto.components.settings.AccountsPane.d70a5287a4',
-            'Optional workspace ID override if the automatic lookup fails.'
-          )}
-          keywords={['opencode', 'workspace', 'id', 'wrk', 'rate limit', 'status bar']}
-          className="space-y-2"
-        >
-          <Label>
-            {translate('auto.components.settings.AccountsPane.dbdb0b0bd8', 'Workspace ID override')}
-          </Label>
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              value={settings.opencodeWorkspaceId}
-              onChange={(e) => {
-                recordOpenCodeSettingEdit('workspaceId')
-                updateSettings({ opencodeWorkspaceId: e.target.value })
-              }}
-              placeholder={translate(
-                'auto.components.settings.AccountsPane.a122332371',
-                'wrk_… (leave blank for automatic lookup)'
-              )}
-              spellCheck={false}
-              className="flex-1 text-xs"
-            />
-            {settings.opencodeWorkspaceId && (
-              <Button
-                variant="ghost"
-                size="xs"
-                onClick={() => {
-                  recordFeatureInteraction('usage-tracking')
-                  updateSettings({ opencodeWorkspaceId: '' })
-                }}
-                className="h-7 shrink-0 text-xs text-muted-foreground hover:text-foreground"
-              >
-                {translate('auto.components.settings.AccountsPane.b398b834c9', 'Clear')}
-              </Button>
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AccountsPane.51c9104e13',
-              'Find this in the URL after logging into opencode.ai (e.g.'
-            )}{' '}
-            <code className="text-xs">
-              {translate(
-                'auto.components.settings.AccountsPane.ae3b21eb6c',
-                'opencode.ai/workspace/wrk_…/go'
-              )}
-            </code>
-            ).
-          </p>
+          <ProviderSectionHeader
+            icon={<OpenCodeGoIcon size={14} />}
+            title={translate('auto.components.settings.AccountsPane.4ac10b4d08', 'OpenCode Go')}
+            action={
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setOpenCodeCookieDraft(settings.opencodeSessionCookie)
+                    setOpenCodeWorkspaceDraft(settings.opencodeWorkspaceId)
+                    setOpenCodeDialogOpen(true)
+                  }}
+                >
+                  {settings.opencodeSessionCookie
+                    ? translate('auto.components.settings.AccountsPane.editCredentials', 'Edit')
+                    : translate(
+                        'auto.components.settings.AccountsPane.configureCredentials',
+                        'Set up'
+                      )}
+                </Button>
+                {settings.opencodeSessionCookie ? (
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    title={translate('auto.components.settings.AccountsPane.b398b834c9', 'Clear')}
+                    aria-label={translate(
+                      'auto.components.settings.AccountsPane.b398b834c9',
+                      'Clear'
+                    )}
+                    onClick={() => {
+                      recordFeatureInteraction('usage-tracking')
+                      updateSettings({ opencodeSessionCookie: '', opencodeWorkspaceId: '' })
+                    }}
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                ) : null}
+              </div>
+            }
+          />
         </SearchableSetting>
       </section>
     ) : null,
     matchesSettingsSearch(searchQuery, getAccountsMiniMaxSearchEntries()) ? (
-      <section key="minimax" id="accounts-minimax" className="space-y-4 scroll-mt-6">
-        <div className="flex items-start justify-between gap-3">
-          <div className="space-y-1">
-            <h3 className="flex items-center gap-2 text-sm font-semibold">
-              <MiniMaxIcon size={16} />
-              {translate('auto.components.settings.AccountsPane.5d63bbfbec', 'MiniMax')}
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              {translate(
-                'auto.components.settings.AccountsPane.15e831350e',
-                'Configure MiniMax usage tracking from platform.minimax.io.'
-              )}
-            </p>
-          </div>
-          <a
-            href={MINIMAX_CONSOLE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-          >
-            {translate('auto.components.settings.AccountsPane.0d8e77bc40', 'Open console')}
-            <ExternalLink className="size-3" />
-          </a>
-        </div>
-
-        <div
-          className={cn(
-            'flex items-start gap-3 rounded-lg border bg-muted/20 p-3',
-            miniMaxConfigured ? 'border-border/60' : 'border-border/40'
-          )}
-        >
-          <ShieldCheck
-            className={cn(
-              'mt-0.5 size-4 shrink-0',
-              miniMaxConfigured ? 'text-foreground' : 'text-muted-foreground'
-            )}
-          />
-          <div className="space-y-0.5">
-            <p className="text-xs font-medium">
-              {miniMaxConfigured
-                ? translate('auto.components.settings.AccountsPane.0b8c1c7e02', 'Stored locally')
-                : translate('auto.components.settings.AccountsPane.1fd1b1b6b4', 'Cookie not set')}
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {translate(
-                'auto.components.settings.AccountsPane.5e08b0fe57',
-                'Stored locally and sent only to platform.minimax.io for usage refreshes.'
-              )}
-            </p>
-          </div>
-        </div>
-
+      <section key="minimax" id="accounts-minimax" className="scroll-mt-6">
         <SearchableSetting
-          title={translate(
-            'auto.components.settings.AccountsPane.21d6eb141e',
-            'MiniMax Session Cookie'
-          )}
+          title={translate('auto.components.settings.AccountsPane.5d63bbfbec', 'MiniMax')}
           description={translate(
             'auto.components.settings.AccountsPane.33bba5ad83',
             'Paste your MiniMax session cookie for local rate-limit fetching.'
           )}
-          keywords={['minimax', 'cookie', 'session', 'rate limit', 'status bar']}
-          className="space-y-2"
+          keywords={[
+            'minimax',
+            'cookie',
+            'session',
+            'rate limit',
+            'status bar',
+            'group',
+            'model',
+            ...getAccountsMiniMaxSearchEntries().flatMap((e) => e.keywords ?? [])
+          ]}
+          className="space-y-1.5"
         >
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Label>
-                {translate(
-                  'auto.components.settings.AccountsPane.21d6eb141e',
-                  'MiniMax Session Cookie'
-                )}
-              </Label>
-              <Badge
-                variant={miniMaxConfigured ? 'secondary' : 'outline'}
-                className="h-5 gap-1 rounded-full px-2 text-[10px] font-medium text-muted-foreground"
-              >
-                {miniMaxConfigured ? <Lock className="size-3" /> : <LockOpen className="size-3" />}
-                {miniMaxConfigured
-                  ? translate('auto.components.settings.AccountsPane.73ea15f24b', 'Saved')
-                  : translate('auto.components.settings.AccountsPane.23afe8f226', 'Not saved')}
-              </Badge>
-            </div>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  className="h-6 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
-                >
-                  <HelpCircle className="size-3" />
-                  {translate('auto.components.settings.AccountsPane.43d7a45b97', 'How to copy')}
+          <ProviderSectionHeader
+            icon={<MiniMaxIcon size={14} />}
+            title={translate('auto.components.settings.AccountsPane.5d63bbfbec', 'MiniMax')}
+            action={
+              <div className="flex items-center gap-1">
+                <Button variant="outline" size="sm" onClick={openMiniMaxDialog}>
+                  {miniMaxConfigured
+                    ? translate('auto.components.settings.AccountsPane.editCredentials', 'Edit')
+                    : translate(
+                        'auto.components.settings.AccountsPane.configureCredentials',
+                        'Set up'
+                      )}
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent align="end" side="bottom" sideOffset={6} className="w-80 p-0">
-                <MiniMaxCookieHelpPopover />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div className="flex gap-2">
-            <Input
-              type="password"
-              value={miniMaxCookieDraft}
-              onChange={(e) => setMiniMaxCookieDraft(e.target.value)}
-              placeholder={translate(
-                'auto.components.settings.AccountsPane.b8a4f21c3e',
-                'Paste the Cookie header from DevTools'
-              )}
-              spellCheck={false}
-              className="flex-1 text-xs"
-            />
-            <Button
-              size="xs"
-              onClick={() => void saveMiniMaxCookie()}
-              disabled={miniMaxCredentialBusy || !miniMaxCookieDraft.trim()}
-              className="h-7 shrink-0 text-xs"
-            >
-              {miniMaxCredentialBusy ? <Loader2 className="size-3 animate-spin" /> : null}
-              {miniMaxConfigured
-                ? translate('auto.components.settings.AccountsPane.f38b9cc4bd', 'Replace')
-                : translate('auto.components.settings.AccountsPane.590a3130f9', 'Save')}
-            </Button>
-            {miniMaxConfigured ? (
-              <Button
-                variant="ghost"
-                size="xs"
-                onClick={() => void clearMiniMaxCookie()}
-                disabled={miniMaxCredentialBusy}
-                className="h-7 shrink-0 text-xs text-muted-foreground hover:text-foreground"
-              >
-                {translate('auto.components.settings.AccountsPane.316ca4e610', 'Forget cookie')}
-              </Button>
-            ) : null}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AccountsPane.79418c782a',
-              'Open platform.minimax.io/console/usage in your browser, sign in, then copy the Cookie request header from DevTools (Network → any remains request → Cookie).'
-            )}
-          </p>
-          {miniMaxConfigured &&
-          miniMaxRateLimits?.status === 'ok' &&
-          miniMaxRateLimits.error === null ? (
-            <p className="text-xs text-muted-foreground">
-              {translate(
-                'auto.components.settings.AccountsPane.53f7b8c7a2',
-                'Last refresh: {{value0}}',
-                { value0: formatMiniMaxRelativeRefresh(miniMaxRateLimits.updatedAt, Date.now()) }
-              )}
-            </p>
-          ) : null}
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AccountsPane.31d24a4e87',
-              'Cookie expires when you sign out in the browser.'
-            )}
-          </p>
+                {miniMaxConfigured ? (
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    title={translate(
+                      'auto.components.settings.AccountsPane.316ca4e610',
+                      'Forget cookie'
+                    )}
+                    aria-label={translate(
+                      'auto.components.settings.AccountsPane.316ca4e610',
+                      'Forget cookie'
+                    )}
+                    disabled={miniMaxCredentialBusy}
+                    onClick={() => void clearMiniMaxCookie()}
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    {miniMaxCredentialBusy ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="size-4" />
+                    )}
+                  </Button>
+                ) : null}
+              </div>
+            }
+          />
         </SearchableSetting>
-
-        <div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="space-y-1">
-              <h4 className="text-xs font-semibold text-muted-foreground">
-                {translate('auto.components.settings.AccountsPane.9dd50d3f75', 'Advanced')}
-              </h4>
-              <p className="text-xs text-muted-foreground">
-                {translate(
-                  'auto.components.settings.AccountsPane.174fb408f9',
-                  'Leave these defaults alone unless MiniMax usage refresh points at the wrong workspace or model.'
-                )}
-              </p>
-            </div>
-          </div>
-
-          <SearchableSetting
-            title={translate(
-              'auto.components.settings.AccountsPane.bf160bb6c0',
-              'Group ID override'
-            )}
-            description={translate(
-              'auto.components.settings.AccountsPane.b1e2743313',
-              'Optional. Leave blank to use minimax_group_id_v2 from the cookie.'
-            )}
-            keywords={['minimax', 'group', 'id', 'rate limit']}
-            className="space-y-2"
-          >
-            <Label>
-              {translate('auto.components.settings.AccountsPane.bf160bb6c0', 'Group ID override')}
-            </Label>
-            <Input
-              type="text"
-              value={settings.minimaxGroupId}
-              onChange={(e) => updateSettings({ minimaxGroupId: e.target.value })}
-              placeholder={translate(
-                'auto.components.settings.AccountsPane.0747d6391a',
-                'Use group ID from cookie'
-              )}
-              spellCheck={false}
-              className="text-xs"
-            />
-          </SearchableSetting>
-
-          <SearchableSetting
-            title={translate(
-              'auto.components.settings.AccountsPane.4ff2af7524',
-              'Usage model names'
-            )}
-            description={translate(
-              'auto.components.settings.AccountsPane.5cf4b0f85f',
-              'Optional comma-separated model names. Leave as general unless MiniMax returns a model-specific error.'
-            )}
-            keywords={['minimax', 'model', 'general', 'rate limit']}
-            className="space-y-2"
-          >
-            <Label>
-              {translate('auto.components.settings.AccountsPane.4ff2af7524', 'Usage model names')}
-            </Label>
-            <Input
-              type="text"
-              value={settings.minimaxUsageModels}
-              onChange={(e) => updateSettings({ minimaxUsageModels: e.target.value })}
-              placeholder={translate('auto.components.settings.AccountsPane.3c92b0d31c', 'general')}
-              spellCheck={false}
-              className="text-xs"
-            />
-          </SearchableSetting>
-        </div>
       </section>
     ) : null
   ].filter(Boolean)
 
   return (
-    <div className="space-y-8">
+    <div className="flex flex-col">
       <Dialog
         open={removeAccountId !== null}
         onOpenChange={(open) => !open && setRemoveAccountId(null)}
@@ -1824,12 +1326,209 @@ export function AccountsPane({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {visibleSections.map((section, index) => (
-        <div key={index} className="space-y-8">
-          {index > 0 ? <Separator /> : null}
-          {section}
-        </div>
-      ))}
+
+      <Dialog open={openCodeDialogOpen} onOpenChange={setOpenCodeDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {translate('auto.components.settings.AccountsPane.4ac10b4d08', 'OpenCode Go')}
+            </DialogTitle>
+            <DialogDescription>
+              {translate(
+                'auto.components.settings.AccountsPane.b2b1aa936d',
+                'Paste your opencode.ai session cookie for rate limit fetching.'
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label>
+                {translate(
+                  'auto.components.settings.AccountsPane.67e3c33670',
+                  'OpenCode Go session cookie'
+                )}
+              </Label>
+              <Input
+                type="password"
+                value={openCodeCookieDraft}
+                onChange={(e) => setOpenCodeCookieDraft(e.target.value)}
+                placeholder={translate(
+                  'auto.components.settings.AccountsPane.a7e38affcd',
+                  'Fe26.2**… token or auth=Fe26.2**… header'
+                )}
+                spellCheck={false}
+                className="text-xs"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>
+                {translate(
+                  'auto.components.settings.AccountsPane.dbdb0b0bd8',
+                  'Workspace ID override'
+                )}
+              </Label>
+              <Input
+                type="text"
+                value={openCodeWorkspaceDraft}
+                onChange={(e) => setOpenCodeWorkspaceDraft(e.target.value)}
+                placeholder={translate(
+                  'auto.components.settings.AccountsPane.a122332371',
+                  'wrk_… (leave blank for automatic lookup)'
+                )}
+                spellCheck={false}
+                className="text-xs"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenCodeDialogOpen(false)}>
+              {translate('auto.components.settings.AccountsPane.dbb9626ed1', 'Cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                recordOpenCodeSettingEdit('cookie')
+                recordOpenCodeSettingEdit('workspaceId')
+                updateSettings({
+                  opencodeSessionCookie: openCodeCookieDraft.trim(),
+                  opencodeWorkspaceId: openCodeWorkspaceDraft.trim()
+                })
+                setOpenCodeDialogOpen(false)
+                toast.success(
+                  translate(
+                    'auto.components.settings.AccountsPane.opencodeSaved',
+                    'OpenCode Go settings saved.'
+                  )
+                )
+              }}
+            >
+              {translate('auto.components.settings.AccountsPane.590a3130f9', 'Save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={miniMaxDialogOpen} onOpenChange={setMiniMaxDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {translate('auto.components.settings.AccountsPane.5d63bbfbec', 'MiniMax')}
+            </DialogTitle>
+            <DialogDescription>
+              {translate(
+                'auto.components.settings.AccountsPane.33bba5ad83',
+                'Paste your MiniMax session cookie for local rate-limit fetching.'
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <Label>
+                  {translate(
+                    'auto.components.settings.AccountsPane.21d6eb141e',
+                    'MiniMax Session Cookie'
+                  )}
+                </Label>
+                <div className="flex items-center gap-0.5">
+                  <Button variant="ghost" size="xs" className="h-6 gap-1 px-2 text-xs" asChild>
+                    <a href={MINIMAX_CONSOLE_URL} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="size-3" />
+                      {translate(
+                        'auto.components.settings.AccountsPane.0d8e77bc40',
+                        'Open console'
+                      )}
+                    </a>
+                  </Button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="xs" className="h-6 gap-1 px-2 text-xs">
+                        <HelpCircle className="size-3" />
+                        {translate(
+                          'auto.components.settings.AccountsPane.43d7a45b97',
+                          'How to copy'
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent align="end" side="bottom" sideOffset={6} className="w-80 p-0">
+                      <MiniMaxCookieHelpPopover />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+              <Input
+                type="password"
+                value={miniMaxCookieDraft}
+                onChange={(e) => setMiniMaxCookieDraft(e.target.value)}
+                placeholder={
+                  miniMaxConfigured
+                    ? translate(
+                        'auto.components.settings.AccountsPane.minimaxCookieLeaveBlank',
+                        'Leave blank to keep current cookie'
+                      )
+                    : translate(
+                        'auto.components.settings.AccountsPane.b8a4f21c3e',
+                        'Paste the Cookie header from DevTools'
+                      )
+                }
+                spellCheck={false}
+                className="text-xs"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>
+                {translate('auto.components.settings.AccountsPane.bf160bb6c0', 'Group ID override')}
+              </Label>
+              <Input
+                type="text"
+                value={miniMaxGroupDraft}
+                onChange={(e) => setMiniMaxGroupDraft(e.target.value)}
+                placeholder={translate(
+                  'auto.components.settings.AccountsPane.0747d6391a',
+                  'Use group ID from cookie'
+                )}
+                spellCheck={false}
+                className="text-xs"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>
+                {translate('auto.components.settings.AccountsPane.4ff2af7524', 'Usage model names')}
+              </Label>
+              <Input
+                type="text"
+                value={miniMaxModelsDraft}
+                onChange={(e) => setMiniMaxModelsDraft(e.target.value)}
+                placeholder={translate(
+                  'auto.components.settings.AccountsPane.3c92b0d31c',
+                  'general'
+                )}
+                spellCheck={false}
+                className="text-xs"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMiniMaxDialogOpen(false)}>
+              {translate('auto.components.settings.AccountsPane.dbb9626ed1', 'Cancel')}
+            </Button>
+            <Button
+              onClick={() => void saveMiniMaxDialog()}
+              disabled={miniMaxCredentialBusy || (!miniMaxConfigured && !miniMaxCookieDraft.trim())}
+            >
+              {miniMaxCredentialBusy ? <Loader2 className="size-3.5 animate-spin" /> : null}
+              {translate('auto.components.settings.AccountsPane.590a3130f9', 'Save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <div className="divide-y divide-border/40">
+        {visibleSections.map((section, index) => (
+          <div key={index} className="py-2.5 first:pt-0 last:pb-0">
+            {section}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

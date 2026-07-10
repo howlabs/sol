@@ -22,7 +22,7 @@ import {
   Shapes,
   SlidersHorizontal,
   Trash2
-} from 'lucide-react'
+} from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { useShallow } from 'zustand/react/shallow'
 import type { AppState } from '@/store/types'

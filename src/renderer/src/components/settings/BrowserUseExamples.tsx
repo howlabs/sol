@@ -1,4 +1,4 @@
-import { Copy, Sparkles } from 'lucide-react'
+import { Copy, Sparkles } from '@/lib/icons'
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'

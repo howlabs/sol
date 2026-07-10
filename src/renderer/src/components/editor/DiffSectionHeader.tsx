@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronRight, ExternalLink } from 'lucide-react'
+import { ChevronDown, ChevronRight, ExternalLink } from '@/lib/icons'
 import type { MouseEvent, ReactElement, ReactNode } from 'react'
 import { translate } from '@/i18n/i18n'
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Info, Loader2, RotateCw } from 'lucide-react'
+import { Info, Loader2, RotateCw } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import { Button } from '../ui/button'
@@ -41,8 +41,8 @@ export function AdvancedPane({ settings, updateSettings }: AdvancedPaneProps): R
   }
 
   return (
-    <div className="space-y-4">
-      <section className="space-y-3">
+    <div className="space-y-1">
+      <section className="space-y-1.5">
         <SettingsSubsectionHeader
           title={translate('auto.components.settings.AdvancedPane.8d8d8ac599', 'Compatibility')}
           description={translate(

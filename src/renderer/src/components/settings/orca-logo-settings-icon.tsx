@@ -1,5 +1,5 @@
 import { createElement } from 'react'
-import type { LucideProps } from 'lucide-react'
+import type { LucideProps } from '@/lib/icons'
 import logo from '../../../../../resources/logo.svg'
 import { cn } from '@/lib/utils'
 

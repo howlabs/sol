@@ -9,7 +9,7 @@ describe('getProviderAccountScope', () => {
     expect(getProviderAccountScope({ activeRuntimeEnvironmentId: null })).toEqual({
       label: LOCAL_HOST_LABEL,
       description:
-        'Credentials and account checks for this provider are owned by this desktop client. Use Settings > Remote Orca Servers > Advanced to edit server-owned credentials.'
+        'Sign-in for this provider is stored on this computer. Manage remote-server credentials in Settings → Remote Orca Servers → Advanced.'
     })
   })
 
@@ -17,7 +17,7 @@ describe('getProviderAccountScope', () => {
     expect(getProviderAccountScope({ activeRuntimeEnvironmentId: ' env-1 ' })).toEqual({
       label: 'Remote server: env-1',
       description:
-        'Credentials and account checks for this provider are owned by this remote server. Use Settings > Remote Orca Servers > Advanced to edit another default runtime scope.'
+        'Sign-in for this provider is stored on this remote server. Change the default runtime in Settings → Remote Orca Servers → Advanced.'
     })
   })
 
@@ -25,12 +25,12 @@ describe('getProviderAccountScope', () => {
     expect(getProviderRateLimitScope({ activeRuntimeEnvironmentId: null }, 'GitHub')).toEqual({
       label: LOCAL_HOST_LABEL,
       description:
-        'GitHub API budget is fetched from the CLI on this desktop client. Use Settings > Remote Orca Servers > Advanced to view server-owned budgets.'
+        'GitHub rate limits come from the CLI on this computer. View server budgets in Settings → Remote Orca Servers → Advanced.'
     })
     expect(getProviderRateLimitScope({ activeRuntimeEnvironmentId: ' env-1 ' }, 'GitLab')).toEqual({
       label: 'Remote server: env-1',
       description:
-        'GitLab API budget is fetched from the CLI on this remote server. Use Settings > Remote Orca Servers > Advanced to view another default runtime budget.'
+        'GitLab rate limits come from the CLI on this remote server. Pick another runtime in Settings → Remote Orca Servers → Advanced.'
     })
   })
 })

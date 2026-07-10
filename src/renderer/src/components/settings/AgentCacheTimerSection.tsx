@@ -1,12 +1,12 @@
 import type React from 'react'
-import { Timer } from 'lucide-react'
+import { Timer } from '@/lib/icons'
 import type { GlobalSettings } from '../../../../shared/types'
 import { useAppStore } from '../../store'
 import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { getAgentCacheTimerSearchEntries } from './agent-cache-timer-search'
 import { SearchableSetting } from './SearchableSetting'
-import { SettingsSubsectionHeader, SettingsSwitch } from './SettingsFormControls'
+import { SettingsSubsectionHeader, SettingsSwitchRow } from './SettingsFormControls'
 import { translate } from '@/i18n/i18n'
 
 type AgentCacheTimerSectionProps = {
@@ -19,7 +19,7 @@ export function AgentCacheTimerSection({
   updateSettings
 }: AgentCacheTimerSectionProps): React.JSX.Element {
   return (
-    <section className="space-y-4">
+    <section className="space-y-1.5">
       <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.AgentCacheTimerSection.a137f8854d',
@@ -45,29 +45,24 @@ export function AgentCacheTimerSection({
           entry.description ?? '',
           ...(entry.keywords ?? [])
         ])}
-        className="flex items-center justify-between gap-4 py-2"
       >
-        <div className="min-w-0 flex-1 space-y-0.5">
-          <div className="flex items-center gap-2">
-            <Timer className="size-4 text-muted-foreground" />
-            <Label>
+        <SettingsSwitchRow
+          label={
+            <span className="inline-flex items-center gap-2">
+              <Timer className="size-4 text-muted-foreground" />
               {translate(
                 'auto.components.settings.AgentCacheTimerSection.b4e7302944',
                 'Cache Timer'
               )}
-            </Label>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.AgentCacheTimerSection.487b176240',
-              'Show a countdown in the sidebar after a Claude agent becomes idle.'
-            )}
-          </p>
-        </div>
-        <SettingsSwitch
+            </span>
+          }
           ariaLabel={translate(
             'auto.components.settings.AgentCacheTimerSection.b4e7302944',
             'Cache Timer'
+          )}
+          description={translate(
+            'auto.components.settings.AgentCacheTimerSection.487b176240',
+            'Show a countdown in the sidebar after a Claude agent becomes idle.'
           )}
           checked={settings.promptCacheTimerEnabled}
           onChange={() => {
@@ -109,6 +104,22 @@ export function AgentCacheTimerSection({
           </div>
           <Select
             value={String(settings.promptCacheTtlMs)}
+            items={[
+              {
+                value: '300000',
+                label: translate(
+                  'auto.components.settings.AgentCacheTimerSection.54395ecd7c',
+                  '5 minutes'
+                )
+              },
+              {
+                value: '3600000',
+                label: translate(
+                  'auto.components.settings.AgentCacheTimerSection.05de84a104',
+                  '1 hour'
+                )
+              }
+            ]}
             onValueChange={(v) => updateSettings({ promptCacheTtlMs: Number(v) })}
           >
             <SelectTrigger size="sm" className="h-7 text-xs w-[120px]">

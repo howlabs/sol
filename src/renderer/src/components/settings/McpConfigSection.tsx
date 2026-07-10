@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { AlertCircle, FileCode2, LoaderCircle, Plus, RefreshCw } from 'lucide-react'
+import { AlertCircle, FileCode2, LoaderCircle, Plus, RefreshCw } from '@/lib/icons'
 import { toast } from 'sonner'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import type { Repo, Worktree } from '../../../../shared/types'

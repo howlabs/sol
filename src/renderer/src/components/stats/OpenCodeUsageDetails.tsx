@@ -28,7 +28,7 @@ export function OpenCodeUsageDetails({
     <>
       <CodexUsageDailyChart daily={daily} />
 
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className="grid gap-2 xl:grid-cols-2">
         <UsageBreakdownSection
           title={translate('auto.components.stats.OpenCodeUsagePane.040c044d39', 'By model')}
           topLabel={translate('auto.components.stats.OpenCodeUsagePane.a15206a63a', 'Top model:')}

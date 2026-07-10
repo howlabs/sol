@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState, type ComponentType, type ReactNode, type Ref } from 'react'
-import { CircleStop, Loader2 } from 'lucide-react'
+import { CircleStop, Loader2 } from '@/lib/icons'
 import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { ShortcutKeyCombo } from '@/components/ShortcutKeyCombo'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { getAddRepoLocalStartActions } from './add-repo-local-start-actions'
+import {
+  getAddRepoLocalStartActions,
+  type AddRepoLocalStartAction
+} from './add-repo-local-start-actions'
 import { translate } from '@/i18n/i18n'
 
 type AddRepoNestedScanProgressNoticeProps = {
@@ -22,7 +25,10 @@ function AddRepoNestedScanProgressNotice({
   onStopNestedScan
 }: AddRepoNestedScanProgressNoticeProps): React.JSX.Element {
   return (
-    <div className="flex items-center gap-2 rounded-md border border-border bg-muted px-3 py-2 text-xs text-muted-foreground">
+    <div
+      role="status"
+      className="flex items-center gap-2 border-t border-border/50 pt-3 text-[12px] text-muted-foreground"
+    >
       <Loader2 className="size-3.5 shrink-0 animate-spin" />
       <span className="min-w-0 flex-1">{busyLabel}</span>
       {nestedScanInProgress && nestedScanId ? (
@@ -32,7 +38,7 @@ function AddRepoNestedScanProgressNotice({
               type="button"
               variant="ghost"
               size="icon-xs"
-              className="group text-muted-foreground hover:bg-destructive/10 hover:text-destructive focus-visible:bg-destructive/10 focus-visible:text-destructive focus-visible:ring-destructive/40"
+              className="group text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
               aria-label={translate(
                 'auto.components.sidebar.AddRepoStartSteps.9906cae183',
                 'Stop scan'
@@ -43,7 +49,7 @@ function AddRepoNestedScanProgressNotice({
               )}
               onClick={onStopNestedScan}
             >
-              <Loader2 className="size-3.5 animate-spin text-annotation-highlight group-hover:hidden group-focus-visible:hidden" />
+              <Loader2 className="size-3.5 animate-spin group-hover:hidden group-focus-visible:hidden" />
               <CircleStop className="hidden size-3.5 group-hover:block group-focus-visible:block" />
             </Button>
           </TooltipTrigger>
@@ -77,6 +83,11 @@ type AddRepoLocalStartStepProps = {
   onStopNestedScan: () => void
 }
 
+/**
+ * Rebuilt Add Project start surface:
+ * host field → one primary stack button → compact alternate methods.
+ * Keyboard: ↑/↓ roves focus; ⏎ chip marks the active target.
+ */
 export function AddRepoLocalStartStep({
   repoCount,
   isSshLikely,
@@ -107,9 +118,6 @@ export function AddRepoLocalStartStep({
     browseHostKind
   })
 
-  // The white fill + ⏎ chip is a roving selection indicator, not a fixed "primary" badge:
-  // it follows keyboard focus so Enter always activates the highlighted action. Browse is
-  // autofocused on open, so it starts selected; Tab and ↑/↓ move the highlight.
   const [selectedKind, setSelectedKind] = useState<string | null>(primaryAction.kind)
 
   useEffect(() => {
@@ -117,12 +125,9 @@ export function AddRepoLocalStartStep({
       setSelectedKind(null)
       return
     }
-    if (!isAdding) {
-      browseActionRef.current?.focus()
-    }
+    browseActionRef.current?.focus()
   }, [isAdding])
 
-  // ↑/↓ rove focus across the action buttons in visual order; focus drives the selection.
   const handleArrowNavigation = (event: React.KeyboardEvent<HTMLDivElement>): void => {
     if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
       return
@@ -151,193 +156,146 @@ export function AddRepoLocalStartStep({
   }
 
   return (
-    <>
-      <DialogHeader>
-        <DialogTitle>
+    <div className="flex flex-col gap-6">
+      <DialogHeader className="gap-1.5 space-y-0 text-left sm:text-left">
+        <DialogTitle className="text-lg font-semibold tracking-tight text-foreground">
           {translate('auto.components.sidebar.AddRepoStartSteps.d13757911c', 'Add a project')}
         </DialogTitle>
-        {repoCount === 0 ? (
-          <DialogDescription>
-            {translate(
-              'auto.components.sidebar.AddRepoStartSteps.acf895cb42',
-              'Add a project to get started with Orca.'
-            )}
-          </DialogDescription>
-        ) : null}
+        <DialogDescription className="text-sm leading-relaxed text-muted-foreground">
+          {repoCount === 0
+            ? translate('auto.components.Landing.cd21242762', 'Add a project to get started.')
+            : translate(
+                'auto.components.sidebar.AddRepoStartSteps.addAnother',
+                'Open another project on this machine or host.'
+              )}
+        </DialogDescription>
       </DialogHeader>
 
+      {hostSelector}
+
       <div
-        className="space-y-3 pt-2"
         ref={actionsRef}
+        className="flex flex-col gap-3"
         onBlur={handleActionsBlur}
         onKeyDown={handleArrowNavigation}
       >
-        {hostSelector}
-        <AddRepoPrimaryStartAction
-          icon={primaryAction.icon}
-          title={primaryAction.title}
-          description={primaryAction.description}
+        <AddRepoPathButton
+          action={primaryAction}
+          variant="primary"
           disabled={isAdding}
           selected={selectedKind === primaryAction.kind}
           buttonRef={browseActionRef}
-          onClick={primaryAction.onClick}
           onFocus={() => setSelectedKind(primaryAction.kind)}
         />
 
-        {/* Keep secondary entry methods always visible so they stay discoverable without an extra click. */}
-        {/* Label clarifies the lighter-weight rows are alternate entry methods, not lesser features. */}
-        <div className="space-y-1.5">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="relative my-0.5 flex items-center gap-3">
+          <div className="h-px flex-1 bg-border/60" />
+          <span className="text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
             {translate('auto.components.sidebar.AddRepoStartSteps.87596c1446', 'Other ways to add')}
-          </p>
-          {/* Outline uses the `input` token (white-ish in dark mode) to match Browse's visible outline variant;
-              primary-foreground is near-black in dark mode and rendered the border invisible. */}
-          <div className="overflow-hidden rounded-md border border-input bg-background">
-            {secondaryActions.map((action, index) => (
-              <AddRepoSecondaryStartAction
-                key={action.kind}
-                icon={action.icon}
-                title={action.title}
-                description={action.description}
-                disabled={isAdding || Boolean(action.disabled)}
-                selected={selectedKind === action.kind}
-                onClick={action.onClick}
-                onFocus={() => setSelectedKind(action.kind)}
-                className={cn(
-                  index === 0 ? 'rounded-t-md' : 'border-t border-border/70',
-                  index === secondaryActions.length - 1 && 'rounded-b-md'
-                )}
-              />
-            ))}
-          </div>
+          </span>
+          <div className="h-px flex-1 bg-border/60" />
         </div>
 
-        {isAdding && addProjectBusyLabel ? (
-          <AddRepoNestedScanProgressNotice
-            busyLabel={addProjectBusyLabel}
-            nestedScanInProgress={nestedScanInProgress}
-            nestedScanId={nestedScanId}
-            onStopNestedScan={onStopNestedScan}
+        {secondaryActions.map((action) => (
+          <AddRepoPathButton
+            key={action.kind}
+            action={action}
+            variant="secondary"
+            disabled={isAdding || Boolean(action.disabled)}
+            selected={selectedKind === action.kind}
+            onFocus={() => setSelectedKind(action.kind)}
           />
-        ) : null}
+        ))}
       </div>
-    </>
+
+      {isAdding && addProjectBusyLabel ? (
+        <AddRepoNestedScanProgressNotice
+          busyLabel={addProjectBusyLabel}
+          nestedScanInProgress={nestedScanInProgress}
+          nestedScanId={nestedScanId}
+          onStopNestedScan={onStopNestedScan}
+        />
+      ) : null}
+    </div>
   )
 }
 
-type AddRepoStartActionProps = {
-  icon: ComponentType<{ className?: string }>
-  title: string
-  description: string
+type AddRepoPathButtonProps = {
+  action: AddRepoLocalStartAction
+  variant: 'primary' | 'secondary'
   disabled: boolean
-  // Selected = keyboard-focused: renders the selection wash + trailing ⏎ chip so Enter's target is obvious.
   selected: boolean
-  onClick: () => void
   onFocus: () => void
   buttonRef?: Ref<HTMLButtonElement>
 }
 
-// Shared trailing chip so the ⏎ glyph travels with the selected action across primary and secondary rows.
-const AddRepoEnterChip = (): React.JSX.Element => (
-  <span aria-hidden="true" className="shrink-0">
-    <ShortcutKeyCombo
-      keys={['⏎']}
-      keyCapClassName="border-border/80 bg-background/70 text-muted-foreground"
-    />
-  </span>
-)
+function AddRepoEnterChip(): React.JSX.Element {
+  return (
+    <span aria-hidden="true" className="shrink-0">
+      <ShortcutKeyCombo
+        keys={['⏎']}
+        keyCapClassName={cn(
+          'min-w-6 border-border/50 px-1.5 py-0.5 text-[11px] font-medium shadow-none',
+          'bg-background/80 text-muted-foreground'
+        )}
+      />
+    </span>
+  )
+}
 
-const AddRepoPrimaryStartAction = ({
-  icon: Icon,
-  title,
-  description,
+function AddRepoPathButton({
+  action,
+  variant,
   disabled,
   selected,
-  onClick,
   onFocus,
   buttonRef
-}: AddRepoStartActionProps): React.JSX.Element => (
-  // A neutral wash marks the roving keyboard selection without making the row
-  // read like the committed primary action.
-  <Button
-    ref={buttonRef}
-    type="button"
-    variant="ghost"
-    onClick={onClick}
-    onFocus={onFocus}
-    disabled={disabled}
-    data-add-repo-action
-    className={cn(
-      'h-auto min-h-[3.75rem] w-full justify-start gap-3 whitespace-normal px-3 py-2.5 text-left',
-      selected
-        ? 'border border-ring bg-foreground/10 text-foreground focus-visible:border-ring focus-visible:ring-0 dark:bg-accent dark:text-accent-foreground'
-        : 'border border-border bg-background shadow-none dark:bg-background'
-    )}
-  >
-    <span
-      className={cn(
-        'grid size-7 shrink-0 place-items-center rounded-md',
-        selected ? 'bg-background/70 text-accent-foreground' : 'text-foreground'
-      )}
-    >
-      <Icon className="size-4" />
-    </span>
-    <span className="min-w-0 flex-1">
-      <span className="block text-sm font-medium leading-5">{title}</span>
-      <span className="mt-0.5 block text-xs font-normal leading-5 text-muted-foreground">
-        {description}
-      </span>
-    </span>
-    {selected ? <AddRepoEnterChip /> : null}
-  </Button>
-)
+}: AddRepoPathButtonProps): React.JSX.Element {
+  const Icon = action.icon as ComponentType<{ className?: string }>
+  const isPrimary = variant === 'primary'
 
-function AddRepoSecondaryStartAction({
-  icon: Icon,
-  title,
-  description,
-  disabled,
-  selected,
-  onClick,
-  onFocus,
-  className
-}: AddRepoStartActionProps & { className?: string }): React.JSX.Element {
   return (
-    <button
+    <Button
+      ref={buttonRef}
       type="button"
-      data-add-repo-action
+      variant={isPrimary ? (selected ? 'default' : 'outline') : 'outline'}
       disabled={disabled}
-      onClick={onClick}
+      data-add-repo-action
+      onClick={action.onClick}
       onFocus={onFocus}
       className={cn(
-        'flex min-h-[3.25rem] w-full items-center gap-3 border border-transparent px-3 py-2.5 text-left transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:cursor-default disabled:opacity-40',
-        className,
-        // Selected mirrors the primary card's neutral wash so the highlight moves between rows.
-        selected
-          ? 'border-ring bg-foreground/10 text-foreground focus-visible:ring-0 dark:bg-accent dark:text-accent-foreground'
-          : 'hover:bg-accent focus-visible:bg-accent focus-visible:ring-[3px] focus-visible:ring-inset focus-visible:ring-ring/50'
+        // Why: large hit targets — min ~48px secondary, taller primary with two-line copy.
+        'h-auto w-full justify-start gap-3 whitespace-normal px-4 text-left shadow-none',
+        isPrimary ? 'min-h-14 py-3.5' : 'min-h-12 py-3',
+        !isPrimary && selected && 'border-ring bg-muted/40 ring-1 ring-ring/30',
+        isPrimary && !selected && 'bg-background'
       )}
     >
       <span
         className={cn(
-          'grid size-7 shrink-0 place-items-center rounded-md',
-          selected ? 'bg-background/70 text-accent-foreground' : 'text-muted-foreground'
+          'grid shrink-0 place-items-center rounded-md',
+          isPrimary ? 'size-9' : 'size-8',
+          selected && isPrimary
+            ? 'bg-primary-foreground/15 text-primary-foreground'
+            : 'bg-muted/50 text-foreground'
         )}
       >
-        <Icon className="size-4" />
+        <Icon className={cn(isPrimary ? 'size-4' : 'size-3.5', 'opacity-90')} />
       </span>
       <span className="min-w-0 flex-1">
-        <span
-          className={cn(
-            'block text-sm font-medium leading-5',
-            selected ? 'text-accent-foreground' : 'text-foreground'
-          )}
-        >
-          {title}
-        </span>
-        <span className="block text-xs leading-4 text-muted-foreground">{description}</span>
+        <span className="block text-[15px] font-medium leading-snug">{action.title}</span>
+        {isPrimary || action.description ? (
+          <span
+            className={cn(
+              'mt-0.5 block text-[13px] font-normal leading-snug',
+              selected && isPrimary ? 'text-primary-foreground/80' : 'text-muted-foreground'
+            )}
+          >
+            {action.description}
+          </span>
+        ) : null}
       </span>
       {selected ? <AddRepoEnterChip /> : null}
-    </button>
+    </Button>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { ExternalLink, FolderOpen } from 'lucide-react'
+import { ExternalLink, FolderOpen } from '@/lib/icons'
 import { toast } from 'sonner'
 import {
   DropdownMenuItem,

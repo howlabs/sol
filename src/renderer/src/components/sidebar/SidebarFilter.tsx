@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { Check, FolderPlus, GitBranch, ListFilter, Moon, Server, Workflow } from 'lucide-react'
+import { Check, FolderPlus, GitBranch, ListFilter, Moon, Server, Workflow } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { Button } from '@/components/ui/button'
 import {

@@ -1,4 +1,5 @@
 import { translate } from '@/i18n/i18n'
+import { USAGE_SUBPANEL_SHELL_CLASS } from './usage-panel-shell'
 import { formatCost, formatTokens } from './usage-formatters'
 
 export type UsageBreakdownRow = {
@@ -34,22 +35,22 @@ export function UsageBreakdownSection({
   const sessionsKey = 'auto.components.stats.UsageBreakdownSection.02a046792e'
 
   return (
-    <section className="rounded-lg border border-border/60 bg-card/40 p-4">
-      <div className="mb-3">
-        <h4 className="text-sm font-semibold text-foreground">{title}</h4>
-        <p className="text-xs text-muted-foreground">
+    <section className={`${USAGE_SUBPANEL_SHELL_CLASS} space-y-1.5`}>
+      <div className="space-y-0.5">
+        <h4 className="text-xs font-semibold tracking-tight text-foreground">{title}</h4>
+        <p className="text-[11px] leading-snug text-muted-foreground">
           {topLabel}{' '}
           {topValue ?? translate('auto.components.stats.UsageBreakdownSection.7765a4c3e1', 'n/a')}
         </p>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-2">
         {rows.slice(0, 5).map((row) => (
-          <div key={row.key} className="space-y-1">
-            <div className="flex items-center justify-between gap-3 text-sm">
+          <div key={row.key} className="space-y-0.5">
+            <div className="flex items-center justify-between gap-3 text-xs">
               <span className="truncate text-foreground">{row.label}</span>
               <span className="shrink-0 text-muted-foreground">{formatTokens(row.tokens)}</span>
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-[11px] text-muted-foreground">
               {row.sessions} {translate(sessionsKey, 'sessions •')} {row.eventsOrTurns}{' '}
               {translate(eventsOrTurnsKey, eventsOrTurnsLabel)}
               {row.hasInferredPricing

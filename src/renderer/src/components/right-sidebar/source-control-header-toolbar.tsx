@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import { GitPullRequestArrow, Loader2, Search, X } from 'lucide-react'
+import { GitPullRequestArrow, Loader2, Search, X } from '@/lib/icons'
 import type {
   GitBranchCompareSummary,
   GitUpstreamStatus,

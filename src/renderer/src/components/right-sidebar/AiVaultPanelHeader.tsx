@@ -1,4 +1,4 @@
-import { LoaderCircle, RefreshCw, Search, X } from 'lucide-react'
+import { LoaderCircle, RefreshCw, Search, X } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { translate } from '@/i18n/i18n'
 import type {

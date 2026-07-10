@@ -11,7 +11,7 @@ import {
   Volume1,
   Zap,
   type LucideIcon
-} from 'lucide-react'
+} from '@/lib/icons'
 import { basename } from '@/lib/path'
 import type { GlobalSettings } from '../../../shared/types'
 import { translate } from '@/i18n/i18n'

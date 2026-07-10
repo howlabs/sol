@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Gauge, RefreshCw } from 'lucide-react'
+import { Gauge, RefreshCw } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import { installWindowVisibilityInterval } from '@/lib/window-visibility-interval'
 import { useAppStore } from '@/store'
@@ -139,12 +139,12 @@ function GitHubRateLimitRows({
   snapshot: GitHubRateLimitSnapshot
 }): React.JSX.Element {
   return (
-    <div className="flex flex-col gap-1 text-xs">
+    <div className="flex flex-col gap-0.5 text-[11px]">
       {BUCKETS.map((b) => {
         const v = snapshot[b.key]
         const tone = toneForGitHubBucket(v.remaining, v.limit)
         return (
-          <div key={b.key} className="flex items-center justify-between gap-3">
+          <div key={b.key} className="flex items-center justify-between gap-3 py-0.5">
             <span className="text-muted-foreground">{b.description}</span>
             <span
               className={cn(
@@ -175,17 +175,24 @@ export function GitHubRateLimitPanel({ className }: { className?: string }): Rea
   const budgetScope = getProviderRateLimitScope(settings, 'GitHub')
 
   return (
-    <div className={cn('space-y-3 rounded-md border border-border/60 p-3', className)}>
+    // Why: lives under SettingsSection + GitProviderApiBudgetPane — one quiet
+    // list surface for the budget readout, not a nested card shell.
+    <div
+      className={cn(
+        'space-y-1.5 rounded-md border border-border/50 bg-muted/15 px-3 py-2.5',
+        className
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
-        <div className="space-y-0.5">
-          <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
-            <Gauge className="size-4" />
+        <div className="min-w-0 space-y-0.5">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+            <Gauge className="size-3.5 text-muted-foreground" />
             {translate(
               'auto.components.github.github.rate.limit.display.58c5f88216',
               'GitHub API Budget'
             )}
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[11px] leading-snug text-muted-foreground">
             {translate(
               'auto.components.github.github.rate.limit.display.d5e5de9070',
               'Orca uses REST, Search, and GraphQL through the GitHub CLI.'
@@ -197,14 +204,14 @@ export function GitHubRateLimitPanel({ className }: { className?: string }): Rea
               'Budget scope'
             )}
             scope={budgetScope}
-            className="text-xs"
+            className="text-[11px]"
           />
         </div>
         <button
           type="button"
           onClick={() => void refresh(true)}
           disabled={isFetching}
-          className="inline-flex size-7 items-center justify-center rounded-md border border-border bg-secondary text-secondary-foreground transition hover:bg-accent disabled:opacity-50"
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-secondary text-secondary-foreground transition hover:bg-accent disabled:opacity-50"
           aria-label={translate(
             'auto.components.github.github.rate.limit.display.d12d3d6f33',
             'Refresh GitHub API budget'
@@ -214,7 +221,7 @@ export function GitHubRateLimitPanel({ className }: { className?: string }): Rea
         </button>
       </div>
       {hasError ? (
-        <div className="text-xs text-muted-foreground">
+        <div className="text-[11px] text-muted-foreground">
           {translate(
             'auto.components.github.github.rate.limit.display.34973d4695',
             'GitHub API budget is unavailable.'
@@ -223,7 +230,7 @@ export function GitHubRateLimitPanel({ className }: { className?: string }): Rea
       ) : snapshot ? (
         <GitHubRateLimitRows snapshot={snapshot} />
       ) : (
-        <div className="text-xs text-muted-foreground">
+        <div className="text-[11px] text-muted-foreground">
           {translate(
             'auto.components.github.github.rate.limit.display.5509443543',
             'Loading GitHub API budget…'

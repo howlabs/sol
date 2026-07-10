@@ -1101,7 +1101,7 @@ function Settings(): React.JSX.Element {
                   forceVisible={hasUnsavedSourceControlAiPromptChanges}
                 >
                   {isSectionMounted('git') ? (
-                    <>
+                    <div className="space-y-1">
                       <GitPane
                         settings={settings}
                         updateSettings={updateSettings}
@@ -1121,7 +1121,7 @@ function Settings(): React.JSX.Element {
                         settingsSearchQuery={settingsSearchQuery}
                       />
                       <GitProviderApiBudgetPane settingsSearchQuery={settingsSearchQuery} />
-                    </>
+                    </div>
                   ) : null}
                 </SettingsSection>
 
@@ -1130,7 +1130,7 @@ function Settings(): React.JSX.Element {
                   title={translate('auto.components.settings.Settings.11faa2f7dd', 'Task Sources')}
                   description={translate(
                     'auto.components.settings.Settings.dd72ed437a',
-                    'Choose which task providers appear in the Tasks page and sidebar.'
+                    'Providers for the Tasks page and sidebar shortcuts.'
                   )}
                   searchEntries={getSectionSearchEntries('tasks')}
                 >

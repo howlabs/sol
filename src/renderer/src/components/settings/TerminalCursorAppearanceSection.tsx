@@ -20,7 +20,7 @@ export function TerminalCursorAppearanceSection({
   updateSettings
 }: TerminalCursorAppearanceSectionProps): React.JSX.Element {
   return (
-    <section className="space-y-3">
+    <section className="space-y-1.5">
       <SettingsSubsectionHeader
         title={translate(
           'auto.components.settings.TerminalAppearanceSection.abcb4dd019',
@@ -28,7 +28,7 @@ export function TerminalCursorAppearanceSection({
         )}
       />
 
-      <div className="ml-4 divide-y divide-border/40">
+      <div className="ml-3 divide-y divide-border/40">
         <SearchableSetting
           title={translate(
             'auto.components.settings.TerminalAppearanceSection.db270cc9a9',

@@ -7,7 +7,7 @@ import { ScrollArea } from '../ui/scroll-area'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Popover, PopoverAnchor, PopoverContent } from '../ui/popover'
-import { Check, ChevronsUpDown, CircleX } from 'lucide-react'
+import { Check, ChevronsUpDown, CircleX } from '@/lib/icons'
 import { normalizeColor, type TerminalThemeOption } from '@/lib/terminal-theme'
 import { MAX_THEME_RESULTS } from './SettingsConstants'
 import {
@@ -24,14 +24,23 @@ type SettingsSwitchProps = {
   onChange: () => void
   ariaLabel?: string
   ariaLabelledBy?: string
+  ariaDescribedBy?: string
   disabled?: boolean
 }
+
+// Why: hit box targets Mira control density (~28px) while the painted track stays compact (h-4 w-7).
+export const SETTINGS_SWITCH_HIT_TARGET_CLASS =
+  'relative inline-flex min-h-7 min-w-9 shrink-0 cursor-pointer items-center justify-center rounded-full p-1.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50'
+
+export const SETTINGS_SWITCH_TRACK_CLASS =
+  'pointer-events-none relative inline-flex h-4 w-7 items-center rounded-full border border-transparent transition-colors'
 
 export function SettingsSwitch({
   checked,
   onChange,
   ariaLabel,
   ariaLabelledBy,
+  ariaDescribedBy,
   disabled
 }: SettingsSwitchProps): React.JSX.Element {
   return (
@@ -41,19 +50,24 @@ export function SettingsSwitch({
       aria-checked={checked}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
+      aria-describedby={ariaDescribedBy}
       disabled={disabled}
       onClick={onChange}
-      className={cn(
-        'relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-transparent outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50',
-        checked ? 'bg-foreground' : 'bg-muted-foreground/30'
-      )}
+      className={SETTINGS_SWITCH_HIT_TARGET_CLASS}
     >
       <span
         className={cn(
-          'pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform',
-          checked ? 'translate-x-4' : 'translate-x-0.5'
+          SETTINGS_SWITCH_TRACK_CLASS,
+          checked ? 'bg-foreground' : 'bg-muted-foreground/30'
         )}
-      />
+      >
+        <span
+          className={cn(
+            'pointer-events-none block size-3 rounded-full bg-background shadow-sm transition-transform',
+            checked ? 'translate-x-3' : 'translate-x-0.5'
+          )}
+        />
+      </span>
     </button>
   )
 }
@@ -79,17 +93,19 @@ export function SettingsRow({
   return (
     <div
       className={cn(
-        'flex gap-4',
-        description ? 'py-3' : 'py-2',
+        'flex gap-3',
+        description ? 'py-2' : 'py-1.5',
         alignTop ? 'items-start' : 'items-center justify-between'
       )}
     >
-      <div className={cn('min-w-0 flex-1', description ? 'space-y-1' : 'space-y-0.5')}>
-        <Label id={labelId} className="select-text">
+      <div className={cn('min-w-0 flex-1', description ? 'space-y-0.5' : 'space-y-0')}>
+        <Label id={labelId} className="select-text text-xs font-medium leading-none">
           {label}
         </Label>
         {description ? (
-          <p className="select-text text-xs text-muted-foreground">{description}</p>
+          <p className="select-text text-[11px] leading-snug text-muted-foreground">
+            {description}
+          </p>
         ) : null}
       </div>
       <div className="shrink-0">{control}</div>
@@ -103,6 +119,8 @@ type SettingsSwitchRowProps = {
   checked: boolean
   onChange: () => void
   ariaLabel?: string
+  ariaDescribedBy?: string
+  disabled?: boolean
 }
 
 export function SettingsSwitchRow({
@@ -110,7 +128,9 @@ export function SettingsSwitchRow({
   description,
   checked,
   onChange,
-  ariaLabel
+  ariaLabel,
+  ariaDescribedBy,
+  disabled
 }: SettingsSwitchRowProps): React.JSX.Element {
   return (
     <SettingsRow
@@ -120,7 +140,9 @@ export function SettingsSwitchRow({
         <SettingsSwitch
           checked={checked}
           onChange={onChange}
+          disabled={disabled}
           ariaLabel={ariaLabel ?? (typeof label === 'string' ? label : undefined)}
+          ariaDescribedBy={ariaDescribedBy}
         />
       }
     />
@@ -177,8 +199,8 @@ export function SettingsSegmentedControl<T extends string | number>({
               }
             }}
             className={cn(
-              'rounded-sm text-center outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50',
-              size === 'sm' ? 'px-2.5 py-0.5 text-xs' : 'px-3 py-1 text-sm',
+              'rounded-sm text-center outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring/30',
+              size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-0.5 text-xs',
               equalWidth && 'flex-1',
               active
                 ? 'bg-accent font-medium text-accent-foreground'
@@ -231,7 +253,7 @@ type SettingsSubsectionHeaderProps = {
   className?: string
 }
 
-/** Consistent subsection header: h3 text-sm font-semibold + optional muted description. */
+/** Consistent subsection header: h3 text-xs font-semibold tracking-tight + optional muted description. */
 export function SettingsSubsectionHeader({
   title,
   description,
@@ -239,10 +261,12 @@ export function SettingsSubsectionHeader({
   className
 }: SettingsSubsectionHeaderProps): React.JSX.Element {
   return (
-    <div className={cn('flex items-start justify-between gap-3', className)}>
-      <div className="space-y-1">
-        <h3 className="text-sm font-semibold">{title}</h3>
-        {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
+    <div className={cn('flex items-center justify-between gap-2', className)}>
+      <div className="min-w-0 space-y-0.5">
+        <h3 className="text-xs font-semibold tracking-tight">{title}</h3>
+        {description ? (
+          <p className="text-[11px] leading-snug text-muted-foreground">{description}</p>
+        ) : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}
     </div>
@@ -699,8 +723,8 @@ export function FontAutocomplete({
   }
   const popoverAvailableHeightStyle = {
     // Why: tailwind-merge rewrites this arbitrary max-height class on the
-    // ScrollArea root, so keep the Radix available-height clamp as inline style.
-    maxHeight: 'var(--radix-popover-content-available-height)'
+    // ScrollArea root, so keep the positioner available-height clamp as inline style.
+    maxHeight: 'var(--available-height)'
   } as React.CSSProperties
 
   return (
@@ -836,7 +860,7 @@ export function FontAutocomplete({
           the whole settings pane, pushing the section content out of view. */}
         <PopoverContent
           align="start"
-          className="w-[var(--radix-popover-trigger-width)]"
+          className="w-[var(--anchor-width)]"
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
           onInteractOutside={(e) => {

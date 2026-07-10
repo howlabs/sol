@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { ExternalLink, Settings } from 'lucide-react'
+import { ExternalLink, Settings } from '@/lib/icons'
 
 import { Button } from '@/components/ui/button'
 import {

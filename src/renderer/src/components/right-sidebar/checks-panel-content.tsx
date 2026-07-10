@@ -25,8 +25,8 @@ import {
   SlidersHorizontal,
   Trash,
   X
-} from 'lucide-react'
-import { ExternalLink } from 'lucide-react'
+} from '@/lib/icons'
+import { ExternalLink } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'

@@ -21,12 +21,12 @@ import {
   RefreshCw,
   Send,
   X
-} from 'lucide-react'
+} from '@/lib/icons'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { VisuallyHidden } from 'radix-ui'
+import { VisuallyHidden } from '@/components/ui/visually-hidden'
 import CommentMarkdown from '@/components/sidebar/CommentMarkdown'
 import { isScreenSubmitShortcut } from '@/lib/screen-submit-shortcut'
 import { useMountedRef } from '@/hooks/useMountedRef'

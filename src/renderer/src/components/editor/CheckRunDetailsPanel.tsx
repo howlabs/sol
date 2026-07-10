@@ -1,5 +1,5 @@
 import React from 'react'
-import { ExternalLink, LoaderCircle, RefreshCw } from 'lucide-react'
+import { ExternalLink, LoaderCircle, RefreshCw } from '@/lib/icons'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import CommentMarkdown from '@/components/sidebar/CommentMarkdown'

@@ -11,7 +11,7 @@ import {
   Ellipsis,
   Link,
   Unlink
-} from 'lucide-react'
+} from '@/lib/icons'
 import { useAppStore, type AppState } from '@/store'
 import {
   buildGitHubPRRefreshStateClearToken,

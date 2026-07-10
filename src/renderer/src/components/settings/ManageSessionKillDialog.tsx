@@ -1,4 +1,4 @@
-import { LoaderCircle } from 'lucide-react'
+import { LoaderCircle } from '@/lib/icons'
 import type { PtyManagementSession } from '../../../../preload/api-types'
 import { Button } from '../ui/button'
 import {

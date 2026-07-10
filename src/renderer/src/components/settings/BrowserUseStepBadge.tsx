@@ -1,4 +1,4 @@
-import { Check, Loader2 } from 'lucide-react'
+import { Check, Loader2 } from '@/lib/icons'
 
 export type StepState = 'pending' | 'done' | 'in-progress'
 

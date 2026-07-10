@@ -2,6 +2,7 @@ import { useState, type Dispatch, type ReactNode, type SetStateAction } from 're
 import type { GlobalSettings } from '../../../../shared/types'
 import {
   ColorField,
+  SettingsRow,
   SettingsSegmentedControl,
   SettingsSwitchRow,
   SettingsSubsectionHeader,
@@ -128,7 +129,7 @@ export function TerminalThemeCatalogSection({
       )
 
   return (
-    <section className="space-y-5">
+    <section className="space-y-1.5">
       <SettingsSubsectionHeader
         className="items-center"
         title={translate(
@@ -145,9 +146,9 @@ export function TerminalThemeCatalogSection({
         }
       />
 
-      <div className="ml-4 grid gap-4">
-        <div className={advancedContent ? 'border-b border-border/40' : undefined}>
-          <div className="space-y-3">
+      <div className="ml-3 grid gap-2">
+        <div className={advancedContent ? 'border-b border-border/40 pb-2' : undefined}>
+          <div className="divide-y divide-border/40">
             <SearchableSetting
               title={translate(
                 'auto.components.settings.TerminalThemeSections.target_title',
@@ -156,39 +157,39 @@ export function TerminalThemeCatalogSection({
               keywords={['terminal', 'theme', 'dark', 'light']}
               forceVisible
             >
-              <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">
-                  {translate(
-                    'auto.components.settings.TerminalThemeSections.target_title',
-                    'Theme Mode'
-                  )}
-                </p>
-                <SettingsSegmentedControl
-                  value={target}
-                  onChange={setTarget}
-                  ariaLabel={translate(
-                    'auto.components.settings.TerminalThemeSections.target_aria',
-                    'Terminal theme mode'
-                  )}
-                  equalWidth
-                  options={[
-                    {
-                      value: 'dark',
-                      label: translate(
-                        'auto.components.settings.TerminalThemeSections.target_dark',
-                        'Dark'
-                      )
-                    },
-                    {
-                      value: 'light',
-                      label: translate(
-                        'auto.components.settings.TerminalThemeSections.target_light',
-                        'Light'
-                      )
-                    }
-                  ]}
-                />
-              </div>
+              <SettingsRow
+                label={translate(
+                  'auto.components.settings.TerminalThemeSections.target_title',
+                  'Theme Mode'
+                )}
+                control={
+                  <SettingsSegmentedControl
+                    value={target}
+                    onChange={setTarget}
+                    ariaLabel={translate(
+                      'auto.components.settings.TerminalThemeSections.target_aria',
+                      'Terminal theme mode'
+                    )}
+                    equalWidth
+                    options={[
+                      {
+                        value: 'dark',
+                        label: translate(
+                          'auto.components.settings.TerminalThemeSections.target_dark',
+                          'Dark'
+                        )
+                      },
+                      {
+                        value: 'light',
+                        label: translate(
+                          'auto.components.settings.TerminalThemeSections.target_light',
+                          'Light'
+                        )
+                      }
+                    ]}
+                  />
+                }
+              />
             </SearchableSetting>
 
             {isLightTarget ? (
@@ -224,14 +225,14 @@ export function TerminalThemeCatalogSection({
           <div
             className={cn(
               'grid overflow-hidden transition-[grid-template-rows,padding-top] duration-200 ease-out',
-              showCustomControls ? 'grid-rows-[1fr] pt-6' : 'grid-rows-[0fr] pt-0'
+              showCustomControls ? 'grid-rows-[1fr] pt-3' : 'grid-rows-[0fr] pt-0'
             )}
             aria-hidden={!showCustomControls}
             inert={!showCustomControls}
           >
             <div
               className={cn(
-                'min-h-0 space-y-6 transition-[opacity,transform] duration-150 ease-out',
+                'min-h-0 space-y-3 transition-[opacity,transform] duration-150 ease-out',
                 showCustomControls
                   ? 'translate-y-0 opacity-100'
                   : 'pointer-events-none -translate-y-1 opacity-0'

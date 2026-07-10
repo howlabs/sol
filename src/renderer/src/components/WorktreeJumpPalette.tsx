@@ -3,7 +3,7 @@ import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useSt
 import { useShallow } from 'zustand/react/shallow'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { FileText, FolderTree, Globe, Plus, Server, ServerOff, SquareTerminal } from 'lucide-react'
+import { FileText, FolderTree, Globe, Plus, Server, ServerOff, SquareTerminal } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { getRepoMapFromState, useAllWorktrees } from '@/store/selectors'
 import { selectPaletteStatusInputs } from './worktree-jump-palette-status-inputs'

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-import { LoaderCircle, GitMerge, ChevronDown, GitPullRequestClosed } from 'lucide-react'
+import { LoaderCircle, GitMerge, ChevronDown, GitPullRequestClosed } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'

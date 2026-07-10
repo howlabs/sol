@@ -1,5 +1,5 @@
 import type React from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from '@/lib/icons'
 import classicIconUrl from '../../../../../resources/icon.png?url'
 import watercolorIconUrl from '../../../../../resources/app-icons/orca-watercolor.png?url'
 import blueIconUrl from '../../../../../resources/app-icons/orca-blue.png?url'

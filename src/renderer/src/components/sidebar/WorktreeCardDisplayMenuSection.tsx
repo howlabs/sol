@@ -54,13 +54,48 @@ export function WorktreeCardDisplayMenuSection(): React.JSX.Element {
       <DropdownMenuSub>
         <DropdownMenuSubTrigger>
           <span className="flex flex-1 items-center justify-between gap-3">
-            {translate(
-              'auto.components.sidebar.SidebarWorkspaceOptionsMenu.newCardDisplay.title',
-              'Card display'
-            )}
+            <span>
+              {translate(
+                'auto.components.sidebar.SidebarWorkspaceOptionsMenu.newCardDisplay.title',
+                'Card display'
+              )}
+            </span>
+            <span className="text-[11px] font-medium text-muted-foreground">{cardLayoutLabel}</span>
           </span>
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className="w-56">
+          <DropdownMenuLabel className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
+            {translate(
+              'auto.components.sidebar.SidebarWorkspaceOptionsMenu.320b675c9a',
+              'Card layout'
+            )}
+          </DropdownMenuLabel>
+          <DropdownMenuRadioGroup
+            value={cardLayout}
+            onValueChange={(value) => {
+              // Why: new card style keeps the status lane + property model;
+              // Detailed/Compact only switches density presets and default
+              // property sets, matching the graduated compact control.
+              setWorktreeCardMode(value === 'compact' ? 'Compact' : 'Default')
+            }}
+          >
+            {CARD_LAYOUT_OPTIONS.map((opt) => (
+              <DropdownMenuRadioItem
+                key={opt.id}
+                value={opt.id}
+                onSelect={(e) => e.preventDefault()}
+              >
+                {opt.label}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
+            {translate(
+              'auto.components.sidebar.SidebarWorkspaceOptionsMenu.ba87080fb7',
+              'Show properties'
+            )}
+          </DropdownMenuLabel>
           {worktreeCardPropertyOptions.map((opt) => (
             <DropdownMenuCheckboxItem
               key={opt.id}
@@ -75,6 +110,29 @@ export function WorktreeCardDisplayMenuSection(): React.JSX.Element {
               {opt.label}
             </DropdownMenuCheckboxItem>
           ))}
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel className="px-2 py-1 text-[11px] font-medium text-muted-foreground">
+            {translate(
+              'auto.components.sidebar.SidebarWorkspaceOptionsMenu.95c9754653',
+              'Agent activity layout'
+            )}
+          </DropdownMenuLabel>
+          <DropdownMenuRadioGroup
+            value={agentActivityDisplayMode}
+            onValueChange={(value) =>
+              setAgentActivityDisplayMode(value as AgentActivityDisplayMode)
+            }
+          >
+            {AGENT_ACTIVITY_DISPLAY_OPTIONS.map((opt) => (
+              <DropdownMenuRadioItem
+                key={opt.id}
+                value={opt.id}
+                onSelect={(e) => e.preventDefault()}
+              >
+                {opt.label}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
         </DropdownMenuSubContent>
       </DropdownMenuSub>
     )

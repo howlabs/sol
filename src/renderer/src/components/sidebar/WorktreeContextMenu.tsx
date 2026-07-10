@@ -30,7 +30,7 @@ import {
   FolderInput,
   FolderPlus,
   FolderTree
-} from 'lucide-react'
+} from '@/lib/icons'
 import { useAppStore } from '@/store'
 import type { AppState } from '@/store/types'
 import { useAllWorktrees, useRepoById, useRepoMap, useWorktreeMap } from '@/store/selectors'

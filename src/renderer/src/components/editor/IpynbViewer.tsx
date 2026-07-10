@@ -30,7 +30,7 @@ import {
   Play,
   Save,
   Trash2
-} from 'lucide-react'
+} from '@/lib/icons'
 import { monaco } from '@/lib/monaco-setup'
 import { computeEditorFontSize } from '@/lib/editor-font-zoom'
 import { getConnectionId } from '@/lib/connection-context'

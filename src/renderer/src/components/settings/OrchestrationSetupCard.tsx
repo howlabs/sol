@@ -38,6 +38,8 @@ export function OrchestrationSetupCard(props: {
       )
     : ORCHESTRATION_SKILL_UPDATE_COMMAND
 
+  // Why: feature-wall / compact hosts already frame the surface — rely on flat
+  // AgentSkillSetupPanel chrome rather than wrapping another card.
   const setupPanel = (
     <AgentSkillSetupPanel
       className={compact ? 'w-full max-w-[520px]' : undefined}
@@ -81,5 +83,5 @@ export function OrchestrationSetupCard(props: {
   if (compact) {
     return <div className="flex min-h-24 flex-1 items-center justify-center">{setupPanel}</div>
   }
-  return <div className="flex">{setupPanel}</div>
+  return <div className="flex min-w-0">{setupPanel}</div>
 }

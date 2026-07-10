@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { ChevronDown, Loader2 } from 'lucide-react'
+import { ChevronDown, Loader2 } from '@/lib/icons'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import {
@@ -11,6 +11,7 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { SettingsSwitch } from '@/components/settings/SettingsFormControls'
 import { useMountedRef } from '@/hooks/useMountedRef'
 import { useAppStore } from '@/store'
 import { getAllWorktreesFromState } from '@/store/selectors'
@@ -234,29 +235,18 @@ export function HostRemoveDialog({
             >
               <div className="min-h-0">
                 <div className="flex items-start gap-3 px-1 pt-1">
+                  <div className="mt-0.5 shrink-0">
+                    <SettingsSwitch
+                      checked={deleteWorkspaces}
+                      ariaLabel={deleteOptionLabel}
+                      onChange={() => setDeleteWorkspaces((v) => !v)}
+                    />
+                  </div>
                   <button
                     type="button"
-                    role="switch"
-                    aria-checked={deleteWorkspaces}
+                    className="min-w-0 flex-1 text-left text-xs leading-snug outline-none focus-visible:ring-2 focus-visible:ring-ring/30 rounded-sm"
                     onClick={() => setDeleteWorkspaces((v) => !v)}
-                    className="group mt-0.5 flex shrink-0 cursor-pointer items-center rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
                   >
-                    <span
-                      aria-hidden
-                      className={cn(
-                        'relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border border-transparent transition-colors',
-                        deleteWorkspaces ? 'bg-foreground' : 'bg-muted-foreground/30'
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'pointer-events-none block size-3.5 rounded-full bg-background shadow-sm transition-transform',
-                          deleteWorkspaces ? 'translate-x-4' : 'translate-x-0.5'
-                        )}
-                      />
-                    </span>
-                  </button>
-                  <span className="min-w-0 flex-1 text-xs leading-snug">
                     <span className="font-medium text-foreground">{deleteOptionLabel}</span>
                     <span className="mt-0.5 block text-muted-foreground">
                       {isConnected
@@ -269,7 +259,7 @@ export function HostRemoveDialog({
                             'Clears them from Orca only. Remote files, worktrees, and branches are left untouched.'
                           )}
                     </span>
-                  </span>
+                  </button>
                 </div>
               </div>
             </div>

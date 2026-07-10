@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import { Check, ChevronsUpDown, FolderPlus, Server } from 'lucide-react'
+import { Check, ChevronsUpDown, FolderPlus, Server } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -221,7 +221,7 @@ export default function RepoCombobox({
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className="w-[var(--radix-popover-trigger-width)] min-w-[18rem] p-0"
+          className="w-[var(--anchor-width)] min-w-[18rem] p-0"
           data-repo-combobox-root="true"
           onOpenAutoFocus={(event) => {
             event.preventDefault()

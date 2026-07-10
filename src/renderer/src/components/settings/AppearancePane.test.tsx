@@ -8,6 +8,11 @@ import { i18n } from '@/i18n/i18n'
 import { getDefaultSettings } from '../../../../shared/constants'
 import type { GlobalSettings, StatusBarItem } from '../../../../shared/types'
 
+// Why: Base UI ScrollArea (font picker) uses getAnimations(); happy-dom lacks it.
+if (typeof Element !== 'undefined' && typeof Element.prototype.getAnimations !== 'function') {
+  Element.prototype.getAnimations = () => []
+}
+
 const mocks = vi.hoisted(() => ({
   state: {
     availableStatusBarToggles: [] as {

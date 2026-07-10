@@ -1,5 +1,5 @@
 import React from 'react'
-import { Ellipsis, ListCollapse, Loader2, RefreshCw } from 'lucide-react'
+import { Ellipsis, ListCollapse, Loader2, RefreshCw } from '@/lib/icons'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
