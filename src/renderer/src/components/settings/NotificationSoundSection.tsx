@@ -13,7 +13,9 @@ import {
 import { Upload } from '@/lib/icons'
 import { getNotificationSoundOptions } from '@/components/notification-sound-options'
 import { useMountedRef } from '@/hooks/useMountedRef'
+import { SearchableSetting } from './SearchableSetting'
 import { SettingsRow } from './SettingsFormControls'
+import { getNotificationsPaneSearchEntries } from './notifications-search'
 import { translate } from '@/i18n/i18n'
 
 const CHOOSE_CUSTOM_SOUND_VALUE = 'choose-custom-file'
@@ -47,6 +49,9 @@ export function NotificationSoundSection({
 }: NotificationSoundSectionProps): React.JSX.Element {
   const mountedRef = useMountedRef()
   const [isPickingSound, setIsPickingSound] = useState(false)
+  const searchEntries = getNotificationsPaneSearchEntries()
+  const soundSearch = searchEntries.find((entry) => entry.title === 'Notification Sound')
+  const volumeSearch = searchEntries.find((entry) => entry.title === 'Notification Volume')
 
   const previewSound = async (
     customSoundId: GlobalSettings['notifications']['customSoundId']
@@ -83,7 +88,10 @@ export function NotificationSoundSection({
     }
   }
 
-  const handleSoundSelect = async (value: NotificationSoundSelectValue): Promise<void> => {
+  const handleSoundSelect = async (value: NotificationSoundSelectValue | null): Promise<void> => {
+    if (value == null) {
+      return
+    }
     if (!isNotificationSoundId(value)) {
       await handleChooseCustomSound()
       return
@@ -96,100 +104,143 @@ export function NotificationSoundSection({
   const soundOptions = getNotificationSoundOptions(notificationSettings.customSoundPath)
 
   return (
-    <div>
-      <SettingsRow
-        label={translate(
-          'auto.components.settings.NotificationsPane.88686e6ca8',
-          'Notification Sound'
-        )}
-        description={translate(
-          'auto.components.settings.NotificationsPane.2a2033c388',
-          'Choose the alert Orca plays when a desktop notification is delivered.'
-        )}
-        control={
-          <Select
-            value={selectedSoundId}
-            disabled={!notificationsEnabled || isPickingSound}
-            onValueChange={(value) => void handleSoundSelect(value as NotificationSoundSelectValue)}
-          >
-            <SelectTrigger className="w-[min(100%,14rem)]" size="sm">
-              <SelectValue
-                placeholder={translate(
-                  'auto.components.settings.NotificationsPane.c258cb96dc',
-                  'Choose notification sound'
-                )}
-              />
-            </SelectTrigger>
-            <SelectContent
-              align="end"
-              className="w-[var(--anchor-width,var(--radix-select-trigger-width))]"
-            >
-              {soundOptions.map((option) => {
-                const OptionIcon = option.icon
-                return (
-                  <SelectItem key={option.id} value={option.id}>
-                    <OptionIcon className="size-4" />
-                    <span className="truncate">{option.title}</span>
-                  </SelectItem>
-                )
-              })}
-              <SelectSeparator />
-              <SelectItem value={CHOOSE_CUSTOM_SOUND_VALUE}>
-                <Upload className="size-4" />
-                <span>
-                  {notificationSettings.customSoundPath
-                    ? translate(
-                        'auto.components.settings.NotificationsPane.76e02467b8',
-                        'Change Custom File'
-                      )
-                    : translate(
-                        'auto.components.settings.NotificationsPane.6e6df3a09a',
-                        'Choose Custom File'
-                      )}
-                </span>
-              </SelectItem>
-            </SelectContent>
-          </Select>
+    <>
+      <SearchableSetting
+        title={
+          soundSearch?.title ??
+          translate('auto.components.settings.NotificationsPane.88686e6ca8', 'Notification Sound')
         }
-      />
-      {notificationSettings.customSoundPath ? (
-        <p
-          className="truncate pb-1 font-mono text-[11px] text-muted-foreground"
-          title={notificationSettings.customSoundPath}
-        >
-          {translate('auto.components.settings.NotificationsPane.4aa5085cd7', 'Custom:')}
-          {notificationSettings.customSoundPath}
-        </p>
-      ) : null}
-      {selectedSoundId !== 'system' ? (
+        description={
+          soundSearch?.description ??
+          translate(
+            'auto.components.settings.NotificationsPane.2a2033c388',
+            'Choose the alert Orca plays when a desktop notification is delivered.'
+          )
+        }
+        keywords={soundSearch?.keywords}
+        className="space-y-1"
+      >
         <SettingsRow
           label={translate(
-            'auto.components.settings.NotificationsPane.2a42dd8d6f',
-            'Notification sound volume'
+            'auto.components.settings.NotificationsPane.88686e6ca8',
+            'Notification Sound'
+          )}
+          description={translate(
+            'auto.components.settings.NotificationsPane.2a2033c388',
+            'Choose the alert Orca plays when a desktop notification is delivered.'
           )}
           control={
-            <div className="flex w-[min(100%,14rem)] items-center gap-2.5">
-              <Slider
-                value={[volumeDraft]}
-                min={0}
-                max={100}
-                step={5}
-                disabled={!notificationsEnabled}
-                onValueChange={([value]) => onVolumeDraftChange(value)}
-                onValueCommit={([value]) => onVolumeCommit(value)}
-                className="flex-1"
-                aria-label={translate(
-                  'auto.components.settings.NotificationsPane.2a42dd8d6f',
-                  'Notification sound volume'
-                )}
-              />
-              <span className="w-9 text-right font-mono text-xs tabular-nums text-muted-foreground">
-                {volumeDraft}%
-              </span>
-            </div>
+            <Select
+              value={selectedSoundId}
+              disabled={!notificationsEnabled || isPickingSound}
+              onValueChange={(value) =>
+                void handleSoundSelect(value as NotificationSoundSelectValue | null)
+              }
+            >
+              <SelectTrigger className="w-[min(100%,14rem)]" size="sm">
+                <SelectValue
+                  placeholder={translate(
+                    'auto.components.settings.NotificationsPane.c258cb96dc',
+                    'Choose notification sound'
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent
+                align="end"
+                className="w-[var(--anchor-width,var(--radix-select-trigger-width))]"
+              >
+                {soundOptions.map((option) => {
+                  const OptionIcon = option.icon
+                  return (
+                    <SelectItem key={option.id} value={option.id}>
+                      <OptionIcon className="size-3.5" />
+                      <span className="truncate">{option.title}</span>
+                    </SelectItem>
+                  )
+                })}
+                <SelectSeparator />
+                <SelectItem value={CHOOSE_CUSTOM_SOUND_VALUE}>
+                  <Upload className="size-3.5" />
+                  <span>
+                    {notificationSettings.customSoundPath
+                      ? translate(
+                          'auto.components.settings.NotificationsPane.76e02467b8',
+                          'Change Custom File'
+                        )
+                      : translate(
+                          'auto.components.settings.NotificationsPane.6e6df3a09a',
+                          'Choose Custom File'
+                        )}
+                  </span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           }
         />
+        {notificationSettings.customSoundPath ? (
+          <p
+            className="truncate pb-1 font-mono text-[11px] text-muted-foreground"
+            title={notificationSettings.customSoundPath}
+          >
+            {translate('auto.components.settings.NotificationsPane.4aa5085cd7', 'Custom:')}
+            {notificationSettings.customSoundPath}
+          </p>
+        ) : null}
+      </SearchableSetting>
+
+      {selectedSoundId !== 'system' ? (
+        <SearchableSetting
+          title={
+            volumeSearch?.title ??
+            translate(
+              'auto.components.settings.NotificationsPane.2a42dd8d6f',
+              'Notification sound volume'
+            )
+          }
+          description={
+            volumeSearch?.description ??
+            translate(
+              'auto.components.settings.notifications.search.eeb6f77322',
+              'Playback volume for non-system notification sounds.'
+            )
+          }
+          keywords={volumeSearch?.keywords}
+        >
+          <SettingsRow
+            label={translate(
+              'auto.components.settings.NotificationsPane.2a42dd8d6f',
+              'Notification sound volume'
+            )}
+            description={translate(
+              'auto.components.settings.notifications.search.eeb6f77322',
+              'Playback volume for non-system notification sounds.'
+            )}
+            control={
+              <div className="flex w-[min(100%,14rem)] items-center gap-2.5">
+                <Slider
+                  // Why: Base UI single-thumb value is a number (not Radix's number[]),
+                  // and commit is onValueCommitted — not onValueCommit.
+                  value={volumeDraft}
+                  min={0}
+                  max={100}
+                  step={5}
+                  disabled={!notificationsEnabled}
+                  onValueChange={(value) => onVolumeDraftChange(value)}
+                  onValueCommitted={(value) => onVolumeCommit(value)}
+                  className="flex-1"
+                  aria-label={translate(
+                    'auto.components.settings.NotificationsPane.2a42dd8d6f',
+                    'Notification sound volume'
+                  )}
+                />
+                <span className="w-9 text-right font-mono text-xs tabular-nums text-muted-foreground">
+                  {volumeDraft}%
+                </span>
+              </div>
+            }
+          />
+        </SearchableSetting>
       ) : null}
-    </div>
+    </>
   )
 }
