@@ -37,7 +37,7 @@ export function GitHubIntegrationCard(): React.JSX.Element {
 
   return (
     <IntegrationCardShell
-      icon={<Github className="size-5" />}
+      icon={<Github />}
       name="GitHub"
       checking={status === 'checking'}
       statusTone={connected ? 'connected' : 'attention'}
@@ -93,7 +93,7 @@ export function GitLabIntegrationCard(): React.JSX.Element {
 
   return (
     <IntegrationCardShell
-      icon={<Gitlab className="size-5" />}
+      icon={<Gitlab />}
       name="GitLab"
       checking={status === 'checking'}
       statusTone={connected ? 'connected' : 'attention'}

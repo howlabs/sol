@@ -23,7 +23,7 @@ export function useIntegrationCardPresentation(): IntegrationCardPresentation {
 export function useIntegrationCardShellClass(className?: string): string {
   // Why: settings Integrations is a connection list, not a marketing card
   // grid. Flat rows inside one group beat stacked elevated cards.
-  return cn('bg-transparent px-3 py-2.5', className)
+  return cn('bg-transparent px-3 py-2', className)
 }
 
 export function IntegrationCardGroup(props: {

@@ -5,9 +5,21 @@ import { OpenRemoteServersButton } from './ProviderHostScopeControl'
 import { usePreflightCardStatuses } from './source-control-preflight-card-status'
 import { translate } from '@/i18n/i18n'
 
-function tokenStatusLabel(status: string, connectedLabel: string): string {
-  if (status === 'connected' || status === 'configured') {
-    return connectedLabel
+function tokenStatusLabel(status: string, options?: { configuredLabel?: string }): string {
+  if (status === 'connected') {
+    return translate(
+      'auto.components.settings.token.source.control.integration.cards.statusConnected',
+      'Connected'
+    )
+  }
+  if (status === 'configured') {
+    return (
+      options?.configuredLabel ??
+      translate(
+        'auto.components.settings.token.source.control.integration.cards.statusConfigured',
+        'Configured'
+      )
+    )
   }
   if (status === 'unavailable') {
     return translate(
@@ -19,6 +31,12 @@ function tokenStatusLabel(status: string, connectedLabel: string): string {
     return translate(
       'auto.components.settings.token.source.control.integration.cards.statusNotConfigured',
       'Not configured'
+    )
+  }
+  if (status === 'optional') {
+    return translate(
+      'auto.components.settings.token.source.control.integration.cards.statusOptionalSetup',
+      'Optional setup'
     )
   }
   return translate(
@@ -34,11 +52,11 @@ export function BitbucketIntegrationCard(): React.JSX.Element {
 
   return (
     <IntegrationCardShell
-      icon={<GitPullRequestArrow className="size-5" />}
+      icon={<GitPullRequestArrow />}
       name="Bitbucket"
       checking={status === 'checking'}
       statusTone={connected ? 'connected' : 'attention'}
-      statusLabel={tokenStatusLabel(status, 'Connected')}
+      statusLabel={tokenStatusLabel(status)}
       actions={
         <>
           {!connected ? (
@@ -78,13 +96,12 @@ export function AzureDevOpsIntegrationCard(): React.JSX.Element {
 
   return (
     <IntegrationCardShell
-      icon={<GitPullRequestArrow className="size-5" />}
+      icon={<GitPullRequestArrow />}
       name="Azure DevOps"
       checking={status === 'checking'}
       statusTone={configured ? 'connected' : 'attention'}
       statusLabel={tokenStatusLabel(
-        status,
-        statuses.azureDevOpsAccount ? 'Connected' : 'Configured'
+        statuses.azureDevOpsAccount && status === 'configured' ? 'connected' : status
       )}
       actions={
         <>
@@ -127,21 +144,19 @@ export function GiteaIntegrationCard(): React.JSX.Element {
 
   return (
     <IntegrationCardShell
-      icon={<GitPullRequestArrow className="size-5" />}
+      icon={<GitPullRequestArrow />}
       name="Gitea"
       checking={status === 'checking'}
       statusTone={configured ? 'connected' : 'attention'}
-      statusLabel={
+      statusLabel={tokenStatusLabel(
         configured
           ? statuses.giteaAccount
-            ? 'Connected'
-            : 'Configured'
-          : status === 'unavailable'
-            ? 'Unavailable'
-            : status === 'not-configured'
-              ? 'Optional setup'
-              : 'Auth failed'
-      }
+            ? 'connected'
+            : 'configured'
+          : status === 'not-configured'
+            ? 'optional'
+            : status
+      )}
       actions={
         <>
           {!configured ? (

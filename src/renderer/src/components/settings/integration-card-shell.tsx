@@ -28,7 +28,7 @@ export function IntegrationCardShell(props: {
   ) : (
     <span
       className={cn(
-        'shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium',
+        'shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium leading-none',
         STATUS_TONE_CLASSES[props.statusTone]
       )}
     >
@@ -38,12 +38,13 @@ export function IntegrationCardShell(props: {
 
   return (
     <div className={shellClass}>
-      <div className="flex items-center gap-3">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-md border border-border/50 bg-muted/30 text-muted-foreground">
+      <div className="flex items-center gap-2.5">
+        {/* Why: Mira density — size-7 tile + size-4 glyphs matches settings rows, not marketing cards. */}
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-md border border-border/50 bg-muted/30 text-muted-foreground [&_svg]:size-4">
           {props.icon}
         </span>
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <p className="truncate text-[13px] font-medium leading-5 text-foreground">{props.name}</p>
+          <p className="truncate text-xs font-medium leading-none text-foreground">{props.name}</p>
           {status}
         </div>
         {props.actions ? (
@@ -62,7 +63,7 @@ export function IntegrationCardDetails(props: {
   children: React.ReactNode
 }): React.JSX.Element {
   return (
-    <div className={cn('mt-2 space-y-1.5 border-t border-border/50 pt-2', props.className)}>
+    <div className={cn('mt-2 space-y-1 border-t border-border/50 pt-2', props.className)}>
       {props.children}
     </div>
   )

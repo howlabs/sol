@@ -64,7 +64,7 @@ export function LinearIntegrationCard(): React.JSX.Element {
 
   return (
     <IntegrationCardShell
-      icon={<LinearIcon className="size-5" />}
+      icon={<LinearIcon />}
       name="Linear"
       checking={checking}
       statusTone={connected ? 'connected' : 'attention'}
@@ -118,7 +118,7 @@ export function LinearIntegrationCard(): React.JSX.Element {
             return (
               <div key={workspace.id} className={subordinateRowClass}>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-foreground">
+                  <p className="truncate text-xs font-medium text-foreground">
                     {workspace.organizationName}
                   </p>
                 </div>

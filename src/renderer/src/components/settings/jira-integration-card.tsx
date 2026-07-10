@@ -60,7 +60,7 @@ export function JiraIntegrationCard(): React.JSX.Element {
 
   return (
     <IntegrationCardShell
-      icon={<JiraIcon className="size-5" />}
+      icon={<JiraIcon />}
       name="Jira"
       checking={checking}
       statusTone={connected ? 'connected' : 'attention'}
@@ -122,7 +122,7 @@ export function JiraIntegrationCard(): React.JSX.Element {
             return (
               <div key={site.id} className={subordinateRowClass}>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-foreground">{site.displayName}</p>
+                  <p className="truncate text-xs font-medium text-foreground">{site.displayName}</p>
                 </div>
                 {testResult?.state === 'ok' ? (
                   <span className="flex shrink-0 items-center gap-1 text-xs text-status-success">
