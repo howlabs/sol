@@ -84,12 +84,16 @@ Call sites keep Lucide icon **names** (`Loader2`, `ChevronDown`, …) for a stab
 ### Phase F — Radix focus/dismiss API shims (call-site compatibility) — **done**
 
 1. Shared helper `components/ui/radix-popup-compat.tsx`:
-   - `onOpenAutoFocus` / `onCloseAutoFocus` → Base UI `initialFocus` / `finalFocus` (respect `preventDefault`)
+   - `onOpenAutoFocus` / `onCloseAutoFocus` → Base UI `initialFocus` / `finalFocus` (respect `preventDefault`; side effects still run)
    - `onInteractOutside` / `onPointerDownOutside` / `onFocusOutside` / `onEscapeKeyDown` → Root `onOpenChange` + `details.cancel()`
+   - Content registers dismiss handlers via **`useLayoutEffect`** + stable ref (safe on first open; no re-register storm from inline handlers)
 2. Wired into **Popover**, **Dialog**, **Sheet**, **DropdownMenu**, **ContextMenu** content + roots.
 3. `asChild` triggers/anchors set `nativeButton={false}` when the child is not a native `<button>` (silences Base UI warnings; FontAutocomplete anchors).
-4. Command palette forwards open/close autofocus handlers to `DialogContent`.
+4. Command palette forwards open/close autofocus handlers to `DialogContent` (typed, no cast).
 5. Terminal pane-title tooltip open styles accept `data-open` alongside Radix `data-state`.
+6. Unit + integration coverage: prop stripping from dialog DOM, focus side-effect mapping, dismiss cancel reasons.
+
+**Verified call-site families (still use Radix names; shims apply):** dialogs (discard/confirm, settings, worktree), popover comboboxes (settings font, repos, automations), context menus (terminal, file explorer, tabs), dropdown menus (notes send, browser), command palette / Quick Open.
 
 ## Guardrails
 
@@ -103,7 +107,7 @@ Call sites keep Lucide icon **names** (`Loader2`, `ChevronDown`, …) for a stab
 
 ## Suggested next implementation PR
 
-Optional Electron smoke only: command palette, context menus, select portals, sheet drawers, and toggle groups after A–F. Prefer Base UI-native props (`initialFocus`, `finalFocus`, Root `onOpenChange` cancel) for **new** code; Radix-named shims remain for existing call sites.
+Design-system migration **A–F is complete**. Optional only: Electron smoke of command palette, context menus, select portals, sheet drawers, and toggle groups. Prefer Base UI-native props (`initialFocus`, `finalFocus`, Root `onOpenChange` cancel) for **new** code; Radix-named shims remain for existing call sites.
 
 ## References
 

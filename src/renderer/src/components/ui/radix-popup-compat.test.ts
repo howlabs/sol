@@ -16,9 +16,30 @@ describe('radix-popup-compat', () => {
     expect((mapped as () => boolean)()).toBe(false)
   })
 
+  it('still runs onOpenAutoFocus side effects when preventDefault is called', () => {
+    const focus = vi.fn()
+    const mapped = mapRadixOpenAutoFocus((event) => {
+      event.preventDefault()
+      focus()
+    }, undefined)
+    expect((mapped as () => boolean)()).toBe(false)
+    expect(focus).toHaveBeenCalledTimes(1)
+  })
+
   it('maps onOpenAutoFocus without preventDefault to initialFocus true', () => {
     const mapped = mapRadixOpenAutoFocus(() => undefined, undefined)
     expect((mapped as () => boolean)()).toBe(true)
+  })
+
+  it('cancels focusOut via onFocusOutside', () => {
+    const cancel = vi.fn()
+    applyRadixDismissHandlers([{ onFocusOutside: (event) => event.preventDefault() }], false, {
+      reason: 'focusOut',
+      event: new FocusEvent('focusout'),
+      cancel,
+      isCanceled: false
+    })
+    expect(cancel).toHaveBeenCalledTimes(1)
   })
 
   it('prefers explicit initialFocus over onOpenAutoFocus', () => {

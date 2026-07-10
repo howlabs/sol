@@ -6,6 +6,7 @@ import { SearchIcon } from '@/lib/icons'
 
 import { cn } from '@/lib/utils'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
+import type { RadixPreventableHandler } from './radix-popup-compat'
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
   return (
@@ -35,8 +36,8 @@ function CommandDialog({
   title?: string
   description?: string
   shouldFilter?: boolean
-  onOpenAutoFocus?: (e: Event) => void
-  onCloseAutoFocus?: (e: Event) => void
+  onOpenAutoFocus?: RadixPreventableHandler
+  onCloseAutoFocus?: RadixPreventableHandler
   contentClassName?: string
   overlayClassName?: string
   commandProps?: React.ComponentProps<typeof CommandPrimitive>
@@ -52,8 +53,8 @@ function CommandDialog({
           'top-[20%] w-[660px] max-w-[90vw] translate-y-0 gap-0 p-0 sm:max-w-[660px]',
           contentClassName
         )}
-        onOpenAutoFocus={onOpenAutoFocus as never}
-        onCloseAutoFocus={onCloseAutoFocus as never}
+        onOpenAutoFocus={onOpenAutoFocus}
+        onCloseAutoFocus={onCloseAutoFocus}
       >
         <DialogTitle className="sr-only">{title}</DialogTitle>
         <DialogDescription className="sr-only">{description}</DialogDescription>

@@ -31,7 +31,7 @@ Target stack for app chrome (not Monaco/xterm content surfaces):
 - **Phase C:** icons via **`@/lib/icons`** → **Phosphor** (`regular` weight). Lucide package removed.
 - **Phase D:** `components/ui` on **Base UI** (`@base-ui/react`). `radix-ui` package removed.
 - **Phase E:** dual positioner CSS vars (`--available-height` / `--anchor-width` with `--radix-*` fallbacks), open/pressed state selectors (`data-open` / `data-pressed`).
-- **Phase F:** Radix focus/dismiss content props (`onOpenAutoFocus`, `onInteractOutside`, …) shimmed to Base UI on shared primitives.
+- **Phase F done:** Radix focus/dismiss content props (`onOpenAutoFocus`, `onInteractOutside`, …) shimmed to Base UI on shared primitives (`radix-popup-compat`).
 
 `components.json` records the full target (`style: base-mira`, `baseColor: stone`, `iconLibrary: phosphor`).
 

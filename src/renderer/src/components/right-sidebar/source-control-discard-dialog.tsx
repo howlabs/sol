@@ -23,13 +23,13 @@ export type PendingDiscardConfirmation =
   | { kind: 'area'; area: DiscardAllArea; paths: readonly string[] }
 
 export function focusDiscardDialogConfirmButton(
-  event: Event,
+  event: { preventDefault: () => void },
   confirmButton: HTMLButtonElement | null
 ): void {
   if (!confirmButton) {
     return
   }
-  // Why: Radix otherwise focuses Cancel first, making Enter dismiss this destructive confirm.
+  // Why: without this, Base UI focuses the first tabbable (Cancel), so Enter dismisses a destructive confirm.
   event.preventDefault()
   confirmButton.focus()
 }

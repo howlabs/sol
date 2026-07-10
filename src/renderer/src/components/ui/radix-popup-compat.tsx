@@ -140,22 +140,28 @@ export function PopupDismissProvider({
   return <PopupDismissContext.Provider value={registry}>{children}</PopupDismissContext.Provider>
 }
 
-/** Register Content-level Radix dismiss props with the nearest Root. */
+/**
+ * Register Content-level Radix dismiss props with the nearest Root.
+ * Why: useLayoutEffect so handlers exist before paint/outside-press on first open;
+ * keep a stable registry entry and read latest handlers from a ref (inline props
+ * change identity every render).
+ */
 export function useRegisterRadixDismissHandlers(handlers: RadixDismissHandlers): void {
   const registry = React.useContext(PopupDismissContext)
-  const { onInteractOutside, onPointerDownOutside, onFocusOutside, onEscapeKeyDown } = handlers
+  const handlersRef = React.useRef(handlers)
+  handlersRef.current = handlers
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (!registry) {
       return
     }
     return registry.register({
-      onInteractOutside,
-      onPointerDownOutside,
-      onFocusOutside,
-      onEscapeKeyDown
+      onInteractOutside: (event) => handlersRef.current.onInteractOutside?.(event),
+      onPointerDownOutside: (event) => handlersRef.current.onPointerDownOutside?.(event),
+      onFocusOutside: (event) => handlersRef.current.onFocusOutside?.(event),
+      onEscapeKeyDown: (event) => handlersRef.current.onEscapeKeyDown?.(event)
     })
-  }, [registry, onInteractOutside, onPointerDownOutside, onFocusOutside, onEscapeKeyDown])
+  }, [registry])
 }
 
 type FocusMapper =
