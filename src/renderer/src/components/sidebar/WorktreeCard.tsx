@@ -1039,8 +1039,7 @@ const WorktreeCard = React.memo(function WorktreeCard({
 
   const stopQuickActionPointerPropagation = useCallback(
     (event: React.PointerEvent<HTMLButtonElement>) => {
-      // Why: the Kanban board is dismissed by document-level pointer handling.
-      // Quick card actions mutate metadata, but must not count as card activation.
+      // Why: quick card actions mutate metadata, but must not count as card activation.
       event.stopPropagation()
     },
     []

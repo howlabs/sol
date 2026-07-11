@@ -3717,28 +3717,10 @@
           "f2e42e1307": "发送",
           "69969ba364": "正在发送..."
         },
-        "SidebarFilter": {
-          "e3b3898218": "添加项目",
-          "92a23e6d07": "重置筛选条件",
-          "81ded53722": "SSH",
-          "b9e8802e73": "没有匹配的项目",
-          "779b7ba05d": "清除",
-          "139877b384": "选择全部",
-          "5f7085a077": "项目",
-          "e5cb32a898": "隐藏默认分支",
-          "638a2d221d": "隐藏休眠项",
-          "f506a1262a": "搜索工作区",
-          "75405270ed": "编辑筛选条件（{{value0}} 个已启用）",
-          "489d1c8c9f": "搜索项目...",
-          "ee240a39eb": "编辑筛选条件",
-          "automationCreated": "隐藏自动化创建的工作区"
-        },
         "SidebarHeader": {
           "92154beb7e": "新工作区",
-          "49f62c5665": "工作区板",
           "5c9c7c16aa": "添加项目以创建工作区",
           "ca6f729da2": "新工作区 ({{value0}})",
-          "a30e34eb5c": "关闭工作区板",
           "25a95899c9": "添加项目"
         },
         "SidebarNav": {
@@ -3785,10 +3767,7 @@
         },
         "SidebarToolbar": {
           "19e32d0e5f": "打开文件夹选择器以添加项目",
-          "abc62b6328": "添加项目",
-          "87d0064026": "工作区板已移到底部栏",
-          "a30e34eb5c": "关闭工作区板",
-          "49f62c5665": "工作区板"
+          "abc62b6328": "添加项目"
         },
         "SidebarWorkspaceFilterSection": {
           "c3fa13dc2e": "隐藏默认分支",
@@ -3867,34 +3846,6 @@
         "SshTargetRow": {
           "4677394048": "正在连接…",
           "75ad429b5d": "连接"
-        },
-        "WorkspaceKanbanCard": {
-          "cefae8983e": "已固定"
-        },
-        "WorkspaceKanbanDrawerHeader": {
-          "f369f5c5a3": "关闭",
-          "e1a34450fc": "按状态组织工作区并打开工作区卡。",
-          "81870af08f": "已选择",
-          "c6a77ab0f4": "工作区板"
-        },
-        "WorkspaceKanbanPinDropTarget": {
-          "c30151c5ee": "拖放到此处即可固定，无需更改状态。",
-          "8fae2d0862": "已固定"
-        },
-        "WorkspaceKanbanSettingsMenu": {
-          "79eb990aa4": "添加状态",
-          "054cb50df7": "删除 {{value0}}",
-          "b45b350eb0": "向左手机 {{value0}}",
-          "8ce44af9a8": "重命名 {{value0}}",
-          "395e541d5d": "状态",
-          "34f03eb0de": "董事会设置",
-          "26cbc92150": "工作区板设置",
-          "87d24a0c2f": "同步看板和议题状态",
-          "4c2eaa78cc": "移动已关联的工作区时，如果存在匹配的工作流状态，将更新其 Linear 议题状态。"
-        },
-        "WorkspaceKanbanStatusLane": {
-          "8ad104642b": "空的",
-          "3611d1ae7f": "调整工作区板列的大小"
         },
         "WorkspaceStatusAppearancePopover": {
           "514be2f569": "将 {{value0}} 颜色设置为 {{value1}}",
@@ -4291,44 +4242,6 @@
             }
           }
         },
-        "LinearAgentSkillSetupPrompt": {
-          "missingCliAndSkill": "缺少 Sol CLI 和 Linear agent 技能。",
-          "modalTitle": "启用 Linear ticket 访问",
-          "modalDescription": "从 terminal 安装 Linear 技能。",
-          "modalPrompt": "允许 agents 读取和编辑已附加的 Linear ticket。",
-          "dontShowAgain": "不再显示",
-          "notNow": "暂不",
-          "missingBoth": "缺少 Sol CLI 和 Linear agent 技能。",
-          "missingCli": "缺少 Sol CLI。",
-          "missingSkill": "缺少 Linear agent 技能。",
-          "title": "设置 Linear agent 技能",
-          "remoteCopy": "这会安装主机设置；远程 agent 环境可能需要单独设置。",
-          "hostCopy": "为已链接 Linear 工作的主机 agent 交接安装此项。",
-          "dismiss": "关闭 Linear agent 技能设置",
-          "setup": "设置",
-          "recheck": "重新检查",
-          "panelTitle": "Linear agent 技能",
-          "panelDescription": "安装主机 agent 技能，用于已链接 Linear 任务交接。",
-          "terminalTitle": "安装 Linear agent 技能",
-          "terminalAria": "Linear agent 技能安装 terminal",
-          "install": "安装 CLI 和技能",
-          "successTitle": "Linear 议题访问已就绪",
-          "successDescription": "Agents 现在可以从此工作区读取和更新已链接的 Linear 议题。",
-          "successDescriptionWsl": "WSL agents 现在可以从此工作区使用已链接的 Linear 议题。",
-          "successDescriptionRemote": "主机 agents 现在可以使用已链接的 Linear 议题。远程 agents 环境可能仍需要单独设置。",
-          "successStatus": "Linear 议题访问已就绪",
-          "done": "完成",
-          "wslCopy": "为已链接 Linear 工作的 WSL agent 交接安装此项。",
-          "wslLabel": "WSL 默认值",
-          "toastMissingCliAndSkill": "缺少 Sol CLI 和 Linear 技能",
-          "toastMissingCli": "缺少 Sol CLI",
-          "toastMissingSkill": "缺少 Linear 技能",
-          "toastInstallCliAndSkillDescription": "安装 Sol CLI 和 Linear 技能，让 agents 可以读取并编辑 Linear 任务。",
-          "toastInstallCliDescription": "安装 Sol CLI，让 agents 可以读取并编辑 Linear 任务。",
-          "toastInstallSkillDescription": "安装 Linear 技能，让 agents 可以通过 Sol CLI 读取并编辑 Linear 任务。",
-          "toastRemoteDescription": "{{value0}} 远程 agent 环境可能仍需要自己的设置。",
-          "toastWslDescription": "{{value0}} 此设置会在所选 WSL agent 运行时中执行。"
-        },
         "FolderWorkspaceComposerDialog": {
           "connectFailed": "无法连接到项目。",
           "noRepos": "在此文件夹下添加 Git 项目，以关联 GitHub 或 GitLab 任务。",
@@ -4408,19 +4321,6 @@
           "2d3e4f5a6b": "检查连接",
           "3c4d5e6f7a": "管理主机…",
           "6e7f8a9b0c": "删除主机..."
-        },
-        "WorkspaceKanbanDrawer": {
-          "1975a4e480": "任务状态同步失败",
-          "e02b0d92ff": "任务状态同步已跳过",
-          "c1d2e3f4a5": "无法读取 Linear 议题 {{value0}}。",
-          "d2e3f4a5b6": "没有与 {{value0}} 匹配的 Linear 工作流状态。",
-          "e3f4a5b6c7": "有多个 Linear 工作流状态与 {{value0}} 匹配。",
-          "f4a5b6c7d8": "无法更新 Linear 议题 {{value0}}。",
-          "a5b6c7d8e9": "无法同步 Linear 议题 {{value0}}。",
-          "b6c7d8e9f0": "无法完成任务状态同步。",
-          "c7d8e9f0a1": "已更新 {{value0}} 个",
-          "d8e9f0a1b2": "已跳过 {{value0}} 个",
-          "e9f0a1b2c3": "失败 {{value0}} 个"
         },
         "WorktreeParentPickerPopover": {
           "failedSetParent": "无法设置父工作树",
@@ -6628,38 +6528,6 @@
         "UIZoomControl": {
           "c2c64b24d0": "重置"
         },
-        "VoicePane": {
-          "68de13f72c": "删除模型失败。",
-          "1ba81c0ff0": "受到推崇的",
-          "cfde55c7b0": "下载模型失败。",
-          "43fd4f454b": "语音模型",
-          "7cf715f891": "举行。",
-          "295d84b849": "一次开始，再次停止。按住：指示同时",
-          "ff9a680010": "切换：按下",
-          "ba4a900d1d": "听写模式",
-          "0121960365": "启用语音听写",
-          "366e1b4f36": "将文本听写到任何焦点窗格中。",
-          "4465596675": "按",
-          "62d2a84d31": "无法清除 OpenAI API 密钥",
-          "37aba8bb63": "OpenAI API 密钥已清除",
-          "8572bbb537": "无法保存 OpenAI API 密钥",
-          "506df81ba6": "OpenAI API 密钥已保存",
-          "91980ce124": "{{value0}} MB",
-          "61a16c8141": "正在提取...",
-          "b6536a1d12": "提取",
-          "8f4d2a51d7": "离线",
-          "d504ab05f0": "流媒体",
-          "fbe5990716": "选择型号",
-          "e24f7d43d2": "选择语音模型。本地模型离线运行；云模型需要 API 密钥。",
-          "174da92062": "抓住",
-          "118b3c2dee": "切换",
-          "901985625d": "切换",
-          "ad5d036ecc": "无法请求麦克风权限。未启用语音听写。",
-          "f9a9cf6928": "启用语音听写之前需要麦克风许可。",
-          "1eac933202": "打开 macOS 隐私和安全。授予访问权限后再次启用听写。",
-          "cd9fe37556": "已授予麦克风权限",
-          "6fa734ed95": "删除 {{value0}}"
-        },
         "WorktreeSymlinksSection": {
           "1c1e35b219": "删除 {{value0}}",
           "b814c618e2": "链接路径",
@@ -8200,35 +8068,6 @@
               "7c7056940a": "shell",
               "713c4a2f92": "为 Windows 上的新 terminal 窗格选择默认 Shell。",
               "13715f9d23": "默认 Shell"
-            }
-          }
-        },
-        "voice": {
-          "pane": {
-            "search": {
-              "f6e0dfa61c": "云",
-              "2d206de105": "API密钥",
-              "04c25a6fb0": "开放伊",
-              "b9dee49cd7": "下载",
-              "10d45a9fce": "时间",
-              "3d8b853963": "演讲",
-              "080202facb": "模型",
-              "7640ed9848": "语音",
-              "56defcd6c3": "选择用于听写的本地或云语音转文本模型。",
-              "7e62cd7c41": "语音模型",
-              "931b1a9e53": "即按即说",
-              "064a9bd94a": "抓住",
-              "6fa48bcd41": "切换",
-              "d86f5600da": "模式",
-              "089d31a45b": "听写",
-              "748b33e531": "切换或按住说话听写行为。",
-              "6a3abb4338": "听写模式",
-              "e360027a65": "麦克风",
-              "698376a38d": "语音听写功能的主开关。",
-              "20574cbc72": "启用语音听写",
-              "322d457a0d": "转录",
-              "dcc7846641": "配置用于云语音转文本模型的 OpenAI API 密钥。",
-              "ebfd0b32e5": "OpenAI 转录"
             }
           }
         },

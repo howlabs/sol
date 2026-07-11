@@ -30,26 +30,16 @@ const updateCapableCallers = new Map<string, readonly string[]>([
   [
     'src/renderer/src/components/settings/BrowserUseSkillStep.tsx',
     ['installedCommand={installedCommand}']
-  ],
-  [
-    'src/renderer/src/components/sidebar/LinearAgentSkillSetupPrompt.tsx',
-    ['ORCA_LINEAR_SKILL_UPDATE_COMMAND', 'installedCommand={installedCommand}']
-  ],
-  [
-    'src/renderer/src/components/sidebar/LinearAgentSkillSetupDialog.tsx',
-    ['installedCommand={installedCommand}']
   ]
 ])
 
 const installOnlyCallers = new Map<string, readonly string[]>([])
 
 const directPanelCallers = new Set([
-  // BrowserUsePane and LinearAgentSkillSetupPrompt delegate through child setup
-  // components that forward installedCommand and are validated separately above.
+  // BrowserUsePane delegates through child setup components that forward
+  // installedCommand and are validated separately above.
   ...[...updateCapableCallers.keys()].filter(
-    (relativePath) =>
-      relativePath !== 'src/renderer/src/components/settings/BrowserUsePane.tsx' &&
-      relativePath !== 'src/renderer/src/components/sidebar/LinearAgentSkillSetupPrompt.tsx'
+    (relativePath) => relativePath !== 'src/renderer/src/components/settings/BrowserUsePane.tsx'
   ),
   ...installOnlyCallers.keys()
 ])

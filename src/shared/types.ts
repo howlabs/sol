@@ -610,7 +610,7 @@ export type WorktreeMeta = {
   orcaCreationSource?: 'desktop' | 'runtime' | 'cli' | 'ssh'
   /** Workspace layout active when Orca created the worktree. */
   orcaCreationWorkspaceLayout?: OrcaWorkspaceLayout
-  /** User-assigned workspace board status for manual sidebar organization. */
+  /** User-assigned workspace status for manual sidebar organization. */
   workspaceStatus?: WorkspaceStatus
   diffComments?: DiffComment[]
   /** Path-derived worktree ids this worktree had before its folder was renamed
@@ -3232,9 +3232,6 @@ export type PersistedUIState = {
   /** Why: Windows-only. Set once after the window first hides to the system
    *  tray, so the "Sol is still running" notification shows only on first use. */
   trayMinimizeNoticeShown?: boolean
-  /** One-shot rollout notice for manual project ordering becoming the default.
-   *  Absent or true means the sidebar callout stays hidden. */
-  projectOrderManualDefaultNoticeDismissed?: boolean
   /** User-hidden empty-state usage CTA in the status bar. Permanently hides the
    *  "Connect AI accounts to see usage" prompt even if all providers are later
    *  disconnected — a dismissed teaching nudge stays dismissed. */

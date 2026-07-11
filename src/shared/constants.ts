@@ -461,9 +461,6 @@ export function getDefaultUIState(): PersistedUIState {
     setupGuideBrowserMilestoneLegacyComplete: false,
     browserImportHintHidden: false,
     trayMinimizeNoticeShown: false,
-    // Why: brand-new profiles never saw recent project ordering; only upgraded
-    // profiles get the one-time sidebar notice on first launch.
-    projectOrderManualDefaultNoticeDismissed: true,
     workspaceCleanup: { dismissals: {} },
     featureTipsSeenIds: [],
     featureInteractions: {},

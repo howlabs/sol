@@ -3717,28 +3717,10 @@
           "f2e42e1307": "보내기",
           "69969ba364": "전송 중…"
         },
-        "SidebarFilter": {
-          "e3b3898218": "프로젝트 추가",
-          "92a23e6d07": "필터 재설정",
-          "81ded53722": "SSH",
-          "b9e8802e73": "일치하는 프로젝트가 없습니다.",
-          "779b7ba05d": "지우기",
-          "139877b384": "모두 선택",
-          "5f7085a077": "프로젝트",
-          "e5cb32a898": "기본 브랜치 숨기기",
-          "638a2d221d": "슬립 중인 항목 숨기기",
-          "f506a1262a": "워크스페이스 필터링",
-          "75405270ed": "필터 편집({{value0}} 활성)",
-          "489d1c8c9f": "프로젝트 검색...",
-          "ee240a39eb": "필터 편집",
-          "automationCreated": "자동화로 생성된 워크스페이스 숨기기"
-        },
         "SidebarHeader": {
           "92154beb7e": "새로운 워크스페이스",
-          "49f62c5665": "워크스페이스 보드",
           "5c9c7c16aa": "워크스페이스를 만들려면 프로젝트를 추가하세요.",
           "ca6f729da2": "새 워크스페이스({{value0}})",
-          "a30e34eb5c": "워크스페이스 보드 닫기",
           "25a95899c9": "프로젝트 추가"
         },
         "SidebarNav": {
@@ -3785,10 +3767,7 @@
         },
         "SidebarToolbar": {
           "19e32d0e5f": "폴더 선택기를 열어 프로젝트를 추가하세요.",
-          "abc62b6328": "프로젝트 추가",
-          "87d0064026": "워크스페이스 보드가 하단 바로 옮겨졌습니다",
-          "a30e34eb5c": "워크스페이스 보드 닫기",
-          "49f62c5665": "워크스페이스 보드"
+          "abc62b6328": "프로젝트 추가"
         },
         "SidebarWorkspaceFilterSection": {
           "c3fa13dc2e": "기본 브랜치 숨기기",
@@ -3867,34 +3846,6 @@
         "SshTargetRow": {
           "4677394048": "연결 중…",
           "75ad429b5d": "연결"
-        },
-        "WorkspaceKanbanCard": {
-          "cefae8983e": "고정됨"
-        },
-        "WorkspaceKanbanDrawerHeader": {
-          "f369f5c5a3": "닫기",
-          "e1a34450fc": "상태별로 워크스페이스를 구성하고 워크스페이스 카드를 엽니다.",
-          "81870af08f": "선택된",
-          "c6a77ab0f4": "워크스페이스 보드"
-        },
-        "WorkspaceKanbanPinDropTarget": {
-          "c30151c5ee": "상태를 변경하지 않고 고정하려면 여기에 드롭하세요.",
-          "8fae2d0862": "고정됨"
-        },
-        "WorkspaceKanbanSettingsMenu": {
-          "79eb990aa4": "상태 추가",
-          "054cb50df7": "{{value0}} 제거",
-          "b45b350eb0": "{{value0}} 왼쪽으로 이동",
-          "8ce44af9a8": "{{value0}} 이름 바꾸기",
-          "395e541d5d": "상태",
-          "34f03eb0de": "보드 설정",
-          "26cbc92150": "워크스페이스 보드 설정",
-          "87d24a0c2f": "보드와 이슈 상태 동기화",
-          "4c2eaa78cc": "연결된 워크스페이스를 이동하면 일치하는 워크플로 상태가 있을 때 Linear 이슈 상태가 업데이트됩니다."
-        },
-        "WorkspaceKanbanStatusLane": {
-          "8ad104642b": "비어 있음",
-          "3611d1ae7f": "워크스페이스 보드 열 크기 조정"
         },
         "WorkspaceStatusAppearancePopover": {
           "514be2f569": "{{value0}} 색상을 {{value1}}로 설정",
@@ -4291,44 +4242,6 @@
             }
           }
         },
-        "LinearAgentSkillSetupPrompt": {
-          "missingCliAndSkill": "Sol CLI와 Linear agent 스킬이 없습니다.",
-          "modalTitle": "Linear 티켓 접근 활성화",
-          "modalDescription": "terminal에서 Linear 스킬을 설치합니다.",
-          "modalPrompt": "agents가 첨부된 Linear 티켓을 읽고 편집할 수 있게 합니다.",
-          "dontShowAgain": "다시 표시하지 않음",
-          "notNow": "나중에",
-          "missingBoth": "Sol CLI와 Linear agent 스킬이 없습니다.",
-          "missingCli": "Sol CLI가 없습니다.",
-          "missingSkill": "Linear agent 스킬이 없습니다.",
-          "title": "Linear agent 스킬 설정",
-          "remoteCopy": "호스트 설정을 설치합니다. 원격 agent 환경에는 별도 설정이 필요할 수 있습니다.",
-          "hostCopy": "연결된 Linear 작업에서 호스트 agent 인계를 위해 설치합니다.",
-          "dismiss": "Linear agent 스킬 설정 닫기",
-          "setup": "설정",
-          "recheck": "다시 확인",
-          "panelTitle": "Linear agent 스킬",
-          "panelDescription": "연결된 Linear 작업 인계를 위해 호스트 agent 스킬을 설치합니다.",
-          "terminalTitle": "Linear agent 스킬 설치",
-          "terminalAria": "Linear agent 스킬 설치 terminal",
-          "install": "CLI 및 스킬 설치",
-          "successTitle": "Linear 티켓 접근이 준비되었습니다",
-          "successDescription": "이제 agents가 이 워크스페이스에서 연결된 Linear 티켓을 읽고 업데이트할 수 있습니다.",
-          "successDescriptionWsl": "이제 WSL agents가 이 워크스페이스에서 연결된 Linear 티켓을 사용할 수 있습니다.",
-          "successDescriptionRemote": "이제 호스트 agents가 연결된 Linear 티켓을 사용할 수 있습니다. 원격 agent 환경에는 자체 설정이 여전히 필요할 수 있습니다.",
-          "successStatus": "Linear 티켓 접근 준비됨",
-          "done": "완료",
-          "wslCopy": "연결된 Linear 작업에서 WSL agent 인계를 위해 설치합니다.",
-          "wslLabel": "WSL 기본값",
-          "toastMissingCliAndSkill": "Sol CLI와 Linear 스킬이 없습니다",
-          "toastMissingCli": "Sol CLI가 없습니다",
-          "toastMissingSkill": "Linear 스킬이 없습니다",
-          "toastInstallCliAndSkillDescription": "Sol CLI와 Linear 스킬을 설치하여 agents가 Linear 작업을 읽고 편집할 수 있게 하세요.",
-          "toastInstallCliDescription": "Sol CLI를 설치하여 agents가 Linear 작업을 읽고 편집할 수 있게 하세요.",
-          "toastInstallSkillDescription": "Linear 스킬을 설치하여 agents가 Sol CLI를 통해 Linear 작업을 읽고 편집할 수 있게 하세요.",
-          "toastRemoteDescription": "{{value0}} 원격 agent 환경에는 자체 설정이 필요할 수 있습니다.",
-          "toastWslDescription": "{{value0}} 이 설정은 선택한 WSL agent 런타임에서 실행됩니다."
-        },
         "FolderWorkspaceComposerDialog": {
           "connectFailed": "프로젝트에 연결하지 못했습니다.",
           "noRepos": "GitHub 또는 GitLab 작업을 연결하려면 이 폴더 아래에 Git 프로젝트를 추가하세요.",
@@ -4408,19 +4321,6 @@
           "2d3e4f5a6b": "연결 확인",
           "3c4d5e6f7a": "호스트 관리…",
           "6e7f8a9b0c": "호스트 제거…"
-        },
-        "WorkspaceKanbanDrawer": {
-          "1975a4e480": "작업 상태 동기화 실패",
-          "e02b0d92ff": "작업 상태 동기화 건너뜀",
-          "c1d2e3f4a5": "Linear 이슈 {{value0}}을(를) 읽을 수 없습니다.",
-          "d2e3f4a5b6": "{{value0}}에 일치하는 Linear 워크플로 상태가 없습니다.",
-          "e3f4a5b6c7": "{{value0}}에 일치하는 Linear 워크플로 상태가 여러 개입니다.",
-          "f4a5b6c7d8": "Linear 이슈 {{value0}}을(를) 업데이트할 수 없습니다.",
-          "a5b6c7d8e9": "Linear 이슈 {{value0}}을(를) 동기화할 수 없습니다.",
-          "b6c7d8e9f0": "작업 상태 동기화를 완료할 수 없습니다.",
-          "c7d8e9f0a1": "{{value0}}개 업데이트됨",
-          "d8e9f0a1b2": "{{value0}}개 건너뜀",
-          "e9f0a1b2c3": "{{value0}}개 실패"
         },
         "WorktreeParentPickerPopover": {
           "failedSetParent": "상위 워크트리를 설정하지 못했습니다",
@@ -6628,38 +6528,6 @@
         "UIZoomControl": {
           "c2c64b24d0": "재설정"
         },
-        "VoicePane": {
-          "68de13f72c": "모델을 삭제하지 못했습니다.",
-          "1ba81c0ff0": "추천",
-          "cfde55c7b0": "모델을 다운로드하지 못했습니다.",
-          "43fd4f454b": "음성 모델",
-          "7cf715f891": "누르고 있는 동안",
-          "295d84b849": "한 번 누르면 시작, 다시 누르면 중지. 길게 누르기: 누르고 있는 동안 받아쓰기",
-          "ff9a680010": "토글: 누르기",
-          "ba4a900d1d": "받아쓰기 모드",
-          "0121960365": "음성 받아쓰기 활성화",
-          "366e1b4f36": "포커스된 창에 텍스트를 받아쓰기합니다.",
-          "4465596675": "누르기",
-          "62d2a84d31": "OpenAI API 키를 지우지 못했습니다.",
-          "37aba8bb63": "OpenAI API 키가 삭제되었습니다.",
-          "8572bbb537": "OpenAI API 키를 저장하지 못했습니다.",
-          "506df81ba6": "OpenAI API 키가 저장되었습니다.",
-          "91980ce124": "{{value0}}MB",
-          "61a16c8141": "추출 중...",
-          "b6536a1d12": "추출 중",
-          "8f4d2a51d7": "오프라인",
-          "d504ab05f0": "스트리밍",
-          "fbe5990716": "모델 선택",
-          "e24f7d43d2": "음성 모델을 선택하세요. 로컬 모델은 오프라인으로 실행됩니다. 클라우드 모델에는 API 키가 필요합니다.",
-          "174da92062": "길게 누르기",
-          "118b3c2dee": "토글",
-          "901985625d": "토글",
-          "ad5d036ecc": "마이크 권한을 요청할 수 없습니다. 음성 받아쓰기가 활성화되지 않았습니다.",
-          "f9a9cf6928": "음성 받아쓰기를 활성화하려면 마이크 권한이 필요합니다.",
-          "1eac933202": "macOS 개인 정보 보호 및 보안을 열었습니다. 액세스 권한을 부여한 후 받아쓰기를 다시 활성화하세요.",
-          "cd9fe37556": "마이크 권한이 부여되었습니다.",
-          "6fa734ed95": "{{value0}} 삭제"
-        },
         "WorktreeSymlinksSection": {
           "1c1e35b219": "{{value0}} 제거",
           "b814c618e2": "연결된 경로",
@@ -8200,35 +8068,6 @@
               "7c7056940a": "셸",
               "713c4a2f92": "Windows의 새 terminal 패널에 대한 기본 셸을 선택합니다.",
               "13715f9d23": "기본 쉘"
-            }
-          }
-        },
-        "voice": {
-          "pane": {
-            "search": {
-              "f6e0dfa61c": "클라우드",
-              "2d206de105": "API 키",
-              "04c25a6fb0": "openai",
-              "b9dee49cd7": "다운로드",
-              "10d45a9fce": "stt",
-              "3d8b853963": "음성",
-              "080202facb": "모델",
-              "7640ed9848": "음성",
-              "56defcd6c3": "받아쓰기에 사용할 로컬 또는 클라우드 음성-텍스트 모델을 선택하세요.",
-              "7e62cd7c41": "음성 모델",
-              "931b1a9e53": "누르고 말하기",
-              "064a9bd94a": "길게 누르기",
-              "6fa48bcd41": "토글",
-              "d86f5600da": "모드",
-              "089d31a45b": "받아쓰기",
-              "748b33e531": "받아쓰기 동작을 전환하거나 길게 누르세요.",
-              "6a3abb4338": "받아쓰기 모드",
-              "e360027a65": "마이크",
-              "698376a38d": "음성 받아쓰기 기능을 위한 마스터 토글입니다.",
-              "20574cbc72": "음성 받아쓰기 활성화",
-              "322d457a0d": "전사",
-              "dcc7846641": "클라우드 음성-텍스트 모델에 사용되는 OpenAI API 키를 구성합니다.",
-              "ebfd0b32e5": "OpenAI 전사"
             }
           }
         },
