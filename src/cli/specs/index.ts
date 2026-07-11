@@ -9,6 +9,7 @@ import { ORCHESTRATION_COMMAND_SPECS } from './orchestration'
 import { ENVIRONMENT_COMMAND_SPECS } from './environment'
 import { AGENT_HOOK_COMMAND_SPECS } from './agent-hooks'
 import { DIAGNOSTICS_COMMAND_SPECS } from './diagnostics'
+import { INTROSPECTION_COMMAND_SPECS } from './introspection'
 import { LINEAR_COMMAND_SPECS } from './linear'
 import { VM_COMMAND_SPECS } from './vm'
 
@@ -22,6 +23,7 @@ export const COMMAND_SPECS: CommandSpec[] = [
   ...ORCHESTRATION_COMMAND_SPECS,
   ...AGENT_HOOK_COMMAND_SPECS,
   ...DIAGNOSTICS_COMMAND_SPECS,
+  ...INTROSPECTION_COMMAND_SPECS,
   ...ENVIRONMENT_COMMAND_SPECS,
   ...LINEAR_COMMAND_SPECS,
   ...VM_COMMAND_SPECS

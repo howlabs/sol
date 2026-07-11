@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const {
   callMock,
+  runtimeClientConstructorMock,
   serveOrcaAppMock,
   getDefaultUserDataPathMock,
   addEnvironmentFromPairingCodeMock,
@@ -13,6 +14,7 @@ const {
   spawnMock
 } = vi.hoisted(() => ({
   callMock: vi.fn(),
+  runtimeClientConstructorMock: vi.fn(),
   serveOrcaAppMock: vi.fn(),
   getDefaultUserDataPathMock: vi.fn(() => '/tmp/orca-user-data'),
   addEnvironmentFromPairingCodeMock: vi.fn(),
@@ -33,6 +35,7 @@ vi.mock('./runtime-client', () => {
       remotePairingCode?: string | null,
       environmentSelector?: string | null
     ) {
+      runtimeClientConstructorMock()
       const effectivePairingCode =
         remotePairingCode === undefined
           ? (process.env.ORCA_PAIRING_CODE ?? process.env.ORCA_REMOTE_PAIRING)
@@ -51,10 +54,12 @@ vi.mock('./runtime-client', () => {
 
   class RuntimeClientError extends Error {
     readonly code: string
+    readonly data?: unknown
 
-    constructor(code: string, message: string) {
+    constructor(code: string, message: string, data?: unknown) {
       super(message)
       this.code = code
+      this.data = data
     }
   }
 
@@ -111,18 +116,21 @@ import {
   main,
   normalizeWorktreeSelector
 } from './index'
-import { GLOBAL_FLAGS } from './args'
+import { GLOBAL_FLAGS, specPaths } from './args'
 import { RuntimeRpcFailureError } from './runtime-client'
 import { buildWorktree, okFixture, queueFixtures, worktreeListFixture } from './test-fixtures'
 import { encodePairingOffer, PAIRING_OFFER_VERSION } from '../shared/pairing'
 
 describe('COMMAND_SPECS collision check', () => {
-  it('has no duplicate command paths', () => {
+  it('has no duplicate command or alias paths', () => {
+    // Why: first-match resolution would silently shadow duplicate aliases.
     const seen = new Set<string>()
     for (const spec of COMMAND_SPECS) {
-      const key = spec.path.join(' ')
-      expect(seen.has(key), `Duplicate COMMAND_SPECS path: "${key}"`).toBe(false)
-      seen.add(key)
+      for (const path of specPaths(spec)) {
+        const key = path.join(' ')
+        expect(seen.has(key), `Duplicate command/alias path: "${key}"`).toBe(false)
+        seen.add(key)
+      }
     }
   })
 

@@ -71,6 +71,14 @@ export function formatCliError(error: unknown, _context: CliErrorContext = {}): 
   if (error instanceof RuntimeClientError && error.code === 'runtime_unavailable') {
     return `${message}\nOrca is not running. Run 'orca open' first.`
   }
+  // Why: error-specific recovery (did-you-mean, flag suggestions) must surface
+  // before any generic fallback — agents and humans both need the next step.
+  if (error instanceof RuntimeClientError) {
+    const nextSteps = nextStepsFromData(error.data)
+    if (nextSteps.length > 0) {
+      return formatMessageWithNextSteps(message, nextSteps)
+    }
+  }
   if (
     error instanceof RuntimeRpcFailureError &&
     error.response.error.code === 'runtime_unavailable'
@@ -78,14 +86,7 @@ export function formatCliError(error: unknown, _context: CliErrorContext = {}): 
     return `${message}\nOrca is not running. Run 'orca open' first.`
   }
   if (error instanceof RuntimeRpcFailureError) {
-    const data = error.response.error.data
-    const nextSteps =
-      data && typeof data === 'object' && Array.isArray((data as { nextSteps?: unknown }).nextSteps)
-        ? (data as { nextSteps: unknown[] }).nextSteps.filter(
-            (step): step is string => typeof step === 'string'
-          )
-        : []
-    return formatMessageWithNextSteps(message, nextSteps)
+    return formatMessageWithNextSteps(message, nextStepsFromData(error.response.error.data))
   }
   return message
 }
@@ -119,6 +120,19 @@ function formatMessageWithNextSteps(message: string, nextSteps: readonly string[
     return message
   }
   return `${message}\n${nextSteps.map((step) => `Next step: ${step}`).join('\n')}`
+}
+
+function nextStepsFromData(data: unknown): string[] {
+  if (
+    data &&
+    typeof data === 'object' &&
+    Array.isArray((data as { nextSteps?: unknown }).nextSteps)
+  ) {
+    return (data as { nextSteps: unknown[] }).nextSteps.filter(
+      (step): step is string => typeof step === 'string'
+    )
+  }
+  return []
 }
 
 export function formatCliStatus(status: CliStatusResult): string {
