@@ -52,10 +52,13 @@ export function GrokAccountsSection(): React.JSX.Element {
     }
   }, [])
 
+  // Why: load once on mount. Action handlers reload explicitly after mutations
+  // to avoid duplicate fetches when grokUsage.updatedAt changes from background
+  // rate-limit polling.
   useEffect(() => {
     void loadStatus()
     void loadAccounts()
-  }, [loadStatus, loadAccounts, grokUsage?.updatedAt])
+  }, [loadStatus, loadAccounts])
 
   // Why: device-code events arrive mid-login via IPC; show URL+code to the user.
   useEffect(() => {
@@ -112,6 +115,7 @@ export function GrokAccountsSection(): React.JSX.Element {
     try {
       const next = await window.api.grokAccounts.select({ accountId })
       setAccountsState(next)
+      await loadStatus()
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
     } finally {
