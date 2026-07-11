@@ -1218,7 +1218,8 @@ describe('GitHandler', () => {
         worktreePath: tmpDir,
         remote: 'origin',
         branch: 'main',
-        ref: 'refs/remotes/origin/main'
+        ref: 'refs/remotes/origin/main',
+        skipAutoMaintenance: true
       })
 
       const second = dispatcher.callRequest('git.diff', {
@@ -1234,7 +1235,18 @@ describe('GitHandler', () => {
 
       expect(gitBufferSpy).toHaveBeenCalledTimes(2)
       expect(gitSpy).toHaveBeenCalledWith(
-        ['fetch', '--no-tags', 'origin', '+refs/heads/main:refs/remotes/origin/main'],
+        [
+          '-c',
+          'maintenance.auto=false',
+          '-c',
+          'maintenance.commit-graph.auto=0',
+          '-c',
+          'gc.auto=0',
+          'fetch',
+          '--no-tags',
+          'origin',
+          '+refs/heads/main:refs/remotes/origin/main'
+        ],
         tmpDir
       )
     })
@@ -1865,7 +1877,7 @@ describe('GitHandler', () => {
 
       await expect(
         dispatcher.callRequest('git.upstreamStatus', { worktreePath: nonRepoDir })
-      ).rejects.toThrow(/not a git repository/i)
+      ).rejects.toThrow(/not a git repository|filesystem boundary/i)
     })
   })
 
