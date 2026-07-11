@@ -30,4 +30,17 @@ describe('getStatusBarToggles', () => {
       expect.arrayContaining(['status bar', 'minimax', 'usage', 'subscription', 'cookie'])
     )
   })
+
+  it('includes Grok usage so Appearance can toggle the default-on status item', () => {
+    const grokToggle = getStatusBarToggles().find((entry) => entry.id === 'grok')
+
+    expect(grokToggle).toMatchObject({
+      title: 'Grok Usage',
+      description: 'Show Grok weekly credit usage from Grok CLI OAuth.',
+      toggleDescription: 'Show Grok subscription credit usage when signed in via Grok CLI.'
+    })
+    expect(grokToggle?.keywords).toEqual(
+      expect.arrayContaining(['status bar', 'grok', 'xai', 'usage', 'subscription'])
+    )
+  })
 })

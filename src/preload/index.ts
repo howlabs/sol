@@ -76,7 +76,8 @@ import type {
 import type {
   CodexRateLimitResetResult,
   RateLimitRuntimeTarget,
-  RateLimitState
+  RateLimitState,
+  GrokAccountStatus
 } from '../shared/rate-limit-types'
 import type { WorkspaceSpaceScanProgress } from '../shared/workspace-space-types'
 import type { WorkspaceCleanupScanProgress } from '../shared/workspace-cleanup'
@@ -3632,6 +3633,7 @@ const api = {
     fetchInactiveCodexAccounts: (): Promise<void> =>
       ipcRenderer.invoke('rateLimits:fetchInactiveCodexAccounts'),
     refreshMiniMax: (): Promise<RateLimitState> => ipcRenderer.invoke('rateLimits:refreshMiniMax'),
+    refreshGrok: (): Promise<RateLimitState> => ipcRenderer.invoke('rateLimits:refreshGrok'),
     onUpdate: (callback: (state: RateLimitState) => void): (() => void) => {
       const listener = (_event: Electron.IpcRendererEvent, state: RateLimitState) => callback(state)
       ipcRenderer.on('rateLimits:update', listener)
@@ -3646,6 +3648,10 @@ const api = {
       ipcRenderer.invoke('minimaxCredentials:saveCookie', cookie),
     clearCookie: (): Promise<{ configured: boolean }> =>
       ipcRenderer.invoke('minimaxCredentials:clearCookie')
+  },
+
+  grokAccounts: {
+    getStatus: (): Promise<GrokAccountStatus> => ipcRenderer.invoke('grokAccounts:getStatus')
   },
 
   ssh: {

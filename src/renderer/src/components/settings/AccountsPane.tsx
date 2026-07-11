@@ -30,9 +30,11 @@ import {
   getAccountsGeminiSearchEntries,
   getAccountsLocationSearchEntries,
   getAccountsMiniMaxSearchEntries,
+  getAccountsGrokSearchEntries,
   getAccountsOpencodeSearchEntries,
   getAccountsPaneSearchEntries
 } from './accounts-search'
+import { GrokAccountsSection } from './GrokAccountsSection'
 import { SearchableSetting } from './SearchableSetting'
 import { SettingsRow, SettingsSegmentedControl, SettingsSwitch } from './SettingsFormControls'
 import { matchesSettingsSearch } from './settings-search'
@@ -1239,6 +1241,9 @@ export function AccountsPane({
           />
         </SearchableSetting>
       </section>
+    ) : null,
+    matchesSettingsSearch(searchQuery, getAccountsGrokSearchEntries()) ? (
+      <GrokAccountsSection key="accounts-grok" />
     ) : null
   ].filter(Boolean)
 

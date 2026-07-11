@@ -5,6 +5,7 @@ import { StatCard } from './StatCard'
 import { ClaudeUsagePane } from './ClaudeUsagePane'
 import { CodexUsagePane } from './CodexUsagePane'
 import { OpenCodeUsagePane } from './OpenCodeUsagePane'
+import { GrokUsagePane } from './GrokUsagePane'
 import { UsageOverviewPane } from './UsageOverviewPane'
 import { Button } from '../ui/button'
 import {
@@ -46,7 +47,7 @@ function formatTrackingSince(timestamp: number | null): string {
   return `Tracking since ${date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`
 }
 
-type UsageTab = 'overview' | 'claude' | 'codex' | 'opencode'
+type UsageTab = 'overview' | 'claude' | 'codex' | 'opencode' | 'grok'
 
 const USAGE_ANALYTICS_OPTIONS = [
   {
@@ -71,6 +72,12 @@ const USAGE_ANALYTICS_OPTIONS = [
     id: 'opencode',
     get label() {
       return translate('auto.components.stats.StatsPane.1e696db2f6', 'OpenCode')
+    }
+  },
+  {
+    id: 'grok',
+    get label() {
+      return translate('auto.components.stats.StatsPane.grokTab', 'Grok')
     }
   }
 ] as const satisfies readonly { id: UsageTab; label: string }[]
@@ -205,6 +212,8 @@ export function StatsPane(): React.JSX.Element {
             <ClaudeUsagePane />
           ) : activeUsageTab === 'codex' ? (
             <CodexUsagePane />
+          ) : activeUsageTab === 'grok' ? (
+            <GrokUsagePane />
           ) : (
             <OpenCodeUsagePane />
           )}

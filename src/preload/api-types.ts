@@ -317,7 +317,8 @@ import type {
 import type {
   CodexRateLimitResetResult,
   RateLimitRuntimeTarget,
-  RateLimitState
+  RateLimitState,
+  GrokAccountStatus
 } from '../shared/rate-limit-types'
 import type {
   WorkspaceSpaceAnalyzeResult,
@@ -2710,12 +2711,16 @@ export type PreloadApi = {
     fetchInactiveClaudeAccounts: () => Promise<void>
     fetchInactiveCodexAccounts: () => Promise<void>
     refreshMiniMax: () => Promise<RateLimitState>
+    refreshGrok: () => Promise<RateLimitState>
     onUpdate: (callback: (state: RateLimitState) => void) => () => void
   }
   minimaxCredentials: {
     getStatus: () => Promise<{ configured: boolean }>
     saveCookie: (cookie: string) => Promise<{ configured: boolean }>
     clearCookie: () => Promise<{ configured: boolean }>
+  }
+  grokAccounts: {
+    getStatus: () => Promise<GrokAccountStatus>
   }
   ssh: {
     listTargets: () => Promise<SshTarget[]>
