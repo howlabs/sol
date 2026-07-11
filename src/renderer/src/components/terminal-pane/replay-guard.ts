@@ -1,5 +1,6 @@
 import type { ManagedPane } from '@/lib/pane-manager/pane-manager'
 import { writeForegroundTerminalChunk } from '@/lib/pane-manager/pane-terminal-foreground-render-settle'
+import { ensureArabicShapingJoinerForText } from '@/lib/pane-manager/terminal-arabic-shaping-joiner'
 
 // Why: xterm.js auto-responds to terminal query sequences (DA1 `CSI c`,
 // DECRQM `CSI ? Ps $ p`, OSC 10/11 color queries, focus events, CPR) by
@@ -78,6 +79,10 @@ function engageReplayGuard(
   }
 }
 
+type ReplayTerminalOptions = {
+  shouldRefreshViewportSynchronously?: () => boolean
+}
+
 /** Writes `data` into the pane's terminal with the replay guard engaged,
  *  so xterm's auto-replies to embedded query sequences do not leak to the
  *  shell as input. The counter increments/decrements so nested replays
@@ -85,17 +90,20 @@ function engageReplayGuard(
 export function replayIntoTerminal(
   pane: ManagedPane,
   replayingPanesRef: ReplayingPanesRef,
-  data: string
+  data: string,
+  options: ReplayTerminalOptions = {}
 ): void {
   if (!data) {
     return
   }
+  ensureArabicShapingJoinerForText(pane.terminal, data)
   const finishReplay = engageReplayGuard(replayingPanesRef, pane.id)
   // Why: hidden/snapshot replay bypasses the live foreground write path, but
   // WebGL/canvas renderers still need a post-parse repaint to drop stale cells.
   writeForegroundTerminalChunk(pane.terminal, data, {
     forceViewportRefresh: true,
     followupViewportRefresh: true,
+    shouldRefreshViewportSynchronously: options.shouldRefreshViewportSynchronously,
     onParsed: finishReplay
   })
 }
@@ -103,11 +111,13 @@ export function replayIntoTerminal(
 export function replayIntoTerminalAsync(
   pane: ManagedPane,
   replayingPanesRef: ReplayingPanesRef,
-  data: string
+  data: string,
+  options: ReplayTerminalOptions = {}
 ): Promise<void> {
   if (!data) {
     return Promise.resolve()
   }
+  ensureArabicShapingJoinerForText(pane.terminal, data)
   return new Promise((resolve) => {
     // Why: settle the promise when the guard releases — via parse completion or
     // the fallback — so an awaiting caller never hangs if xterm's callback for a
@@ -116,6 +126,7 @@ export function replayIntoTerminalAsync(
     writeForegroundTerminalChunk(pane.terminal, data, {
       forceViewportRefresh: true,
       followupViewportRefresh: true,
+      shouldRefreshViewportSynchronously: options.shouldRefreshViewportSynchronously,
       onParsed: finishReplay
     })
   })

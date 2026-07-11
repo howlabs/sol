@@ -17,6 +17,7 @@ type TerminalOutputTarget = ForegroundTerminalOutputTarget
 type TerminalOutputBeforeWrite = (data: string) => void
 type TerminalBacklogRecoveryRequest = () => boolean
 type TerminalOutputParsedCallback = () => void
+type ForegroundRefreshSyncResolver = () => boolean
 
 type WriteTerminalOutputOptions = {
   foreground: boolean
@@ -26,6 +27,9 @@ type WriteTerminalOutputOptions = {
   latencySensitive?: boolean
   forceForegroundRefresh?: boolean
   followupForegroundRefresh?: boolean
+  // Why: WebGL can already have a frame queued after parse; callers may skip a
+  // second synchronous full-grid refresh (orca#8178 redraw CPU).
+  shouldRefreshForegroundSynchronously?: ForegroundRefreshSyncResolver
   stripTransientCursorShows?: boolean
   coalesceForeground?: boolean
   holdForeground?: boolean
@@ -36,6 +40,7 @@ type QueueChunk = {
   foreground: boolean
   forceForegroundRefresh: boolean
   followupForegroundRefresh: boolean
+  shouldRefreshForegroundSynchronously: ForegroundRefreshSyncResolver
   stripTransientCursorShows: boolean
   onParsed?: TerminalOutputParsedCallback
 }
@@ -45,9 +50,12 @@ type QueuedWrite = {
   foreground: boolean
   forceForegroundRefresh: boolean
   followupForegroundRefresh: boolean
+  shouldRefreshForegroundSynchronously: ForegroundRefreshSyncResolver
   stripTransientCursorShows: boolean
   onParsed?: TerminalOutputParsedCallback
 }
+
+const ALWAYS_REFRESH_FOREGROUND_SYNCHRONOUSLY = (): boolean => true
 
 type QueueEntry = {
   terminal: TerminalOutputTarget
@@ -483,6 +491,7 @@ function takeQueuedChunk(entry: QueueEntry, limit: number): QueuedWrite | null {
   let foreground: boolean | null = null
   let forceForegroundRefresh = false
   let followupForegroundRefresh = false
+  let shouldRefreshForegroundSynchronously: ForegroundRefreshSyncResolver | null = null
   let stripTransientCursorShows = false
   const parsedCallbacks: TerminalOutputParsedCallback[] = []
 
@@ -494,6 +503,10 @@ function takeQueuedChunk(entry: QueueEntry, limit: number): QueuedWrite | null {
     foreground ??= chunk.foreground
     forceForegroundRefresh ||= chunk.forceForegroundRefresh
     followupForegroundRefresh ||= chunk.followupForegroundRefresh
+    // Why: only forced refreshes carry a WebGL-aware sync policy; ignore unforced.
+    if (chunk.forceForegroundRefresh && shouldRefreshForegroundSynchronously === null) {
+      shouldRefreshForegroundSynchronously = chunk.shouldRefreshForegroundSynchronously
+    }
     stripTransientCursorShows ||= chunk.stripTransientCursorShows
     if (chunk.data.length <= remaining) {
       data += chunk.data
@@ -529,6 +542,8 @@ function takeQueuedChunk(entry: QueueEntry, limit: number): QueuedWrite | null {
         foreground: foreground === true,
         forceForegroundRefresh,
         followupForegroundRefresh,
+        shouldRefreshForegroundSynchronously:
+          shouldRefreshForegroundSynchronously ?? ALWAYS_REFRESH_FOREGROUND_SYNCHRONOUSLY,
         stripTransientCursorShows,
         onParsed:
           parsedCallbacks.length > 0
@@ -564,6 +579,7 @@ function enqueueChunk(
     foreground?: boolean
     forceForegroundRefresh?: boolean
     followupForegroundRefresh?: boolean
+    shouldRefreshForegroundSynchronously?: ForegroundRefreshSyncResolver
     stripTransientCursorShows?: boolean
     onParsed?: TerminalOutputParsedCallback
   }
@@ -573,6 +589,8 @@ function enqueueChunk(
     foreground: options?.foreground === true,
     forceForegroundRefresh: options?.forceForegroundRefresh === true,
     followupForegroundRefresh: options?.followupForegroundRefresh === true,
+    shouldRefreshForegroundSynchronously:
+      options?.shouldRefreshForegroundSynchronously ?? ALWAYS_REFRESH_FOREGROUND_SYNCHRONOUSLY,
     stripTransientCursorShows: options?.stripTransientCursorShows === true,
     onParsed: options?.onParsed
   })
@@ -589,6 +607,7 @@ function replaceBacklogWithWarning(entry: QueueEntry): void {
       foreground: false,
       forceForegroundRefresh: false,
       followupForegroundRefresh: false,
+      shouldRefreshForegroundSynchronously: ALWAYS_REFRESH_FOREGROUND_SYNCHRONOUSLY,
       stripTransientCursorShows: false
     }
   ]
@@ -708,6 +727,7 @@ function writeQueuedChunk(entry: QueueEntry): 'foreground' | 'background' | null
         {
           forceViewportRefresh: queuedWrite.forceForegroundRefresh,
           followupViewportRefresh: queuedWrite.followupForegroundRefresh,
+          shouldRefreshViewportSynchronously: queuedWrite.shouldRefreshForegroundSynchronously,
           onParsed: queuedWrite.onParsed
         }
       )
@@ -809,6 +829,7 @@ export function writeTerminalOutput(
         foreground: true,
         forceForegroundRefresh: options.forceForegroundRefresh,
         followupForegroundRefresh: options.followupForegroundRefresh,
+        shouldRefreshForegroundSynchronously: options.shouldRefreshForegroundSynchronously,
         stripTransientCursorShows: options.stripTransientCursorShows,
         onParsed: options.onParsed
       })
@@ -876,6 +897,7 @@ export function writeTerminalOutput(
         foreground: true,
         forceForegroundRefresh: options.forceForegroundRefresh,
         followupForegroundRefresh: options.followupForegroundRefresh,
+        shouldRefreshForegroundSynchronously: options.shouldRefreshForegroundSynchronously,
         stripTransientCursorShows: options.stripTransientCursorShows,
         onParsed: options.onParsed
       })
@@ -903,6 +925,7 @@ export function writeTerminalOutput(
         foreground: true,
         forceForegroundRefresh: options.forceForegroundRefresh,
         followupForegroundRefresh: options.followupForegroundRefresh,
+        shouldRefreshForegroundSynchronously: options.shouldRefreshForegroundSynchronously,
         stripTransientCursorShows: options.stripTransientCursorShows,
         onParsed: options.onParsed
       })
@@ -927,6 +950,7 @@ export function writeTerminalOutput(
       {
         forceViewportRefresh: options.forceForegroundRefresh === true,
         followupViewportRefresh: options.followupForegroundRefresh === true,
+        shouldRefreshViewportSynchronously: options.shouldRefreshForegroundSynchronously,
         onParsed: options.onParsed
       }
     )
@@ -1005,6 +1029,7 @@ export function flushTerminalOutput(
           {
             forceViewportRefresh: queuedWrite.forceForegroundRefresh,
             followupViewportRefresh: queuedWrite.followupForegroundRefresh,
+            shouldRefreshViewportSynchronously: queuedWrite.shouldRefreshForegroundSynchronously,
             onParsed: queuedWrite.onParsed
           }
         )

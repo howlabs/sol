@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { ManagedPane } from '@/lib/pane-manager/pane-manager'
+import { configureLazyArabicShapingJoiner } from '@/lib/pane-manager/terminal-arabic-shaping-joiner'
 import {
   isPaneReplaying,
   replayIntoTerminal,
@@ -25,6 +26,7 @@ type FakeTerminal = {
   _core: {
     refresh: (start: number, end: number, sync?: boolean) => void
   }
+  refresh: (start: number, end: number) => void
   /** Flush all pending xterm write callbacks, simulating parse completion. */
   flush: () => void
 }
@@ -44,6 +46,7 @@ function makeFakePane(paneId: number): { pane: ManagedPane; terminal: FakeTermin
     _core: {
       refresh() {}
     },
+    refresh() {},
     write(data: string, cb?: () => void) {
       terminal.lastData.push(data)
       if (cb) {
@@ -65,6 +68,53 @@ describe('replay-guard', () => {
   it('reports no replay for untouched pane', () => {
     const ref = makeRef()
     expect(isPaneReplaying(ref, 1)).toBe(false)
+  })
+
+  it('registers Arabic shaping before replay bytes are written', () => {
+    const ref = makeRef()
+    const { pane, terminal } = makeFakePane(1)
+    const events: string[] = []
+    const joinerTerminal = terminal as FakeTerminal & {
+      registerCharacterJoiner: (handler: (text: string) => [number, number][]) => number
+      deregisterCharacterJoiner: (joinerId: number) => void
+    }
+    joinerTerminal.registerCharacterJoiner = () => {
+      events.push('register')
+      return 5
+    }
+    joinerTerminal.deregisterCharacterJoiner = () => undefined
+    terminal.write = (data: string, callback?: () => void) => {
+      events.push(`write:${data}`)
+      if (callback) {
+        terminal.pendingCallbacks.push(callback)
+      }
+    }
+    const cleanup = configureLazyArabicShapingJoiner(joinerTerminal as never, () => true)
+
+    replayIntoTerminal(pane, ref, 'مرحبا')
+
+    expect(events).toEqual(['register', 'write:مرحبا'])
+    cleanup()
+  })
+
+  it('still replays RTL bytes when joiner registration fails', () => {
+    const ref = makeRef()
+    const { pane, terminal } = makeFakePane(1)
+    const joinerTerminal = terminal as FakeTerminal & {
+      registerCharacterJoiner: () => number
+      deregisterCharacterJoiner: () => void
+    }
+    joinerTerminal.registerCharacterJoiner = () => {
+      throw new Error('terminal disposed')
+    }
+    joinerTerminal.deregisterCharacterJoiner = () => undefined
+    configureLazyArabicShapingJoiner(joinerTerminal as never, () => true)
+
+    replayIntoTerminal(pane, ref, 'مرحبا')
+
+    expect(terminal.lastData).toEqual(['مرحبا'])
+    terminal.flush()
+    expect(isPaneReplaying(ref, pane.id)).toBe(false)
   })
 
   it('is replaying between write dispatch and xterm parse completion', () => {
