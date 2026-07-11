@@ -47,7 +47,9 @@ import type {
   UpdateStatus,
   WorktreeBaseStatusEvent,
   WorktreeDefaultTabsLaunch,
-  WorktreeRemoteBranchConflictEvent
+  WorktreeRemoteBranchConflictEvent,
+  GrokRateLimitAccountsState,
+  GrokDeviceCodeInfo
 } from '../shared/types'
 import type {
   WarpThemeImportPreview,
@@ -3651,7 +3653,27 @@ const api = {
   },
 
   grokAccounts: {
-    getStatus: (): Promise<GrokAccountStatus> => ipcRenderer.invoke('grokAccounts:getStatus')
+    getStatus: (): Promise<GrokAccountStatus> => ipcRenderer.invoke('grokAccounts:getStatus'),
+    list: (): Promise<GrokRateLimitAccountsState> => ipcRenderer.invoke('grokAccounts:list'),
+    add: (args?: { deviceCodeEvent?: string }): Promise<GrokRateLimitAccountsState> =>
+      ipcRenderer.invoke('grokAccounts:add', args?.deviceCodeEvent),
+    reauthenticate: (args: {
+      accountId: string
+      deviceCodeEvent?: string
+    }): Promise<GrokRateLimitAccountsState> =>
+      ipcRenderer.invoke('grokAccounts:reauthenticate', args),
+    remove: (args: { accountId: string }): Promise<GrokRateLimitAccountsState> =>
+      ipcRenderer.invoke('grokAccounts:remove', args),
+    select: (args: { accountId: string | null }): Promise<GrokRateLimitAccountsState> =>
+      ipcRenderer.invoke('grokAccounts:select', args),
+    cancelPendingLogin: (): Promise<boolean> =>
+      ipcRenderer.invoke('grokAccounts:cancelPendingLogin'),
+    onDeviceCode: (callback: (info: GrokDeviceCodeInfo) => void) => {
+      const listener = (_event: Electron.IpcRendererEvent, info: GrokDeviceCodeInfo): void =>
+        callback(info)
+      ipcRenderer.on('grokAccounts:deviceCode', listener)
+      return () => ipcRenderer.removeListener('grokAccounts:deviceCode', listener)
+    }
   },
 
   ssh: {

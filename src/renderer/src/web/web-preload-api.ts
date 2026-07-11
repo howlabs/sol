@@ -2482,8 +2482,19 @@ function createGrokAccountsApi(): NonNullable<Partial<PreloadApi>['grokAccounts'
     tokenFresh: false,
     error: null
   }
+  const emptyAccounts = {
+    accounts: [],
+    activeAccountId: null
+  }
   return {
-    getStatus: () => Promise.resolve(unsigned)
+    getStatus: () => Promise.resolve(unsigned),
+    list: () => Promise.resolve(emptyAccounts),
+    add: () => Promise.resolve(emptyAccounts),
+    reauthenticate: () => Promise.resolve(emptyAccounts),
+    remove: () => Promise.resolve(emptyAccounts),
+    select: () => Promise.resolve(emptyAccounts),
+    cancelPendingLogin: () => Promise.resolve(false),
+    onDeviceCode: () => () => {}
   }
 }
 

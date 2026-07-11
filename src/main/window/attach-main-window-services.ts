@@ -78,7 +78,8 @@ export function attachMainWindowServices(
     // Why: lets the PTY orphan sweep skip the one crash-recovery reload (#5787).
     isRecoveryReloadInFlight?: (webContentsId: number) => boolean
     onBeforeUpdateQuit?: () => void | Promise<void>
-  }
+  },
+  prepareGrokAuth?: () => Promise<{ envPatch: { GROK_HOME?: string } }>
 ): void {
   registerAppReloadHandler(mainWindow, options?.onBeforeRendererReload)
   registerRepoHandlers(mainWindow, store)
@@ -97,7 +98,8 @@ export function attachMainWindowServices(
     {
       awaitLocalPtyStartup: options?.awaitLocalPtyStartup,
       isRecoveryReloadInFlight: options?.isRecoveryReloadInFlight
-    }
+    },
+    prepareGrokAuth
   )
   // Why: the Manage Sessions settings panel (docs/daemon-staleness-ux.md §Phase 1)
   // uses a narrow `pty:management:*` IPC surface that reads the live

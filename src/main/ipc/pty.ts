@@ -563,6 +563,11 @@ type GetSelectedCodexHomePath = (target?: CodexAccountSelectionTarget) => string
 type PrepareClaudeAuth = (
   target?: ClaudeAccountSelectionTarget
 ) => Promise<ClaudeRuntimeAuthPreparation>
+type PrepareGrokAuth = () => Promise<GrokRuntimeAuthPreparation>
+
+type GrokRuntimeAuthPreparation = {
+  envPatch: { GROK_HOME?: string }
+}
 
 function getCodexSelectionTargetForPty(
   shellPath: string | undefined,
@@ -912,6 +917,13 @@ function isClaudeLaunchCommand(command: string | undefined): boolean {
   )
 }
 
+function isGrokLaunchCommand(command: string | undefined): boolean {
+  if (!command) {
+    return false
+  }
+  return /(^|[\s;&|('"`])(?:[^\s;&|('"`]*[\\/])?grok(?:\.cmd|\.exe)?($|[\s;&|)'"`])/i.test(command)
+}
+
 function routesFreshSpawnsToLocalProvider(
   provider: IPtyProvider
 ): provider is FreshLocalFallbackProvider {
@@ -1208,7 +1220,8 @@ export function registerPtyHandlers(
     // Why: returns true (once, consuming the flag) for the crash-recovery reload
     // so its did-finish-load skips the orphan sweep and keeps live PTYs (#5787).
     isRecoveryReloadInFlight?: (webContentsId: number) => boolean
-  }
+  },
+  prepareGrokAuth?: PrepareGrokAuth
 ): void {
   registerRendererLifecycleResetHandlers(mainWindow.webContents)
 
@@ -2060,6 +2073,8 @@ export function registerPtyHandlers(
       if (isClaudeLaunch && isClaudeAuthSwitchInProgress()) {
         throw new Error('A Claude account switch is in progress. Try again after it finishes.')
       }
+      const isGrokLaunch = !args.connectionId && isGrokLaunchCommand(args.command)
+      const grokAuth = isGrokLaunch && prepareGrokAuth ? await prepareGrokAuth() : null
       if (claudeAuth?.stripAuthEnv && hasClaudeAuthEnvConflict(args.env)) {
         throw new Error(
           'This Claude launch defines explicit Anthropic auth environment variables. Remove those overrides before using a managed Claude account.'
@@ -2108,7 +2123,9 @@ export function registerPtyHandlers(
       const sshScopedEnv = stripRemotePaneEnvWhenHooksDisabled(args.connectionId, args.env)
       let env: Record<string, string> | undefined = claudeAuth
         ? { ...sshScopedEnv, ...claudeAuth.envPatch }
-        : sshScopedEnv
+        : grokAuth
+          ? { ...sshScopedEnv, ...grokAuth.envPatch }
+          : sshScopedEnv
       const requestedAgentTeamsPath = env?.ORCA_AGENT_TEAMS_TEAM_ID ? env.PATH : undefined
       if (args.preAllocatedHandle) {
         env = { ...env, ORCA_TERMINAL_HANDLE: args.preAllocatedHandle }
@@ -2702,6 +2719,8 @@ export function registerPtyHandlers(
       )
       const claudeAuth =
         isClaudeLaunch && prepareClaudeAuth ? await prepareClaudeAuth(initialSelectionTarget) : null
+      const isGrokLaunch = !args.connectionId && isGrokLaunchCommand(args.command)
+      const grokAuth = isGrokLaunch && prepareGrokAuth ? await prepareGrokAuth() : null
       spawnTiming.mark('auth')
       if (isClaudeLaunch && isClaudeAuthSwitchInProgress()) {
         throw new Error('A Claude account switch is in progress. Try again after it finishes.')
@@ -2765,7 +2784,9 @@ export function registerPtyHandlers(
       const sshSourceEnv = stripRemotePaneEnvWhenHooksDisabled(args.connectionId, args.env)
       const baseEnvWithAuth = claudeAuth
         ? { ...sshSourceEnv, ...claudeAuth.envPatch }
-        : sshSourceEnv
+        : grokAuth
+          ? { ...sshSourceEnv, ...grokAuth.envPatch }
+          : sshSourceEnv
       const spawnPaneKey = baseEnvWithAuth?.ORCA_PANE_KEY
       const parsedSpawnPaneKey = parseValidPaneKey(spawnPaneKey)
       const verifiedPaneKey =
@@ -3853,7 +3874,8 @@ export function registerHeadlessPtyRuntime(
   getSelectedCodexHomePath?: GetSelectedCodexHomePath,
   getSettings?: () => GlobalSettings,
   prepareClaudeAuth?: PrepareClaudeAuth,
-  store?: Store
+  store?: Store,
+  prepareGrokAuth?: PrepareGrokAuth
 ): void {
   // Why: headless `orca serve` has no renderer window, but the runtime still
   // needs the same PTY controller and provider listeners as desktop so remote
@@ -3872,7 +3894,9 @@ export function registerHeadlessPtyRuntime(
     getSelectedCodexHomePath,
     getSettings,
     prepareClaudeAuth,
-    store
+    store,
+    undefined,
+    prepareGrokAuth
   )
 }
 

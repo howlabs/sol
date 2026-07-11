@@ -123,6 +123,7 @@ import {
 import { normalizeClaudeRuntimeSelection } from './claude-accounts/runtime-selection'
 import { codexHookService } from './codex/hook-service'
 import { ClaudeAccountService } from './claude-accounts/service'
+import { GrokAccountService } from './grok-accounts/service'
 import { ClaudeRuntimeAuthService } from './claude-accounts/runtime-auth-service'
 import {
   attachClaudeLivePtyPersistence,
@@ -202,6 +203,7 @@ let codexAccounts: CodexAccountService | null = null
 let codexRuntimeHome: CodexRuntimeHomeService | null = null
 let claudeAccounts: ClaudeAccountService | null = null
 let claudeRuntimeAuth: ClaudeRuntimeAuthService | null = null
+let grokAccounts: GrokAccountService | null = null
 let runtime: OrcaRuntimeService | null = null
 let rateLimits: RateLimitService | null = null
 let runtimeRpc: OrcaRuntimeRpcServer | null = null
@@ -717,6 +719,11 @@ function prepareCodexRuntimeHomeForLaunch(target?: CodexAccountSelectionTarget):
   return runtimeHomePath
 }
 
+async function prepareGrokAuthForLaunch(): Promise<{ envPatch: { GROK_HOME?: string } }> {
+  const grokHomePath = grokAccounts!.getActiveGrokHomePath()
+  return grokHomePath ? { envPatch: { GROK_HOME: grokHomePath } } : { envPatch: {} }
+}
+
 // Why: tray "Open Orca" / left-click restores the window the close handler may
 // have hidden to the tray; if the window was fully torn down, reopen it the
 // same way macOS dock re-activation does (guarded against update relaunch).
@@ -920,8 +927,9 @@ function openMainWindow(): BrowserWindow {
     claudeUsage,
     codexUsage,
     openCodeUsage,
-    codexAccounts,
-    claudeAccounts,
+    codexAccounts!,
+    claudeAccounts!,
+    grokAccounts!,
     rateLimits,
     rendererWebContentsId,
     automations,
@@ -962,7 +970,8 @@ function openMainWindow(): BrowserWindow {
       isRecoveryReloadInFlight,
       onBeforeUpdateQuit: () =>
         preserveAgentAuthBeforeRestart({ codexRuntimeHome, claudeRuntimeAuth, store })
-    }
+    },
+    () => prepareGrokAuthForLaunch()
   )
   rateLimits.attach(window)
   // Why: quota probes can spawn CLIs and hit network. The attached show/focus
@@ -1679,6 +1688,7 @@ app.whenReady().then(async () => {
   codexAccounts = new CodexAccountService(store, rateLimits, codexRuntimeHome)
   claudeRuntimeAuth = new ClaudeRuntimeAuthService(store)
   claudeAccounts = new ClaudeAccountService(store, rateLimits, claudeRuntimeAuth)
+  grokAccounts = new GrokAccountService(store, rateLimits)
   rateLimits.setCodexHomePathResolver((target) =>
     codexRuntimeHome!.prepareForRateLimitFetch(target)
   )
@@ -1687,6 +1697,7 @@ app.whenReady().then(async () => {
   rateLimits.setClaudeAuthPreparationResolver((target) =>
     claudeRuntimeAuth!.prepareForRateLimitFetch(target)
   )
+  rateLimits.setGrokHomePathResolver(() => grokAccounts!.getActiveGrokHomePath())
   rateLimits.setOpenCodeGoConfigResolver(() => {
     const settings = store!.getSettings()
     return {
@@ -2016,7 +2027,8 @@ app.whenReady().then(async () => {
       prepareCodexRuntimeHomeForLaunch,
       () => store!.getSettings(),
       (target) => claudeRuntimeAuth!.prepareForClaudeLaunch(target),
-      store
+      store,
+      () => prepareGrokAuthForLaunch()
     )
     // Why: headless servers have no renderer to mount <webview> browser panes.
     // Back them with main-process offscreen WebContents instead, so this host can

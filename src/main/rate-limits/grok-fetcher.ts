@@ -1,5 +1,6 @@
 import { net } from 'electron'
 import type { ProviderRateLimits, RateLimitWindow } from '../../shared/rate-limit-types'
+import type { GrokSessionPathEnv } from '../../shared/grok-session-paths'
 import {
   isGrokAccessTokenFresh,
   readGrokAuthSession,
@@ -134,9 +135,13 @@ function mapBillingResponse(
 
 // Why: Sol never runs grok login; it only reads the session file the CLI updates.
 export async function fetchGrokRateLimits(
-  options: { signal?: AbortSignal; authReadResult?: GrokAuthReadResult } = {}
+  options: {
+    signal?: AbortSignal
+    authReadResult?: GrokAuthReadResult
+    env?: GrokSessionPathEnv
+  } = {}
 ): Promise<ProviderRateLimits> {
-  const readResult = options.authReadResult ?? readGrokAuthSession()
+  const readResult = options.authReadResult ?? readGrokAuthSession(options.env)
   if (readResult.status === 'missing') {
     return result('unavailable', 'Not signed in to Grok — run grok login')
   }

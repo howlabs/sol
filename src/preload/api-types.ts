@@ -320,6 +320,7 @@ import type {
   RateLimitState,
   GrokAccountStatus
 } from '../shared/rate-limit-types'
+import type { GrokRateLimitAccountsState, GrokDeviceCodeInfo } from '../shared/types'
 import type {
   WorkspaceSpaceAnalyzeResult,
   WorkspaceSpaceScanProgress
@@ -2721,6 +2722,16 @@ export type PreloadApi = {
   }
   grokAccounts: {
     getStatus: () => Promise<GrokAccountStatus>
+    list: () => Promise<GrokRateLimitAccountsState>
+    add: (args?: { deviceCodeEvent?: string }) => Promise<GrokRateLimitAccountsState>
+    reauthenticate: (args: {
+      accountId: string
+      deviceCodeEvent?: string
+    }) => Promise<GrokRateLimitAccountsState>
+    remove: (args: { accountId: string }) => Promise<GrokRateLimitAccountsState>
+    select: (args: { accountId: string | null }) => Promise<GrokRateLimitAccountsState>
+    cancelPendingLogin: () => Promise<boolean>
+    onDeviceCode: (callback: (info: GrokDeviceCodeInfo) => void) => () => void
   }
   ssh: {
     listTargets: () => Promise<SshTarget[]>

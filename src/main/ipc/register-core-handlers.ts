@@ -64,6 +64,7 @@ import type { OpenCodeUsageStore } from '../opencode-usage/store'
 import type { RateLimitService } from '../rate-limits/service'
 import type { CodexAccountService } from '../codex-accounts/service'
 import type { ClaudeAccountService } from '../claude-accounts/service'
+import type { GrokAccountService } from '../grok-accounts/service'
 import type { AutomationService } from '../automations/service'
 import type { AgentAwakeService } from '../agent-awake-service'
 import type { CrashReportStore } from '../crash-reporting/crash-report-store'
@@ -89,6 +90,7 @@ export function registerCoreHandlers(
   openCodeUsage: OpenCodeUsageStore,
   codexAccounts: CodexAccountService,
   claudeAccounts: ClaudeAccountService,
+  grokAccounts: GrokAccountService,
   rateLimits: RateLimitService,
   mainWindowWebContentsId: number | null = null,
   automations?: AutomationService,
@@ -122,7 +124,7 @@ export function registerCoreHandlers(
   registerAgentTrustHandlers()
   registerClaudeAccountHandlers(claudeAccounts)
   registerMiniMaxCredentialsHandlers(rateLimits)
-  registerGrokAccountHandlers()
+  registerGrokAccountHandlers(grokAccounts)
   registerRateLimitHandlers(rateLimits)
   registerGitHubHandlers(store, stats)
   registerGitLabHandlers(store)
