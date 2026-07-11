@@ -23,6 +23,7 @@ export function normalizeRightSidebarRoute(
     tab === 'workspaces' ||
     tab === 'pr-checks' ||
     tab === 'source-control' ||
+    tab === 'agent-changes' ||
     tab === 'checks' ||
     tab === 'ports'
   ) {

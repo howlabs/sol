@@ -218,7 +218,6 @@ inline src/renderer/src/components/right-sidebar/source-control-dropdown-items.t
 inline src/renderer/src/components/right-sidebar/useCreatePullRequestDialogFields.ts
 inline src/renderer/src/components/right-sidebar/useFileExplorerDragDrop.ts
 inline src/renderer/src/components/settings/AccountsPane.tsx
-inline src/renderer/src/components/settings/AgentsPane.tsx
 inline src/renderer/src/components/settings/RepositoryHooksSection.tsx
 inline src/renderer/src/components/settings/RuntimeEnvironmentsPane.tsx
 inline src/renderer/src/components/settings/Settings.tsx
@@ -325,3 +324,4 @@ inline src/shared/text-search.ts
 inline src/shared/types.ts
 inline tests/e2e/helpers/terminal.ts
 inline tests/e2e/terminal-panes.spec.ts
+inline src/renderer/src/lib/icons.tsx

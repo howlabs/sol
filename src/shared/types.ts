@@ -3144,6 +3144,7 @@ export type RightSidebarTab =
   | 'workspaces'
   | 'pr-checks'
   | 'source-control'
+  | 'agent-changes'
   | 'checks'
   | 'ports'
 export type ActiveRightSidebarTab = Exclude<RightSidebarTab, 'search'>
