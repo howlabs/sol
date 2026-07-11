@@ -684,6 +684,7 @@ function writeForegroundTerminalChunkWithIntent(
   options: {
     forceViewportRefresh: boolean
     followupViewportRefresh: boolean
+    shouldRefreshViewportSynchronously?: () => boolean
     onParsed?: TerminalOutputParsedCallback
   }
 ): void {
@@ -691,6 +692,7 @@ function writeForegroundTerminalChunkWithIntent(
   writeForegroundTerminalChunk(terminal, data, {
     forceViewportRefresh: options.forceViewportRefresh,
     followupViewportRefresh: options.followupViewportRefresh,
+    shouldRefreshViewportSynchronously: options.shouldRefreshViewportSynchronously,
     onParsed: () => {
       // Why: recovery must repaint from the scrolled buffer state that xterm
       // will keep, not from a pre-intent-restored viewport snapshot.

@@ -37,17 +37,8 @@ type RemoteManagedHookInstaller = readonly [
 const REMOTE_MANAGED_HOOK_INSTALLERS: readonly RemoteManagedHookInstaller[] = [
   ['claude', (sftp, remoteHome) => claudeHookService.installRemote(sftp, remoteHome)],
   ['openclaude', (sftp, remoteHome) => openClaudeHookService.installRemote(sftp, remoteHome)],
-  [
-    'codex',
-    (sftp, remoteHome, options) =>
-      codexHookService.installRemote(
-        sftp,
-        remoteHome,
-        options?.codexHomeDir
-          ? { codexHomeDir: options.codexHomeDir, deferTrustUntilConfigToml: true }
-          : undefined
-      )
-  ],
+  // Why: Sol's Codex installRemote is 2-arg (no redirected CODEX_HOME options yet).
+  ['codex', (sftp, remoteHome) => codexHookService.installRemote(sftp, remoteHome)],
   ['gemini', (sftp, remoteHome) => geminiHookService.installRemote(sftp, remoteHome)],
   ['antigravity', (sftp, remoteHome) => antigravityHookService.installRemote(sftp, remoteHome)],
   ['amp', (sftp, remoteHome) => ampHookService.installRemote(sftp, remoteHome)],

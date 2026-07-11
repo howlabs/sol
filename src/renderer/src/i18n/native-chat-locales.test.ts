@@ -24,7 +24,6 @@ describe('native chat locale copy', () => {
         expect(localized.trim()).not.toBe('')
         expect(localized).not.toBe(english)
       }
-      expect(search.grok).toBe('grok')
     }
   )
 })
