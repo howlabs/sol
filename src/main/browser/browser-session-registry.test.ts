@@ -201,11 +201,25 @@ describe('BrowserSessionRegistry', () => {
     expect(mockSession?.setDevicePermissionHandler).toHaveBeenCalled()
   })
 
+  it('auto-grants pointer lock for browser partitions', () => {
+    browserSessionRegistry.createProfile('isolated', 'Pointer Lock Test')
+    const mockSession = sessionFromPartitionMock.mock.results[0]?.value
+    const requestHandler = mockSession.setPermissionRequestHandler.mock.calls[0][0]
+    const checkHandler = mockSession.setPermissionCheckHandler.mock.calls[0][0]
+    const callback = vi.fn()
+    const guestWc = { id: 7, getURL: vi.fn(() => 'https://example.com/') }
+
+    requestHandler(guestWc, 'pointerLock', callback, {})
+
+    expect(callback).toHaveBeenCalledWith(true)
+    expect(checkHandler(null, 'pointerLock', '', {})).toBe(true)
+  })
+
   it('routes media permission requests through macOS TCC for isolated partitions', async () => {
     // Why: verify the parallel fix to the default partition — isolated/imported
     // profiles must also defer media permission checks to macOS instead of
     // denying outright, otherwise pages inside them still hit NotAllowedError
-    // after the user grants Camera/Microphone to Orca.
+    // after the user grants Camera/Microphone to Sol.
     browserSessionRegistry.createProfile('isolated', 'Media Test')
     const mockSession = sessionFromPartitionMock.mock.results[0]?.value
     const requestHandler = mockSession.setPermissionRequestHandler.mock.calls[0][0]
