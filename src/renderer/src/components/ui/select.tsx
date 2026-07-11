@@ -6,7 +6,33 @@ import { Select as SelectPrimitive } from '@base-ui/react/select'
 
 import { cn } from '@/lib/utils'
 
-const Select = SelectPrimitive.Root
+/**
+ * Why: Base UI Select.Root's onValueChange has signature
+ * `(value: string | null, eventDetails) => void`, but Sol call sites use the
+ * Radix-era `(value: string) => void`. Shim the prop so existing call sites
+ * keep working without per-file null-handling churn.
+ */
+function Select({
+  onValueChange,
+  ...props
+}: Omit<SelectPrimitive.Root.Props<unknown>, 'onValueChange'> & {
+  onValueChange?: (value: string) => void
+}): React.JSX.Element {
+  return (
+    <SelectPrimitive.Root
+      onValueChange={
+        onValueChange
+          ? (value: unknown) => {
+              if (value !== null && value !== undefined) {
+                onValueChange(String(value))
+              }
+            }
+          : undefined
+      }
+      {...props}
+    />
+  )
+}
 
 /**
  * Why: Base UI defaults alignItemWithTrigger=true (popup overlaps trigger to

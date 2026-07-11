@@ -8,6 +8,7 @@ import {
 import { resolveDropdownItems, type DropdownActionKind } from './source-control-dropdown-items'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { deriveSourceControlPushRecovery } from './source-control-push-recovery'
+import { hasPhosphorIcon } from '@/lib/phosphor-icon-paths'
 
 function buildInputs(overrides: Partial<PrimaryActionInputs> = {}): PrimaryActionInputs {
   return {
@@ -251,7 +252,7 @@ describe('CommitArea', () => {
 
     expect(picker).toBeDefined()
     expect(picker).not.toContain('disabled=""')
-    expect(picker).toContain('lucide-chevron-down')
+    expect(hasPhosphorIcon(picker ?? '', 'CaretDown')).toBe(true)
   })
 
   it('omits the details trigger when the raw error matches the summary', () => {
@@ -414,7 +415,7 @@ describe('CommitArea', () => {
   })
 
   it('renders a leading checkmark on a Commit primary', () => {
-    expect(firstButton(renderCommitArea(baseProps()))).toContain('lucide-check')
+    expect(hasPhosphorIcon(firstButton(renderCommitArea(baseProps())), 'Check')).toBe(true)
   })
 
   it('omits the checkmark when the primary is a remote action', () => {
@@ -457,7 +458,7 @@ describe('CommitArea', () => {
     expect(stageAllButton).toContain('Stage All')
     expect(stageAllButton).toContain('data-variant="outline"')
     expect(stageAllButton).not.toContain('disabled=""')
-    expect(stageAllButton).toContain('lucide-plus')
+    expect(hasPhosphorIcon(stageAllButton, 'Plus')).toBe(true)
     expect(stageAllButton).toContain('rounded-r-none')
     expect(markup).toContain('aria-label="More commit and remote actions"')
     expect(markup).toContain('Stage all changes')
@@ -490,7 +491,7 @@ describe('CommitArea', () => {
     expect(pushButton).toContain('Push')
     expect(pushButton).toContain('data-variant="outline"')
     expect(pushButton).not.toContain('disabled=""')
-    expect(pushButton).toContain('lucide-arrow-up')
+    expect(hasPhosphorIcon(pushButton, 'ArrowUp')).toBe(true)
     expect(pushButton).toContain('rounded-r-none')
     expect(markup).toContain('aria-label="More commit and remote actions"')
   })
@@ -633,7 +634,7 @@ describe('ConflictSummaryCard', () => {
     )
 
     expect(markup).toContain('Resolve with AI')
-    expect(markup).toContain('lucide-sparkles')
+    expect(hasPhosphorIcon(markup, 'Sparkle')).toBe(true)
     expect(markup).not.toMatch(/\blucide-sparkle(?!s)\b/)
   })
 

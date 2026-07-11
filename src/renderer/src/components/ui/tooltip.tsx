@@ -26,8 +26,24 @@ function TooltipProvider({
   )
 }
 
-function Tooltip({ ...props }: TooltipPrimitive.Root.Props): React.JSX.Element {
-  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+function Tooltip({
+  delayDuration,
+  ...props
+}: TooltipPrimitive.Root.Props & {
+  /** @deprecated Radix name — forwarded to a scoped TooltipProvider as `delay`. */
+  delayDuration?: number
+}): React.JSX.Element {
+  // Why: Base UI sets delay on Provider, not Root. When a per-tooltip
+  // delayDuration is specified, wrap in a scoped provider so it overrides
+  // the parent provider's delay for just this tooltip.
+  if (delayDuration === undefined) {
+    return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+  }
+  return (
+    <TooltipPrimitive.Provider delay={delayDuration}>
+      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+    </TooltipPrimitive.Provider>
+  )
 }
 
 function TooltipTrigger({
@@ -78,7 +94,7 @@ function TooltipContent({
           // Why: tooltip portals can be triggered from inside menus/popovers.
           // Keep labels above those floating surfaces instead of hidden behind them.
           className={cn(
-            'pointer-events-none z-[90] inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-xs text-balance text-background data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+            'pointer-events-none z-[90] inline-flex w-fit max-w-xs origin-(--transform-origin) items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-xs text-balance text-background data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0',
             className
           )}
           {...props}

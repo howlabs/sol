@@ -66,7 +66,7 @@ function CommandDialog({
           )}
           {...commandRootProps}
         >
-          {children}
+          {children as React.ReactNode}
         </Command>
       </DialogContent>
     </Dialog>

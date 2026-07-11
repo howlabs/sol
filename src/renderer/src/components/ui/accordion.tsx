@@ -4,10 +4,24 @@ import { ChevronDownIcon } from '@/lib/icons'
 
 import { cn } from '@/lib/utils'
 
-function Accordion({ className, ...props }: AccordionPrimitive.Root.Props): React.JSX.Element {
+function Accordion({
+  className,
+  type,
+  collapsible: _collapsible,
+  ...props
+}: AccordionPrimitive.Root.Props & {
+  /** @deprecated Radix name — maps to Base UI `multiple` prop. */
+  type?: 'single' | 'multiple'
+  /** @deprecated Radix name — Base UI always allows closing open items. */
+  collapsible?: boolean
+}): React.JSX.Element {
+  // Why: Radix used type="single"|"multiple"; Base UI uses multiple={boolean}.
+  // collapsible is always true in Base UI (items can close), matching Radix
+  // type="single" collapsible behavior, so no separate prop is needed.
   return (
     <AccordionPrimitive.Root
       data-slot="accordion"
+      multiple={type === 'multiple'}
       className={cn('flex w-full flex-col', className)}
       {...props}
     />
@@ -40,7 +54,7 @@ function AccordionTrigger({
         {...props}
       >
         {children}
-        <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+        <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-out" />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   )

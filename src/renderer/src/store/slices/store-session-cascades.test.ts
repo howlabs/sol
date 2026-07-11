@@ -4,6 +4,7 @@ import type * as AgentStatusModule from '@/lib/agent-status'
 import type { BrowserTab, DetectedWorktreeListResult, Worktree } from '../../../../shared/types'
 import { isTerminalLeafId } from '../../../../shared/stable-pane-id'
 import { folderWorkspaceKey } from '../../../../shared/workspace-scope'
+import { getDefaultWorkspaceSession } from '../../../../shared/constants'
 
 // Mock sonner (imported by repos.ts)
 vi.mock('sonner', () => ({ toast: { info: vi.fn(), success: vi.fn(), error: vi.fn() } }))

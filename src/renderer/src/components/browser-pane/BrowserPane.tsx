@@ -54,6 +54,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { preventAgentSendTargetOutsideDismiss } from '@/components/ui/agent-send-dismiss-guard'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover'
@@ -2643,20 +2644,6 @@ function RemoteBrowserPagePane({
       </div>
     </div>
   )
-}
-
-function preventAgentSendTargetOutsideDismiss(event: CustomEvent<{ originalEvent: Event }>) {
-  const target = event.detail.originalEvent.target
-  if (!(target instanceof Element)) {
-    return
-  }
-  if (
-    target.closest(
-      '[data-agent-send-target="eligible"], [data-agent-send-target="disabled"], [data-agent-send-target="sending"]'
-    )
-  ) {
-    event.preventDefault()
-  }
 }
 
 function BrowserPagePane({

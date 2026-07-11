@@ -9,6 +9,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { resolvePrimaryAction, type PrimaryActionInputs } from './source-control-primary-action'
 import { resolveDropdownItems, type DropdownActionKind } from './source-control-dropdown-items'
 import { getDefaultSettings } from '../../../../shared/constants'
+import { hasPhosphorIcon } from '@/lib/phosphor-icon-paths'
 
 function buildInputs(overrides: Partial<PrimaryActionInputs> = {}): PrimaryActionInputs {
   return {
@@ -141,8 +142,8 @@ describe('CommitArea AI generation', () => {
 
     const button = buttonByLabel(markup, 'Stop generating commit message')
     expect(button).toContain('title="Stop generating"')
-    expect(button).toContain('lucide-refresh-cw')
-    expect(button).toContain('lucide-square')
+    expect(hasPhosphorIcon(button, 'ArrowsClockwise')).toBe(true)
+    expect(hasPhosphorIcon(button, 'Square')).toBe(true)
   })
 
   it('shows generation errors separately from commit errors and links them to the textarea', () => {

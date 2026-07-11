@@ -12,6 +12,7 @@ import {
   CommandItem
 } from '@/components/ui/command'
 import { prepareQuickOpenFiles, rankQuickOpenFiles } from '@/components/quick-open-search'
+import type { RadixPreventableEvent } from '@/components/ui/radix-popup-compat'
 import { useRuntimeFileListForWorktree } from '@/components/quick-open-file-list'
 import { useModalReturnFocus } from '@/hooks/useModalReturnFocus'
 import { translate } from '@/i18n/i18n'
@@ -95,7 +96,7 @@ export default function QuickOpen(): React.JSX.Element | null {
     [closeModal]
   )
 
-  const handleCloseAutoFocus = useCallback((e: Event) => {
+  const handleCloseAutoFocus = useCallback((e: RadixPreventableEvent) => {
     // Why: prevent Radix from stealing focus to the trigger element.
     e.preventDefault()
   }, [])

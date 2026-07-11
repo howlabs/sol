@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import type { PRCheckDetail, PRCheckRunDetails } from '../../../../shared/types'
 import { ChecksList } from './checks-panel-content'
+import { hasPhosphorIcon } from '@/lib/phosphor-icon-paths'
 
 const openCheckRunDetails = vi.fn()
 const patchOpenCheckRunDetails = vi.fn()
@@ -122,7 +123,7 @@ describe('ChecksList expanded check details', () => {
     expect(stickyBar?.className).toContain('bg-card/95')
     expect(stickyBar?.textContent).toContain('verify')
     expect(stickyBar?.textContent).toContain('View full logs')
-    expect(container.innerHTML).toContain('lucide-panel-right')
+    expect(hasPhosphorIcon(container.innerHTML, 'Sidebar')).toBe(true)
     expect(container.innerHTML).toContain('data-variant="outline"')
   })
 

@@ -4,6 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { CommitArea } from './SourceControl'
 import { resolvePrimaryAction, type PrimaryActionInputs } from './source-control-primary-action'
 import { resolveDropdownItems, type DropdownActionKind } from './source-control-dropdown-items'
+import { hasPhosphorIcon } from '@/lib/phosphor-icon-paths'
 
 // Why: split out from CommitArea.test.tsx so each file stays under the
 // project's max-lines budget. These tests cover the directional-icon
@@ -76,14 +77,17 @@ function primaryButton(props: ReturnType<typeof baseProps>): string {
 describe('CommitArea primary action icons', () => {
   it('renders an up-arrow on a Push primary', () => {
     expect(
-      primaryButton(
-        baseProps({
-          stagedCount: 0,
-          hasMessage: false,
-          upstreamStatus: { hasUpstream: true, ahead: 1, behind: 0 }
-        })
+      hasPhosphorIcon(
+        primaryButton(
+          baseProps({
+            stagedCount: 0,
+            hasMessage: false,
+            upstreamStatus: { hasUpstream: true, ahead: 1, behind: 0 }
+          })
+        ),
+        'ArrowUp'
       )
-    ).toContain('lucide-arrow-up')
+    ).toBe(true)
   })
 
   it('renders no directional icon on a Pull primary', () => {
@@ -94,46 +98,53 @@ describe('CommitArea primary action icons', () => {
         upstreamStatus: { hasUpstream: true, ahead: 0, behind: 1 }
       })
     )
-    expect(button).not.toContain('lucide-arrow-up')
-    expect(button).not.toContain('lucide-arrow-down-up')
-    expect(button).not.toContain('lucide-cloud-upload')
+    expect(button).not.toContain('<svg')
   })
 
   it('renders a bidirectional arrow on a Sync primary', () => {
     expect(
-      primaryButton(
-        baseProps({
-          stagedCount: 0,
-          hasMessage: false,
-          upstreamStatus: { hasUpstream: true, ahead: 1, behind: 1 }
-        })
+      hasPhosphorIcon(
+        primaryButton(
+          baseProps({
+            stagedCount: 0,
+            hasMessage: false,
+            upstreamStatus: { hasUpstream: true, ahead: 1, behind: 1 }
+          })
+        ),
+        'ArrowsDownUp'
       )
-    ).toContain('lucide-arrow-down-up')
+    ).toBe(true)
   })
 
   it('renders a cloud-up icon on a Publish primary', () => {
     expect(
-      primaryButton(
-        baseProps({
-          stagedCount: 0,
-          hasMessage: false,
-          upstreamStatus: { hasUpstream: false, ahead: 0, behind: 0 }
-        })
+      hasPhosphorIcon(
+        primaryButton(
+          baseProps({
+            stagedCount: 0,
+            hasMessage: false,
+            upstreamStatus: { hasUpstream: false, ahead: 0, behind: 0 }
+          })
+        ),
+        'CloudArrowUp'
       )
-    ).toContain('lucide-cloud-upload')
+    ).toBe(true)
   })
 
   it('renders a plus icon on a Stage All primary', () => {
     expect(
-      primaryButton(
-        baseProps({
-          stagedCount: 0,
-          hasUnstagedChanges: true,
-          hasStageableChanges: true,
-          hasMessage: false,
-          upstreamStatus: { hasUpstream: true, ahead: 0, behind: 0 }
-        })
+      hasPhosphorIcon(
+        primaryButton(
+          baseProps({
+            stagedCount: 0,
+            hasUnstagedChanges: true,
+            hasStageableChanges: true,
+            hasMessage: false,
+            upstreamStatus: { hasUpstream: true, ahead: 0, behind: 0 }
+          })
+        ),
+        'Plus'
       )
-    ).toContain('lucide-plus')
+    ).toBe(true)
   })
 })

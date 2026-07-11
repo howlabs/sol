@@ -4,6 +4,7 @@ import type { Tab, TabGroup } from '../../../../shared/types'
 import type * as AgentStatusModule from '@/lib/agent-status'
 import { buildMobileSessionTabSnapshots } from '../../runtime/sync-runtime-graph'
 import { closeMobileSessionTabInStore } from '../../runtime/mobile-session-tab-close'
+import { getDefaultUIState } from '../../../../shared/constants'
 
 // Mock sonner (imported by repos.ts)
 vi.mock('sonner', () => ({ toast: { info: vi.fn(), success: vi.fn(), error: vi.fn() } }))

@@ -72,9 +72,10 @@ function ScrollSpeedSlider({
         max={max}
         step={step}
         value={[value]}
-        onValueChange={([next]) => {
-          if (next !== undefined) {
-            onChange(next)
+        onValueChange={(next) => {
+          const v = (next as readonly number[])[0]
+          if (v !== undefined) {
+            onChange(v)
           }
         }}
       />

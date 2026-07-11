@@ -8,6 +8,12 @@ import { cn } from '@/lib/utils'
 type ScrollAreaProps = ScrollAreaPrimitive.Root.Props & {
   /** Forwarded to the viewport (call sites clamp max-height here, not only on Root). */
   viewportProps?: ScrollAreaPrimitive.Viewport.Props
+  /** Ref for the scrollable viewport element (e.g. virtualizer scroll element). */
+  viewportRef?: React.Ref<HTMLDivElement>
+  /** Set e.g. -1 so the viewport can receive programmatic focus (explorer keyboard shortcuts after inline rename). */
+  viewportTabIndex?: number
+  /** Extra className applied to the viewport (merged with defaults). */
+  viewportClassName?: string
 }
 
 function ScrollArea({
@@ -15,10 +21,13 @@ function ScrollArea({
   children,
   style,
   viewportProps,
+  viewportRef,
+  viewportTabIndex,
+  viewportClassName: viewportClassNameProp,
   ...props
 }: ScrollAreaProps): React.JSX.Element {
   const {
-    className: viewportClassName,
+    className: viewportClassNameFromProps,
     style: viewportStyle,
     ...viewportRest
   } = viewportProps ?? {}
@@ -33,10 +42,13 @@ function ScrollArea({
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
+        ref={viewportRef}
+        tabIndex={viewportTabIndex}
         data-slot="scroll-area-viewport"
         className={cn(
           'size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
-          viewportClassName
+          viewportClassNameProp,
+          viewportClassNameFromProps
         )}
         style={viewportStyle}
         {...viewportRest}

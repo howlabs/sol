@@ -11,6 +11,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { preventAgentSendTargetOutsideDismiss } from '@/components/ui/agent-send-dismiss-guard'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { ReviewNotesSendMenuContent } from './ReviewNotesSendMenuContent'
@@ -235,20 +236,6 @@ export function NotesSendMenu<TNote>({
       </DropdownMenuContent>
     </DropdownMenu>
   )
-}
-
-function preventAgentSendTargetOutsideDismiss(event: CustomEvent<{ originalEvent: Event }>) {
-  const target = event.detail.originalEvent.target
-  if (!(target instanceof Element)) {
-    return
-  }
-  if (
-    target.closest(
-      '[data-agent-send-target="eligible"], [data-agent-send-target="disabled"], [data-agent-send-target="sending"]'
-    )
-  ) {
-    event.preventDefault()
-  }
 }
 
 function NoteScopeMenuRow({ label, count }: { label: string; count: number }): React.JSX.Element {

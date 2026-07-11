@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover'
+import type { BaseUIEvent } from '@base-ui/react'
 
 import { cn } from '@/lib/utils'
 import { updatePopoverContentRef } from './popover-content-ref'
@@ -103,11 +104,25 @@ function PopoverContent({
   ref: forwardedRef,
   initialFocus,
   finalFocus,
+  collisionPadding,
+  collisionBoundary,
+  avoidCollisions,
   ...props
 }: PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> &
+  Pick<
+    PopoverPrimitive.Positioner.Props,
+    | 'align'
+    | 'alignOffset'
+    | 'side'
+    | 'sideOffset'
+    | 'collisionPadding'
+    | 'collisionBoundary'
+    | 'collisionAvoidance'
+  > &
   RadixContentCompatProps & {
     portalContainer?: HTMLElement | null
+    /** @deprecated Radix name — maps to Base UI collisionAvoidance with both axes disabled. */
+    avoidCollisions?: boolean
   }): React.JSX.Element {
   const { radix, rest } = splitRadixContentCompatProps(props)
   useRegisterRadixDismissHandlers(radix)
@@ -130,7 +145,7 @@ function PopoverContent({
 
   const handleWheel = React.useCallback(
     (event: React.WheelEvent<HTMLDivElement>) => {
-      onWheel?.(event)
+      onWheel?.(event as unknown as BaseUIEvent<React.WheelEvent<HTMLDivElement>>)
       if (event.defaultPrevented) {
         return
       }
@@ -174,6 +189,11 @@ function PopoverContent({
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
+        collisionPadding={collisionPadding}
+        collisionBoundary={collisionBoundary}
+        // Why: Radix avoidCollisions={false} disables flipping. Base UI uses
+        // collisionAvoidance with 'none' on both axes.
+        collisionAvoidance={avoidCollisions === false ? { side: 'none', align: 'none' } : undefined}
         className="isolate z-[60]"
       >
         <PopoverPrimitive.Popup

@@ -14,6 +14,7 @@ import {
   PRCommentsList,
   PRTriageStrip
 } from './checks-panel-content'
+import { hasPhosphorIcon } from '@/lib/phosphor-icon-paths'
 
 function renderWithTooltips(element: React.ReactElement): string {
   return renderToStaticMarkup(React.createElement(TooltipProvider, null, element))
@@ -141,7 +142,7 @@ describe('MergeConflictNotice', () => {
     )
 
     expect(markup).toContain('Resolve')
-    expect(markup).toContain('lucide-sparkles')
+    expect(hasPhosphorIcon(markup, 'Sparkle')).toBe(true)
     expect(markup).not.toContain('Resolve with AI')
   })
 
@@ -156,7 +157,7 @@ describe('MergeConflictNotice', () => {
 
     expect(markup).toContain('Conflicts block this MR')
     expect(markup).toContain('Resolve')
-    expect(markup).toContain('lucide-sparkles')
+    expect(hasPhosphorIcon(markup, 'Sparkle')).toBe(true)
   })
 
   it('renders the CI fix action for failing non-conflict checks', () => {
@@ -174,7 +175,7 @@ describe('MergeConflictNotice', () => {
     expect(markup).toContain('1 failing check')
     expect(markup).toContain('Fix')
     expect(markup).toContain('data-variant="outline"')
-    expect(markup).toContain('lucide-sparkles')
+    expect(hasPhosphorIcon(markup, 'Sparkle')).toBe(true)
     expect(markup).not.toContain('Fix with AI')
     expect(markup).not.toContain('Resolve')
   })
@@ -203,7 +204,7 @@ describe('ChecksList', () => {
     )
 
     expect(markup).toContain('aria-label="Open check details"')
-    expect(markup).toContain('lucide-external-link')
+    expect(hasPhosphorIcon(markup, 'ArrowSquareOut')).toBe(true)
     expect(markup).toContain('Failed')
     expect(markup.indexOf('Failed')).toBeLessThan(markup.indexOf('aria-label="Open check details"'))
     expect(markup).toContain('text-muted-foreground')
@@ -302,7 +303,7 @@ describe('PRCommentsList', () => {
     expect(markup.indexOf('aria-label="Comment display options"')).toBeLessThan(
       markup.indexOf('aria-label="Add comment"')
     )
-    expect(markup).toContain('lucide-plus')
+    expect(hasPhosphorIcon(markup, 'Plus')).toBe(true)
     expect(markup).not.toContain('Add a comment...')
     expect(markup).not.toContain('Add a PR comment')
   })
@@ -369,11 +370,11 @@ describe('PRCommentsList', () => {
     )
 
     expect(markup).toContain('aria-label="Start conversation"')
-    expect(markup).toContain('lucide-plus')
+    expect(hasPhosphorIcon(markup, 'Plus')).toBe(true)
+    expect(hasPhosphorIcon(markup, 'ChatTeardropText')).toBe(true)
     expect(markup).not.toContain('Start conversation...')
     expect(markup).not.toContain('No comments yet')
     expect(markup).not.toContain('Add a comment')
-    expect((markup.match(/lucide-message-square/g) ?? []).length).toBe(1)
   })
 })
 

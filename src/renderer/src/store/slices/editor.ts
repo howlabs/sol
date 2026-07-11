@@ -1123,7 +1123,6 @@ function getOpenedEditFileIdAfterOpen(
 }
 
 function shouldHydrateWithOwnedEditorFileId(
-  worktreeId: string,
   runtimeEnvironmentId: string | null | undefined
 ): boolean {
   return runtimeOwnerKey(runtimeEnvironmentId) !== null
@@ -4314,7 +4313,7 @@ export const createEditorSlice: StateCreator<AppState, [], [], EditorSlice> = (s
           // same path is no longer open in another owner.
           const ownedId = buildOwnedEditorFileId(pf.filePath, worktreeId, pf.runtimeEnvironmentId)
           const id =
-            shouldHydrateWithOwnedEditorFileId(worktreeId, pf.runtimeEnvironmentId) ||
+            shouldHydrateWithOwnedEditorFileId(pf.runtimeEnvironmentId) ||
             usedOpenFileIds.has(pf.filePath)
               ? ownedId
               : pf.filePath

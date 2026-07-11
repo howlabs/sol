@@ -13,6 +13,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import type { RadixPreventableEvent } from '@/components/ui/radix-popup-compat'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import {
   Copy,
@@ -622,7 +623,7 @@ const WorktreeContextMenu = React.memo(function WorktreeContextMenu({
   }, [])
 
   const handleCloseAutoFocus = useCallback(
-    (event: Event) => {
+    (event: RadixPreventableEvent) => {
       // Why: Radix otherwise restores focus to the hidden context-menu trigger.
       // When Sleep/Delete clears the active workspace and remounts the sidebar,
       // that focus restore can scroll the virtual list away from the row the

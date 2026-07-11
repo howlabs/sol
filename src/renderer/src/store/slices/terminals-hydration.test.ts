@@ -93,6 +93,7 @@ globalThis.window = { api: mockApi }
 
 import type { WorkspaceSessionState } from '../../../../shared/types'
 import { folderWorkspaceKey, worktreeWorkspaceKey } from '../../../../shared/workspace-scope'
+import { getDefaultWorkspaceSession } from '../../../../shared/constants'
 import {
   createTestStore,
   makeLayout,

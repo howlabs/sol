@@ -1,4 +1,5 @@
 import * as React from 'react'
+import type { InteractionType } from '@base-ui/utils/useEnhancedClickHandler'
 
 /**
  * Phase F: map Radix dismiss/focus content props onto Base UI
@@ -167,7 +168,7 @@ export function useRegisterRadixDismissHandlers(handlers: RadixDismissHandlers):
 type FocusMapper =
   | boolean
   | React.RefObject<HTMLElement | null>
-  | ((interactionType: string) => boolean | HTMLElement | null | void)
+  | ((interactionType: InteractionType) => boolean | HTMLElement | null | void)
   | undefined
 
 /**

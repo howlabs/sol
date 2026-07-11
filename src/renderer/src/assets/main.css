@@ -1489,6 +1489,31 @@
   animation: settings-shell-enter 180ms ease-out;
 }
 
+/*
+ * tw-animate-css defaults to the weak built-in "ease". Override with the
+ * project's standard ease-out curve for popover/tooltip/hover-card/select
+ * enter and exit animations. The variable only affects elements using
+ * animate-in / animate-out, so regular transitions are untouched.
+ */
+[data-open],
+[data-closed] {
+  --tw-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-open],
+  [data-closed] {
+    --tw-ease: linear;
+    --tw-animation-duration: 1ms;
+    --tw-enter-translate-x: 0;
+    --tw-enter-translate-y: 0;
+    --tw-enter-scale: 1;
+    --tw-exit-translate-x: 0;
+    --tw-exit-translate-y: 0;
+    --tw-exit-scale: 1;
+  }
+}
+
 .collapsible-height-content {
   overflow: hidden;
 }

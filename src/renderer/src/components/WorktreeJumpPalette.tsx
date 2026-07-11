@@ -14,6 +14,7 @@ import {
   CommandEmpty,
   CommandItem
 } from '@/components/ui/command'
+import type { RadixPreventableEvent } from '@/components/ui/radix-popup-compat'
 import { branchName } from '@/lib/git-utils'
 import { parseGitHubIssueOrPRNumber, parseGitHubIssueOrPRLink } from '@/lib/github-links'
 import { getLinkedWorkItemSuggestedName, getLinkedWorkItemWorkspaceName } from '@/lib/new-workspace'
@@ -1558,11 +1559,11 @@ export default function WorktreeJumpPalette(): React.JSX.Element | null {
     repoMap
   ])
 
-  const handleCloseAutoFocus = useCallback((e: Event) => {
+  const handleCloseAutoFocus = useCallback((e: RadixPreventableEvent) => {
     e.preventDefault()
   }, [])
 
-  const handleOpenAutoFocus = useCallback((_event: Event) => {
+  const handleOpenAutoFocus = useCallback((_event: RadixPreventableEvent) => {
     // No-op: address-bar detection is handled in the visible effect before
     // Radix steals focus. This callback exists only to satisfy the prop API.
   }, [])

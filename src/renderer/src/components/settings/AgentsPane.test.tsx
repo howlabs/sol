@@ -189,8 +189,7 @@ describe('AgentsPane', () => {
       React.createElement(AgentRuntimeSetting, {
         settings: {
           ...getDefaultSettings('/tmp'),
-          localAgentRuntime: 'wsl',
-          terminalWindowsShell: 'wsl.exe'
+          localWindowsRuntimeDefault: { kind: 'wsl', distro: 'Ubuntu' }
         },
         updateSettings: vi.fn(),
         refresh: vi.fn()

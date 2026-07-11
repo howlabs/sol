@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ChecksPanelReviewHeader } from './ChecksPanel'
+import { hasPhosphorIcon } from '@/lib/phosphor-icon-paths'
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
   DropdownMenu: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -75,7 +76,7 @@ describe('ChecksPanelReviewHeader', () => {
     expect(markup).toContain('More PR actions')
     expect(markup).toContain('unlink PR')
     expect(markup).toContain('Link another PR')
-    expect(markup).toContain('lucide-ellipsis')
+    expect(hasPhosphorIcon(markup, 'DotsThree')).toBe(true)
     expect(markup).not.toContain('lucide-external-link')
   })
 

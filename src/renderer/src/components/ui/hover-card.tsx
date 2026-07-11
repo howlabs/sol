@@ -5,26 +5,61 @@ import { PreviewCard as PreviewCardPrimitive } from '@base-ui/react/preview-card
 
 import { cn } from '@/lib/utils'
 
-function HoverCard({ ...props }: PreviewCardPrimitive.Root.Props): React.JSX.Element {
-  return <PreviewCardPrimitive.Root data-slot="hover-card" {...props} />
+// Why: Base UI PreviewCard puts delay/closeDelay on Trigger, not Root.
+// Radix HoverCard put them on Root. Forward via context so call sites
+// can keep passing openDelay/closeDelay to <HoverCard>.
+const HoverCardDelayContext = React.createContext<{
+  delay?: number
+  closeDelay?: number
+}>({})
+
+function HoverCard({
+  openDelay,
+  closeDelay,
+  ...props
+}: PreviewCardPrimitive.Root.Props & {
+  /** @deprecated Radix name — forwarded to Trigger as `delay`. */
+  openDelay?: number
+  /** @deprecated Radix name — forwarded to Trigger as `closeDelay`. */
+  closeDelay?: number
+}): React.JSX.Element {
+  const ctx = React.useMemo(() => ({ delay: openDelay, closeDelay }), [openDelay, closeDelay])
+  return (
+    <HoverCardDelayContext.Provider value={ctx}>
+      <PreviewCardPrimitive.Root data-slot="hover-card" {...props} />
+    </HoverCardDelayContext.Provider>
+  )
 }
 
 function HoverCardTrigger({
   asChild,
   children,
+  delay: delayProp,
+  closeDelay: closeDelayProp,
   ...props
 }: PreviewCardPrimitive.Trigger.Props & { asChild?: boolean }): React.JSX.Element {
+  const ctx = React.useContext(HoverCardDelayContext)
+  // Why: explicit trigger props win over root-level forwarded defaults.
+  const delay = delayProp ?? ctx.delay
+  const closeDelay = closeDelayProp ?? ctx.closeDelay
   if (asChild && React.isValidElement(children)) {
     return (
       <PreviewCardPrimitive.Trigger
         data-slot="hover-card-trigger"
         render={children as React.ReactElement}
+        delay={delay}
+        closeDelay={closeDelay}
         {...props}
       />
     )
   }
   return (
-    <PreviewCardPrimitive.Trigger data-slot="hover-card-trigger" {...props}>
+    <PreviewCardPrimitive.Trigger
+      data-slot="hover-card-trigger"
+      delay={delay}
+      closeDelay={closeDelay}
+      {...props}
+    >
       {children}
     </PreviewCardPrimitive.Trigger>
   )
@@ -36,11 +71,13 @@ function HoverCardContent({
   sideOffset = 4,
   align = 'center',
   alignOffset = 4,
+  collisionPadding,
+  collisionBoundary,
   ...props
 }: PreviewCardPrimitive.Popup.Props &
   Pick<
     PreviewCardPrimitive.Positioner.Props,
-    'align' | 'alignOffset' | 'side' | 'sideOffset'
+    'align' | 'alignOffset' | 'side' | 'sideOffset' | 'collisionPadding' | 'collisionBoundary'
   >): React.JSX.Element {
   return (
     <PreviewCardPrimitive.Portal data-slot="hover-card-portal">
@@ -49,6 +86,8 @@ function HoverCardContent({
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
+        collisionPadding={collisionPadding}
+        collisionBoundary={collisionBoundary}
         className="isolate z-50"
       >
         <PreviewCardPrimitive.Popup
