@@ -14,6 +14,7 @@ import {
   resolveTerminalCursorInactiveStyle
 } from '@/lib/pane-manager/pane-terminal-options'
 import { normalizeDesktopTerminalScrollbackRows } from '../../../../shared/terminal-scrollback-policy'
+import { normalizeTerminalLineHeight } from '../../../../shared/terminal-line-height-settings'
 import { normalizeTerminalTuiMouseWheelMultiplier } from '@/lib/pane-manager/pane-terminal-mouse-wheel'
 import { buildWindowsPtyCompatibilityOptions } from '@/lib/pane-manager/windows-pty-compatibility'
 import { buildTerminalKeyboardProtocolOptions } from '@/lib/pane-manager/terminal-keyboard-protocol'
@@ -881,11 +882,12 @@ export function useTerminalPaneLifecycle({
         imeNativeTextForwarderDisposablesRef.current.set(pane.id, imeNativeTextForwarder)
         pane.terminal.attachCustomKeyEventHandler((e) => {
           const now = Date.now()
-          const pendingCandidateReleaseGuardActive = shouldApplyTerminalImePendingCandidateKeyRelease(
-            e,
-            pendingTerminalImeCandidateKeyReleases,
-            now
-          )
+          const pendingCandidateReleaseGuardActive =
+            shouldApplyTerminalImePendingCandidateKeyRelease(
+              e,
+              pendingTerminalImeCandidateKeyReleases,
+              now
+            )
           const imeKeyboardOptions = {
             compositionActive: imeCompositionTracker.isActive(),
             candidateKeyGuardActive:
@@ -1404,7 +1406,7 @@ export function useTerminalPaneLifecycle({
             currentSettings?.terminalFastScrollSensitivity
           ),
           macOptionIsMeta: effectiveMacOptionAsAltRef.current === 'true',
-          lineHeight: currentSettings?.terminalLineHeight ?? 1,
+          lineHeight: normalizeTerminalLineHeight(currentSettings?.terminalLineHeight),
           wordSeparator: currentSettings?.terminalWordSeparator
         }
       },

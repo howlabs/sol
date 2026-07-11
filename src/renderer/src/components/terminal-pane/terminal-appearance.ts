@@ -4,6 +4,7 @@ import type { GlobalSettings } from '../../../../shared/types'
 import { mode2031SequenceFor } from '../../../../shared/terminal-color-scheme-protocol'
 import { resolveTerminalFontWeights } from '../../../../shared/terminal-fonts'
 import { resolveTerminalLigaturesEnabled } from '../../../../shared/terminal-ligatures'
+import { normalizeTerminalLineHeight } from '../../../../shared/terminal-line-height-settings'
 import {
   getBuiltinTheme,
   resolvePaneStyleOptions,
@@ -252,7 +253,7 @@ export function applyTerminalAppearance(
     // detection behavior; the detection layer simply decides *what* value
     // `effectiveMacOptionAsAlt` carries.
     pane.terminal.options.macOptionIsMeta = effectiveMacOptionAsAlt === 'true'
-    pane.terminal.options.lineHeight = settings.terminalLineHeight
+    pane.terminal.options.lineHeight = normalizeTerminalLineHeight(settings.terminalLineHeight)
     // Why call unconditionally: the per-pane helper is a no-op when the
     // current addon state already matches, so passing the resolved value on
     // every appearance apply keeps newly-created panes in sync without a
