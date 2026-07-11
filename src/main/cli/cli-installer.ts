@@ -20,10 +20,12 @@ import type { CliInstallMethod, CliInstallStatus } from '../../shared/cli-instal
 import { buildAppImageCliWrapper } from './appimage-cli-wrapper'
 
 const execFileAsync = promisify(execFile)
-const DEFAULT_MAC_COMMAND_PATH = '/usr/local/bin/orca'
-const DEV_COMMAND_NAME = 'orca-dev'
-const LINUX_COMMAND_NAME = 'orca-ide'
-const LEGACY_LINUX_COMMAND_NAME = 'orca'
+const DEFAULT_MAC_COMMAND_PATH = '/usr/local/bin/sol'
+const DEV_COMMAND_NAME = 'sol-dev'
+const LINUX_COMMAND_NAME = 'sol'
+// Why: remove older product CLI names after installs so PATH doesn't keep
+// shadowing GNOME Orca (`orca`) or a previous `orca-ide` symlink.
+const LEGACY_LINUX_COMMAND_NAMES = ['orca-ide', 'orca'] as const
 const DEV_LAUNCHER_DIR = ['cli', 'bin']
 const WINDOWS_PATH_COMMAND_TIMEOUT_MS = 5_000
 
@@ -74,8 +76,8 @@ export class CliInstaller {
       // Why: development builds must not claim the production shell command.
       return DEV_COMMAND_NAME
     }
-    // Why: packaged Linux uses `orca-ide` to avoid shadowing GNOME Orca's /usr/bin/orca.
-    return this.platform === 'linux' ? LINUX_COMMAND_NAME : 'orca'
+    // Why: packaged Linux uses `sol` (not `orca`) so we never shadow GNOME Orca's /usr/bin/orca.
+    return this.platform === 'linux' ? LINUX_COMMAND_NAME : 'sol'
   }
 
   constructor(options: CliInstallerOptions = {}) {
@@ -103,7 +105,7 @@ export class CliInstaller {
     const candidateMacPath = options.defaultMacCommandPath ?? DEFAULT_MAC_COMMAND_PATH
     this.macCommandPath = existsSync(dirname(candidateMacPath))
       ? candidateMacPath
-      : join(this.homePath, '.local', 'bin', 'orca')
+      : join(this.homePath, '.local', 'bin', 'sol')
     this.privilegedRunner = options.privilegedRunner ?? runMacPrivilegedCommand
     this.userPathReader = options.userPathReader ?? (() => readWindowsUserPath())
     this.userPathWriter = options.userPathWriter ?? ((value) => writeWindowsUserPath(value))
@@ -174,7 +176,7 @@ export class CliInstaller {
       throw new Error(status.detail ?? 'CLI registration is unavailable on this build.')
     }
     if (status.state === 'conflict') {
-      throw new Error(`Refusing to replace non-Orca command at ${status.commandPath}.`)
+      throw new Error(`Refusing to replace non-Sol command at ${status.commandPath}.`)
     }
 
     // eslint-disable-next-line unicorn/prefer-ternary -- Why: the install path performs async side effects and is easier to audit as an explicit branch than as an awaited ternary.
@@ -185,7 +187,7 @@ export class CliInstaller {
       await this.installAppImageWrapper(status.commandPath, status.launcherPath)
       await this.removeLegacyLinuxCommandIfManaged(status.launcherPath)
     } else if (this.isWindowsPackagedBundledCommand(status.commandPath, status.launcherPath)) {
-      // Why: packaged Windows already ships resources/bin/orca.cmd. Registration
+      // Why: packaged Windows already ships resources/bin/sol.cmd. Registration
       // only owns the user PATH entry; rewriting the asset makes it recurse.
     } else {
       // Why: mkdir stays here for the Windows wrapper path — the target dir is
@@ -220,7 +222,7 @@ export class CliInstaller {
       return status
     }
     if (status.state === 'conflict') {
-      throw new Error(`Refusing to remove non-Orca command at ${status.commandPath}.`)
+      throw new Error(`Refusing to remove non-Sol command at ${status.commandPath}.`)
     }
     if (status.state === 'stale') {
       throw new Error(`Refusing to remove a command not owned by Orca at ${status.commandPath}.`)
@@ -302,7 +304,7 @@ export class CliInstaller {
       const status = await this.inspectSymlink(commandPath, launcherPath)
       if (status.state !== 'not_installed') {
         if (reachedDefaultCommandPath && !isDefaultCommandPath && status.state === 'conflict') {
-          // Why: a non-Orca command after an empty/default install slot can be
+          // Why: a non-Sol command after an empty/default install slot can be
           // shadowed safely by installing there; no user file needs replacing.
           continue
         }
@@ -337,7 +339,7 @@ export class CliInstaller {
         return join(this.homePath, '.local', 'bin', DEV_COMMAND_NAME)
       }
       if (this.platform === 'win32') {
-        return join(this.localAppDataPath, 'Programs', 'Orca Dev', 'bin', `${DEV_COMMAND_NAME}.cmd`)
+        return join(this.localAppDataPath, 'Programs', 'Sol Dev', 'bin', `${DEV_COMMAND_NAME}.cmd`)
       }
     }
 
@@ -349,9 +351,8 @@ export class CliInstaller {
       // Why: Linux does not have a single privileged global shell-command flow
       // equivalent to macOS's /usr/local/bin integration. ~/.local/bin is the
       // least surprising user-scoped location that many distros already expose.
-      // Why `orca-ide`: GNOME Orca (the screen reader) ships /usr/bin/orca on
-      // most Linux distros. Using `orca-ide` avoids shadowing that system
-      // command, matching the executableName already used for the Electron binary.
+      // Why `sol`: GNOME Orca (the screen reader) owns /usr/bin/orca on many
+      // distros; `sol` is the product CLI and never collides with that system tool.
       return join(this.homePath, '.local', 'bin', LINUX_COMMAND_NAME)
     }
 
@@ -433,37 +434,50 @@ export class CliInstaller {
       return
     }
 
-    const legacyCommandPath = join(this.homePath, '.local', 'bin', LEGACY_LINUX_COMMAND_NAME)
-    try {
-      const stats = await lstat(legacyCommandPath)
-      if (!stats.isSymbolicLink()) {
-        return
-      }
+    for (const legacyName of LEGACY_LINUX_COMMAND_NAMES) {
+      const legacyCommandPath = join(this.homePath, '.local', 'bin', legacyName)
+      try {
+        const stats = await lstat(legacyCommandPath)
+        if (!stats.isSymbolicLink()) {
+          continue
+        }
 
-      const currentTarget = await readlink(legacyCommandPath)
-      const resolvedCurrentTarget = resolve(dirname(legacyCommandPath), currentTarget)
-      if (!this.isManagedLegacyLinuxTarget(resolvedCurrentTarget, launcherPath)) {
-        return
-      }
+        const currentTarget = await readlink(legacyCommandPath)
+        const resolvedCurrentTarget = resolve(dirname(legacyCommandPath), currentTarget)
+        if (!this.isManagedLegacyLinuxTarget(resolvedCurrentTarget, launcherPath, legacyName)) {
+          continue
+        }
 
-      // Why: after the Linux command rename, the old Orca-owned `orca` symlink
-      // would keep shadowing GNOME Orca even though the new command is installed.
-      await unlink(legacyCommandPath)
-    } catch (error) {
-      if (isMissingError(error)) {
-        return
+        // Why: after the CLI rename to `sol`, managed legacy symlinks would keep
+        // shadowing GNOME Orca or pointing at removed install paths.
+        await unlink(legacyCommandPath)
+      } catch (error) {
+        if (isMissingError(error)) {
+          continue
+        }
+        throw error
       }
-      throw error
     }
   }
 
-  private isManagedLegacyLinuxTarget(resolvedTarget: string, launcherPath: string): boolean {
-    const legacyLauncherPath = resolve(dirname(launcherPath), LEGACY_LINUX_COMMAND_NAME)
+  private isManagedLegacyLinuxTarget(
+    resolvedTarget: string,
+    launcherPath: string,
+    legacyName: string
+  ): boolean {
+    const legacyLauncherPath = resolve(dirname(launcherPath), legacyName)
     if (resolvedTarget === legacyLauncherPath) {
       return true
     }
 
-    if (basename(resolvedTarget) !== LEGACY_LINUX_COMMAND_NAME) {
+    // Why: legacy shell names (`orca`, `orca-ide`) may point at the current
+    // `sol` launcher after a product rename, so accept both old and new bases.
+    const targetBase = basename(resolvedTarget)
+    if (
+      targetBase !== legacyName &&
+      targetBase !== LINUX_COMMAND_NAME &&
+      !(LEGACY_LINUX_COMMAND_NAMES as readonly string[]).includes(targetBase)
+    ) {
       return false
     }
 
@@ -475,7 +489,7 @@ export class CliInstaller {
 
     // Why: AppImage upgrades can leave a legacy symlink into a now-gone FUSE
     // mount; the stable AppImage path is not a sibling of that old target.
-    return /(?:^|[/\\])resources[/\\]bin[/\\]orca$/.test(resolvedTarget)
+    return /(?:^|[/\\])resources[/\\]bin[/\\](?:sol|orca-ide|orca)$/.test(resolvedTarget)
   }
 
   private async installWindowsWrapper(commandPath: string, launcherPath: string): Promise<void> {
@@ -591,7 +605,7 @@ export class CliInstaller {
           ? `Registered at ${commandPath}.`
           : isManagedStaleTarget
             ? `${commandPath} points to an older Orca launcher.`
-            : `${commandPath} points to a non-Orca launcher.`
+            : `${commandPath} points to a non-Sol launcher.`
       })
     } catch (error) {
       if (isMissingError(error)) {
@@ -652,7 +666,7 @@ export class CliInstaller {
     const siblingDevLauncherDir = resolve(siblingDevUserDataPath, ...DEV_LAUNCHER_DIR)
 
     // Why: development builds generate launchers under the sibling `*-dev`
-    // profile; packaged Orca must be able to reclaim that public command.
+    // profile; packaged Sol must be able to reclaim that public command.
     return (
       basename(siblingDevUserDataPath) === `${basename(packagedUserDataPath)}-dev` &&
       isPathInsideOrEqual(siblingDevLauncherDir, resolvedTarget)
@@ -860,7 +874,7 @@ async function ensureDevLauncher(args: {
   )
   await mkdir(dirname(launcherPath), { recursive: true })
 
-  // Why: packaged Orca ships real platform launchers under resources/bin, but
+  // Why: packaged Sol ships real platform launchers under resources/bin, but
   // development builds do not have that stable asset layout. Generating a
   // launcher in userData lets us validate the shell-command flow without
   // changing the packaged registration contract.
@@ -952,7 +966,7 @@ function extractManagedUnixLauncherTarget(content: string): string | null {
   }
 
   // Why: older dev installs wrote a generated shell launcher directly to
-  // /usr/local/bin/orca. Treat only Orca's compiled CLI entrypoints as managed;
+  // /usr/local/bin/sol. Treat only Sol's compiled CLI entrypoints as managed;
   // arbitrary user scripts that happen to launch Electron must stay conflicts.
   return /(?:^|[/\\])(?:out|app\.asar\.unpacked[/\\]out)[/\\]cli[/\\]index\.js$/.test(cliPath)
     ? cliPath
@@ -1131,7 +1145,7 @@ export function getBundledLauncherPath(
   resourcesPath: string
 ): string | null {
   if (platform === 'darwin') {
-    return join(resourcesPath, 'bin', 'orca')
+    return join(resourcesPath, 'bin', 'sol')
   }
   if (platform === 'linux') {
     return join(resourcesPath, 'bin', LINUX_COMMAND_NAME)

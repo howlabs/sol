@@ -974,11 +974,8 @@ export function createMainWindow(
     if (store.getUI().trayMinimizeNoticeShown !== true) {
       try {
         new Notification({
-          title: 'Orca',
-          body: translateMain(
-            'tray.minimizeNotice.body',
-            'Orca is still running in the system tray'
-          )
+          title: 'Sol',
+          body: translateMain('tray.minimizeNotice.body', 'Sol is still running in the system tray')
         }).show()
       } catch {
         // Notification is best-effort — never block hiding the window.

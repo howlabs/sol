@@ -3227,7 +3227,7 @@ export type PersistedUIState = {
    *  available from Settings > Browser and the toolbar overflow menu. */
   browserImportHintHidden?: boolean
   /** Why: Windows-only. Set once after the window first hides to the system
-   *  tray, so the "Orca is still running" notification shows only on first use. */
+   *  tray, so the "Sol is still running" notification shows only on first use. */
   trayMinimizeNoticeShown?: boolean
   /** One-shot rollout notice for manual project ordering becoming the default.
    *  Absent or true means the sidebar callout stays hidden. */

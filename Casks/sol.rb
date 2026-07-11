@@ -1,4 +1,4 @@
-cask "orca" do
+cask "sol" do
   arch arm: "arm64", intel: "x64"
 
   version "1.3.24"
@@ -17,33 +17,33 @@ cask "orca" do
   end
 
   # Why: electron-updater (src/main/updater.ts) handles in-place updates by
-  # writing a new Orca.app into /Applications. Marking the cask auto_updates
+  # writing a new Sol.app into /Applications. Marking the cask auto_updates
   # tells Homebrew not to compete with the in-app updater — `brew upgrade`
   # becomes a no-op unless the user passes --greedy, and brew's version
   # metadata stays aligned with whatever the app has swapped itself to.
   auto_updates true
-  conflicts_with cask: "orca@rc"
+  conflicts_with cask: "sol@rc"
   depends_on macos: :big_sur
 
   app "Sol.app"
 
-  # Why: expose the bundled `orca` CLI on PATH at install time (Homebrew symlinks
+  # Why: expose the bundled `sol` CLI on PATH at install time (Homebrew symlinks
   # this into its already-on-PATH bin dir). Without it, the CLI is only registered
   # by the in-app "Install CLI" action, which a headless host can never trigger —
-  # so `orca serve` on a server would be unreachable from the shell. The shim
+  # so `sol serve` on a server would be unreachable from the shell. The shim
   # resolves the real app by walking symlinks, so the Homebrew symlink works.
   binary "#{appdir}/Sol.app/Contents/Resources/bin/sol"
 
-  # Why: Orca writes user data under ~/.orca (worktrees, agent state) and
+  # Why: Sol writes user data under ~/.sol (worktrees, agent state) and
   # Electron's standard userData directories. Zap removes everything the app
   # creates during normal use so `brew uninstall --zap` is a clean slate.
   zap trash: [
-    "~/.orca",
-    "~/Library/Application Support/Orca",
-    "~/Library/Caches/com.stablyai.orca",
-    "~/Library/Caches/com.stablyai.orca.ShipIt",
-    "~/Library/HTTPStorages/com.stablyai.orca",
-    "~/Library/Preferences/com.stablyai.orca.plist",
-    "~/Library/Saved Application State/com.stablyai.orca.savedState",
+    "~/.sol",
+    "~/Library/Application Support/Sol",
+    "~/Library/Caches/com.howlabs.sol",
+    "~/Library/Caches/com.howlabs.sol.ShipIt",
+    "~/Library/HTTPStorages/com.howlabs.sol",
+    "~/Library/Preferences/com.howlabs.sol.plist",
+    "~/Library/Saved Application State/com.howlabs.sol.savedState",
   ]
 end

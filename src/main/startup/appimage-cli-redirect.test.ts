@@ -70,13 +70,13 @@ describe('AppImage CLI redirect', () => {
       platform: 'linux',
       isPackaged: true,
       resourcesPath: root,
-      execPath: '/opt/orca/orca-ide',
+      execPath: '/opt/orca/sol',
       commandNames,
       spawn: spawn as never
     })
 
     expect(result).toEqual({ redirected: true, status: 0 })
-    expect(spawn).toHaveBeenCalledWith('/opt/orca/orca-ide', [cliEntryPath, 'status', '--json'], {
+    expect(spawn).toHaveBeenCalledWith('/opt/orca/sol', [cliEntryPath, 'status', '--json'], {
       env: expect.objectContaining({
         APPIMAGE: '/opt/orca/orca-linux.AppImage',
         ELECTRON_RUN_AS_NODE: '1',

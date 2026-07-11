@@ -1,4 +1,4 @@
-cask "orca@rc" do
+cask "sol@rc" do
   arch arm: "arm64", intel: "x64"
 
   version "1.4.36-rc.3"
@@ -27,31 +27,31 @@ cask "orca@rc" do
     end
   end
 
-  # Why: RC installs should follow Orca's prerelease-aware updater instead of
+  # Why: RC installs should follow Sol's prerelease-aware updater instead of
   # waiting for Homebrew metadata churn between frequent release candidates.
   auto_updates true
-  conflicts_with cask: "orca"
+  conflicts_with cask: "sol"
   depends_on macos: :big_sur
 
   app "Sol.app"
 
-  # Why: expose the bundled `orca` CLI on PATH at install time (Homebrew symlinks
+  # Why: expose the bundled `sol` CLI on PATH at install time (Homebrew symlinks
   # this into its already-on-PATH bin dir). Without it, the CLI is only registered
   # by the in-app "Install CLI" action, which a headless host can never trigger —
-  # so `orca serve` on a server would be unreachable from the shell. The shim
+  # so `sol serve` on a server would be unreachable from the shell. The shim
   # resolves the real app by walking symlinks, so the Homebrew symlink works.
   binary "#{appdir}/Sol.app/Contents/Resources/bin/sol"
 
-  # Why: Orca writes user data under ~/.orca (worktrees, agent state) and
+  # Why: Sol writes user data under ~/.sol (worktrees, agent state) and
   # Electron's standard userData directories. Zap removes everything the app
   # creates during normal use so `brew uninstall --zap` is a clean slate.
   zap trash: [
-    "~/.orca",
-    "~/Library/Application Support/Orca",
-    "~/Library/Caches/com.stablyai.orca",
-    "~/Library/Caches/com.stablyai.orca.ShipIt",
-    "~/Library/HTTPStorages/com.stablyai.orca",
-    "~/Library/Preferences/com.stablyai.orca.plist",
-    "~/Library/Saved Application State/com.stablyai.orca.savedState",
+    "~/.sol",
+    "~/Library/Application Support/Sol",
+    "~/Library/Caches/com.howlabs.sol",
+    "~/Library/Caches/com.howlabs.sol.ShipIt",
+    "~/Library/HTTPStorages/com.howlabs.sol",
+    "~/Library/Preferences/com.howlabs.sol.plist",
+    "~/Library/Saved Application State/com.howlabs.sol.savedState",
   ]
 end

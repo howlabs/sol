@@ -306,10 +306,10 @@ function retireLegacyInstructionsForClearedTextActionRecipes(
 // path, causing dev and production instances to share the same file and silently
 // overwrite each other.
 //
-// It also must not be resolved lazily on every call, because app.setName('Orca')
-// runs before the Store constructor and would change the resolved path from
-// lowercase 'orca' to uppercase 'Orca'. On case-sensitive filesystems (Linux)
-// this would look in the wrong directory and lose existing user data.
+// It also must not be resolved lazily on every call, because app.setName('Sol')
+// runs before the Store constructor and would change the resolved path if Electron
+// remaps the product userData directory. On case-sensitive filesystems (Linux)
+// a late rename would look in the wrong directory and lose existing user data.
 //
 // Solution: index.ts calls initDataPath() right after configureDevUserDataPath()
 // but before app.setName(), capturing the correct path at the right moment.

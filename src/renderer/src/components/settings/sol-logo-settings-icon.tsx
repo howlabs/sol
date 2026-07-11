@@ -3,7 +3,7 @@ import type { LucideProps } from '@/lib/icons'
 import logo from '../../../../../resources/logo.svg'
 import { cn } from '@/lib/utils'
 
-export function OrcaLogoSettingsIcon({ className }: LucideProps): React.JSX.Element {
+export function SolLogoSettingsIcon({ className }: LucideProps): React.JSX.Element {
   return createElement('img', {
     src: logo,
     alt: '',

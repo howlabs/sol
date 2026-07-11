@@ -455,7 +455,7 @@ function createWebPreloadApi(): Partial<PreloadApi> {
     app: {
       getIdentity: () =>
         Promise.resolve({
-          name: 'Orca',
+          name: 'Sol',
           isDev: false,
           devLabel: null,
           devBranch: null,

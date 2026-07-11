@@ -10,13 +10,13 @@ vi.mock('node:child_process', () => ({
 import { WslCliInstaller, _internals } from './wsl-cli-installer'
 
 function makeHostStatus(
-  launcherPath = 'C:\\Users\\me\\AppData\\Local\\Programs\\Orca\\resources\\bin\\orca.cmd'
+  launcherPath = 'C:\\Users\\me\\AppData\\Local\\Programs\\Sol\\resources\\bin\\sol.cmd'
 ) {
   return {
     platform: 'win32',
-    commandName: 'orca',
-    commandPath: 'C:\\Users\\me\\AppData\\Local\\Programs\\Orca\\bin\\orca.cmd',
-    pathDirectory: 'C:\\Users\\me\\AppData\\Local\\Programs\\Orca\\bin',
+    commandName: 'sol',
+    commandPath: 'C:\\Users\\me\\AppData\\Local\\Programs\\Sol\\bin\\sol.cmd',
+    pathDirectory: 'C:\\Users\\me\\AppData\\Local\\Programs\\Sol\\bin',
     pathConfigured: true,
     launcherPath,
     installMethod: 'wrapper',
@@ -29,8 +29,8 @@ function makeHostStatus(
 }
 
 function createWslRunner(initialFile: string | null = null, pathIncludesLocalBin = true) {
-  const commandPath = '/home/alice/.local/bin/orca-ide'
-  const bridgePath = '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+  const commandPath = '/home/alice/.local/bin/sol'
+  const bridgePath = '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
   const files = new Map<string, string>()
   if (initialFile !== null) {
     files.set(commandPath, initialFile)
@@ -62,7 +62,7 @@ function createWslRunner(initialFile: string | null = null, pathIncludesLocalBin
     if (command.includes('rm -f')) {
       if (
         files.has(bridgePath) &&
-        !files.get(bridgePath)?.includes('# Orca managed WSL CLI PowerShell bridge')
+        !files.get(bridgePath)?.includes('# Sol managed WSL CLI PowerShell bridge')
       ) {
         throw new Error('__ORCA_CONFLICT__')
       }
@@ -97,7 +97,7 @@ describe('WslCliInstaller', () => {
     vi.useRealTimers()
   })
 
-  it('installs a WSL launcher that forwards to the Windows Orca launcher', async () => {
+  it('installs a WSL launcher that forwards to the Windows Sol launcher', async () => {
     const wsl = createWslRunner()
     const installer = new WslCliInstaller({
       platform: 'win32',
@@ -108,7 +108,7 @@ describe('WslCliInstaller', () => {
 
     await expect(installer.getStatus()).resolves.toMatchObject({
       state: 'not_installed',
-      commandPath: '/home/alice/.local/bin/orca-ide'
+      commandPath: '/home/alice/.local/bin/sol'
     })
 
     const installed = await installer.install()
@@ -116,12 +116,12 @@ describe('WslCliInstaller', () => {
     expect(installed).toMatchObject({
       state: 'installed',
       pathConfigured: true,
-      launcherPath: 'C:\\Users\\me\\AppData\\Local\\Programs\\Orca\\resources\\bin\\orca.cmd'
+      launcherPath: 'C:\\Users\\me\\AppData\\Local\\Programs\\Sol\\resources\\bin\\sol.cmd'
     })
     expect(wsl.getFile()).toBe(
       _internals.buildWslLauncher(
-        'C:\\Users\\me\\AppData\\Local\\Programs\\Orca\\resources\\bin\\orca.cmd',
-        '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+        'C:\\Users\\me\\AppData\\Local\\Programs\\Sol\\resources\\bin\\sol.cmd',
+        '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
       )
     )
     expect(wsl.getBridge()).toBe(_internals.buildWslBridgeScript())
@@ -131,24 +131,27 @@ describe('WslCliInstaller', () => {
   })
 
   it('derives the shared WSL bridge path for current and legacy command names', () => {
+    expect(_internals.getBridgePathFromCommandPath('/home/alice/.local/bin/sol')).toBe(
+      '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
+    )
     expect(_internals.getBridgePathFromCommandPath('/home/alice/.local/bin/orca-ide')).toBe(
-      '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+      '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
     )
     expect(_internals.getBridgePathFromCommandPath('/home/alice/.local/bin/orca')).toBe(
-      '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+      '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
     )
   })
 
   it('reports installed WSL launchers whose bin directory is missing from PATH', async () => {
     const launcher = _internals.buildWslLauncher(
-      'C:\\Orca\\orca.cmd',
-      '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+      'C:\\Sol\\sol.cmd',
+      '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
     )
     const wsl = createWslRunner(launcher, false)
     const installer = new WslCliInstaller({
       platform: 'win32',
       distro: 'Ubuntu',
-      hostInstaller: { getStatus: async () => makeHostStatus('C:\\Orca\\orca.cmd') },
+      hostInstaller: { getStatus: async () => makeHostStatus('C:\\Sol\\sol.cmd') },
       wslRunner: wsl.runner
     })
 
@@ -161,16 +164,16 @@ describe('WslCliInstaller', () => {
 
   it('accepts current managed WSL scripts with an extra heredoc trailing newline', async () => {
     const launcher = `${_internals.buildWslLauncher(
-      'C:\\Orca\\orca.cmd',
-      '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+      'C:\\Sol\\sol.cmd',
+      '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
     )}\n`
     const wsl = createWslRunner(launcher)
     const installer = new WslCliInstaller({
       platform: 'win32',
       distro: 'Ubuntu',
-      hostInstaller: { getStatus: async () => makeHostStatus('C:\\Orca\\orca.cmd') },
+      hostInstaller: { getStatus: async () => makeHostStatus('C:\\Sol\\sol.cmd') },
       wslRunner: async (distro, command) => {
-        if (command.includes('cat /home/alice/.local/share/orca/orca-wsl-bridge.ps1')) {
+        if (command.includes('cat /home/alice/.local/share/sol/sol-wsl-bridge.ps1')) {
           return `${_internals.buildWslBridgeScript()}\n`
         }
         return wsl.runner(distro, command)
@@ -179,7 +182,7 @@ describe('WslCliInstaller', () => {
 
     await expect(installer.getStatus()).resolves.toMatchObject({
       state: 'installed',
-      currentTarget: 'C:\\Orca\\orca.cmd'
+      currentTarget: 'C:\\Sol\\sol.cmd'
     })
   })
 
@@ -199,14 +202,14 @@ describe('WslCliInstaller', () => {
   it('removes a managed WSL launcher', async () => {
     const wsl = createWslRunner(
       _internals.buildWslLauncher(
-        'C:\\Orca\\orca.cmd',
-        '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+        'C:\\Sol\\sol.cmd',
+        '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
       )
     )
     const installer = new WslCliInstaller({
       platform: 'win32',
       distro: 'Ubuntu',
-      hostInstaller: { getStatus: async () => makeHostStatus('C:\\Orca\\orca.cmd') },
+      hostInstaller: { getStatus: async () => makeHostStatus('C:\\Sol\\sol.cmd') },
       wslRunner: wsl.runner
     })
 
@@ -216,15 +219,15 @@ describe('WslCliInstaller', () => {
 
   it('generates a launcher that forwards arguments through a PowerShell file bridge', () => {
     const launcher = _internals.buildWslLauncher(
-      'C:\\Program Files\\Orca\\orca.cmd',
-      '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+      'C:\\Program Files\\Orca\\sol.cmd',
+      '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
     )
     const bridge = _internals.buildWslBridgeScript()
 
     expect(launcher).toContain('command -v powershell.exe')
     expect(launcher).toContain('/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe')
     expect(launcher).toContain(
-      'Orca WSL CLI requires Windows interop and could not find powershell.exe.'
+      'Sol WSL CLI requires Windows interop and could not find powershell.exe.'
     )
     expect(launcher).toContain('"$ORCA_POWERSHELL" -NoProfile -ExecutionPolicy Bypass -File')
     expect(launcher).toContain('"$ORCA_WIN_LAUNCHER" "$@"')
@@ -271,14 +274,14 @@ describe('WslCliInstaller', () => {
 
     await expect(installer.getStatus()).resolves.toMatchObject({
       state: 'not_installed',
-      commandPath: '/home/alice/.local/bin/orca-ide'
+      commandPath: '/home/alice/.local/bin/sol'
     })
   })
 
   it('marks stale managed launchers that point at the old app bin instead of packaged resources', async () => {
     const oldLauncher = _internals.buildWslLauncher(
-      'C:\\Users\\me\\AppData\\Local\\Programs\\Orca\\bin\\orca.cmd',
-      '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+      'C:\\Users\\me\\AppData\\Local\\Programs\\Sol\\bin\\sol.cmd',
+      '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
     )
     const wsl = createWslRunner(oldLauncher)
     const installer = new WslCliInstaller({
@@ -290,13 +293,13 @@ describe('WslCliInstaller', () => {
 
     await expect(installer.getStatus()).resolves.toMatchObject({
       state: 'stale',
-      currentTarget: 'C:\\Users\\me\\AppData\\Local\\Programs\\Orca\\bin\\orca.cmd',
-      launcherPath: 'C:\\Users\\me\\AppData\\Local\\Programs\\Orca\\resources\\bin\\orca.cmd'
+      currentTarget: 'C:\\Users\\me\\AppData\\Local\\Programs\\Sol\\bin\\sol.cmd',
+      launcherPath: 'C:\\Users\\me\\AppData\\Local\\Programs\\Sol\\resources\\bin\\sol.cmd'
     })
 
     await expect(installer.install()).resolves.toMatchObject({
       state: 'installed',
-      currentTarget: 'C:\\Users\\me\\AppData\\Local\\Programs\\Orca\\resources\\bin\\orca.cmd'
+      currentTarget: 'C:\\Users\\me\\AppData\\Local\\Programs\\Sol\\resources\\bin\\sol.cmd'
     })
   })
 
@@ -328,16 +331,16 @@ describe('WslCliInstaller', () => {
 
   it('refuses to remove an old managed launcher when the bridge path is user-owned', async () => {
     const oldLauncher = _internals.buildWslLauncher(
-      'C:\\Old\\orca.cmd',
-      '/home/alice/.local/share/orca/orca-wsl-bridge.ps1'
+      'C:\\Old\\sol.cmd',
+      '/home/alice/.local/share/sol/sol-wsl-bridge.ps1'
     )
     const wsl = createWslRunner(oldLauncher)
     const installer = new WslCliInstaller({
       platform: 'win32',
       distro: 'Ubuntu',
-      hostInstaller: { getStatus: async () => makeHostStatus('C:\\Orca\\orca.cmd') },
+      hostInstaller: { getStatus: async () => makeHostStatus('C:\\Sol\\sol.cmd') },
       wslRunner: async (distro, command) => {
-        if (command.includes('cat /home/alice/.local/share/orca/orca-wsl-bridge.ps1')) {
+        if (command.includes('cat /home/alice/.local/share/sol/sol-wsl-bridge.ps1')) {
           return 'user bridge'
         }
         if (command.includes('rm -f')) {

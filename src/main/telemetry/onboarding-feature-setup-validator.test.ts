@@ -46,7 +46,7 @@ describe('onboarding feature setup telemetry validation', () => {
         linear_tickets: false,
         orchestration: true,
         selected_count: 2,
-        command: 'npx skills add https://github.com/stablyai/orca --global'
+        command: 'npx skills add https://github.com/howlabs/sol --global'
       } as never).ok
     ).toBe(false)
     expect(

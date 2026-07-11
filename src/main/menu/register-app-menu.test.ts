@@ -15,7 +15,7 @@ vi.mock('electron', () => ({
     setApplicationMenu: setApplicationMenuMock
   },
   app: {
-    name: 'Orca'
+    name: 'Sol'
   }
 }))
 

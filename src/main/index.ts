@@ -576,7 +576,7 @@ if (hasSingleInstanceLock) {
   installDevParentWatchdog(shouldCoupleToDevParent)
   installDevParentSignalQuit(shouldCoupleToDevParent)
   // Why: must run after configureDevUserDataPath (which redirects userData to
-  // orca-dev in dev mode) but before app.setName('Orca') inside whenReady
+  // orca-dev in dev mode) but before app.setName('Sol') inside whenReady
   // (which would change the resolved path on case-sensitive filesystems).
   initDataPath()
   // Why: same timing constraint as initDataPath — capture the userData path

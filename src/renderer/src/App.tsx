@@ -1630,7 +1630,7 @@ function App(): React.JSX.Element {
           <div className="titlebar-traffic-light-pad" />
         ) : hasCustomTitleBar ? (
           /* Why: on Windows/Linux the native title bar is removed, so we render
-             the Orca logo as a non-interactive identity anchor and a ··· button
+             the Sol logo as a non-interactive identity anchor and a ··· button
              that pops up the application menu (the same menu revealed by Alt
              on the default autoHideMenuBar). */
           <>
@@ -1660,10 +1660,10 @@ function App(): React.JSX.Element {
                 <ContextMenuTrigger asChild>
                   <div
                     className="titlebar-app-name"
-                    aria-label={translate('auto.App.5096cbbc86', 'Orca')}
+                    aria-label={translate('auto.App.5096cbbc86', 'Sol')}
                   >
                     <span className="titlebar-app-name-main">
-                      {translate('auto.App.5096cbbc86', 'Orca')}
+                      {translate('auto.App.5096cbbc86', 'Sol')}
                     </span>
                   </div>
                 </ContextMenuTrigger>

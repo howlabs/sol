@@ -10,7 +10,7 @@ import { getBundledLauncherPath } from './cli-installer'
 const DISPATCHER_MARKER = '# orca-serve-bare-orca-dispatcher'
 
 export type LinuxBareOrcaDispatcherOptions = {
-  /** Packaged app resources root; the bundled `orca-ide` launcher lives under it. */
+  /** Packaged app resources root; the bundled `sol` launcher lives under it. */
   resourcesPath: string
   /** Test seam — defaults to the real home directory. */
   homePath?: string
@@ -26,17 +26,15 @@ export type LinuxBareOrcaDispatcherState =
 export type LinuxBareOrcaDispatcherResult = {
   state: LinuxBareOrcaDispatcherState
   dispatcherPath: string
-  /** What the dispatcher execs: the stable AppImage, or the bundled orca-ide. */
+  /** What the dispatcher execs: the stable AppImage, or the bundled sol. */
   target: string | null
 }
 
-// Why: on Linux the CLI installs as `orca-ide`, not bare `orca`, to avoid
-// shadowing GNOME Orca's /usr/bin/orca. But the Claude Team launcher typed into
-// the initial managed terminal invokes the literal `orca claude-teams`, so a
-// headless serve box needs a bare-`orca` dispatcher on the managed-terminal PATH
-// (~/.local/bin, which patchPackagedProcessPath puts ahead of /usr/bin). It is a
-// plain file, not a managed symlink, so CliInstaller.removeLegacyLinuxCommandIfManaged
-// never reclaims it.
+// Why: on Linux the product CLI is `sol` so we never shadow GNOME Orca's
+// /usr/bin/orca. Some managed-terminal boot paths still invoke bare `orca
+// claude-teams`, so headless serve installs a bare-`orca` dispatcher on
+// ~/.local/bin (ahead of /usr/bin via patchPackagedProcessPath). It is a plain
+// file, not a managed symlink, so CliInstaller legacy cleanup never reclaims it.
 export async function installLinuxBareOrcaDispatcher(
   options: LinuxBareOrcaDispatcherOptions
 ): Promise<LinuxBareOrcaDispatcherResult> {

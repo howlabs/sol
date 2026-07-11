@@ -232,7 +232,7 @@ export default function Landing(): React.JSX.Element {
             >
               <img
                 src={logo}
-                alt={translate('auto.components.Landing.520304a067', 'Orca logo')}
+                alt={translate('auto.components.Landing.520304a067', 'Sol logo')}
                 className="size-9 dark:invert"
               />
             </div>

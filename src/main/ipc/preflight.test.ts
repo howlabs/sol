@@ -694,8 +694,8 @@ describe('preflight', () => {
       }
       const script = String(args[5])
       expect(script).not.toContain("'orca'")
-      expect(script).not.toContain("'orca-dev'")
-      expect(script).not.toContain("'orca-ide'")
+      expect(script).not.toContain("'sol-dev'")
+      expect(script).not.toContain("'sol'")
       if (script.includes("'claude'")) {
         return { stdout: '__ORCA_AGENT_PATH__claude\t/home/test/.local/bin/claude\n' }
       }

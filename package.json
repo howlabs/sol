@@ -6,7 +6,9 @@
   "author": "howlabs",
   "bin": {
     "orca": "./out/cli/index.js",
-    "orca-dev": "./config/scripts/orca-dev.mjs"
+    "orca-dev": "./config/scripts/orca-dev.mjs",
+    "sol": "./out/cli/index.js",
+    "sol-dev": "./config/scripts/orca-dev.mjs"
   },
   "main": "./out/main/index.js",
   "scripts": {
