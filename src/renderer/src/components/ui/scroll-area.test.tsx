@@ -66,4 +66,30 @@ describe('ScrollArea sizing footgun', () => {
     expect(el?.style.maxHeight).toBe('var(--available-height)')
     expect(viewport?.style.maxHeight).toBe('var(--available-height)')
   })
+
+  // Why: the Base UI migration (13a9877c9) accidentally dropped viewportRef,
+  // viewportTabIndex, and viewportClassName forwarding, which made the File
+  // Explorer virtualizer receive a null scroll element and render zero rows.
+  it('forwards viewportRef, viewportTabIndex, and viewportClassName to the viewport', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const root = createRoot(container)
+    roots.push(root)
+
+    const ref = { current: null as HTMLDivElement | null }
+
+    await act(async () => {
+      root.render(
+        <ScrollArea viewportRef={ref} viewportTabIndex={-1} viewportClassName="h-full min-h-0 py-2">
+          <div />
+        </ScrollArea>
+      )
+    })
+
+    const viewport = container.querySelector<HTMLElement>('[data-slot="scroll-area-viewport"]')
+    expect(ref.current).toBe(viewport)
+    expect(viewport?.tabIndex).toBe(-1)
+    expect(viewport?.className).toContain('h-full')
+    expect(viewport?.className).toContain('py-2')
+  })
 })
