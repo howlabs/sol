@@ -3717,28 +3717,10 @@
           "f2e42e1307": "送信",
           "69969ba364": "送信中…"
         },
-        "SidebarFilter": {
-          "e3b3898218": "プロジェクトの追加",
-          "92a23e6d07": "フィルターをリセットする",
-          "81ded53722": "SSH",
-          "b9e8802e73": "一致するプロジェクトはありません",
-          "779b7ba05d": "クリア",
-          "139877b384": "すべて選択",
-          "5f7085a077": "プロジェクト",
-          "e5cb32a898": "デフォルトのブランチを非表示にする",
-          "638a2d221d": "スリープ中を非表示",
-          "f506a1262a": "ワークスペースのフィルタリング",
-          "75405270ed": "フィルターの編集 ({{value0}} がアクティブ)",
-          "489d1c8c9f": "プロジェクトを検索...",
-          "ee240a39eb": "フィルターの編集",
-          "automationCreated": "自動化で作成されたワークスペースを非表示"
-        },
         "SidebarHeader": {
           "92154beb7e": "新規ワークスペース",
-          "49f62c5665": "ワークスペースボード",
           "5c9c7c16aa": "プロジェクトを追加してワークスペースを作成する",
           "ca6f729da2": "新規ワークスペース ({{value0}})",
-          "a30e34eb5c": "ワークスペースボードを閉じる",
           "25a95899c9": "プロジェクトを追加"
         },
         "SidebarNav": {
@@ -3785,10 +3767,7 @@
         },
         "SidebarToolbar": {
           "19e32d0e5f": "フォルダーピッカーを開いてプロジェクトを追加します",
-          "abc62b6328": "プロジェクトを追加",
-          "87d0064026": "ワークスペースボードは下部バーに移動しました",
-          "a30e34eb5c": "ワークスペースボードを閉じる",
-          "49f62c5665": "ワークスペースボード"
+          "abc62b6328": "プロジェクトを追加"
         },
         "SidebarWorkspaceFilterSection": {
           "c3fa13dc2e": "デフォルトのブランチを非表示にする",
@@ -3867,34 +3846,6 @@
         "SshTargetRow": {
           "4677394048": "接続中…",
           "75ad429b5d": "接続"
-        },
-        "WorkspaceKanbanCard": {
-          "cefae8983e": "固定された"
-        },
-        "WorkspaceKanbanDrawerHeader": {
-          "f369f5c5a3": "閉じる",
-          "e1a34450fc": "ワークスペースをステータスごとに整理し、ワークスペース カードを開きます。",
-          "81870af08f": "選択された",
-          "c6a77ab0f4": "ワークスペースボード"
-        },
-        "WorkspaceKanbanPinDropTarget": {
-          "c30151c5ee": "ここにドロップすると、ステータスを変更せずにピンを固定できます。",
-          "8fae2d0862": "固定された"
-        },
-        "WorkspaceKanbanSettingsMenu": {
-          "79eb990aa4": "ステータスの追加",
-          "054cb50df7": "{{value0}} を削除",
-          "b45b350eb0": "{{value0}} を左に移動",
-          "8ce44af9a8": "{{value0}} の名前を変更",
-          "395e541d5d": "ステータス",
-          "34f03eb0de": "ボードの設定",
-          "26cbc92150": "ワークスペースボードの設定",
-          "87d24a0c2f": "ボードと Issue のステータスを同期",
-          "4c2eaa78cc": "リンク済みワークスペースを移動すると、一致するワークフロー状態がある場合に Linear Issue のステータスが更新されます。"
-        },
-        "WorkspaceKanbanStatusLane": {
-          "8ad104642b": "空の",
-          "3611d1ae7f": "ワークスペースボードの列のサイズを変更する"
         },
         "WorkspaceStatusAppearancePopover": {
           "514be2f569": "{{value0}} の色を {{value1}} に設定します",
@@ -4291,44 +4242,6 @@
             }
           }
         },
-        "LinearAgentSkillSetupPrompt": {
-          "missingCliAndSkill": "Sol CLI と Linear agent スキルがありません。",
-          "modalTitle": "Linear チケットアクセスを有効にする",
-          "modalDescription": "terminal から Linear スキルをインストールします。",
-          "modalPrompt": "Agents が添付された Linear チケットを読み書きできるようにします。",
-          "dontShowAgain": "今後表示しない",
-          "notNow": "後で",
-          "missingBoth": "Sol CLI と Linear agent スキルがありません。",
-          "missingCli": "Sol CLI がありません。",
-          "missingSkill": "Linear agent スキルがありません。",
-          "title": "Linear agent スキルを設定",
-          "remoteCopy": "これはホスト側の設定をインストールします。リモート agent 環境では別途設定が必要な場合があります。",
-          "hostCopy": "リンクされた Linear 作業からのホスト agent 引き継ぎ用にインストールします。",
-          "dismiss": "Linear agent スキル設定を閉じる",
-          "setup": "設定",
-          "recheck": "再確認",
-          "panelTitle": "Linear agent スキル",
-          "panelDescription": "リンクされた Linear タスクの引き継ぎ用にホスト agent スキルをインストールします。",
-          "terminalTitle": "Linear agent スキルをインストール",
-          "terminalAria": "Linear agent スキルのインストール terminal",
-          "install": "CLI とスキルをインストール",
-          "successTitle": "Linear チケットアクセスの準備ができました",
-          "successDescription": "Agents はこのワークスペースからリンクされた Linear チケットを読み取り、更新できるようになりました。",
-          "successDescriptionWsl": "WSL agents はこのワークスペースからリンクされた Linear チケットを使用できるようになりました。",
-          "successDescriptionRemote": "ホスト agents はリンクされた Linear チケットを使用できるようになりました。リモート agent 環境ではまだ独自の設定が必要な場合があります。",
-          "successStatus": "Linear チケットアクセス準備完了",
-          "done": "完了",
-          "wslCopy": "リンクされた Linear 作業からの WSL agent 引き継ぎ用にインストールします。",
-          "wslLabel": "WSL 既定",
-          "toastMissingCliAndSkill": "Sol CLI と Linear スキルがありません",
-          "toastMissingCli": "Sol CLI がありません",
-          "toastMissingSkill": "Linear スキルがありません",
-          "toastInstallCliAndSkillDescription": "Sol CLI と Linear スキルをインストールして、agents が Linear タスクを読み書きできるようにします。",
-          "toastInstallCliDescription": "Sol CLI をインストールして、agents が Linear タスクを読み書きできるようにします。",
-          "toastInstallSkillDescription": "Linear スキルをインストールして、agents が Sol CLI を通じて Linear タスクを読み書きできるようにします。",
-          "toastRemoteDescription": "{{value0}} リモート agent 環境では独自の設定が必要な場合があります。",
-          "toastWslDescription": "{{value0}} この設定は選択した WSL agent ランタイムで実行されます。"
-        },
         "FolderWorkspaceComposerDialog": {
           "connectFailed": "プロジェクトに接続できませんでした。",
           "noRepos": "GitHub または GitLab のタスクを関連付けるには、このフォルダー内に Git プロジェクトを追加。",
@@ -4408,19 +4321,6 @@
           "2d3e4f5a6b": "Check connection",
           "3c4d5e6f7a": "ホストを管理…",
           "6e7f8a9b0c": "Remove host…"
-        },
-        "WorkspaceKanbanDrawer": {
-          "1975a4e480": "タスクステータスの同期に失敗しました",
-          "e02b0d92ff": "タスクステータスの同期をスキップしました",
-          "c1d2e3f4a5": "Linear Issue {{value0}} を読み取れませんでした。",
-          "d2e3f4a5b6": "{{value0}} に一致する Linear ワークフロー状態がありません。",
-          "e3f4a5b6c7": "{{value0}} に一致する Linear ワークフロー状態が複数あります。",
-          "f4a5b6c7d8": "Linear Issue {{value0}} を更新できませんでした。",
-          "a5b6c7d8e9": "Linear Issue {{value0}} を同期できませんでした。",
-          "b6c7d8e9f0": "タスクステータスの同期を完了できませんでした。",
-          "c7d8e9f0a1": "{{value0}} 件更新",
-          "d8e9f0a1b2": "{{value0}} 件スキップ",
-          "e9f0a1b2c3": "{{value0}} 件失敗"
         },
         "WorktreeParentPickerPopover": {
           "failedSetParent": "親ワークツリーを設定できませんでした",
@@ -6665,38 +6565,6 @@
         "UIZoomControl": {
           "c2c64b24d0": "リセット"
         },
-        "VoicePane": {
-          "68de13f72c": "モデルの削除に失敗しました。",
-          "1ba81c0ff0": "推奨",
-          "cfde55c7b0": "モデルのダウンロードに失敗しました。",
-          "43fd4f454b": "音声モデル",
-          "7cf715f891": "が開催されます。",
-          "295d84b849": "一度開始し、もう一度停止します。ホールド: 言いながら言い続ける",
-          "ff9a680010": "トグル: 押す",
-          "ba4a900d1d": "ディクテーションモード",
-          "0121960365": "音声ディクテーションを有効にする",
-          "366e1b4f36": "フォーカスされたペインにテキストを書き込むことができます。",
-          "4465596675": "プレス",
-          "62d2a84d31": "OpenAI APIキーのクリアに失敗しました",
-          "37aba8bb63": "OpenAI APIキーがクリアされました",
-          "8572bbb537": "OpenAI APIキーの保存に失敗しました",
-          "506df81ba6": "OpenAI API キーが保存されました",
-          "91980ce124": "{{value0}} MB",
-          "61a16c8141": "抽出中...",
-          "b6536a1d12": "抽出する",
-          "8f4d2a51d7": "オフライン",
-          "d504ab05f0": "ストリーミング",
-          "fbe5990716": "モデルの選択",
-          "e24f7d43d2": "音声モデルを選択します。ローカル モデルはオフラインで実行されます。クラウド モデルには API キーが必要です。",
-          "174da92062": "ホールド",
-          "118b3c2dee": "トグル",
-          "901985625d": "トグル",
-          "ad5d036ecc": "マイクの許可を要求できませんでした。音声ディクテーションが有効になっていませんでした。",
-          "f9a9cf6928": "音声ディクテーションを有効にする前に、マイクの許可が必要です。",
-          "1eac933202": "macOS のプライバシーとセキュリティを開きました。アクセスを許可した後、ディクテーションを再度有効にします。",
-          "cd9fe37556": "マイクの許可が与えられました",
-          "6fa734ed95": "{{value0}} を削除"
-        },
         "WorktreeSymlinksSection": {
           "1c1e35b219": "{{value0}} を削除",
           "b814c618e2": "リンクされたパス",
@@ -8237,35 +8105,6 @@
               "7c7056940a": "シェル",
               "713c4a2f92": "Windows 上の新規 terminal ペインのデフォルト シェルを選択します。",
               "13715f9d23": "デフォルトのシェル"
-            }
-          }
-        },
-        "voice": {
-          "pane": {
-            "search": {
-              "f6e0dfa61c": "雲",
-              "2d206de105": "APIキー",
-              "04c25a6fb0": "openai",
-              "b9dee49cd7": "ダウンロード",
-              "10d45a9fce": "stt",
-              "3d8b853963": "スピーチ",
-              "080202facb": "モデル",
-              "7640ed9848": "声",
-              "56defcd6c3": "ディクテーションに使用するローカルまたはクラウドの音声テキスト変換モデルを選択します。",
-              "7e62cd7c41": "音声モデル",
-              "931b1a9e53": "押して話をする",
-              "064a9bd94a": "所有",
-              "6fa48bcd41": "トグル",
-              "d86f5600da": "モード",
-              "089d31a45b": "口述筆記",
-              "748b33e531": "ディクテーション動作を切り替えたり、押し続けたりします。",
-              "6a3abb4338": "ディクテーションモード",
-              "e360027a65": "マイクロフォン",
-              "698376a38d": "音声ディクテーション機能のマスター切り替え。",
-              "20574cbc72": "音声ディクテーションを有効にする",
-              "322d457a0d": "転写",
-              "dcc7846641": "クラウド音声テキスト変換モデルに使用される OpenAI API キーを構成します。",
-              "ebfd0b32e5": "OpenAI 文字起こし"
             }
           }
         },

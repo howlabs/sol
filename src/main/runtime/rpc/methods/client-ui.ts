@@ -229,7 +229,6 @@ const UiUpdate = z
     _inlineAgentsDefaultedForAllUsers: z.boolean().optional(),
     trustedOrcaHooks: z.record(z.string(), z.unknown()).optional(),
     setupScriptPromptDismissedRepoIds: StringArray.optional(),
-    projectOrderManualDefaultNoticeDismissed: z.boolean().optional(),
     usageEmptyStateDismissed: z.boolean().optional(),
 
     taskResumeState: TaskResumeState.optional(),

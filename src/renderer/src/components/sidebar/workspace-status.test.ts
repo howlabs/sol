@@ -39,7 +39,7 @@ describe('workspace status drag data', () => {
     expect(readWorkspaceDragData(dataTransfer)).toBe('wt-1')
   })
 
-  it('round-trips selected worktree ids for board batch drops', () => {
+  it('round-trips selected worktree ids for batch drops', () => {
     const dataTransfer = new TestDataTransfer() as unknown as DataTransfer
 
     writeWorkspaceDragData(dataTransfer, ['wt-1', 'wt-2'])
