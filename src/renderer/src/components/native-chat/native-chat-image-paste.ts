@@ -19,7 +19,8 @@ const IMAGE_ATTACHMENT_AGENTS: ReadonlySet<AgentType> = new Set<AgentType>([
   'gemini',
   'cursor',
   'copilot',
-  'droid'
+  'droid',
+  'grok'
 ])
 
 export function getAgentImageHandling(agent: AgentType): AgentImageHandling {

@@ -2580,13 +2580,13 @@ export type GlobalSettings = {
    *  paste with Cmd/Ctrl+V without an intervening Cmd/Ctrl+Shift+C. Defaults
    *  to false so existing users keep the explicit-copy behavior. */
   terminalClipboardOnSelect: boolean
-  /** Why: lets TUIs like tmux, nvim, and fzf copy to the system clipboard via
-   *  the OSC 52 escape sequence — essential for SSH-hosted workflows where
+  /** Why: lets TUIs like Grok, tmux, nvim, and fzf copy to the system clipboard
+   *  via the OSC 52 escape sequence — essential for SSH-hosted workflows where
    *  the terminal is the only bridge to the local clipboard. Defaults to
-   *  false because OSC 52 is a classic data-exfiltration vector (any
-   *  process piping untrusted output into the terminal — `cat attacker.log`
-   *  — can silently rewrite the user's clipboard). Opt-in preserves the
-   *  conservative default while making the capability one toggle away. */
+   *  true so Grok/SSH copy works without a settings hunt; still toggleable
+   *  because OSC 52 is a classic data-exfiltration vector (any process
+   *  piping untrusted output into the terminal — `cat attacker.log`
+   *  — can silently rewrite the user's clipboard). */
   terminalAllowOsc52Clipboard: boolean
   /** Experimental Claude Code Agent Teams integration. Native panes use a
    *  tmux-compatible shim so teammate output stays on Orca's normal PTY path. */

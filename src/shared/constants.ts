@@ -252,7 +252,9 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     windowBackgroundBlur: false,
     minimizeToTrayOnClose: false,
     terminalClipboardOnSelect: false,
-    terminalAllowOsc52Clipboard: false,
+    // Why: Grok CLI and other TUIs rely on OSC 52 write for remote copy; keep
+    // user-toggleable but default on so SSH/agent copy works out of the box.
+    terminalAllowOsc52Clipboard: true,
     claudeAgentTeamsMode: 'off',
     setupScriptLaunchMode: 'new-tab',
     terminalScrollbackRows: DESKTOP_TERMINAL_SCROLLBACK_ROWS_DEFAULT,

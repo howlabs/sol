@@ -76,8 +76,10 @@ import { useTabStripOverflowNavigation } from './tab-strip-overflow-navigation'
 import { useTabStripDragScrollHandlers } from './tab-strip-drag-scroll'
 import { shouldShowWindowsShellMenu } from './windows-shell-menu-visibility'
 import { canToggleNativeChat } from '../native-chat/native-chat-availability'
+import { isNativeChatTranscriptLocalReadable } from '@/lib/native-chat-transcript-readability'
 import { selectTabAgentTypesByTabId } from './tab-agent-types-by-tab-id'
 import { resolveCommittedTitleAgentType } from '@/lib/pane-agent-evidence'
+import { getConnectionIdFromState } from '@/lib/connection-context'
 
 const isWindows = navigator.userAgent.includes('Windows')
 const NEW_TAB_MENU_TERMINAL_FOCUS_RETRY_MS = 50
@@ -440,6 +442,9 @@ function TabBarInner({
     useShallow((s) => selectTabAgentTypesByTabId(s.agentStatusByPaneKey ?? {}))
   )
   const nativeChatEnabled = useAppStore((s) => s.settings?.experimentalNativeChat === true)
+  const nativeChatTranscriptIsLocalReadable = useAppStore((s) =>
+    isNativeChatTranscriptLocalReadable(getConnectionIdFromState(s, worktreeId))
+  )
 
   // Why: Electron <webview> elements run in a separate process, so clicking
   // inside one never dispatches a pointerdown on the renderer document.
@@ -1036,6 +1041,7 @@ function TabBarInner({
                     launchAgent: terminalTab.launchAgent,
                     detectedAgent,
                     resolvedAgent,
+                    nativeChatTranscriptIsLocalReadable,
                     isChatViewMode: unifiedTabForItem.viewMode === 'chat'
                   })
                 return (

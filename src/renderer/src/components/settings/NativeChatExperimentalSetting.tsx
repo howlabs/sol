@@ -41,7 +41,7 @@ export function NativeChatExperimentalSetting({
       title={translate('auto.components.settings.ExperimentalPane.nativeChat.title', 'Native chat')}
       description={translate(
         'auto.components.settings.ExperimentalPane.nativeChat.description',
-        'Preview the desktop chat surface for Claude and Codex terminal sessions.'
+        'Preview the desktop chat surface for supported agent terminal sessions.'
       )}
       keywords={getExperimentalSearchEntry().nativeChat.keywords}
       className="space-y-1.5"
@@ -54,7 +54,7 @@ export function NativeChatExperimentalSetting({
         )}
         description={translate(
           'auto.components.settings.ExperimentalPane.nativeChat.copy',
-          'Adds a native chat view you can switch to from supported Claude and Codex terminal panes. Experimental while we tune transcript fidelity, streaming, and terminal parity.'
+          'Adds a native chat view you can switch to from supported agent terminal panes. Experimental while we tune transcript fidelity, streaming, and terminal parity.'
         )}
         checked={nativeChatEnabled}
         ariaLabel={translate(
@@ -75,7 +75,7 @@ export function NativeChatExperimentalSetting({
           )}
           description={translate(
             'auto.components.settings.ExperimentalPane.nativeChat.defaultCopy',
-            'Choose how new Claude and Codex terminal tabs open.'
+            'Choose how new supported agent terminal tabs open.'
           )}
           control={
             <Select
