@@ -84,7 +84,7 @@ The `P1` set is too large to treat as a flat list. The high-signal reliability c
 - [#6846](https://github.com/stablyai/orca/issues/6846): remote PTY sessions do not stay alive on disconnect.
 - [#6908](https://github.com/stablyai/orca/issues/6908): WSL project added through UI does not discover branches/base refs, while CLI repo add works.
 - [#6907](https://github.com/stablyai/orca/issues/6907): Codex launched in a WSL worktree does not appear in agent status/sidebar.
-- [#6916](https://github.com/stablyai/orca/issues/6916): OMP launched in a WSL worktree has no live agent status.
+- ~~[#6916](https://github.com/stablyai/orca/issues/6916): OMP launched in a WSL worktree has no live agent status.~~ Obsolete for Sol — OMP removed from the agent catalog.
 - [#6032](https://github.com/stablyai/orca/issues/6032): Remote Orca Servers can lose host-scoped repo and project state.
 - [#6688](https://github.com/stablyai/orca/issues/6688): viewing a diff on remote host errors.
 - [#6753](https://github.com/stablyai/orca/issues/6753): remote-host GitHub merge errors.
@@ -95,7 +95,7 @@ The `P1` set is too large to treat as a flat list. The high-signal reliability c
 - [#6803](https://github.com/stablyai/orca/issues/6803): multiple working agents thrash their order in the sidebar.
 - [#6072](https://github.com/stablyai/orca/issues/6072): mobile keeps showing old agent rows after terminals are closed.
 - [#5913](https://github.com/stablyai/orca/issues/5913): Pi compact agent row remains after closing its terminal tab.
-- [#5718](https://github.com/stablyai/orca/issues/5718): OMP sessions not showing up in Agent Session History or filter options.
+- ~~[#5718](https://github.com/stablyai/orca/issues/5718): OMP sessions not showing up in Agent Session History or filter options.~~ Obsolete for Sol — OMP removed from the agent catalog.
 - [#5404](https://github.com/stablyai/orca/issues/5404): false "agent running" notifications persist after starting Claude Agents on VSSH/WSL.
 
 ### Mobile Terminal and Tabs

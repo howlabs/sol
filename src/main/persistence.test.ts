@@ -4241,9 +4241,7 @@ describe('Store', () => {
       codex: '--dangerously-bypass-approvals-and-sandbox',
       cursor: '--yolo'
     })
-    expect(store.getSettings().agentDefaultEnv).toMatchObject({
-      goose: { GOOSE_MODE: 'auto' }
-    })
+    expect(store.getSettings().agentDefaultEnv).toEqual({})
     expect(store.getSettings().agentYoloDefaultsMigrated).toBe(true)
   })
 
@@ -4254,7 +4252,7 @@ describe('Store', () => {
         settings: {
           agentCmdOverrides: {
             codex: 'codex --profile work',
-            goose: 'goose'
+            hermes: 'hermes'
           }
         }
       })
@@ -4262,7 +4260,7 @@ describe('Store', () => {
     const store = await createStore()
 
     expect(store.getSettings().agentDefaultArgs?.codex).toBe('')
-    expect(store.getSettings().agentDefaultEnv?.goose).toEqual({})
+    expect(store.getSettings().agentDefaultArgs?.hermes).toBe('')
     expect(store.getSettings().agentDefaultArgs?.claude).toBe('--dangerously-skip-permissions')
   })
 
@@ -4274,7 +4272,6 @@ describe('Store', () => {
           agentYoloDefaultsMigrated: true,
           agentDefaultArgs: {
             opencode: '--dangerously-skip-permissions --model opencode/gpt-5',
-            kilo: '--dangerously-skip-permissions',
             codex: '--dangerously-bypass-approvals-and-sandbox'
           }
         }
@@ -4284,14 +4281,12 @@ describe('Store', () => {
     store.flush()
 
     expect(store.getSettings().agentDefaultArgs?.opencode).toBe('--model opencode/gpt-5')
-    expect(store.getSettings().agentDefaultArgs?.kilo).toBe('')
     expect(store.getSettings().agentDefaultArgs?.codex).toBe(
       '--dangerously-bypass-approvals-and-sandbox'
     )
     expect((readDataFile() as PersistedState).settings.agentDefaultArgs?.opencode).toBe(
       '--model opencode/gpt-5'
     )
-    expect((readDataFile() as PersistedState).settings.agentDefaultArgs?.kilo).toBe('')
   })
 
   it('normalizes app icon on load and update', async () => {

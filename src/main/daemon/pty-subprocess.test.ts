@@ -66,7 +66,6 @@ const ORCA_SHELL_WRAPPER_ENV = [
   'ORCA_OPENCODE_CONFIG_DIR',
   'ORCA_MIMOCODE_HOME',
   'ORCA_PI_CODING_AGENT_DIR',
-  'ORCA_OMP_CODING_AGENT_DIR',
   'ORCA_CODEX_HOME'
 ] as const
 const POWERSHELL_OSC133_COMMAND_ARGS = ['-NoLogo', '-NoExit', '-EncodedCommand', expect.any(String)]
@@ -1293,34 +1292,6 @@ describe('createPtySubprocess', () => {
           SHELL: '/bin/zsh',
           MIMOCODE_HOME: '/tmp/orca-mimocode-overlay',
           ORCA_MIMOCODE_HOME: '/tmp/orca-mimocode-overlay'
-        }
-      })
-    } finally {
-      if (platform) {
-        Object.defineProperty(process, 'platform', platform)
-      }
-    }
-
-    const lastCall = spawnMock.mock.calls.at(-1)!
-    expect(lastCall[1]).toEqual(['-l'])
-    expect(lastCall[2].env.ZDOTDIR).toMatch(ZSH_SHELL_READY_DIR)
-    expect(lastCall[2].env.ORCA_SHELL_READY_MARKER).toBe('0')
-  })
-
-  it('uses shell wrapper when typed OMP commands need the status extension', () => {
-    const proc = mockPtyProcess()
-    spawnMock.mockReturnValue(proc)
-    const platform = Object.getOwnPropertyDescriptor(process, 'platform')
-    Object.defineProperty(process, 'platform', { value: 'linux' })
-
-    try {
-      createPtySubprocess({
-        sessionId: 'test',
-        cols: 80,
-        rows: 24,
-        env: {
-          SHELL: '/bin/zsh',
-          ORCA_OMP_STATUS_EXTENSION: '/tmp/.omp/agent/extensions/orca-agent-status.ts'
         }
       })
     } finally {

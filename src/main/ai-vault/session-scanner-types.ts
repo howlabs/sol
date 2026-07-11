@@ -21,11 +21,9 @@ export type AiVaultScanOptions = {
   grokSessionsDir?: string
   devinTranscriptsDir?: string
   hermesSessionsDir?: string
-  rovoSessionsDir?: string
   openclawStateDir?: string
   openclawLegacyStateDir?: string
   piSessionsDir?: string
-  ompSessionsDir?: string
   droidSessionsDir?: string
   droidProjectsDir?: string
   kimiSessionsDir?: string

@@ -1608,7 +1608,7 @@ describe('applyWebSessionTabsSnapshot', () => {
           isActive: true,
           status: 'ready',
           terminal: 'terminal-1',
-          launchAgent: 'omp',
+          launchAgent: 'pi',
           agentStatus: {
             state: 'done',
             prompt: '',
@@ -1629,10 +1629,10 @@ describe('applyWebSessionTabsSnapshot', () => {
     const mirroredPaneKey = makePaneKey(mirroredId!, LEAF_ID)
     expect(patch.tabsByWorktree?.[WT]?.[0]).toMatchObject({
       title: 'OMP ready',
-      launchAgent: 'omp'
+      launchAgent: 'pi'
     })
     expect(patch.agentStatusByPaneKey?.[mirroredPaneKey]).toMatchObject({
-      agentType: 'omp',
+      agentType: 'pi',
       terminalTitle: 'OMP ready'
     })
   })

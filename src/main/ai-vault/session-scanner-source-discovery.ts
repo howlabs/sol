@@ -23,15 +23,10 @@ const GROK_SESSIONS_DIR = join(
   'sessions'
 )
 const HERMES_SESSIONS_DIR = join(homedir(), '.hermes', 'sessions')
-const ROVO_SESSIONS_DIR = join(homedir(), '.rovodev', 'sessions')
 const OPENCLAW_STATE_DIR = process.env.OPENCLAW_STATE_DIR?.trim() || join(homedir(), '.openclaw')
 const PI_SESSIONS_DIR = normalizeAgentSessionsDir(
   process.env.PI_CODING_AGENT_DIR?.trim() || join(homedir(), '.pi', 'agent', 'sessions'),
   '.pi'
-)
-const OMP_SESSIONS_DIR = normalizeAgentSessionsDir(
-  process.env.OMP_CODING_AGENT_DIR?.trim() || join(homedir(), '.omp', 'agent', 'sessions'),
-  '.omp'
 )
 // Why: Devin ATIF transcripts are stored under <DEVIN_HOME>/transcripts.
 const DEVIN_TRANSCRIPTS_DIR = join(
@@ -128,9 +123,7 @@ function standardDiscoveries(
     ...grokDiscoveries(options, wslHomeDirs, limit, issues),
     ...devinDiscoveries(options, wslHomeDirs, limit, issues),
     ...hermesDiscoveries(options, wslHomeDirs, limit, issues),
-    ...rovoDiscoveries(options, wslHomeDirs, limit, issues),
-    ...piDiscoveries(options, wslHomeDirs, limit, issues),
-    ...ompDiscoveries(options, wslHomeDirs, limit, issues)
+    ...piDiscoveries(options, wslHomeDirs, limit, issues)
   ]
 }
 
@@ -214,27 +207,6 @@ function hermesDiscoveries(
   )
 }
 
-function rovoDiscoveries(
-  options: AiVaultScanOptions,
-  wslHomeDirs: readonly string[],
-  limit: number,
-  issues: AiVaultScanIssue[]
-): Promise<SessionFileDiscovery>[] {
-  return sessionRootDirs(options.rovoSessionsDir ?? ROVO_SESSIONS_DIR, wslHomeDirs, [
-    '.rovodev',
-    'sessions'
-  ]).map((rootDir) =>
-    discoverFiles({
-      rootDir,
-      limit,
-      agent: 'rovo',
-      issues,
-      extensions: ['.json'],
-      filePredicate: (path) => basename(path) === 'metadata.json'
-    })
-  )
-}
-
 function piDiscoveries(
   options: AiVaultScanOptions,
   wslHomeDirs: readonly string[],
@@ -247,21 +219,6 @@ function piDiscoveries(
     'sessions'
   ]).map((rootDir) =>
     discoverFiles({ rootDir, limit, agent: 'pi', issues, extensions: ['.jsonl'] })
-  )
-}
-
-function ompDiscoveries(
-  options: AiVaultScanOptions,
-  wslHomeDirs: readonly string[],
-  limit: number,
-  issues: AiVaultScanIssue[]
-): Promise<SessionFileDiscovery>[] {
-  return sessionRootDirs(options.ompSessionsDir ?? OMP_SESSIONS_DIR, wslHomeDirs, [
-    '.omp',
-    'agent',
-    'sessions'
-  ]).map((rootDir) =>
-    discoverFiles({ rootDir, limit, agent: 'omp', issues, extensions: ['.jsonl'] })
   )
 }
 

@@ -79,7 +79,6 @@ function makeSettings(): GlobalSettings {
     editorAutoSave: false,
     editorAutoSaveDelayMs: 1000,
     editorMinimapEnabled: false,
-    markdownReviewToolsEnabled: true,
     terminalFontSize: 14,
     terminalFontFamily: 'monospace',
     terminalFontWeight: 400,

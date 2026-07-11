@@ -80,13 +80,12 @@ Legend:
 | Droid | `droid --resume <sessionId>` verified by local help and Factory CLI docs. | Factory hooks reference includes `session_id`; Orca installs Droid hooks and already subscribes to `SessionStart`. | Exact supported after extraction. |
 | Grok | `grok --resume <SESSION_ID>` verified by local help. | Orca already reads `sessionId`/`session_id` in `getGrokChatHistoryPath`, but only to locate chat history. | Exact supported after preserving that same ID. |
 | Cursor | `cursor-agent --resume <chatId>` and `cursor-agent resume` verified by local help and Cursor docs. | Current Orca Cursor hook install deliberately omits `sessionStart`/`sessionEnd`; the subscribed event set does not currently prove a chat ID source. `cursor-agent create-chat` was locally verified to return a UUID, but preallocation for Orca launches still needs an end-to-end test before relying on it. | Resume verified, ID capture missing. |
-| Pi | `pi --session <path|id>`, `pi --resume`, and `pi --continue` verified by local help and Pi docs. | Orca's bundled Pi/OMP extension posts status events but does not include session file path, session UUID, or session name in the status payload. | Resume verified, ID capture missing. |
-| OMP | Same launch family as Pi in Orca. | Orca reuses Pi extension API shape and does not include exact session pointer. | Resume verified by inheritance only from Pi-like CLI contract; exact OMP ID capture missing. |
+| Pi | `pi --session <path|id>`, `pi --resume`, and `pi --continue` verified by local help and Pi docs. | Orca's bundled Pi extension posts status events but does not include session file path, session UUID, or session name in the status payload. | Resume verified, ID capture missing. |
 | Amp | Orca's managed plugin posts `threadId: event.thread.id`. | Amp is not installed locally, and no exact Amp CLI resume command was verified in this investigation. | ID seen, resume not verified. |
 | Hermes | Orca's managed Hermes plugin selects `session_id` for session/LLM/tool events. | Hermes is not installed locally, and no exact Hermes CLI resume command was verified in this investigation. | ID seen, resume not verified. |
 | Copilot | Orca installs broad Copilot hooks. | Local Copilot CLI not installed; no exact resume command or session ID contract was verified. | Not supported for exact resume yet. |
 | Command Code | Orca installs hooks for `PreToolUse`, `PostToolUse`, and `Stop`. | Local Command Code CLI not installed; no exact resume command or session ID contract was verified. | Not supported for exact resume yet. |
-| openclaude, autohand, aider, goose, kilo, kiro, crush, aug, cline, codebuff, continue, kimi, mistral-vibe, qwen-code, rovo, openclaw | Not investigated to exact-resume standard. | Not in `HOOK_SOURCE_BY_PATHNAME` today. | Out of current hook scope. |
+| openclaude, aider, kiro, cline, kimi, qwen-code, openclaw | Not investigated to exact-resume standard. | Not in `HOOK_SOURCE_BY_PATHNAME` today. | Out of current hook scope. |
 
 ## Exact resume behavior by provider
 
@@ -211,13 +210,13 @@ Not verified:
 
 Conclusion: exact Cursor resume is CLI-supported, but Orca currently needs either a verified hook payload chat ID or a launch preallocation strategy that is tested end to end.
 
-### Pi and OMP
+### Pi
 
 Verified:
 
 - Local `pi --help` shows `--continue`, `--resume`, `--session <path|id>`, `--fork <path|id>`, `--session-dir`, and `--no-session`.
 - Pi docs state `/resume` opens a picker and `pi -r` opens the same picker at startup.
-- Orca's Pi/OMP extension posts status events from Pi's extension API, but the status events do not include session path, UUID, or session name.
+- Orca's Pi extension posts status events from Pi's extension API, but the status events do not include session path, UUID, or session name.
 
 Resume command:
 
@@ -294,7 +293,7 @@ This is the extraction map that is supported by the evidence above:
 ## Open questions that remain genuinely unverified
 
 - Cursor: whether any currently subscribed Cursor hook payload carries `chatId`. If not, the only plausible exact strategy is preallocating a chat with `cursor-agent create-chat` at launch and starting/resuming that known chat. That needs an end-to-end test before productizing.
-- Pi/OMP: whether the extension API can expose the current session file/path/UUID. Current Orca extension does not forward it.
+- Pi: whether the extension API can expose the current session file/path/UUID. Current Orca extension does not forward it.
 - Amp: whether the Amp CLI has an exact thread resume command matching `threadId`.
 - Hermes: whether Hermes has an exact session resume CLI command matching `session_id`.
 - Copilot and Command Code: exact resume command and exact hook session field were not verified because the CLIs were not installed locally and no sufficient primary docs/source were found during this pass.

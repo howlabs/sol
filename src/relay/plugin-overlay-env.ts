@@ -27,13 +27,9 @@ export function resolveOpenCodeSourceConfigDir(
 export function resolvePiSourceAgentDir(
   env: Record<string, string>,
   shell: string | undefined,
-  kind: PiAgentKind
+  _kind: PiAgentKind = 'pi'
 ): string | undefined {
-  const sourceKey = kind === 'omp' ? 'ORCA_OMP_SOURCE_AGENT_DIR' : 'ORCA_PI_SOURCE_AGENT_DIR'
-  const overlayKey = kind === 'omp' ? 'ORCA_OMP_CODING_AGENT_DIR' : 'ORCA_PI_CODING_AGENT_DIR'
-  const otherOverlayKey = kind === 'omp' ? 'ORCA_PI_CODING_AGENT_DIR' : 'ORCA_OMP_CODING_AGENT_DIR'
-
-  const sourceDir = firstNonEmpty(env[sourceKey])
+  const sourceDir = firstNonEmpty(env.ORCA_PI_SOURCE_AGENT_DIR)
   if (sourceDir) {
     return sourceDir
   }
@@ -43,13 +39,13 @@ export function resolvePiSourceAgentDir(
     return startupDir
   }
 
-  // Why: a mismatched Orca overlay shadow means this shell inherited the other
-  // Pi-compatible agent's PTY overlay. Do not remirror that overlay into this
-  // launch; let plugin-overlay default to the selected kind's own home dir.
+  // Why: a mismatched Orca overlay shadow means this shell inherited another
+  // agent's PTY overlay. Do not remirror that overlay into this launch; let
+  // plugin-overlay default to Pi's own home dir.
   if (
     env.PI_CODING_AGENT_DIR &&
-    env.PI_CODING_AGENT_DIR !== env[overlayKey] &&
-    env.PI_CODING_AGENT_DIR !== env[otherOverlayKey]
+    env.PI_CODING_AGENT_DIR !== env.ORCA_PI_CODING_AGENT_DIR &&
+    env.PI_CODING_AGENT_DIR !== env.ORCA_OMP_CODING_AGENT_DIR
   ) {
     return env.PI_CODING_AGENT_DIR
   }

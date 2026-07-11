@@ -44,7 +44,7 @@ import { PortScanHandler } from './port-scan-handler'
 import { AgentExecHandler } from './agent-exec-handler'
 import { WorkspaceSessionHandler } from './workspace-session-handler'
 import { endpointDirForRelaySocket, RelayAgentHookServer } from './agent-hook-server'
-import { PluginOverlayManager, getRelayPiStatusExtensionPath } from './plugin-overlay'
+import { PluginOverlayManager } from './plugin-overlay'
 import {
   AGENT_HOOK_INSTALL_PLUGINS_METHOD,
   AGENT_HOOK_NOTIFICATION_METHOD,
@@ -564,32 +564,15 @@ async function main(): Promise<void> {
       }
     }
     if (pluginOverlay.hasPiSource()) {
-      // Why: source-dir defaulting is keyed on which Pi-compatible agent is
-      // being launched (Pi vs OMP). Install Orca's guarded extension into that
-      // real remote agent dir without redirecting PI_CODING_AGENT_DIR.
+      // Why: install Orca's guarded extension into the real remote Pi agent
+      // dir without redirecting PI_CODING_AGENT_DIR.
       const launchCommandHint = resolveSetupAgentSequenceLaunchCommand(ctx.env, ctx.command)
       const kind = detectPiAgentKindFromCommand(launchCommandHint)
-      const hasLaunchCommand =
-        typeof launchCommandHint === 'string' && launchCommandHint.trim().length > 0
-      const shouldPrepareOmpShadow = kind === 'omp' || !hasLaunchCommand
       if (kind === 'pi') {
         const sourceDir = resolvePiSourceAgentDir(ctx.env, ctx.shell, 'pi')
         const dir = pluginOverlay.materializePi(overlayId, sourceDir, 'pi')
         if (dir) {
           env.ORCA_PI_SOURCE_AGENT_DIR = dir
-        }
-      }
-      if (shouldPrepareOmpShadow) {
-        // Why: in a bare shell, prepare OMP's status extension so a typed
-        // `omp` gets integration, but do not make OMP the shell's home.
-        const sourceDir =
-          kind === 'omp'
-            ? resolvePiSourceAgentDir(ctx.env, ctx.shell, 'omp')
-            : ctx.env.ORCA_OMP_SOURCE_AGENT_DIR
-        const dir = pluginOverlay.materializePi(overlayId, sourceDir, 'omp')
-        if (dir) {
-          env.ORCA_OMP_STATUS_EXTENSION = getRelayPiStatusExtensionPath(dir)
-          env.ORCA_OMP_SOURCE_AGENT_DIR = dir
         }
       }
     }
@@ -623,7 +606,7 @@ async function main(): Promise<void> {
   // change as new agent events are added — pinning them to the relay binary
   // would force a relay redeploy on every Orca update). Cache them so each
   // subsequent PTY spawn can materialize the remote OpenCode overlay and
-  // install Pi/OMP managed extensions. See docs/design/agent-status-over-ssh.md §4.
+  // install Pi managed extensions. See docs/design/agent-status-over-ssh.md §4.
   // Why: bound the per-source size so a buggy/hostile Orca can't OOM the
   // relay by pushing a giant string. The HTTP path has HOOK_REQUEST_MAX_BYTES
   // = 1 MB; the JSON-RPC path needs an equivalent ceiling. Real plugin sources
@@ -631,20 +614,16 @@ async function main(): Promise<void> {
   dispatcher.onRequest(AGENT_HOOK_INSTALL_PLUGINS_METHOD, async (params) => {
     const opencode = params.opencodePluginSource
     const pi = params.piExtensionSource
-    const omp = params.ompExtensionSource
     assertPluginSourceUnderByteCap('opencodePluginSource', opencode)
     assertPluginSourceUnderByteCap('piExtensionSource', pi)
-    assertPluginSourceUnderByteCap('ompExtensionSource', omp)
     pluginOverlay.setSources({
       opencodePluginSource: typeof opencode === 'string' ? opencode : undefined,
-      piExtensionSource: typeof pi === 'string' ? pi : undefined,
-      ompExtensionSource: typeof omp === 'string' ? omp : undefined
+      piExtensionSource: typeof pi === 'string' ? pi : undefined
     })
     return {
       installed: {
         opencode: pluginOverlay.hasOpenCodeSource(),
-        pi: pluginOverlay.hasPiSource('pi'),
-        omp: pluginOverlay.hasPiSource('omp')
+        pi: pluginOverlay.hasPiSource('pi')
       }
     }
   })

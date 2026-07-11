@@ -83,7 +83,6 @@ export function remoteSessionSources(
       parseDevinSessionContent
     ),
     jsonlSource('pi', remoteHome, hostPlatform, remotePiSessionsSegments(), piParser),
-    jsonlSource('omp', remoteHome, hostPlatform, remoteOmpSessionsSegments(), ompParser),
     jsonlSource(
       'droid',
       remoteHome,
@@ -204,15 +203,6 @@ function piParser(
   return parseMessageGraphSessionContent('pi', file, content, platform, options)
 }
 
-function ompParser(
-  file: FileWithMtime,
-  content: string,
-  platform: NodeJS.Platform,
-  options: RemoteParserOptions
-): Promise<AiVaultSession | null> {
-  return parseMessageGraphSessionContent('omp', file, content, platform, options)
-}
-
 function openClawParser(
   file: FileWithMtime,
   content: string,
@@ -228,8 +218,4 @@ function remotePathSegments(path: string): string[] {
 
 function remotePiSessionsSegments(): string[] {
   return normalizeAgentSessionsDir('/.pi/agent/sessions', '.pi').split('/').filter(Boolean)
-}
-
-function remoteOmpSessionsSegments(): string[] {
-  return normalizeAgentSessionsDir('/.omp/agent/sessions', '.omp').split('/').filter(Boolean)
 }

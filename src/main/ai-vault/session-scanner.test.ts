@@ -530,24 +530,6 @@ describe('scanAiVaultSessions', () => {
       })
     )
 
-    await mkdir(join(roots.rovoSessionsDir, 'rovo-session'), { recursive: true })
-    await writeFile(
-      join(roots.rovoSessionsDir, 'rovo-session', 'metadata.json'),
-      JSON.stringify({ title: 'Rovo title', workspace_path: '/tmp/rovo' })
-    )
-    await writeFile(
-      join(roots.rovoSessionsDir, 'rovo-session', 'session_context.json'),
-      JSON.stringify({
-        message_history: [
-          {
-            kind: 'request',
-            timestamp: '2026-05-01T10:06:00.000Z',
-            parts: [{ part_kind: 'user-prompt', content: 'Rovo title' }]
-          }
-        ]
-      })
-    )
-
     await mkdir(join(roots.openclawStateDir, 'agents', 'default', 'sessions'), { recursive: true })
     await writeFile(
       join(roots.openclawStateDir, 'agents', 'default', 'sessions', 'openclaw-session.jsonl'),
@@ -580,44 +562,6 @@ describe('scanAiVaultSessions', () => {
           type: 'message',
           timestamp: '2026-05-01T10:08:01.000Z',
           message: { role: 'user', content: [{ type: 'text', text: 'Pi title' }] }
-        }
-      ])
-    )
-
-    const ompSessionFile = join(roots.ompSessionsDir, 'omp-session.jsonl')
-    await mkdir(roots.ompSessionsDir, { recursive: true })
-    await writeFile(
-      ompSessionFile,
-      jsonLines([
-        {
-          type: 'session',
-          version: 3,
-          id: 'omp-session',
-          title: 'OMP session title',
-          timestamp: '2026-05-01T10:08:30.000Z',
-          cwd: '/tmp/omp'
-        },
-        {
-          type: 'model_change',
-          model: 'gpt-5.4-mini',
-          timestamp: '2026-05-01T10:08:30.500Z'
-        },
-        {
-          type: 'message',
-          timestamp: '2026-05-01T10:08:31.000Z',
-          message: { role: 'user', content: [{ type: 'text', text: 'OMP title' }] }
-        },
-        {
-          type: 'message',
-          timestamp: '2026-05-01T10:08:32.000Z',
-          message: {
-            role: 'assistant',
-            content: [{ type: 'text', text: 'OMP answer' }],
-            model: 'gpt-5.4-mini',
-            // totalTokens deliberately != input+output so the assertion proves
-            // the explicit-total field is read, not an input/output sum.
-            usage: { input: 10, output: 5, totalTokens: 160 }
-          }
         }
       ])
     )
@@ -750,55 +694,15 @@ describe('scanAiVaultSessions', () => {
     expect(commandByAgent.get('hermes')).toBe(
       "cd '/tmp/hermes' && hermes --resume 'hermes-session'"
     )
-    expect(commandByAgent.get('rovo')).toBe(
-      "cd '/tmp/rovo' && acli rovodev run --restore 'rovo-session'"
-    )
     expect(commandByAgent.get('openclaw')).toBe(
       "cd '/tmp/openclaw' && openclaw --resume 'openclaw-session'"
     )
     expect(commandByAgent.get('pi')).toBe("cd '/tmp/pi' && pi --session 'pi-session'")
-    // OMP resumes by absolute transcript path, not by internal session id.
-    expect(commandByAgent.get('omp')).toBe(`cd '/tmp/omp' && omp --resume '${ompSessionFile}'`)
     expect(commandByAgent.get('devin')).toBe("cd '/tmp/devin' && devin --resume 'devin-session'")
     expect(commandByAgent.get('droid')).toBe("cd '/tmp/droid' && droid --resume 'droid-session'")
     expect(commandByAgent.get('kimi')).toBe(
       "cd '/tmp/kimi' && kimi --session 'session_kimi-session'"
     )
-
-    const ompSession = result.sessions.find((session) => session.agent === 'omp')
-    expect(ompSession?.model).toBe('gpt-5.4-mini')
-    expect(ompSession?.totalTokens).toBe(160)
-  })
-
-  it('captures an in-progress OMP model from model_change before any assistant reply', async () => {
-    // OMP writes the model on `model_change.model` (not Pi's `modelId`). With no
-    // assistant message yet, the model must still come through — proving the
-    // model_change fallback rather than assistant-message capture.
-    const root = await mkdtemp(join(tmpdir(), 'orca-ai-vault-omp-mc-'))
-    tempRoots.push(root)
-    const roots = isolatedScanRoots(root)
-    await mkdir(roots.ompSessionsDir, { recursive: true })
-    await writeFile(
-      join(roots.ompSessionsDir, 'omp-in-progress.jsonl'),
-      jsonLines([
-        {
-          type: 'session',
-          id: 'omp-in-progress',
-          timestamp: '2026-05-01T10:00:00.000Z',
-          cwd: '/tmp/omp'
-        },
-        { type: 'model_change', model: 'omp-mc-only-model', timestamp: '2026-05-01T10:00:01.000Z' },
-        {
-          type: 'message',
-          timestamp: '2026-05-01T10:00:02.000Z',
-          message: { role: 'user', content: [{ type: 'text', text: 'first prompt' }] }
-        }
-      ])
-    )
-
-    const result = await scanAiVaultSessions({ ...roots, platform: 'darwin', limit: 5 })
-    const session = result.sessions.find((s) => s.agent === 'omp')
-    expect(session?.model).toBe('omp-mc-only-model')
   })
 
   it('strips newline-heavy Grok user_query envelopes without regex matching', async () => {

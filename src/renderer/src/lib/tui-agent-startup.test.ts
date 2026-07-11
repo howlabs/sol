@@ -81,40 +81,6 @@ describe('buildAgentStartupPlan', () => {
     })
   })
 
-  it('launches Autohand Code first and injects the draft prompt after startup', () => {
-    expect(
-      buildAgentStartupPlan({
-        agent: 'autohand',
-        prompt: 'Add tests for the parser',
-        cmdOverrides: {},
-        platform: 'linux'
-      })
-    ).toEqual({
-      agent: 'autohand',
-      launchCommand: 'autohand',
-      expectedProcess: 'autohand',
-      followupPrompt: 'Add tests for the parser',
-      launchConfig: emptyLaunchConfig('autohand')
-    })
-  })
-
-  it('launches Ante first and injects the draft prompt after startup', () => {
-    expect(
-      buildAgentStartupPlan({
-        agent: 'ante',
-        prompt: 'Summarize the failing tests',
-        cmdOverrides: {},
-        platform: 'linux'
-      })
-    ).toEqual({
-      agent: 'ante',
-      launchCommand: 'ante',
-      expectedProcess: 'ante',
-      followupPrompt: 'Summarize the failing tests',
-      launchConfig: emptyLaunchConfig('ante')
-    })
-  })
-
   it('uses cursor-agent as the actual launch binary', () => {
     expect(
       buildAgentStartupPlan({

@@ -69,26 +69,6 @@ describe('buildTitleDerivedAgentRows', () => {
     ])
   })
 
-  it('normalizes Pi-compatible title-derived rows to the launched OMP owner', () => {
-    const rows = buildWorktreeAgentRows({
-      tabs: [makeTab('tab-1', { launchAgent: 'omp' })],
-      entries: [],
-      retained: [],
-      runtimePaneTitlesByTabId: {
-        'tab-1': {
-          1: '\u280b π: tmp'
-        }
-      },
-      ptyIdsByTabId: { 'tab-1': ['pty-omp'] },
-      terminalLayoutsByTabId: { 'tab-1': makeSingleLayout(LEAF_ID_1) },
-      now: 2000
-    })
-
-    expect(rows.map((row) => [row.agentType, row.state, row.entry.terminalTitle])).toEqual([
-      ['omp', 'working', '\u280b OMP']
-    ])
-  })
-
   it('keeps Pi-compatible title-derived rows as Pi for launched Pi sessions', () => {
     const rows = buildWorktreeAgentRows({
       tabs: [makeTab('tab-1', { launchAgent: 'pi' })],

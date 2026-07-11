@@ -142,7 +142,7 @@ describe('buildWorktreeAgentRows', () => {
 
   it('prefers an unrelated live title over the launched tab agent for unknown rows', () => {
     const rows = buildWorktreeAgentRows({
-      tabs: [makeTab('tab-1', { launchAgent: 'omp', title: '\u280b Codex' })],
+      tabs: [makeTab('tab-1', { launchAgent: 'pi', title: '\u280b Codex' })],
       entries: [
         makeEntry(PANE_KEY_1, 1000, {
           agentType: undefined,
@@ -156,9 +156,9 @@ describe('buildWorktreeAgentRows', () => {
     expect(rows[0].agentType).toBe('codex')
   })
 
-  it('normalizes live Pi-compatible rows from the launched OMP tab agent', () => {
+  it('keeps live Pi-compatible rows attributed to the launched Pi tab agent', () => {
     const rows = buildWorktreeAgentRows({
-      tabs: [makeTab('tab-1', { launchAgent: 'omp', title: '\u280b Pi' })],
+      tabs: [makeTab('tab-1', { launchAgent: 'pi', title: '\u280b Pi' })],
       entries: [
         makeEntry(PANE_KEY_1, 1000, {
           agentType: 'pi',
@@ -169,7 +169,7 @@ describe('buildWorktreeAgentRows', () => {
       now: 2000
     })
 
-    expect(rows[0].agentType).toBe('omp')
+    expect(rows[0].agentType).toBe('pi')
   })
 
   it('resolves retained unknown rows from the launched tab agent', () => {

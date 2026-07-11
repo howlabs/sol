@@ -1,21 +1,36 @@
-import { describe, expect, it, vi } from 'vitest'
-import { rovoPartsText } from './session-scanner-graph-parsers'
+import { describe, expect, it } from 'vitest'
+import { parseMessageGraphSessionContent } from './session-scanner-graph-parsers'
 
 describe('AI Vault graph session parsers', () => {
-  it('folds large Rovo prompt parts without joining the selected text', () => {
-    const joinSpy = vi.spyOn(Array.prototype, 'join')
-    const result = rovoPartsText(
-      [
-        { part_kind: 'tool-output', content: 'ignored' },
-        { part_kind: 'user-prompt', content: 'Rovo prompt '.repeat(80) },
-        { part_kind: 'text', text: 'tail' }
-      ],
-      'user'
-    )
-    const joinCalls = joinSpy.mock.calls.length
+  it('parses Pi message-graph JSONL content', async () => {
+    const content = [
+      JSON.stringify({
+        type: 'session',
+        id: 'pi-session',
+        timestamp: '2026-05-01T10:00:00.000Z',
+        cwd: '/tmp/pi'
+      }),
+      JSON.stringify({
+        type: 'message',
+        timestamp: '2026-05-01T10:00:01.000Z',
+        message: { role: 'user', content: [{ type: 'text', text: 'Pi vault title' }] }
+      })
+    ].join('\n')
 
-    expect(joinCalls).toBe(0)
-    expect(result?.startsWith('Rovo prompt Rovo prompt')).toBe(true)
-    expect(result?.endsWith('...')).toBe(true)
+    const session = await parseMessageGraphSessionContent(
+      'pi',
+      {
+        path: '/tmp/pi-session.jsonl',
+        mtimeMs: Date.now(),
+        modifiedAt: '2026-05-01T10:00:01.000Z'
+      },
+      content,
+      'darwin'
+    )
+
+    expect(session?.agent).toBe('pi')
+    expect(session?.sessionId).toBe('pi-session')
+    expect(session?.title).toBe('Pi vault title')
+    expect(session?.cwd).toBe('/tmp/pi')
   })
 })

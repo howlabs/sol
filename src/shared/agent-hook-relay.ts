@@ -41,7 +41,6 @@ export type AgentHookSource =
   | 'mimo-code'
   | 'cursor'
   | 'pi'
-  | 'omp'
   | 'droid'
   | 'command-code'
   | 'grok'

@@ -168,23 +168,6 @@ describe('tui agent startup plans', () => {
     })
   })
 
-  it('launches Mistral Vibe through the installed vibe executable', () => {
-    const plan = buildAgentStartupPlan({
-      agent: 'mistral-vibe',
-      prompt: 'fix it',
-      cmdOverrides: {},
-      platform: 'linux'
-    })
-
-    expect(plan).toEqual({
-      agent: 'mistral-vibe',
-      launchCommand: 'vibe',
-      expectedProcess: 'vibe',
-      followupPrompt: 'fix it',
-      launchConfig: { agentCommand: 'vibe', agentArgs: '', agentEnv: {} }
-    })
-  })
-
   it('launches Qwen Code through the installed qwen executable', () => {
     const plan = buildAgentStartupPlan({
       agent: 'qwen-code',
@@ -291,20 +274,20 @@ describe('tui agent startup plans', () => {
 
   it('carries agent launch environment defaults into startup plans', () => {
     const plan = buildAgentStartupPlan({
-      agent: 'goose',
+      agent: 'claude',
       prompt: '',
       cmdOverrides: {},
-      agentEnv: { GOOSE_MODE: 'auto' },
+      agentEnv: { CUSTOM_FLAG: '1' },
       platform: 'linux',
       allowEmptyPromptLaunch: true
     })
 
-    expect(plan?.launchCommand).toBe('goose')
-    expect(plan?.env).toEqual({ GOOSE_MODE: 'auto' })
+    expect(plan?.launchCommand).toBe('claude')
+    expect(plan?.env).toEqual({ CUSTOM_FLAG: '1' })
     expect(plan?.launchConfig).toEqual({
-      agentCommand: 'goose',
+      agentCommand: 'claude',
       agentArgs: '',
-      agentEnv: { GOOSE_MODE: 'auto' }
+      agentEnv: { CUSTOM_FLAG: '1' }
     })
   })
 
@@ -380,18 +363,6 @@ describe('tui agent startup plans', () => {
     expect(plan?.launchCommand).toBe("kiro-cli chat --tui '--trust-all-tools'")
   })
 
-  it('launches Continue through the documented cn binary', () => {
-    const plan = buildAgentStartupPlan({
-      agent: 'continue',
-      prompt: 'fix it',
-      cmdOverrides: {},
-      agentArgs: '--allow "*"',
-      platform: 'linux'
-    })
-
-    expect(plan?.launchCommand).toBe("cn '--allow' '*'")
-  })
-
   it('clears draft environment variables with the target shell syntax', () => {
     expect(
       buildAgentDraftLaunchPlan({
@@ -411,25 +382,6 @@ describe('tui agent startup plans', () => {
         shell: 'cmd'
       })?.launchCommand
     ).toBe('pi & set "ORCA_PI_PREFILL="')
-  })
-
-  it('returns an OMP draft plan with ORCA_OMP_PREFILL (OMP-scoped, not Pi-shared)', () => {
-    // Why: OMP owns its own managed prefill extension and env var.
-    // orca-prefill.ts reads ORCA_OMP_PREFILL for OMP launches — see
-    // src/main/pi/titlebar-extension-service.ts — so a draft plan for OMP
-    // MUST emit that name. A regression here would either silently drop the
-    // draft (Pi var ignored by OMP) or honor a stale Pi-PTY draft.
-    const plan = buildAgentDraftLaunchPlan({
-      agent: 'omp',
-      draft: 'fix the omp regression',
-      cmdOverrides: {},
-      platform: 'linux'
-    })
-
-    expect(plan).not.toBeNull()
-    expect(plan?.env).toEqual({ ORCA_OMP_PREFILL: 'fix the omp regression' })
-    expect(plan?.expectedProcess).toBe('omp')
-    expect(plan?.launchCommand).toBe('omp; unset ORCA_OMP_PREFILL')
   })
 
   it('returns null for oversized Windows flag drafts so callers paste after ready', () => {

@@ -28,9 +28,8 @@ const PATH_SHAPED_PTY_ID = [
   'feature@@a1b2c3d4'
 ].join(sep)
 
-function legacyOverlayPath(kind: 'pi' | 'omp', ptyId: string): string {
-  const rootDir = kind === 'pi' ? 'pi-agent-overlays' : 'omp-agent-overlays'
-  return join(userDataDir, rootDir, ptyId)
+function legacyOverlayPath(ptyId: string): string {
+  return join(userDataDir, 'pi-agent-overlays', ptyId)
 }
 
 describe('PiTitlebarExtensionService legacy overlay paths', () => {
@@ -60,7 +59,7 @@ describe('PiTitlebarExtensionService legacy overlay paths', () => {
   })
 
   it('clears legacy raw path-shaped daemon overlays during teardown', () => {
-    const legacyOverlayDir = legacyOverlayPath('pi', PATH_SHAPED_PTY_ID)
+    const legacyOverlayDir = legacyOverlayPath(PATH_SHAPED_PTY_ID)
     mkdirSync(legacyOverlayDir, { recursive: true })
     writeFileSync(join(legacyOverlayDir, 'stale.txt'), 'stale overlay')
 

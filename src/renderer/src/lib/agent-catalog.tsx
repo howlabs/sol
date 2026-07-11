@@ -3,15 +3,7 @@ import { ClaudeIcon, DroidIcon, OpenAIIcon } from '@/components/status-bar/icons
 import openClaudeLogoUrl from '../../../../resources/openclaude-logo.png?url'
 import type { TuiAgent } from '../../../shared/types'
 import { getTuiAgentLaunchCommand, TUI_AGENT_CONFIG } from '../../../shared/tui-agent-config'
-import {
-  AgentLetterIcon,
-  AiderIcon,
-  CopilotIcon,
-  KiloIcon,
-  OmpIcon,
-  OpenCodeIcon,
-  PiIcon
-} from './agent-icon-glyphs'
+import { AgentLetterIcon, AiderIcon, CopilotIcon, OpenCodeIcon, PiIcon } from './agent-icon-glyphs'
 import { translate } from '@/i18n/i18n'
 import { createLocalizedCatalog } from '@/i18n/localized-catalog'
 
@@ -97,24 +89,10 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     homepageUrl: 'https://mimo.xiaomi.com/coder'
   },
   {
-    id: 'ante',
-    label: translate('auto.lib.agent.catalog.da41abbdd4', 'Ante'),
-    cmd: 'ante',
-    faviconDomain: 'antigma.ai',
-    homepageUrl: 'https://github.com/AntigmaLabs/ante-preview'
-  },
-  {
     id: 'pi',
     label: translate('auto.lib.agent.catalog.302934c5d9', 'Pi'),
     cmd: 'pi',
     homepageUrl: 'https://pi.dev'
-  },
-  {
-    id: 'omp',
-    label: translate('auto.lib.agent.catalog.09973b4d84', 'OMP'),
-    cmd: 'omp',
-    faviconDomain: 'omp.sh',
-    homepageUrl: 'https://omp.sh'
   },
   {
     id: 'gemini',
@@ -137,24 +115,11 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     homepageUrl: 'https://aider.chat/docs/'
   },
   {
-    id: 'goose',
-    label: translate('auto.lib.agent.catalog.8da11d876c', 'Goose'),
-    cmd: 'goose',
-    faviconDomain: 'goose-docs.ai',
-    homepageUrl: 'https://block.github.io/goose/docs/quickstart/'
-  },
-  {
     id: 'amp',
     label: translate('auto.lib.agent.catalog.c73c573939', 'Amp'),
     cmd: 'amp',
     faviconDomain: 'ampcode.com',
     homepageUrl: 'https://ampcode.com/manual#install'
-  },
-  {
-    id: 'kilo',
-    label: translate('auto.lib.agent.catalog.918ba4ffed', 'Kilocode'),
-    cmd: 'kilo',
-    homepageUrl: 'https://kilo.ai/docs/cli'
   },
   {
     id: 'kiro',
@@ -168,39 +133,11 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     homepageUrl: 'https://kiro.dev/docs/cli/'
   },
   {
-    id: 'crush',
-    label: translate('auto.lib.agent.catalog.9477377a2a', 'Charm'),
-    cmd: 'crush',
-    faviconDomain: 'charm.sh',
-    homepageUrl: 'https://github.com/charmbracelet/crush'
-  },
-  {
-    id: 'aug',
-    label: translate('auto.lib.agent.catalog.5e8eff11b3', 'Auggie'),
-    cmd: 'auggie',
-    faviconDomain: 'augmentcode.com',
-    homepageUrl: 'https://docs.augmentcode.com/cli/overview'
-  },
-  {
-    id: 'autohand',
-    label: translate('auto.lib.agent.catalog.1f8a19e9ad', 'Autohand Code'),
-    cmd: 'autohand',
-    faviconDomain: 'autohand.ai',
-    homepageUrl: 'https://github.com/autohandai/code-cli'
-  },
-  {
     id: 'cline',
     label: translate('auto.lib.agent.catalog.cbaf0c2e0b', 'Cline'),
     cmd: 'cline',
     faviconDomain: 'cline.bot',
     homepageUrl: 'https://docs.cline.bot/cline-cli/overview'
-  },
-  {
-    id: 'codebuff',
-    label: translate('auto.lib.agent.catalog.4238b771b5', 'Codebuff'),
-    cmd: 'codebuff',
-    faviconDomain: 'codebuff.com',
-    homepageUrl: 'https://www.codebuff.com/docs/help/quick-start'
   },
   {
     id: 'command-code',
@@ -212,15 +149,6 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     cmd: 'command-code',
     faviconDomain: 'commandcode.ai',
     homepageUrl: 'https://commandcode.ai/docs/quickstart'
-  },
-  {
-    id: 'continue',
-    label: translate('auto.lib.agent.catalog.9e2a9bb87b', 'Continue'),
-    // Why: Continue's terminal agent installs as `cn`; `continue` resolves to
-    // a shell builtin in common shells and is not a reliable executable hint.
-    cmd: 'cn',
-    faviconDomain: 'continue.dev',
-    homepageUrl: 'https://docs.continue.dev/guides/cli'
   },
   {
     id: 'cursor',
@@ -243,15 +171,6 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     homepageUrl: 'https://www.kimi.com/code/docs/en/kimi-code-cli/getting-started.html'
   },
   {
-    id: 'mistral-vibe',
-    label: translate('auto.lib.agent.catalog.ca73055bd0', 'Mistral Vibe'),
-    // Why: `uv tool install mistral-vibe` exposes the interactive CLI as
-    // `vibe`; the package name is not the executable users put on PATH.
-    cmd: 'vibe',
-    faviconDomain: 'mistral.ai',
-    homepageUrl: 'https://github.com/mistralai/mistral-vibe'
-  },
-  {
     id: 'qwen-code',
     label: translate('auto.lib.agent.catalog.bee242fe3d', 'Qwen Code'),
     // Why: QwenLM/qwen-code installs its CLI executable as `qwen`; the package
@@ -259,14 +178,6 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     cmd: 'qwen',
     faviconDomain: 'qwenlm.github.io',
     homepageUrl: 'https://github.com/QwenLM/qwen-code'
-  },
-  {
-    id: 'rovo',
-    label: translate('auto.lib.agent.catalog.4e63c7b956', 'Rovo Dev'),
-    cmd: 'rovo',
-    faviconDomain: 'atlassian.com',
-    homepageUrl:
-      'https://support.atlassian.com/rovo/docs/install-and-run-rovo-dev-cli-on-your-device/'
   },
   {
     id: 'hermes',
@@ -324,14 +235,8 @@ export function AgentIcon({
   if (agent === 'pi') {
     return <PiIcon size={size} />
   }
-  if (agent === 'omp') {
-    return <OmpIcon size={size} />
-  }
   if (agent === 'aider') {
     return <AiderIcon size={size} />
-  }
-  if (agent === 'kilo') {
-    return <KiloIcon size={size} />
   }
   if (agent === 'copilot') {
     return <CopilotIcon size={size} />

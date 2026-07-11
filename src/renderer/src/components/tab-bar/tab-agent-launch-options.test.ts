@@ -47,12 +47,12 @@ describe('tab agent launch options', () => {
   })
 
   it('ranks an exact alias above weaker prefix matches', () => {
-    const options = buildTabAgentLaunchOptions(['codex', 'copilot', 'codebuff'])
+    const options = buildTabAgentLaunchOptions(['codex', 'copilot', 'kiro'])
 
     // "co" prefixes all three; "codex" exactly matches one and must lead.
     expect(findMatchingTabAgentLaunchOptions('codex', options)[0]?.agent).toBe('codex')
     expect(findMatchingTabAgentLaunchOptions('co', options).map((o) => o.agent)).toEqual(
-      expect.arrayContaining(['codex', 'copilot', 'codebuff'])
+      expect.arrayContaining(['codex', 'copilot', 'kiro'])
     )
   })
 

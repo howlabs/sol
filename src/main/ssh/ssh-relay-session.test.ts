@@ -195,9 +195,9 @@ describe('SshRelaySession', () => {
     expect(installPluginsCallIndex).toBeGreaterThanOrEqual(0)
     const installPluginsParams = muxRequestMock.mock.calls[installPluginsCallIndex]?.[1]
     expect(installPluginsParams).toMatchObject({
-      piExtensionSource: expect.stringContaining('/hook/pi'),
-      ompExtensionSource: expect.stringContaining('/hook/omp')
+      piExtensionSource: expect.stringContaining('/hook/pi')
     })
+    expect(installPluginsParams).not.toHaveProperty('ompExtensionSource')
     expect(mockConn.sftp).toHaveBeenCalledTimes(1)
     expect(installRemoteManagedAgentHooksMock).toHaveBeenCalledWith(sftp, '/home/orca')
     expect(sftp.end).toHaveBeenCalledTimes(1)

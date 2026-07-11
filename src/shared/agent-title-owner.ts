@@ -91,8 +91,8 @@ function hasIdleSuffix(title: string, sourceProfile: SyntheticAgentTitleProfile)
 }
 
 /**
- * Why: remote OMP surfaces may report Pi as the live status identity, while
- * launch ownership still identifies the user-selected agent.
+ * Why: Pi-compatible surfaces may report a wrapper label as the live status
+ * identity, while launch ownership still identifies the user-selected agent.
  */
 export function resolveCompatibleAgentTypeForOwner(
   incomingAgentType: AgentType | null | undefined,
