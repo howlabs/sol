@@ -608,9 +608,8 @@ function resolvePiAgentSourceDir(baseEnv: Record<string, string>): string | unde
   const publicDir = readEnvWithProcessFallback(baseEnv, 'PI_CODING_AGENT_DIR')
   const ownOverlayDir = readEnvWithProcessFallback(baseEnv, 'ORCA_PI_CODING_AGENT_DIR')
   const legacyOmpOverlayDir = readEnvWithProcessFallback(baseEnv, 'ORCA_OMP_CODING_AGENT_DIR')
-  // Why: if PI_CODING_AGENT_DIR is just a restored Orca overlay and the
-  // matching source shadow is absent, remirroring it would leak another
-  // agent's overlay tree into this launch. Fall through to defaults.
+  // Why: skip remirroring when PI_CODING_AGENT_DIR is only a restored Orca
+  // overlay (including legacy OMP); fall through to defaults instead.
   if (publicDir && publicDir !== ownOverlayDir && publicDir !== legacyOmpOverlayDir) {
     return publicDir
   }

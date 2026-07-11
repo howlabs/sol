@@ -27,9 +27,8 @@ export const isSafeDescendCandidate = sharedIsSafeDescendCandidate
 
 const PI_AGENT_SUBDIR = 'agent'
 const ORCA_MANAGED_EXTENSION_MARKER = '@orca-managed-pi-extension'
-// Why: old Orca versions used a separate OMP overlay root. Keep the name so
-// upgrade-time cleanup can remove stale PTY-scoped dirs without reintroducing
-// OMP as a launchable agent kind.
+// Why: keep the legacy OMP overlay root name so upgrade cleanup can still
+// remove stale PTY-scoped dirs after OMP was dropped from the catalog.
 const LEGACY_OMP_OVERLAY_ROOT_DIR_NAME = 'omp-agent-overlays'
 
 type ManagedExtensionWriteResult = 'written' | 'skipped-user-owned' | 'failed'
@@ -160,10 +159,8 @@ export class PiTitlebarExtensionService {
   }
 
   clearPty(ptyId: string): void {
-    // Why: PTY teardown doesn't know which kind was launched historically.
-    // Sweep Pi overlay roots plus the legacy OMP overlay root for migration
-    // cleanup. Source-scoped legacy overlays are deliberately left in place
-    // so upgrades never delete user runtime state.
+    // Why: teardown sweeps Pi + legacy OMP overlay roots; source-scoped
+    // overlays stay so upgrades never delete user runtime state.
     for (const kind of Object.keys(OVERLAY_ROOT_DIR_NAME) as PiAgentKind[]) {
       try {
         this.safeRemoveOverlay(this.getPtyOverlayDir(ptyId, kind), this.getOverlayRoot(kind))

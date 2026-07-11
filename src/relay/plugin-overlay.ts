@@ -1,20 +1,6 @@
-// Why: relay-side equivalent of Orca's local agent integration installers.
-// OpenCode still needs a config overlay, while Pi gets Orca-managed extension
-// files installed into the remote agent home. Host paths from the renderer
-// are meaningless on SSH targets, so the relay performs the remote filesystem
-// work itself.
-//
-// Plugin source strings ship over the JSON-RPC channel at session-ready
-// (commit #7) — they are NOT bundled with the relay binary because the
-// relay is versioned independently from Orca and the plugin source changes
-// frequently as new agent events get added (see docs/design/agent-status-
-// over-ssh.md §4 "Why ship the plugin source over the wire").
-//
-// We deliberately do not reuse OpenCodeHookService / PiTitlebarExtensionService
-// directly: those modules import `electron` and ride on Orca's userData
-// path. The relay's electron-free constraint forces a thin parallel
-// implementation rooted at $HOME/.orca-relay/ for OpenCode and at the remote
-// Pi home for that agent.
+// Why: electron-free relay twin of local agent installers. OpenCode gets a
+// config overlay; Pi gets managed extensions under the remote agent home.
+// Plugin sources arrive over JSON-RPC at session-ready (not bundled here).
 
 import { createHash } from 'node:crypto'
 import {
@@ -257,9 +243,8 @@ export class PluginOverlayManager {
       return
     }
     const safe = safeDirName(id)
-    // Why: sweep all overlay roots (OpenCode + Pi + legacy OMP) because PTY
-    // exit doesn't know which kind materialized this id. Per-root scoping
-    // inside safeRemoveOverlay keeps each call bounded to its own tree.
+    // Why: PTY exit may not know which kind materialized this id, so sweep
+    // OpenCode, Pi, and legacy OMP roots (each call stays root-scoped).
     for (const root of [this.opencodeRoot, ...Object.values(this.piRoots), this.legacyOmpRoot]) {
       try {
         safeRemoveOverlay(join(root, safe), root)

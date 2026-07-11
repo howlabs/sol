@@ -39,9 +39,8 @@ export function resolvePiSourceAgentDir(
     return startupDir
   }
 
-  // Why: a mismatched Orca overlay shadow means this shell inherited another
-  // agent's PTY overlay. Do not remirror that overlay into this launch; let
-  // plugin-overlay default to Pi's own home dir.
+  // Why: skip remirroring when PI_CODING_AGENT_DIR is another PTY's overlay
+  // shadow; default to Pi's own home instead.
   if (
     env.PI_CODING_AGENT_DIR &&
     env.PI_CODING_AGENT_DIR !== env.ORCA_PI_CODING_AGENT_DIR &&
