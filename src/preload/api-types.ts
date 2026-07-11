@@ -2723,11 +2723,8 @@ export type PreloadApi = {
   grokAccounts: {
     getStatus: () => Promise<GrokAccountStatus>
     list: () => Promise<GrokRateLimitAccountsState>
-    add: (args?: { deviceCodeEvent?: string }) => Promise<GrokRateLimitAccountsState>
-    reauthenticate: (args: {
-      accountId: string
-      deviceCodeEvent?: string
-    }) => Promise<GrokRateLimitAccountsState>
+    add: () => Promise<GrokRateLimitAccountsState>
+    reauthenticate: (args: { accountId: string }) => Promise<GrokRateLimitAccountsState>
     remove: (args: { accountId: string }) => Promise<GrokRateLimitAccountsState>
     select: (args: { accountId: string | null }) => Promise<GrokRateLimitAccountsState>
     cancelPendingLogin: () => Promise<boolean>

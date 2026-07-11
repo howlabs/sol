@@ -3655,12 +3655,8 @@ const api = {
   grokAccounts: {
     getStatus: (): Promise<GrokAccountStatus> => ipcRenderer.invoke('grokAccounts:getStatus'),
     list: (): Promise<GrokRateLimitAccountsState> => ipcRenderer.invoke('grokAccounts:list'),
-    add: (args?: { deviceCodeEvent?: string }): Promise<GrokRateLimitAccountsState> =>
-      ipcRenderer.invoke('grokAccounts:add', args?.deviceCodeEvent),
-    reauthenticate: (args: {
-      accountId: string
-      deviceCodeEvent?: string
-    }): Promise<GrokRateLimitAccountsState> =>
+    add: (): Promise<GrokRateLimitAccountsState> => ipcRenderer.invoke('grokAccounts:add'),
+    reauthenticate: (args: { accountId: string }): Promise<GrokRateLimitAccountsState> =>
       ipcRenderer.invoke('grokAccounts:reauthenticate', args),
     remove: (args: { accountId: string }): Promise<GrokRateLimitAccountsState> =>
       ipcRenderer.invoke('grokAccounts:remove', args),

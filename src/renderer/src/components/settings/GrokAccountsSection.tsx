@@ -84,7 +84,7 @@ export function GrokAccountsSection(): React.JSX.Element {
     setDeviceCode(null)
     setError(null)
     try {
-      const next = await window.api.grokAccounts.add({ deviceCodeEvent: 'grokAccounts:deviceCode' })
+      const next = await window.api.grokAccounts.add()
       setAccountsState(next)
       await loadStatus()
     } catch (err) {
@@ -129,8 +129,7 @@ export function GrokAccountsSection(): React.JSX.Element {
     setError(null)
     try {
       const next = await window.api.grokAccounts.reauthenticate({
-        accountId,
-        deviceCodeEvent: 'grokAccounts:deviceCode'
+        accountId
       })
       setAccountsState(next)
       await loadStatus()

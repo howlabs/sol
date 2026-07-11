@@ -236,9 +236,19 @@ export class GrokAccountService {
     }
     const account = settings.grokManagedAccounts.find((entry) => entry.id === activeId)
     if (!account) {
+      // Why: active id points to a removed account — clear the stale selection
+      // so launches and rate-limit fetches don't silently fall back to ~/.grok.
+      this.store.updateSettings({ activeGrokManagedAccountId: null })
       return null
     }
-    return resolveOwnedManagedGrokHome(activeId, account.managedGrokHomePath)
+    const ownedPath = resolveOwnedManagedGrokHome(activeId, account.managedGrokHomePath)
+    if (!ownedPath) {
+      // Why: managed dir is missing or not owned by Orca — clear the selection
+      // rather than silently using the wrong Grok login.
+      this.store.updateSettings({ activeGrokManagedAccountId: null })
+      return null
+    }
+    return ownedPath
   }
 }
 

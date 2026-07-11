@@ -25,8 +25,8 @@ export function GrokAccountRow({
     <div
       data-current={active ? 'true' : undefined}
       className={cn(
-        'flex items-center gap-2 rounded-lg border p-2.5',
-        active ? 'border-border/60 bg-accent' : 'border-border/40'
+        'flex items-center gap-2 rounded-lg border p-2.5 transition-colors',
+        active ? 'border-border/60 bg-accent' : 'border-border/40 hover:bg-accent/50'
       )}
     >
       <button
