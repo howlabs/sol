@@ -10,6 +10,10 @@ import { Progress } from './ui/progress'
 import { AlertCircle, Check, Loader2, Minus, Network, RotateCw, X } from '@/lib/icons'
 import type { ChangelogData } from '../../../shared/types'
 import { translate } from '@/i18n/i18n'
+import {
+  getDesktopReleaseTagPageUrl,
+  getDesktopReleasesListingUrl
+} from '../../../shared/desktop-release-feed'
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -18,9 +22,7 @@ function releaseUrlForVersion(version: string | null): string {
   // plain releases listing rather than /releases/latest — /latest also breaks
   // when GitHub's release API is degraded, and the listing is the most
   // reliable manual fallback.
-  return version
-    ? `https://github.com/stablyai/orca/releases/tag/v${version}`
-    : 'https://github.com/stablyai/orca/releases'
+  return version ? getDesktopReleaseTagPageUrl(version) : getDesktopReleasesListingUrl()
 }
 
 function isAnimatedGif(url: string | undefined): boolean {

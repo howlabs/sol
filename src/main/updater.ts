@@ -2,6 +2,7 @@
 import { app, BrowserWindow, powerMonitor } from 'electron'
 import type { NsisUpdater } from 'electron-updater'
 import { is } from '@electron-toolkit/utils'
+import { DESKTOP_RELEASE_LATEST_DOWNLOAD_URL } from '../shared/desktop-release-feed'
 import type { UpdateCheckOptions, UpdateStatus } from '../shared/types'
 import { killAllPty } from './ipc/pty'
 import { withUpdaterSpan } from './observability/instrumentation'
@@ -899,7 +900,7 @@ async function pinDefaultReleaseFeed(
   } else {
     clearPrereleaseFallbackContext()
     clearPublishingWindowLastGoodCheck()
-    const url = 'https://github.com/stablyai/orca/releases/latest/download'
+    const url = DESKTOP_RELEASE_LATEST_DOWNLOAD_URL
     console.info(
       `[updater] release feed fallback: current=${currentVersion} includePrerelease=${includePrerelease} → ${url}`
     )
@@ -1290,7 +1291,7 @@ export function setupAutoUpdater(
   // moving /latest redirect changing between check and download.
   autoUpdater.setFeedURL({
     provider: 'generic',
-    url: 'https://github.com/stablyai/orca/releases/latest/download'
+    url: DESKTOP_RELEASE_LATEST_DOWNLOAD_URL
   })
 
   if (autoUpdaterInitialized) {
