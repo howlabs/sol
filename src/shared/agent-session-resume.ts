@@ -184,10 +184,13 @@ export function extractAgentProviderSession(
     case 'amp':
     case 'cursor':
     case 'pi':
-    case 'omp':
     case 'command-code':
     case 'copilot':
     case 'hermes':
+      return null
+    default:
+      // Why: residual hook sources (including retired agents still on the wire
+      // type) do not publish provider session metadata for sleep/resume.
       return null
   }
 }

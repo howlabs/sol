@@ -1,6 +1,4 @@
 import { createReadStream } from 'node:fs'
-import { readFile } from 'node:fs/promises'
-import { basename, dirname, join } from 'node:path'
 import { createInterface } from 'node:readline'
 import type { AiVaultSession } from '../../shared/ai-vault-types'
 import type { ExecutionHostId } from '../../shared/execution-host'
@@ -12,21 +10,15 @@ import type {
 import {
   accumulatorFoldResumeState,
   addPreviewContent,
-  addPreviewMessage,
   createAccumulator,
-  finalizeSession,
   sessionIdFromFileName,
   updateTimeline
 } from './session-scanner-accumulator'
 import {
-  arrayValue,
   asRecord,
-  extractContentText,
   extractMessageText,
   extractString,
-  firstString,
   parseJsonObject,
-  readJsonObjectIfExists,
   tokenTotal
 } from './session-scanner-values'
 
@@ -35,137 +27,9 @@ type ParserSessionOptions = {
   executionHostPlatform?: NodeJS.Platform | null
 }
 
-export async function parseRovoSessionFile(
-  file: FileWithMtime,
-  platform: NodeJS.Platform = process.platform
-): Promise<AiVaultSession | null> {
-  const metadata = asRecord(JSON.parse(await readFile(file.path, 'utf-8')) as unknown)
-  if (!metadata) {
-    return null
-  }
-  const accumulator = createAccumulator({
-    agent: 'rovo',
-    file,
-    sessionId: basename(dirname(file.path))
-  })
-  accumulator.title = firstString(metadata, ['title', 'name', 'summary'])
-  accumulator.cwd = firstString(metadata, [
-    'workspace_path',
-    'workspacePath',
-    'workspace',
-    'cwd',
-    'working_directory',
-    'workingDirectory',
-    'project_path',
-    'projectPath'
-  ])
-  updateTimeline(
-    accumulator,
-    extractString(metadata.created_at) ?? extractString(metadata.createdAt)
-  )
-  updateTimeline(
-    accumulator,
-    extractString(metadata.updated_at) ?? extractString(metadata.updatedAt)
-  )
-
-  const contextPath = join(dirname(file.path), 'session_context.json')
-  const context = await readJsonObjectIfExists(contextPath)
-  if (context) {
-    consumeRovoSessionContext(accumulator, context)
-  }
-
-  return finalizeSession(accumulator, platform)
-}
-
-export function consumeRovoSessionContext(
-  accumulator: SessionAccumulator,
-  context: Record<string, unknown>
-): void {
-  for (const message of arrayValue(context.messages)) {
-    const record = asRecord(message)
-    const role = extractString(record?.role)
-    if (role === 'user' || role === 'assistant') {
-      accumulator.messageCount++
-      updateTimeline(accumulator, extractString(record?.timestamp))
-      if (role === 'user') {
-        accumulator.title ??= extractContentText(record?.content)
-      }
-      addPreviewContent(accumulator, role, record?.content, record?.timestamp)
-    }
-  }
-
-  for (const historyEntry of arrayValue(context.message_history)) {
-    consumeRovoHistoryEntry(accumulator, asRecord(historyEntry))
-  }
-}
-
-export function consumeRovoHistoryEntry(
-  accumulator: SessionAccumulator,
-  record: Record<string, unknown> | null
-): void {
-  if (!record) {
-    return
-  }
-  updateTimeline(accumulator, extractString(record.timestamp))
-  const role = extractString(record.role) ?? rovoRoleFromKind(record.kind)
-  if (role !== 'user' && role !== 'assistant') {
-    return
-  }
-  const text = rovoPartsText(arrayValue(record.parts), role)
-  if (!text) {
-    return
-  }
-  accumulator.messageCount++
-  if (role === 'user') {
-    accumulator.title ??= text
-  }
-  addPreviewMessage(accumulator, {
-    role,
-    text,
-    timestamp: record.timestamp
-  })
-}
-
-export function rovoRoleFromKind(value: unknown): 'user' | 'assistant' | null {
-  if (value === 'request') {
-    return 'user'
-  }
-  if (value === 'response') {
-    return 'assistant'
-  }
-  return null
-}
-
-export function rovoPartsText(parts: unknown[], role: 'user' | 'assistant'): string | null {
-  const textParts: string[] = []
-  for (const part of parts) {
-    const record = asRecord(part)
-    if (!record) {
-      continue
-    }
-    const kind = extractString(record.part_kind)
-    if (role === 'user' && kind !== 'user-prompt' && kind !== 'text') {
-      continue
-    }
-    if (role === 'assistant' && kind !== 'text') {
-      continue
-    }
-    const text =
-      typeof record.content === 'string'
-        ? record.content
-        : typeof record.text === 'string'
-          ? record.text
-          : null
-    if (text !== null) {
-      textParts.push(text)
-    }
-  }
-  return extractContentText(textParts)
-}
-
 // Agents whose transcripts are append-only message-graph JSONL (session +
-// model_change + message records). OMP is a Pi fork and shares the format.
-export type MessageGraphAgent = 'openclaw' | 'pi' | 'omp'
+// model_change + message records).
+export type MessageGraphAgent = 'openclaw' | 'pi'
 
 export async function parseMessageGraphSessionFile(
   agent: MessageGraphAgent,
@@ -210,8 +74,8 @@ function consumeMessageGraphRecordLine(accumulator: SessionAccumulator, line: st
     return
   }
   if (record.type === 'model_change') {
-    // Pi writes `modelId`; OMP writes `model`. Prefer either so an in-progress
-    // session shows its model before the first assistant reply lands.
+    // Why: Pi writes `modelId`; prefer either so an in-progress session shows
+    // its model before the first assistant reply lands.
     accumulator.model =
       extractString(record.modelId) ?? extractString(record.model) ?? accumulator.model
     return

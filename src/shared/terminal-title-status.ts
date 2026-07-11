@@ -161,7 +161,7 @@ export function detectAgentStatusFromTitle(title: string): AgentStatus | null {
     return 'idle'
   }
 
-  // Why: resolve synthetic Pi/OMP permission/idle labels before the broader
+  // Why: resolve synthetic Pi permission/idle labels before the broader
   // Pi and braille-spinner checks below.
   const piCompatibleSyntheticAgentStatus = getPiCompatibleSyntheticAgentStatus(title)
   if (piCompatibleSyntheticAgentStatus) {

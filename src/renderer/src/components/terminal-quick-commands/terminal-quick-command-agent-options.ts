@@ -10,7 +10,6 @@ const QUICK_COMMAND_AGENT_PRESENTATION_ORDER = [
   'copilot',
   'opencode',
   'pi',
-  'omp',
   'cursor',
   'droid',
   'command-code',

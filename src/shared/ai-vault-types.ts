@@ -12,10 +12,8 @@ export const AI_VAULT_AGENTS = [
   'codex',
   'hermes',
   'pi',
-  'omp',
   'cursor',
   'gemini',
-  'rovo',
   'copilot',
   'opencode',
   'grok',
@@ -35,10 +33,8 @@ export const AI_VAULT_AGENT_LABELS = {
   codex: 'Codex',
   hermes: 'Hermes',
   pi: 'Pi',
-  omp: 'OMP',
   cursor: 'Cursor',
   gemini: 'Gemini',
-  rovo: 'Rovo Dev',
   copilot: 'GitHub Copilot',
   opencode: 'OpenCode',
   grok: 'Grok',
@@ -107,17 +103,9 @@ export function buildAiVaultResumeCommand(args: {
   resumeFilePath?: string | null
   shell?: AgentStartupShell
 }): string {
-  const { agent, sessionId, cwd, platform, commandOverride, codexHome, resumeFilePath, shell } =
-    args
+  const { agent, sessionId, cwd, platform, commandOverride, codexHome, shell } = args
   const baseCommand = commandOverride?.trim() || defaultAiVaultResumeCommandBase(agent)
-  // Why: OMP's `--resume` accepts an absolute transcript path, which resolves
-  // regardless of which session-dir root (custom OMP_CODING_AGENT_DIR / WSL
-  // home) the file was discovered under, where an id-prefix lookup scoped to
-  // the default store would miss it. Falls back to the id if no path is known.
-  const resumeTarget = agent === 'omp' && resumeFilePath?.trim() ? resumeFilePath.trim() : sessionId
-  const sessionArg = shell
-    ? quoteStartupArg(resumeTarget, shell)
-    : quoteShellArg(resumeTarget, platform)
+  const sessionArg = shell ? quoteStartupArg(sessionId, shell) : quoteShellArg(sessionId, platform)
   const resumeCommand = buildAgentResumeInvocation(agent, baseCommand, sessionArg)
 
   return buildAiVaultResumeShellCommand({ resumeCommand, cwd, platform, codexHome, shell })
@@ -201,9 +189,6 @@ function defaultAiVaultResumeCommandBase(agent: AiVaultAgent): string {
   if (agent === 'hermes') {
     return 'hermes'
   }
-  if (agent === 'rovo') {
-    return 'acli'
-  }
   return TUI_AGENT_CONFIG[agent].detectCmd
 }
 
@@ -215,8 +200,6 @@ function buildAgentResumeInvocation(
   switch (agent) {
     case 'codex':
       return `${baseCommand} resume ${sessionArg}`
-    case 'rovo':
-      return `${baseCommand} rovodev run --restore ${sessionArg}`
     case 'opencode':
     case 'pi':
     // Why: Kimi Code resumes with `kimi --session <id>` (alias `-S`). Sessions
@@ -234,9 +217,6 @@ function buildAgentResumeInvocation(
     case 'devin':
     case 'openclaw':
     case 'droid':
-    // Why: OMP resumes by absolute transcript path (see buildAiVaultResumeCommand),
-    // but the `--resume <arg>` invocation form is identical to the others here.
-    case 'omp':
       return `${baseCommand} --resume ${sessionArg}`
   }
 }

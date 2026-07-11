@@ -38,7 +38,7 @@ const BASE_ENV = {
 } satisfies Record<string, string>
 
 function createHarness(args: {
-  kind: 'pi' | 'omp'
+  kind: 'pi'
   env?: Record<string, string | undefined>
   title?: string
   argv?: string[]
@@ -151,23 +151,22 @@ function createHarness(args: {
 }
 
 describe('getPiAgentStatusExtensionSource', () => {
-  it('routes an OMP executable through /hook/omp', async () => {
+  it('routes Pi status posts through /hook/pi', async () => {
     const harness = createHarness({
       kind: 'pi',
-      title: 'omp',
       existsSync: () => false
     })
 
     await harness.callHook('agent_start')
 
     expect(harness.fetchMock).toHaveBeenCalledTimes(1)
-    expect(harness.fetchMock.mock.calls[0]?.[0]).toBe('http://127.0.0.1:4321/hook/omp')
+    expect(harness.fetchMock.mock.calls[0]?.[0]).toBe('http://127.0.0.1:4321/hook/pi')
     expect(harness.spawnMock).not.toHaveBeenCalled()
   })
 
   it('keeps native fetch as the only path even when the runtime looks like WSL', async () => {
     const harness = createHarness({
-      kind: 'omp',
+      kind: 'pi',
       env: { WSL_DISTRO_NAME: 'Ubuntu' },
       existsSync: () => true
     })
@@ -180,7 +179,7 @@ describe('getPiAgentStatusExtensionSource', () => {
 
   it('falls back to Windows curl from WSL when fetch fails', async () => {
     const harness = createHarness({
-      kind: 'omp',
+      kind: 'pi',
       env: { WSL_DISTRO_NAME: 'Ubuntu' },
       existsSync: (path) => path === '/mnt/c/Windows/System32/curl.exe',
       fetchImpl: vi.fn(async () => {
@@ -213,7 +212,7 @@ describe('getPiAgentStatusExtensionSource', () => {
       'X-Orca-Agent-Hook-Token: token-1',
       '--data-binary',
       '@-',
-      'http://127.0.0.1:4321/hook/omp'
+      'http://127.0.0.1:4321/hook/pi'
     ])
     // Why: delivery must be fire-and-forget off the pi event loop — no
     // blocking wait — with the payload fed via stdin, never argv.
@@ -236,7 +235,7 @@ describe('getPiAgentStatusExtensionSource', () => {
 
   it('probes WSL evidence and the curl path once per process', async () => {
     const harness = createHarness({
-      kind: 'omp',
+      kind: 'pi',
       existsSync: (path) => path === '/mnt/c/Windows/System32/curl.exe',
       readFileSync: (path) => {
         if (path === '/proc/sys/kernel/osrelease') {
@@ -264,7 +263,7 @@ describe('getPiAgentStatusExtensionSource', () => {
 
   it('stays fail-open on ordinary Linux', async () => {
     const harness = createHarness({
-      kind: 'omp',
+      kind: 'pi',
       existsSync: () => true,
       fetchImpl: vi.fn(async () => {
         throw new Error('loopback unreachable')
@@ -279,7 +278,7 @@ describe('getPiAgentStatusExtensionSource', () => {
 
   it('does not treat WSLENV alone as WSL evidence', async () => {
     const harness = createHarness({
-      kind: 'omp',
+      kind: 'pi',
       env: { WSLENV: 'FOO/u' },
       existsSync: () => true,
       readFileSync: (path) => {
@@ -301,7 +300,7 @@ describe('getPiAgentStatusExtensionSource', () => {
 
   it('remains fail-open when the Windows curl bridge is missing', async () => {
     const harness = createHarness({
-      kind: 'omp',
+      kind: 'pi',
       env: { WSL_DISTRO_NAME: 'Ubuntu' },
       existsSync: () => false,
       fetchImpl: vi.fn(async () => {

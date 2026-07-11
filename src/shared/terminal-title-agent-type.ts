@@ -39,8 +39,8 @@ export function isGeminiTerminalTitle(title: string): boolean {
   ) {
     return true
   }
-  // Why: Pi/OMP titles include cwd/session text; substring matching made
-  // paths like "gemini-project" masquerade as Gemini CLI.
+  // Why: Pi titles include cwd/session text; substring matching made paths
+  // like "gemini-project" masquerade as Gemini CLI.
   if (isPiAgentTitle(title)) {
     return false
   }
@@ -225,8 +225,7 @@ const TITLE_LABEL_TO_AGENT: Partial<Record<string, TuiAgent>> = {
   Cursor: 'cursor',
   Droid: 'droid',
   Hermes: 'hermes',
-  Pi: 'pi',
-  OMP: 'omp'
+  Pi: 'pi'
 }
 
 function hasGenericClaudeStatusPrefix(title: string): boolean {

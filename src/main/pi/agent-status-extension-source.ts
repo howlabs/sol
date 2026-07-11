@@ -2,8 +2,8 @@
 // in-process TypeScript extension API (pi.on('agent_start'), 'tool_call',
 // etc.). To get pi panes into the unified agent-hooks pipeline alongside
 // Claude/Codex/Gemini/OpenCode/Cursor, we ship a bundled extension into
-// the selected Pi/OMP extension dir (PiTitlebarExtensionService) that POSTs to
-// /hook/<kind> using the same ORCA_AGENT_HOOK_* + ORCA_PANE_KEY env that every
+// the selected Pi extension dir (PiTitlebarExtensionService) that POSTs to
+// /hook/pi using the same ORCA_AGENT_HOOK_* + ORCA_PANE_KEY env that every
 // PTY already receives from ipc/pty.ts.
 //
 // Each Pi process gets its own paneKey through env. Like the OpenCode plugin,
@@ -20,8 +20,8 @@ export function getPiAgentStatusExtensionSource(kind: PiAgentKind = 'pi'): strin
   // the same endpoint file the OpenCode plugin reads (process.env is frozen
   // at PTY spawn, so on Orca restart we have to re-read it from disk).
   return [
-    '// Why: no package-specific type import here. Pi and OMP expose the same',
-    '// extension API, but publish their types under different package names.',
+    '// Why: no package-specific type import here. Pi exposes the extension API',
+    '// under its own package name; keep this source free of Orca imports.',
     '// Why: warn-once so a recurring parse error on a malformed endpoint',
     '// file does not spam stderr inside the pi TUI on every event.',
     'let warnedBadEndpoint = false',
@@ -80,35 +80,11 @@ export function getPiAgentStatusExtensionSource(kind: PiAgentKind = 'pi'): strin
     '  }',
     '}',
     '',
-    'function processName(value: unknown): string {',
-    "  return String(value || '').split(/[\\\\/]/).pop()?.toLowerCase() || ''",
-    '}',
-    '',
-    'function resolveHookPath(): string {',
-    `  const configuredPath = '/hook/${kind}'`,
-    '  const executableNames = [',
-    '    processName(process.title),',
-    '    processName(process.env._),',
-    '    processName(process.argv[1]),',
-    '    processName(process.argv[0])',
-    '  ]',
-    '  const isOmpExecutable = executableNames.some((name) =>',
-    "    ['omp', 'omp.js', 'omp.sh', 'omp.cmd', 'omp.exe', 'omp.bat'].includes(name)",
-    '  )',
-    '  // Why: a bare shell may launch either Pi or OMP after spawn. Runtime',
-    '  // executable detection keeps that status labeled',
-    '  // as OMP instead of silently reporting it as Pi.',
-    '  if (isOmpExecutable) {',
-    "    return '/hook/omp'",
-    '  }',
-    '  return configuredPath',
-    '}',
-    '',
     'async function post(hookEventName: string, extra: Record<string, unknown> = {}): Promise<void> {',
     '  const coords = resolveHookCoords()',
     '  const paneKey = process.env.ORCA_PANE_KEY',
     '  if (!coords.port || !coords.token || !paneKey) return',
-    '  const url = `http://127.0.0.1:${coords.port}${resolveHookPath()}`',
+    `  const url = \`http://127.0.0.1:\${coords.port}/hook/${kind}\``,
     '  const body = JSON.stringify({',
     '    paneKey,',
     "    launchToken: process.env.ORCA_AGENT_LAUNCH_TOKEN || '',",

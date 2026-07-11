@@ -3,7 +3,7 @@ one focused file because the registration helper is stateful and each spawn-path
 assertion reuses the same mocked IPC and node-pty harness. */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { userInfo } from 'node:os'
-import { delimiter, join, posix } from 'node:path'
+import { delimiter, join } from 'node:path'
 import {
   TERMINAL_INPUT_CHUNK_MAX_BYTES,
   TERMINAL_INPUT_MAX_BYTES
@@ -11,11 +11,6 @@ import {
 import { CLIPBOARD_TEXT_MEASURE_YIELD_CODE_UNITS } from '../../shared/clipboard-text'
 const isWindowsHost = process.platform === 'win32'
 const posixOnlyIt = isWindowsHost ? it.skip : it
-const expectedOmpStatusExtension = posix.join(
-  '/tmp/default-omp-agent',
-  'extensions',
-  'orca-agent-status.ts'
-)
 function expectedAttributionShimDir(): string {
   return join(
     '/tmp/orca-user-data',
@@ -354,17 +349,9 @@ describe('registerPtyHandlers', () => {
       ORCA_AGENT_HOOK_PORT: '5678',
       ORCA_AGENT_HOOK_TOKEN: 'agent-token'
     })
-    piBuildPtyEnvMock.mockImplementation(
-      (_ptyId: string, existingAgentDir?: string, kind?: string) =>
-        kind === 'omp'
-          ? {
-              ORCA_OMP_SOURCE_AGENT_DIR: existingAgentDir ?? '/tmp/default-omp-agent',
-              ORCA_OMP_STATUS_EXTENSION: `${existingAgentDir ?? '/tmp/default-omp-agent'}/extensions/orca-agent-status.ts`
-            }
-          : {
-              ORCA_PI_SOURCE_AGENT_DIR: existingAgentDir ?? '/tmp/default-pi-agent'
-            }
-    )
+    piBuildPtyEnvMock.mockImplementation((_ptyId: string, existingAgentDir?: string) => ({
+      ORCA_PI_SOURCE_AGENT_DIR: existingAgentDir ?? '/tmp/default-pi-agent'
+    }))
     isPwshAvailableMock.mockReturnValue(false)
     spawnMock.mockReturnValue({
       onData: vi.fn(() => makeDisposable()),
@@ -946,67 +933,15 @@ describe('registerPtyHandlers', () => {
 
     it('installs Pi managed extensions without redirecting Orca terminal PTY homes', async () => {
       const env = await spawnAndGetEnv(undefined, { PI_CODING_AGENT_DIR: '/tmp/user-pi-agent' })
+      expect(piBuildPtyEnvMock).toHaveBeenCalledTimes(1)
       expect(piBuildPtyEnvMock).toHaveBeenCalledWith(expect.any(String), '/tmp/user-pi-agent', 'pi')
-      expect(piBuildPtyEnvMock).toHaveBeenCalledWith(expect.any(String), undefined, 'omp')
       expect(env.PI_CODING_AGENT_DIR).toBe('/tmp/user-pi-agent')
       expect(env.ORCA_PI_CODING_AGENT_DIR).toBeUndefined()
       expect(env.ORCA_PI_SOURCE_AGENT_DIR).toBe('/tmp/user-pi-agent')
+      // Why: dual OMP install was removed; legacy OMP shadows must stay stripped.
       expect(env.ORCA_OMP_CODING_AGENT_DIR).toBeUndefined()
-      expect(env.ORCA_OMP_STATUS_EXTENSION).toBe(
-        '/tmp/default-omp-agent/extensions/orca-agent-status.ts'
-      )
-    })
-
-    it('threads command: "omp" through to piBuildPtyEnv and emits OMP status metadata', async () => {
-      // Why: OMP launches must emit OMP-named Orca shadow vars (ORCA_OMP_*),
-      // not Pi-named ones. The PI_CODING_AGENT_DIR binary var is unavoidable
-      // (OMP's own binary reads it — see C:\tmp\pr-workspace\oh-my-pi
-      // packages/utils/src/dirs.ts), but every other Orca-owned env name
-      // stays kind-scoped so an OMP PTY never accumulates Pi shadow state.
-      const env = await spawnAndGetEnv(
-        undefined,
-        { PI_CODING_AGENT_DIR: '/tmp/user-omp-agent' },
-        undefined,
-        undefined,
-        'omp'
-      )
-      expect(piBuildPtyEnvMock).toHaveBeenCalledWith(
-        expect.any(String),
-        '/tmp/user-omp-agent',
-        'omp'
-      )
-      expect(env.PI_CODING_AGENT_DIR).toBe('/tmp/user-omp-agent')
-      expect(env.ORCA_OMP_CODING_AGENT_DIR).toBeUndefined()
-      expect(env.ORCA_OMP_STATUS_EXTENSION).toBe(
-        '/tmp/user-omp-agent/extensions/orca-agent-status.ts'
-      )
-      expect(env.ORCA_OMP_SOURCE_AGENT_DIR).toBe('/tmp/user-omp-agent')
-      // CRITICAL: a Pi-named shadow MUST NOT leak into an OMP PTY env.
-      expect(env.ORCA_PI_CODING_AGENT_DIR).toBeUndefined()
-      expect(env.ORCA_PI_SOURCE_AGENT_DIR).toBeUndefined()
-    })
-
-    it('uses sequenced startup env as the OMP launch hint when command is a wrapper', async () => {
-      const env = await spawnAndGetEnv(
-        {
-          PI_CODING_AGENT_DIR: '/tmp/user-omp-agent',
-          [SETUP_AGENT_SEQUENCE_STARTUP_COMMAND_ENV]: 'omp --resume'
-        },
-        undefined,
-        undefined,
-        undefined,
-        'powershell wait-wrapper'
-      )
-
-      expect(piBuildPtyEnvMock).toHaveBeenCalledWith(
-        expect.any(String),
-        '/tmp/user-omp-agent',
-        'omp'
-      )
-      expect(env.ORCA_OMP_STATUS_EXTENSION).toBe(
-        '/tmp/user-omp-agent/extensions/orca-agent-status.ts'
-      )
-      expect(env.ORCA_PI_SOURCE_AGENT_DIR).toBeUndefined()
+      expect(env.ORCA_OMP_SOURCE_AGENT_DIR).toBeUndefined()
+      expect(env.ORCA_OMP_STATUS_EXTENSION).toBeUndefined()
     })
 
     it('mirrors the original Pi source dir when launched from an Orca overlay shell', async () => {
@@ -1020,27 +955,7 @@ describe('registerPtyHandlers', () => {
       expect(env.ORCA_PI_SOURCE_AGENT_DIR).toBe('/tmp/user-pi-agent')
     })
 
-    it('does not use an inherited Pi overlay source for an OMP launch', async () => {
-      const env = await spawnAndGetEnv(
-        {
-          PI_CODING_AGENT_DIR: '/tmp/parent-orca-pi-overlay',
-          ORCA_PI_CODING_AGENT_DIR: '/tmp/parent-orca-pi-overlay',
-          ORCA_PI_SOURCE_AGENT_DIR: '/tmp/user-pi-agent'
-        },
-        undefined,
-        undefined,
-        undefined,
-        'omp'
-      )
-
-      expect(piBuildPtyEnvMock).toHaveBeenCalledWith(expect.any(String), undefined, 'omp')
-      expect(env.ORCA_OMP_CODING_AGENT_DIR).toBeUndefined()
-      expect(env.ORCA_OMP_SOURCE_AGENT_DIR).toBe('/tmp/default-omp-agent')
-      expect(env.ORCA_PI_CODING_AGENT_DIR).toBeUndefined()
-      expect(env.ORCA_PI_SOURCE_AGENT_DIR).toBeUndefined()
-    })
-
-    it('does not use an inherited OMP overlay source for an explicit Pi launch', async () => {
+    it('does not use an inherited legacy OMP overlay source for a Pi launch', async () => {
       const env = await spawnAndGetEnv(
         {
           PI_CODING_AGENT_DIR: '/tmp/parent-orca-omp-overlay',
@@ -1053,6 +968,8 @@ describe('registerPtyHandlers', () => {
         'pi'
       )
 
+      // Why: PI_CODING_AGENT_DIR equal to the legacy OMP overlay is treated as
+      // a restored overlay, not a real user source — fall through to defaults.
       expect(piBuildPtyEnvMock).toHaveBeenCalledWith(expect.any(String), undefined, 'pi')
       expect(env.ORCA_PI_CODING_AGENT_DIR).toBeUndefined()
       expect(env.ORCA_PI_SOURCE_AGENT_DIR).toBe('/tmp/default-pi-agent')
@@ -1425,62 +1342,14 @@ describe('registerPtyHandlers', () => {
 
       it('installs Pi managed extensions without redirecting homes on the daemon path', async () => {
         const env = await daemonSpawnAndGetEnv({ PI_CODING_AGENT_DIR: '/user/.pi/agent' })
+        expect(piBuildPtyEnvMock).toHaveBeenCalledTimes(1)
         expect(piBuildPtyEnvMock).toHaveBeenCalledWith(expect.any(String), '/user/.pi/agent', 'pi')
-        expect(piBuildPtyEnvMock).toHaveBeenCalledWith(expect.any(String), undefined, 'omp')
         expect(env.PI_CODING_AGENT_DIR).toBe('/user/.pi/agent')
         expect(env.ORCA_PI_CODING_AGENT_DIR).toBeUndefined()
         expect(env.ORCA_PI_SOURCE_AGENT_DIR).toBe('/user/.pi/agent')
         expect(env.ORCA_OMP_CODING_AGENT_DIR).toBeUndefined()
-        expect(env.ORCA_OMP_STATUS_EXTENSION).toBe(expectedOmpStatusExtension)
-      })
-
-      it('threads command: "omp" through to piBuildPtyEnv on the daemon path with OMP status metadata', async () => {
-        // Why: mirror of the local-spawn OMP threading assertion. The
-        // daemon path's `command` forwarding could silently regress and
-        // Pi-only tests would still pass.
-        const env = await daemonSpawnAndGetEnv(
-          { PI_CODING_AGENT_DIR: '/user/.omp/agent' },
-          undefined,
-          undefined,
-          undefined,
-          { command: 'omp' }
-        )
-        expect(piBuildPtyEnvMock).toHaveBeenCalledWith(
-          expect.any(String),
-          '/user/.omp/agent',
-          'omp'
-        )
-        expect(env.PI_CODING_AGENT_DIR).toBe('/user/.omp/agent')
-        expect(env.ORCA_OMP_CODING_AGENT_DIR).toBeUndefined()
-        expect(env.ORCA_OMP_STATUS_EXTENSION).toBe(
-          '/user/.omp/agent/extensions/orca-agent-status.ts'
-        )
-        expect(env.ORCA_OMP_SOURCE_AGENT_DIR).toBe('/user/.omp/agent')
-        expect(env.ORCA_PI_CODING_AGENT_DIR).toBeUndefined()
-        expect(env.ORCA_PI_SOURCE_AGENT_DIR).toBeUndefined()
-      })
-
-      it('uses sequenced startup env as the daemon OMP launch hint when command is a wrapper', async () => {
-        const env = await daemonSpawnAndGetEnv(
-          {
-            PI_CODING_AGENT_DIR: '/user/.omp/agent',
-            [SETUP_AGENT_SEQUENCE_STARTUP_COMMAND_ENV]: 'omp --resume'
-          },
-          undefined,
-          undefined,
-          undefined,
-          { command: 'powershell wait-wrapper' }
-        )
-
-        expect(piBuildPtyEnvMock).toHaveBeenCalledWith(
-          expect.any(String),
-          '/user/.omp/agent',
-          'omp'
-        )
-        expect(env.ORCA_OMP_STATUS_EXTENSION).toBe(
-          '/user/.omp/agent/extensions/orca-agent-status.ts'
-        )
-        expect(env.ORCA_PI_SOURCE_AGENT_DIR).toBeUndefined()
+        expect(env.ORCA_OMP_SOURCE_AGENT_DIR).toBeUndefined()
+        expect(env.ORCA_OMP_STATUS_EXTENSION).toBeUndefined()
       })
 
       it('injects the selected Codex home on the daemon path', async () => {

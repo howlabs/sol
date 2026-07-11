@@ -1,20 +1,6 @@
-// Why: relay-side equivalent of Orca's local agent integration installers.
-// OpenCode still needs a config overlay, while Pi/OMP now get Orca-managed
-// extension files installed into the remote agent homes. Host paths from the
-// renderer are meaningless on SSH targets, so the relay performs the remote
-// filesystem work itself.
-//
-// Plugin source strings ship over the JSON-RPC channel at session-ready
-// (commit #7) — they are NOT bundled with the relay binary because the
-// relay is versioned independently from Orca and the plugin source changes
-// frequently as new agent events get added (see docs/design/agent-status-
-// over-ssh.md §4 "Why ship the plugin source over the wire").
-//
-// We deliberately do not reuse OpenCodeHookService / PiTitlebarExtensionService
-// directly: those modules import `electron` and ride on Orca's userData
-// path. The relay's electron-free constraint forces a thin parallel
-// implementation rooted at $HOME/.orca-relay/ for OpenCode and at the remote
-// Pi/OMP homes for those agents.
+// Why: electron-free relay twin of local agent installers. OpenCode gets a
+// config overlay; Pi gets managed extensions under the remote agent home.
+// Plugin sources arrive over JSON-RPC at session-ready (not bundled here).
 
 import { createHash } from 'node:crypto'
 import {
@@ -35,9 +21,10 @@ import type { PiAgentKind } from '../shared/pi-agent-kind'
 const RELAY_HOOKS_DIR = '.orca-relay'
 const OPENCODE_OVERLAY_SUBDIR = 'opencode-overlays'
 const PI_OVERLAY_SUBDIR_BY_KIND: Record<PiAgentKind, string> = {
-  pi: 'pi-overlays',
-  omp: 'omp-overlays'
+  pi: 'pi-overlays'
 }
+// Why: old relays used a separate OMP overlay root; clearOverlay still sweeps it.
+const LEGACY_OMP_OVERLAY_SUBDIR = 'omp-overlays'
 const OPENCODE_PLUGIN_FILE = 'orca-opencode-status.js'
 const PI_EXTENSION_FILE = 'orca-agent-status.ts'
 const PI_AGENT_SUBDIR = 'agent'
@@ -48,15 +35,9 @@ function withOrcaManagedPiExtensionMarker(source: string): string {
     ? source
     : `// ${ORCA_MANAGED_EXTENSION_MARKER}\n${source}`
 }
-// Why: source-dir resolution is keyed off the launching agent (Pi or OMP).
-// Both consume `PI_CODING_AGENT_DIR` but default to different `~/.<kind>/agent`
-// paths on the remote disk. The renderer-chosen launch command flows in via
-// the relay PtyEnvAugmenter ctx; never derived from disk presence (a
-// cross-agent fallback shadows the other agent's user extensions when both
-// are installed).
+
 const PI_AGENT_HOME_DIR_NAME: Record<PiAgentKind, string> = {
-  pi: '.pi',
-  omp: '.omp'
+  pi: '.pi'
 }
 
 function safeDirName(input: string): string {
@@ -75,8 +56,6 @@ export type PluginSources = {
   opencodePluginSource?: string
   /** Source body of Pi's `orca-agent-status.ts` to drop into <overlay>/extensions/. */
   piExtensionSource?: string
-  /** Source body of OMP's `orca-agent-status.ts` to drop into <overlay>/extensions/. */
-  ompExtensionSource?: string
 }
 
 export function getRelayPiStatusExtensionPath(agentDir: string): string {
@@ -86,21 +65,21 @@ export function getRelayPiStatusExtensionPath(agentDir: string): string {
 export class PluginOverlayManager {
   private opencodePluginSource: string | null = null
   private piExtensionSources: Record<PiAgentKind, string | null> = {
-    pi: null,
-    omp: null
+    pi: null
   }
   private homeDir: string
   private opencodeRoot: string
   private piRoots: Record<PiAgentKind, string>
+  private legacyOmpRoot: string
 
   constructor(opts?: { homeDir?: string }) {
     const home = opts?.homeDir ?? homedir()
     this.homeDir = home
     this.opencodeRoot = join(home, RELAY_HOOKS_DIR, OPENCODE_OVERLAY_SUBDIR)
     this.piRoots = {
-      pi: join(home, RELAY_HOOKS_DIR, PI_OVERLAY_SUBDIR_BY_KIND.pi),
-      omp: join(home, RELAY_HOOKS_DIR, PI_OVERLAY_SUBDIR_BY_KIND.omp)
+      pi: join(home, RELAY_HOOKS_DIR, PI_OVERLAY_SUBDIR_BY_KIND.pi)
     }
+    this.legacyOmpRoot = join(home, RELAY_HOOKS_DIR, LEGACY_OMP_OVERLAY_SUBDIR)
   }
 
   /** Replace the cached source bodies. Called from relay.ts when Orca sends
@@ -117,9 +96,6 @@ export class PluginOverlayManager {
     if (typeof sources.piExtensionSource === 'string') {
       this.piExtensionSources.pi = withOrcaManagedPiExtensionMarker(sources.piExtensionSource)
     }
-    if (typeof sources.ompExtensionSource === 'string') {
-      this.piExtensionSources.omp = withOrcaManagedPiExtensionMarker(sources.ompExtensionSource)
-    }
   }
 
   hasOpenCodeSource(): boolean {
@@ -130,7 +106,7 @@ export class PluginOverlayManager {
     if (kind) {
       return this.getPiExtensionSource(kind) !== null
     }
-    return this.piExtensionSources.pi !== null || this.piExtensionSources.omp !== null
+    return this.piExtensionSources.pi !== null
   }
 
   private getPiExtensionSource(kind: PiAgentKind): string | null {
@@ -230,9 +206,8 @@ export class PluginOverlayManager {
     }
   }
 
-  /** Install the Pi/OMP status extension into the remote real agent dir and
-   *  return that directory. `kind` selects which Pi-compatible agent's default
-   *  dir to use when `existingAgentDir` is not supplied. */
+  /** Install the Pi status extension into the remote real agent dir and
+   *  return that directory. */
   materializePi(id: string, existingAgentDir?: string, kind: PiAgentKind = 'pi'): string | null {
     const extensionSource = this.getPiExtensionSource(kind)
     if (!extensionSource || !isUsableId(id)) {
@@ -268,10 +243,9 @@ export class PluginOverlayManager {
       return
     }
     const safe = safeDirName(id)
-    // Why: sweep all overlay roots (OpenCode + each Pi-kind) because PTY exit
-    // doesn't know which kind materialized this id. Per-root scoping inside
-    // safeRemoveOverlay keeps each call bounded to its own tree.
-    for (const root of [this.opencodeRoot, ...Object.values(this.piRoots)]) {
+    // Why: PTY exit may not know which kind materialized this id, so sweep
+    // OpenCode, Pi, and legacy OMP roots (each call stays root-scoped).
+    for (const root of [this.opencodeRoot, ...Object.values(this.piRoots), this.legacyOmpRoot]) {
       try {
         safeRemoveOverlay(join(root, safe), root)
       } catch (err) {

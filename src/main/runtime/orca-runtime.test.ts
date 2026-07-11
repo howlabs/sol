@@ -13225,7 +13225,7 @@ describe('OrcaRuntimeService', () => {
     ])
   })
 
-  it('preserves authoritative OMP identity for Pi-compatible remote terminal snapshots', async () => {
+  it('preserves authoritative Pi identity for Pi-compatible remote terminal snapshots', async () => {
     const runtime = new OrcaRuntimeService(store)
     const leafId = '11111111-1111-4111-8111-111111111111'
     const hostPaneKey = `tab-1:${leafId}`
@@ -13248,7 +13248,7 @@ describe('OrcaRuntimeService', () => {
               parentTabId: 'tab-1',
               leafId,
               title: '\u280b Pi',
-              launchAgent: 'omp',
+              launchAgent: 'pi',
               agentStatus: {
                 state: 'working',
                 prompt: 'fix parity',
@@ -13271,20 +13271,20 @@ describe('OrcaRuntimeService', () => {
     expect(result.tabs[0]).toEqual(
       expect.objectContaining({
         type: 'terminal',
-        title: '\u280b OMP',
-        launchAgent: 'omp',
+        title: '\u280b Pi',
+        launchAgent: 'pi',
         agentStatus: expect.objectContaining({
           state: 'working',
-          agentType: 'omp',
+          agentType: 'pi',
           paneKey: hostPaneKey,
-          terminalTitle: '\u280b OMP'
+          terminalTitle: '\u280b Pi'
         })
       })
     )
   })
 
-  it('derives remote OMP owner from live PTY metadata when the tab snapshot omits it', async () => {
-    const spawn = vi.fn().mockResolvedValue({ id: 'pty-omp' })
+  it('derives remote Pi owner from live PTY metadata when the tab snapshot omits it', async () => {
+    const spawn = vi.fn().mockResolvedValue({ id: 'pty-pi' })
     const runtime = new OrcaRuntimeService(store)
     runtime.setPtyController({
       spawn,
@@ -13295,9 +13295,9 @@ describe('OrcaRuntimeService', () => {
     runtime.attachWindow(1)
 
     await runtime.createTerminal(`path:${TEST_WORKTREE_PATH}`, {
-      command: 'omp',
-      launchAgent: 'omp',
-      title: 'OMP',
+      command: 'pi',
+      launchAgent: 'pi',
+      title: 'Pi',
       activate: true
     })
     const spawnCall = spawn.mock.calls[0]?.[0]
@@ -13325,7 +13325,7 @@ describe('OrcaRuntimeService', () => {
           worktreeId: TEST_WORKTREE_ID,
           leafId,
           paneRuntimeId: 1,
-          ptyId: 'pty-omp',
+          ptyId: 'pty-pi',
           paneTitle: '\u280b π - tmp'
         }
       ],
@@ -13343,7 +13343,7 @@ describe('OrcaRuntimeService', () => {
               id: `${tabId}::${leafId}`,
               parentTabId: tabId,
               leafId,
-              ptyId: 'pty-omp',
+              ptyId: 'pty-pi',
               title: '\u280b π - tmp',
               isActive: true
             }
@@ -13357,40 +13357,40 @@ describe('OrcaRuntimeService', () => {
     expect(result.tabs[0]).toEqual(
       expect.objectContaining({
         type: 'terminal',
-        title: '\u280b OMP',
-        launchAgent: 'omp'
+        title: '\u280b Pi',
+        launchAgent: 'pi'
       })
     )
   })
 
   it('skips the foreground-process probe when the PTY launch agent is already known', async () => {
     // Why: foregroundAgent is only the owner fallback when launchAgent is unknown,
-    // so probing a launched agent (e.g. omp) would burn a relay round-trip on every
+    // so probing a launched agent would burn a relay round-trip on every
     // status transition without ever changing the resolved owner.
-    const getForegroundProcess = vi.fn(async () => 'omp')
+    const getForegroundProcess = vi.fn(async () => 'pi')
     const runtime = new OrcaRuntimeService(store)
     runtime.setPtyController({
-      spawn: vi.fn().mockResolvedValue({ id: 'pty-omp' }),
+      spawn: vi.fn().mockResolvedValue({ id: 'pty-pi' }),
       write: () => true,
       kill: () => true,
       getForegroundProcess
     })
     runtime.attachWindow(1)
     await runtime.createTerminal(`path:${TEST_WORKTREE_PATH}`, {
-      command: 'omp',
-      launchAgent: 'omp',
-      title: 'OMP',
+      command: 'pi',
+      launchAgent: 'pi',
+      title: 'Pi',
       activate: true
     })
 
-    runtime.onPtyData('pty-omp', '\x1b]0;⠋ OMP\x07working\n', 100)
-    runtime.onPtyData('pty-omp', '\x1b]0;OMP ready\x07idle\n', 200)
+    runtime.onPtyData('pty-pi', '\x1b]0;⠋ Pi\x07working\n', 100)
+    runtime.onPtyData('pty-pi', '\x1b]0;Pi ready\x07idle\n', 200)
 
     expect(getForegroundProcess).not.toHaveBeenCalled()
   })
 
   it('probes the foreground process only on a status transition for unknown launch agents', async () => {
-    const getForegroundProcess = vi.fn(async () => 'omp')
+    const getForegroundProcess = vi.fn(async () => 'pi')
     const runtime = createRuntime()
     runtime.setPtyController({
       write: () => true,
@@ -13403,25 +13403,25 @@ describe('OrcaRuntimeService', () => {
     const settleProbe = (): Promise<void> => new Promise((resolve) => setImmediate(resolve))
 
     // Two working frames (spinner churn) collapse to a single status transition.
-    runtime.onPtyData('pty-bg', '\x1b]0;⠋ OMP\x07alpha\n', 100)
-    runtime.onPtyData('pty-bg', '\x1b]0;⠊ OMP\x07bravo\n', 200)
+    runtime.onPtyData('pty-bg', '\x1b]0;⠋ Pi\x07alpha\n', 100)
+    runtime.onPtyData('pty-bg', '\x1b]0;⠊ Pi\x07bravo\n', 200)
     await settleProbe()
     expect(getForegroundProcess).toHaveBeenCalledTimes(1)
 
     // Transition to idle is a second distinct status, so it probes again.
-    runtime.onPtyData('pty-bg', '\x1b]0;OMP ready\x07charlie\n', 300)
+    runtime.onPtyData('pty-bg', '\x1b]0;Pi ready\x07charlie\n', 300)
     await settleProbe()
     expect(getForegroundProcess).toHaveBeenCalledTimes(2)
 
     // A repeated idle frame is not a transition, so it does not probe again.
-    runtime.onPtyData('pty-bg', '\x1b]0;OMP ready\x07delta\n', 400)
+    runtime.onPtyData('pty-bg', '\x1b]0;Pi ready\x07delta\n', 400)
     await settleProbe()
     expect(getForegroundProcess).toHaveBeenCalledTimes(2)
   })
 
-  it('normalizes Pi-compatible mobile session status to OMP for an unknown-launch foreground omp PTY', async () => {
-    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-omp' })
-    const getForegroundProcess = vi.fn(async () => 'omp')
+  it('keeps Pi-compatible mobile session status as Pi for an unknown-launch foreground pi PTY (typed path)', async () => {
+    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-pi-unknown' })
+    const getForegroundProcess = vi.fn(async () => 'pi')
     const runtime = new OrcaRuntimeService(store)
     runtime.setPtyController({
       spawn,
@@ -13430,26 +13430,26 @@ describe('OrcaRuntimeService', () => {
       getForegroundProcess
     })
     const terminal = await runtime.createTerminal(`id:${TEST_WORKTREE_ID}`, {
-      tabId: 'typed-omp-tab',
+      tabId: 'typed-pi-unknown-tab',
       leafId: HEADLESS_LEAF_ID,
       title: 'Terminal'
     })
 
-    runtime.onPtyData('pty-typed-omp', '\x1b]0;Pi ready\x07', 123)
+    runtime.onPtyData('pty-typed-pi-unknown', '\x1b]0;Pi ready\x07', 123)
     await new Promise<void>((resolve) => setImmediate(resolve))
 
     const result = await runtime.listMobileSessionTabs(`id:${TEST_WORKTREE_ID}`)
 
-    expect(getForegroundProcess).toHaveBeenCalledWith('pty-typed-omp')
+    expect(getForegroundProcess).toHaveBeenCalledWith('pty-typed-pi-unknown')
     expect(result.tabs[0]).toEqual(
       expect.objectContaining({
         type: 'terminal',
-        title: 'OMP ready',
+        title: 'Pi ready',
         agentStatus: expect.objectContaining({
           state: 'done',
-          agentType: 'omp',
+          agentType: 'pi',
           terminalHandle: terminal.handle,
-          terminalTitle: 'OMP ready'
+          terminalTitle: 'Pi ready'
         })
       })
     )
@@ -13458,7 +13458,7 @@ describe('OrcaRuntimeService', () => {
 
   it('waits for unknown-launch foreground owner before publishing Pi-compatible mobile status', async () => {
     const foregroundProcess = deferred<string | null>()
-    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-omp' })
+    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-pi-unknown' })
     const getForegroundProcess = vi.fn(() => foregroundProcess.promise)
     const runtime = new OrcaRuntimeService(store)
     runtime.setPtyController({
@@ -13468,20 +13468,20 @@ describe('OrcaRuntimeService', () => {
       getForegroundProcess
     })
     const terminal = await runtime.createTerminal(`id:${TEST_WORKTREE_ID}`, {
-      tabId: 'typed-omp-tab',
+      tabId: 'typed-pi-unknown-tab',
       leafId: HEADLESS_LEAF_ID,
       title: 'Terminal'
     })
     const events: RuntimeMobileSessionTabsResult[] = []
     const unsubscribe = runtime.onMobileSessionTabsChanged((snapshot) => events.push(snapshot))
 
-    runtime.onPtyData('pty-typed-omp', '\x1b]0;Pi ready\x07', 123)
+    runtime.onPtyData('pty-typed-pi-unknown', '\x1b]0;Pi ready\x07', 123)
     await new Promise<void>((resolve) => setImmediate(resolve))
 
-    expect(getForegroundProcess).toHaveBeenCalledWith('pty-typed-omp')
+    expect(getForegroundProcess).toHaveBeenCalledWith('pty-typed-pi-unknown')
     expect(events).toHaveLength(0)
 
-    foregroundProcess.resolve('omp')
+    foregroundProcess.resolve('pi')
     await new Promise<void>((resolve) => setImmediate(resolve))
 
     expect(events).toEqual([
@@ -13489,12 +13489,12 @@ describe('OrcaRuntimeService', () => {
         tabs: [
           expect.objectContaining({
             type: 'terminal',
-            title: 'OMP ready',
+            title: 'Pi ready',
             agentStatus: expect.objectContaining({
               state: 'done',
-              agentType: 'omp',
+              agentType: 'pi',
               terminalHandle: terminal.handle,
-              terminalTitle: 'OMP ready'
+              terminalTitle: 'Pi ready'
             })
           })
         ]
@@ -13506,7 +13506,7 @@ describe('OrcaRuntimeService', () => {
 
   it('keeps same-status Pi-compatible title changes queued behind the foreground owner probe', async () => {
     const foregroundProcess = deferred<string | null>()
-    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-omp' })
+    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-pi-unknown' })
     const getForegroundProcess = vi.fn(() => foregroundProcess.promise)
     const runtime = new OrcaRuntimeService(store)
     runtime.setPtyController({
@@ -13516,22 +13516,22 @@ describe('OrcaRuntimeService', () => {
       getForegroundProcess
     })
     const terminal = await runtime.createTerminal(`id:${TEST_WORKTREE_ID}`, {
-      tabId: 'typed-omp-tab',
+      tabId: 'typed-pi-unknown-tab',
       leafId: HEADLESS_LEAF_ID,
       title: 'Terminal'
     })
     const events: RuntimeMobileSessionTabsResult[] = []
     const unsubscribe = runtime.onMobileSessionTabsChanged((snapshot) => events.push(snapshot))
 
-    runtime.onPtyData('pty-typed-omp', '\x1b]0;Pi ready\x07', 123)
+    runtime.onPtyData('pty-typed-pi-unknown', '\x1b]0;Pi ready\x07', 123)
     await new Promise<void>((resolve) => setImmediate(resolve))
-    runtime.onPtyData('pty-typed-omp', '\x1b]0;Pi idle\x07', 124)
+    runtime.onPtyData('pty-typed-pi-unknown', '\x1b]0;Pi idle\x07', 124)
     await new Promise<void>((resolve) => setImmediate(resolve))
 
     expect(getForegroundProcess).toHaveBeenCalledTimes(1)
     expect(events).toHaveLength(0)
 
-    foregroundProcess.resolve('omp')
+    foregroundProcess.resolve('pi')
     await new Promise<void>((resolve) => setImmediate(resolve))
 
     expect(events).toEqual([
@@ -13539,12 +13539,12 @@ describe('OrcaRuntimeService', () => {
         tabs: [
           expect.objectContaining({
             type: 'terminal',
-            title: 'OMP ready',
+            title: 'Pi ready',
             agentStatus: expect.objectContaining({
               state: 'done',
-              agentType: 'omp',
+              agentType: 'pi',
               terminalHandle: terminal.handle,
-              terminalTitle: 'OMP ready'
+              terminalTitle: 'Pi ready'
             })
           })
         ]
@@ -13557,7 +13557,7 @@ describe('OrcaRuntimeService', () => {
   it('coalesces same-status title frames behind one post-title foreground probe', async () => {
     const staleForegroundProcess = deferred<string | null>()
     const freshForegroundProcess = deferred<string | null>()
-    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-omp' })
+    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-pi-unknown' })
     const getForegroundProcess = vi
       .fn()
       .mockReturnValueOnce(staleForegroundProcess.promise)
@@ -13570,17 +13570,17 @@ describe('OrcaRuntimeService', () => {
       getForegroundProcess
     })
     const terminal = await runtime.createTerminal(`id:${TEST_WORKTREE_ID}`, {
-      tabId: 'typed-omp-tab',
+      tabId: 'typed-pi-unknown-tab',
       leafId: HEADLESS_LEAF_ID,
       title: 'Terminal'
     })
     const events: RuntimeMobileSessionTabsResult[] = []
     const unsubscribe = runtime.onMobileSessionTabsChanged((snapshot) => events.push(snapshot))
 
-    runtime.onPtyData('pty-typed-omp', '\x1b]0;Pi ready\x07', 123)
+    runtime.onPtyData('pty-typed-pi-unknown', '\x1b]0;Pi ready\x07', 123)
     await new Promise<void>((resolve) => setImmediate(resolve))
-    runtime.onPtyData('pty-typed-omp', '\x1b]0;Pi idle\x07', 124)
-    runtime.onPtyData('pty-typed-omp', '\x1b]0;Pi done\x07', 125)
+    runtime.onPtyData('pty-typed-pi-unknown', '\x1b]0;Pi idle\x07', 124)
+    runtime.onPtyData('pty-typed-pi-unknown', '\x1b]0;Pi done\x07', 125)
     await new Promise<void>((resolve) => setImmediate(resolve))
 
     expect(getForegroundProcess).toHaveBeenCalledTimes(1)
@@ -13592,7 +13592,7 @@ describe('OrcaRuntimeService', () => {
     expect(getForegroundProcess).toHaveBeenCalledTimes(2)
     expect(events).toHaveLength(0)
 
-    freshForegroundProcess.resolve('omp')
+    freshForegroundProcess.resolve('pi')
     await new Promise<void>((resolve) => setImmediate(resolve))
 
     expect(getForegroundProcess).toHaveBeenCalledTimes(2)
@@ -13601,12 +13601,12 @@ describe('OrcaRuntimeService', () => {
         tabs: [
           expect.objectContaining({
             type: 'terminal',
-            title: 'OMP ready',
+            title: 'Pi ready',
             agentStatus: expect.objectContaining({
               state: 'done',
-              agentType: 'omp',
+              agentType: 'pi',
               terminalHandle: terminal.handle,
-              terminalTitle: 'OMP ready'
+              terminalTitle: 'Pi ready'
             })
           })
         ]
@@ -13619,7 +13619,7 @@ describe('OrcaRuntimeService', () => {
   it('starts a post-title foreground probe when an older pending probe finds no owner', async () => {
     const staleForegroundProcess = deferred<string | null>()
     const freshForegroundProcess = deferred<string | null>()
-    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-omp' })
+    const spawn = vi.fn().mockResolvedValue({ id: 'pty-typed-pi-unknown' })
     const getForegroundProcess = vi
       .fn()
       .mockReturnValueOnce(staleForegroundProcess.promise)
@@ -13632,7 +13632,7 @@ describe('OrcaRuntimeService', () => {
       getForegroundProcess
     })
     const terminal = await runtime.createTerminal(`id:${TEST_WORKTREE_ID}`, {
-      tabId: 'typed-omp-tab',
+      tabId: 'typed-pi-unknown-tab',
       leafId: HEADLESS_LEAF_ID,
       title: 'Terminal'
     })
@@ -13643,8 +13643,8 @@ describe('OrcaRuntimeService', () => {
       runtime as unknown as {
         refreshPtyForegroundAgentFromController: (ptyId: string) => Promise<boolean>
       }
-    ).refreshPtyForegroundAgentFromController('pty-typed-omp')
-    runtime.onPtyData('pty-typed-omp', '\x1b]0;Pi ready\x07', 123)
+    ).refreshPtyForegroundAgentFromController('pty-typed-pi-unknown')
+    runtime.onPtyData('pty-typed-pi-unknown', '\x1b]0;Pi ready\x07', 123)
     await new Promise<void>((resolve) => setImmediate(resolve))
 
     expect(getForegroundProcess).toHaveBeenCalledTimes(1)
@@ -13656,7 +13656,7 @@ describe('OrcaRuntimeService', () => {
     expect(getForegroundProcess).toHaveBeenCalledTimes(2)
     expect(events).toHaveLength(0)
 
-    freshForegroundProcess.resolve('omp')
+    freshForegroundProcess.resolve('pi')
     await new Promise<void>((resolve) => setImmediate(resolve))
 
     expect(events).toEqual([
@@ -13664,12 +13664,12 @@ describe('OrcaRuntimeService', () => {
         tabs: [
           expect.objectContaining({
             type: 'terminal',
-            title: 'OMP ready',
+            title: 'Pi ready',
             agentStatus: expect.objectContaining({
               state: 'done',
-              agentType: 'omp',
+              agentType: 'pi',
               terminalHandle: terminal.handle,
-              terminalTitle: 'OMP ready'
+              terminalTitle: 'Pi ready'
             })
           })
         ]

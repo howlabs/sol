@@ -271,36 +271,16 @@ describe('resolveTabAgentFromSignals', () => {
     ).toBe('codex')
   })
 
-  it('keeps OMP launch identity over Pi-compatible wrapper titles after activity', () => {
+  it('keeps Pi launch identity over Pi-compatible wrapper titles after activity', () => {
     expect(
       resolveTabAgentFromSignals({
         hasObservedAgentSignal: true,
         isRemote: true,
         title: '⠋ Pi',
         hookAgent: null,
-        launchAgent: 'omp'
+        launchAgent: 'pi'
       })
-    ).toBe('omp')
-
-    expect(
-      resolveTabAgentFromSignals({
-        hasObservedAgentSignal: true,
-        isRemote: true,
-        title: '⠋ Pi',
-        hookAgent: 'pi',
-        launchAgent: 'omp'
-      })
-    ).toBe('omp')
-
-    expect(
-      resolveTabAgentFromSignals({
-        hasObservedAgentSignal: true,
-        isRemote: false,
-        title: '⠋ Pi',
-        hookAgent: 'pi',
-        launchAgent: 'omp'
-      })
-    ).toBe('omp')
+    ).toBe('pi')
 
     expect(
       resolveTabAgentFromSignals({
@@ -309,16 +289,6 @@ describe('resolveTabAgentFromSignals', () => {
         title: 'Terminal 1',
         hookAgent: null,
         siblingHookAgent: 'pi',
-        launchAgent: 'omp'
-      })
-    ).toBe('omp')
-
-    expect(
-      resolveTabAgentFromSignals({
-        hasObservedAgentSignal: true,
-        isRemote: true,
-        title: '⠋ OMP',
-        hookAgent: 'omp',
         launchAgent: 'pi'
       })
     ).toBe('pi')
@@ -330,20 +300,9 @@ describe('resolveTabAgentFromSignals', () => {
         title: 'zsh',
         hookAgent: null,
         focusedCompletedHookAgent: 'pi',
-        launchAgent: 'omp'
+        launchAgent: 'pi'
       })
-    ).toBe('omp')
-
-    expect(
-      resolveTabAgentFromSignals({
-        hasObservedAgentSignal: true,
-        isRemote: false,
-        title: 'zsh',
-        hookAgent: null,
-        siblingCompletedHookAgent: 'pi',
-        launchAgent: 'omp'
-      })
-    ).toBe('omp')
+    ).toBe('pi')
   })
 
   it('prefers explicit hook identity over a conflicting title mention', () => {

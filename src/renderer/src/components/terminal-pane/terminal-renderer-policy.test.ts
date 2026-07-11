@@ -130,7 +130,7 @@ describe('resolvePaneRendererPolicy', () => {
     it('keeps GPU on when a non-Gemini owner emits a Gemini-looking title', () => {
       const decision = resolvePaneRendererPolicy({
         rawTitle: `${GEMINI_WORKING} Gemini CLI`,
-        ownerAgentType: 'omp',
+        ownerAgentType: 'pi',
         userGpuMode: 'auto'
       })
       // Why: OMP ownership is authoritative and outranks raw title text (#7428).
@@ -150,7 +150,7 @@ describe('resolvePaneRendererPolicy', () => {
   })
 
   describe('agent token text cannot flip renderer policy under authoritative owners', () => {
-    const AGENT_TOKENS = ['gemini', 'claude', 'codex', 'opencode', 'cursor', 'omp', 'pi'] as const
+    const AGENT_TOKENS = ['gemini', 'claude', 'codex', 'opencode', 'cursor', 'pi'] as const
 
     for (const token of AGENT_TOKENS) {
       it(`keeps GPU on when a title mentions "${token}" but owner is another agent`, () => {
@@ -167,7 +167,7 @@ describe('resolvePaneRendererPolicy', () => {
     it('keeps GPU on for an OMP owner whose title is exactly the Gemini token', () => {
       const decision = resolvePaneRendererPolicy({
         rawTitle: 'gemini',
-        ownerAgentType: 'omp',
+        ownerAgentType: 'pi',
         userGpuMode: 'auto'
       })
       expect(decision.gpuEnabled).toBe(true)

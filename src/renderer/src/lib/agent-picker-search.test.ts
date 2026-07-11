@@ -13,9 +13,7 @@ const agents = [
   entry('codex', 'Codex', 'codex'),
   entry('copilot', 'GitHub Copilot', 'copilot'),
   entry('opencode', 'OpenCode', 'opencode'),
-  entry('mistral-vibe', 'Mistral Vibe', 'vibe'),
-  entry('qwen-code', 'Qwen Code', 'qwen-code'),
-  entry('crush', 'Charm', 'crush'),
+  entry('qwen-code', 'Qwen Code', 'qwen'),
   entry('antigravity', 'Antigravity', 'agy'),
   entry('cursor', 'Cursor', 'cursor-agent')
 ]
@@ -41,7 +39,6 @@ describe('agent picker search', () => {
 
   it('matches multi-word agents by initials and ordered shorthand', () => {
     expect(searchAgentPickerEntries(agents, 'gc')[0]?.id).toBe('copilot')
-    expect(searchAgentPickerEntries(agents, 'mv')[0]?.id).toBe('mistral-vibe')
     expect(searchAgentPickerEntries(agents, 'qc')[0]?.id).toBe('qwen-code')
   })
 

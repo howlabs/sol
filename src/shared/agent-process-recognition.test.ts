@@ -75,64 +75,14 @@ describe('agent process recognition', () => {
     expect(recognizeAgentProcess('cmd.exe')).toBeNull()
   })
 
-  it('recognizes Ante without classifying ante-prefixed path fragments as the agent', () => {
-    expect(recognizeAgentProcess('ante')).toEqual({
-      agent: 'ante',
-      processName: 'ante'
-    })
-    expect(recognizeAgentProcess('/Users/dev/.ante/bin/ante')).toEqual({
-      agent: 'ante',
-      processName: 'ante'
-    })
-    expect(isExpectedAgentProcess('/Users/dev/.ante/bin/ante', 'ante')).toBe(true)
-    expect(isRecognizedAgentType('ante')).toBe(true)
-    // Why: 'ante' is a common token in directory and binary names; only the
-    // exact normalized basename may classify as the agent.
-    expect(recognizeAgentProcess('ante-obsidian')).toBeNull()
-    expect(recognizeAgentProcess('antechamber')).toBeNull()
-    expect(isExpectedAgentProcess('ante-obsidian', 'ante')).toBe(false)
-  })
-
-  it('does not recognize Ante headless one-shot commands as interactive agents', () => {
-    expect(recognizeAgentProcessFromCommandLine('ante -p "summarize this diff"')).toBeNull()
-    expect(recognizeAgentProcessFromCommandLine('ante -psummarize')).toBeNull()
-    expect(
-      recognizeAgentProcessFromCommandLine('ante --prompt "review this for security issues"')
-    ).toBeNull()
-    expect(
-      recognizeAgentProcessFromCommandLine('ante --prompt=review --output-format minimal')
-    ).toBeNull()
-    expect(recognizeAgentProcessFromCommandLine('ante --resume ses_123')).toEqual({
-      agent: 'ante',
-      processName: 'ante'
-    })
-  })
-
-  it('does not recognize wrapped Ante headless one-shot commands as interactive agents', () => {
-    expect(
-      recognizeAgentProcessFromCommandLine('node /Users/dev/.ante/bin/ante --prompt "review"')
-    ).toBeNull()
-    expect(
-      recognizeAgentProcessFromCommandLine(
-        String.raw`node C:\Users\dev\.ante\bin\ante.cmd -p review`
-      )
-    ).toBeNull()
-    expect(recognizeAgentProcessFromCommandLine('node /Users/dev/.ante/bin/ante')).toEqual({
-      agent: 'ante',
-      processName: 'ante'
-    })
-  })
-
-  it('recognizes Mistral Vibe by its installed executable and legacy alias', () => {
-    expect(recognizeAgentProcess('/home/dev/.local/bin/vibe')).toEqual({
-      agent: 'mistral-vibe',
-      processName: 'vibe'
-    })
-    expect(recognizeAgentProcess('mistral-vibe')).toEqual({
-      agent: 'mistral-vibe',
-      processName: 'mistral-vibe'
-    })
-    expect(isRecognizedAgentType('vibe')).toBe(true)
+  it('does not recognize retired agent CLIs as interactive agents', () => {
+    expect(recognizeAgentProcess('ante')).toBeNull()
+    expect(recognizeAgentProcess('mistral-vibe')).toBeNull()
+    expect(recognizeAgentProcess('vibe')).toBeNull()
+    expect(recognizeAgentProcess('omp')).toBeNull()
+    expect(isRecognizedAgentType('ante')).toBe(false)
+    expect(isRecognizedAgentType('mistral-vibe')).toBe(false)
+    expect(isRecognizedAgentType('omp')).toBe(false)
   })
 
   it('recognizes Qwen Code by its installed qwen executable', () => {

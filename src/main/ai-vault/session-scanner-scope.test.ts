@@ -26,7 +26,6 @@ function scopedScanOptions(claudeProjectsDir: string, extra: Partial<AiVaultScan
     grokSessionsDir: '/nonexistent/grok',
     devinTranscriptsDir: '/nonexistent/devin',
     hermesSessionsDir: '/nonexistent/hermes',
-    rovoSessionsDir: '/nonexistent/rovo',
     openclawStateDir: '/nonexistent/openclaw',
     openclawLegacyStateDir: '/nonexistent/openclaw-legacy',
     piSessionsDir: '/nonexistent/pi',

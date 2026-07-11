@@ -1036,7 +1036,7 @@ describe('connectPanePty', () => {
     expect(deps.updateTabTitle).toHaveBeenCalledWith('tab-1', 'OMP ready')
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'done',
-      agentType: 'omp',
+      agentType: 'pi',
       terminalTitle: 'OMP ready'
     })
   })
@@ -1074,7 +1074,7 @@ describe('connectPanePty', () => {
       agentStatusByPaneKey: {
         [paneKey]: {
           paneKey,
-          agentType: 'omp',
+          agentType: 'pi',
           state: 'working',
           prompt: '',
           updatedAt: Date.now(),
@@ -1135,7 +1135,7 @@ describe('connectPanePty', () => {
     mockStoreState = {
       ...mockStoreState,
       tabsByWorktree: {
-        'wt-1': [{ id: 'tab-1', ptyId: 'tab-pty', launchAgent: 'omp' }]
+        'wt-1': [{ id: 'tab-1', ptyId: 'tab-pty', launchAgent: 'pi' }]
       }
     } as StoreState
     const pane1 = createPane(1)
@@ -1289,7 +1289,7 @@ describe('connectPanePty', () => {
     expect(deps.setRuntimePaneTitle).toHaveBeenCalledWith('tab-1', 1, 'OMP ready')
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'done',
-      agentType: 'omp',
+      agentType: 'pi',
       terminalTitle: 'OMP ready'
     })
   })
@@ -1465,7 +1465,7 @@ describe('connectPanePty', () => {
     expect(deps.setRuntimePaneTitle).toHaveBeenCalledWith('tab-1', 1, 'OMP ready')
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'done',
-      agentType: 'omp',
+      agentType: 'pi',
       terminalTitle: 'OMP ready'
     })
   })
@@ -1502,7 +1502,7 @@ describe('connectPanePty', () => {
     expect(transport.sendInput).toHaveBeenCalledWith('op\x1b[Dm\r')
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'done',
-      agentType: 'omp',
+      agentType: 'pi',
       terminalTitle: 'OMP ready'
     })
   })
@@ -1538,7 +1538,7 @@ describe('connectPanePty', () => {
 
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'done',
-      agentType: 'omp',
+      agentType: 'pi',
       terminalTitle: 'OMP ready'
     })
   })
@@ -1612,7 +1612,7 @@ describe('connectPanePty', () => {
 
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'done',
-      agentType: 'omp',
+      agentType: 'pi',
       terminalTitle: 'OMP ready'
     })
   })
@@ -1657,7 +1657,7 @@ describe('connectPanePty', () => {
 
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'done',
-      agentType: 'omp',
+      agentType: 'pi',
       terminalTitle: 'OMP ready'
     })
   })
@@ -12972,7 +12972,7 @@ describe('connectPanePty', () => {
     transportFactoryQueue.push(transport)
     enableActiveRuntimeEnvironment()
     mockStoreState.tabsByWorktree = {
-      'wt-1': [{ id: 'tab-1', ptyId: 'tab-pty', launchAgent: 'omp' }]
+      'wt-1': [{ id: 'tab-1', ptyId: 'tab-pty', launchAgent: 'pi' }]
     }
     mockStoreState.runtimePaneTitlesByTabId = { 'tab-1': { 1: '\u280b Pi' } }
 
@@ -13014,7 +13014,7 @@ describe('connectPanePty', () => {
       {
         state: 'working',
         prompt: 'fix the remote title',
-        agentType: 'omp'
+        agentType: 'pi'
       },
       '\u280b OMP'
     )
@@ -13033,7 +13033,7 @@ describe('connectPanePty', () => {
       {
         state: 'working',
         prompt: 'keep the remote title',
-        agentType: 'omp'
+        agentType: 'pi'
       },
       '\u280b OMP'
     )
@@ -13045,7 +13045,7 @@ describe('connectPanePty', () => {
     transportFactoryQueue.push(transport)
     enableActiveRuntimeEnvironment()
     mockStoreState.tabsByWorktree = {
-      'wt-1': [{ id: 'tab-1', ptyId: 'tab-pty', launchAgent: 'omp' }]
+      'wt-1': [{ id: 'tab-1', ptyId: 'tab-pty', launchAgent: 'pi' }]
     }
 
     const pane = createPane(1)

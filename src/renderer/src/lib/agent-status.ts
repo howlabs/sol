@@ -118,13 +118,11 @@ const WELL_KNOWN_LABELS: Record<string, string> = {
   cursor: 'Cursor',
   aider: 'Aider',
   pi: 'Pi',
-  omp: 'OMP',
   droid: 'Droid',
   'command-code': 'Command Code',
   grok: 'Grok',
   hermes: 'Hermes',
   devin: 'Devin',
-  ante: 'Ante',
   kimi: 'Kimi'
 }
 
@@ -154,36 +152,25 @@ const ICONABLE_AGENT_TYPES: Record<TuiAgent, true> = {
   'claude-agent-teams': true,
   openclaude: true,
   codex: true,
-  autohand: true,
   opencode: true,
   'mimo-code': true,
   pi: true,
-  omp: true,
   gemini: true,
   antigravity: true,
   aider: true,
-  goose: true,
   amp: true,
-  kilo: true,
   kiro: true,
-  crush: true,
-  aug: true,
   cline: true,
-  codebuff: true,
   'command-code': true,
-  continue: true,
   cursor: true,
   droid: true,
   kimi: true,
-  'mistral-vibe': true,
   'qwen-code': true,
-  rovo: true,
   hermes: true,
   openclaw: true,
   copilot: true,
   grok: true,
-  devin: true,
-  ante: true
+  devin: true
 }
 
 export function agentTypeToIconAgent(agentType: AgentType | null | undefined): TuiAgent | null {

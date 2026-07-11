@@ -87,10 +87,6 @@ describe('MiMo title detection', () => {
 
 describe('Pi-compatible title detection', () => {
   it.each([
-    ['\u280b OMP', 'OMP', 'working'],
-    ['OMP ready', 'OMP', 'idle'],
-    ['OMP', 'OMP', 'idle'],
-    ['OMP - action required', 'OMP', 'permission'],
     ['\u280b Pi', 'Pi', 'working'],
     ['Pi ready', 'Pi', 'idle'],
     // Why: normalizeTerminalTitle collapses idle π frames to bare "Pi"; re-detection
@@ -111,27 +107,25 @@ describe('Pi-compatible title detection', () => {
   })
 
   it.each([
-    ['\u280b Pi', 'omp', '\u280b OMP'],
-    ['Pi ready', 'omp', 'OMP ready'],
-    ['Pi - action required', 'omp', 'OMP - action required'],
-    ['π - tmp', 'omp', 'OMP ready'],
-    ['π: tmp', 'omp', 'OMP ready'],
-    ['\u280b π: tmp', 'omp', '\u280b OMP'],
-    ['\u280b π - tmp', 'omp', '\u280b OMP'],
-    ['\u280b OMP', 'pi', '\u280b Pi']
-  ] as const)('normalizes %s to the authoritative %s owner', (title, owner, expectedTitle) => {
+    ['\u280b Pi', 'pi', '\u280b Pi'],
+    ['Pi ready', 'pi', 'Pi ready'],
+    ['Pi - action required', 'pi', 'Pi - action required'],
+    ['π - tmp', 'pi', 'Pi ready'],
+    ['π: tmp', 'pi', 'Pi ready'],
+    ['\u280b π: tmp', 'pi', '\u280b Pi'],
+    ['\u280b π - tmp', 'pi', '\u280b Pi']
+  ] as const)('normalizes %s under the authoritative %s owner', (title, owner, expectedTitle) => {
     expect(normalizeCompatibleAgentTitleForOwner(title, owner)).toBe(expectedTitle)
   })
 
-  it('preserves Pi-compatible custom titles and unrelated owners', () => {
-    expect(normalizeCompatibleAgentTitleForOwner('Fix pi bugs', 'omp')).toBe('Fix pi bugs')
+  it('preserves custom titles and unrelated owners', () => {
+    expect(normalizeCompatibleAgentTitleForOwner('Fix pi bugs', 'pi')).toBe('Fix pi bugs')
     expect(normalizeCompatibleAgentTitleForOwner('\u280b Pi', 'codex')).toBe('\u280b Pi')
   })
 
   it('identifies titles whose compatible identity can be re-owned', () => {
     expect(hasCompatibleAgentTitleIdentity('Pi ready')).toBe(true)
     expect(hasCompatibleAgentTitleIdentity('π - tmp')).toBe(true)
-    expect(hasCompatibleAgentTitleIdentity('\u280b OMP')).toBe(true)
     expect(hasCompatibleAgentTitleIdentity('Fix pi bugs')).toBe(false)
     expect(hasCompatibleAgentTitleIdentity('\u280b Codex')).toBe(false)
   })
@@ -148,16 +142,16 @@ describe('Pi-compatible title detection', () => {
         terminalTitle: '\u280b Pi',
         stateHistory: []
       },
-      'omp'
+      'pi'
     )
 
-    expect(status.agentType).toBe('omp')
-    expect(status.terminalTitle).toBe('\u280b OMP')
-    expect(resolveCompatibleAgentTypeForOwner('codex', 'omp')).toBe('codex')
+    expect(status.agentType).toBe('pi')
+    expect(status.terminalTitle).toBe('\u280b Pi')
+    expect(resolveCompatibleAgentTypeForOwner('codex', 'pi')).toBe('codex')
   })
 
-  it.each(['~/omp/working', 'omp-harness ready', '~/pi/working', 'pi-scratch ready'])(
-    'does not classify path or hyphen false positive %s',
+  it.each(['~/omp/working', 'omp-harness ready', 'OMP ready', '~/pi/working', 'pi-scratch ready'])(
+    'does not classify path, hyphen, or retired-agent false positive %s',
     (title) => {
       expect(getAgentLabel(title)).toBeNull()
       expect(detectAgentStatusFromTitle(title)).toBeNull()

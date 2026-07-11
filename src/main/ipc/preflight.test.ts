@@ -480,9 +480,6 @@ describe('preflight', () => {
       if (target === 'claude') {
         return { stdout: '/Users/test/.local/bin/claude\n' }
       }
-      if (target === 'continue') {
-        return { stdout: 'continue: shell built-in command\n' }
-      }
       if (target === 'cursor-agent') {
         return { stdout: '/Users/test/.local/bin/cursor-agent\n' }
       }
@@ -708,35 +705,7 @@ describe('preflight', () => {
     await expect(detectInstalledAgents({ wslDistro: 'Ubuntu' })).resolves.toEqual(['claude'])
   })
 
-  it('detects Mistral Vibe from the installed vibe executable', async () => {
-    execFileAsyncMock.mockImplementation(async (command, args) => {
-      if (command !== 'which') {
-        throw new Error(`unexpected command ${String(command)}`)
-      }
-      if (String(args[0]) === 'vibe') {
-        return { stdout: '/home/test/.local/bin/vibe\n' }
-      }
-      throw new Error('not found')
-    })
-
-    await expect(detectInstalledAgents()).resolves.toEqual(['mistral-vibe'])
-  })
-
-  it('deduplicates Mistral Vibe when both current and legacy executables exist', async () => {
-    execFileAsyncMock.mockImplementation(async (command, args) => {
-      if (command !== 'which') {
-        throw new Error(`unexpected command ${String(command)}`)
-      }
-      if (String(args[0]) === 'vibe' || String(args[0]) === 'mistral-vibe') {
-        return { stdout: `/home/test/.local/bin/${String(args[0])}\n` }
-      }
-      throw new Error('not found')
-    })
-
-    await expect(detectInstalledAgents()).resolves.toEqual(['mistral-vibe'])
-  })
-
-  it('sends aliased detection commands through the SSH remote preflight path', async () => {
+  it('sends detection commands through the SSH remote preflight path', async () => {
     const request = vi.fn().mockResolvedValue({ agents: ['openclaude'] })
     getActiveMultiplexerMock.mockReturnValue({
       isDisposed: () => false,
@@ -751,8 +720,7 @@ describe('preflight', () => {
     expect(request).toHaveBeenCalledWith('preflight.detectAgents', {
       commands: expect.arrayContaining([
         { id: 'openclaude', cmd: 'openclaude' },
-        { id: 'mistral-vibe', cmd: 'vibe' },
-        { id: 'mistral-vibe', cmd: 'mistral-vibe' }
+        { id: 'qwen-code', cmd: 'qwen' }
       ])
     })
   })

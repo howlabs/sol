@@ -37,8 +37,7 @@ const TITLE_AGENT_LABEL_TO_TYPE: Record<string, AgentType> = {
   Cursor: 'cursor',
   Droid: 'droid',
   Hermes: 'hermes',
-  Pi: 'pi',
-  OMP: 'omp'
+  Pi: 'pi'
 }
 
 const CLAUDE_AGENT_TOKEN_RE = /(?<![\w./\\-])claude(?![\w./\\-])/i

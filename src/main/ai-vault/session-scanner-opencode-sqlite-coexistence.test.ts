@@ -30,14 +30,12 @@ function isolatedScanRoots(root: string) {
     grokSessionsDir: join(root, 'grok-sessions'),
     devinTranscriptsDir: join(root, 'devin-transcripts'),
     hermesSessionsDir: join(root, 'hermes-sessions'),
-    rovoSessionsDir: join(root, 'rovo-sessions'),
     openclawStateDir: join(root, 'openclaw-state'),
     openclawLegacyStateDir: join(root, 'openclaw-legacy-state'),
     piSessionsDir: join(root, 'pi-sessions'),
     droidSessionsDir: join(root, 'droid-sessions'),
     droidProjectsDir: join(root, 'droid-projects'),
-    kimiSessionsDir: join(root, 'kimi-sessions'),
-    ompSessionsDir: join(root, 'omp-sessions')
+    kimiSessionsDir: join(root, 'kimi-sessions')
   }
 }
 

@@ -1,3 +1,4 @@
+import { join } from 'node:path'
 import { describe, expect, it, vi } from 'vitest'
 import {
   extractPreviewContentText,
@@ -53,19 +54,17 @@ describe('AI Vault session scanner text values', () => {
     expect(result).toBe(`${'a'.repeat(216)}...`)
   })
 
-  it('expands Pi and OMP agent homes to their session directories', () => {
-    expect(normalizeAgentSessionsDir('/agents/.pi', '.pi')).toBe('/agents/.pi/agent/sessions')
-    expect(normalizeAgentSessionsDir('/agents/.pi/agent', '.pi')).toBe('/agents/.pi/agent/sessions')
-    expect(normalizeAgentSessionsDir('/agents/.pi/agent/sessions', '.pi')).toBe(
-      '/agents/.pi/agent/sessions'
+  it('expands Pi agent homes to their session directories', () => {
+    // Why: normalizeAgentSessionsDir uses path.join, so expectations must match
+    // the host path separator (Windows vs POSIX).
+    expect(normalizeAgentSessionsDir(join('/agents', '.pi'), '.pi')).toBe(
+      join('/agents', '.pi', 'agent', 'sessions')
     )
-
-    expect(normalizeAgentSessionsDir('/agents/.omp', '.omp')).toBe('/agents/.omp/agent/sessions')
-    expect(normalizeAgentSessionsDir('/agents/.omp/agent', '.omp')).toBe(
-      '/agents/.omp/agent/sessions'
+    expect(normalizeAgentSessionsDir(join('/agents', '.pi', 'agent'), '.pi')).toBe(
+      join('/agents', '.pi', 'agent', 'sessions')
     )
-    expect(normalizeAgentSessionsDir('/agents/.omp/agent/sessions', '.omp')).toBe(
-      '/agents/.omp/agent/sessions'
+    expect(normalizeAgentSessionsDir(join('/agents', '.pi', 'agent', 'sessions'), '.pi')).toBe(
+      join('/agents', '.pi', 'agent', 'sessions')
     )
   })
 })

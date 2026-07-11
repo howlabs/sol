@@ -2881,8 +2881,7 @@ export class Store {
         const migratedAgentYoloDefaults = migrateAgentYoloDefaults(parsed.settings)
         if (
           parsed.settings?.agentYoloDefaultsMigrated !== true ||
-          hasUnsupportedTuiAgentArgs('opencode', parsed.settings?.agentDefaultArgs?.opencode) ||
-          hasUnsupportedTuiAgentArgs('kilo', parsed.settings?.agentDefaultArgs?.kilo)
+          hasUnsupportedTuiAgentArgs('opencode', parsed.settings?.agentDefaultArgs?.opencode)
         ) {
           this.loadNeedsSave = true
         }
