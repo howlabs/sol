@@ -140,14 +140,14 @@ function normalizeFeatureSectionLines(lines: string[], start: number, end: numbe
 }
 
 function mergeSystemCodexConfigIntoRuntime(runtimeConfig: string, systemConfig: string): string {
-  const runtimeSections = getTomlSections(runtimeConfig)
+  const runtimeSections = deduplicateProjectTomlSections(getTomlSections(runtimeConfig))
   const runtimeProjectHeaders = new Set(
     runtimeSections
       .filter((section) => isRuntimeProjectTomlSection(section.header))
       .map((section) => getTomlSectionHeaderKey(section.header))
   )
   const systemUntrustedProjectHeaders = new Set(
-    getTomlSections(systemConfig)
+    deduplicateProjectTomlSections(getTomlSections(systemConfig))
       .filter((section) => isRuntimeProjectTomlSection(section.header))
       .filter((section) => getProjectTrustLevel(section.block) === 'untrusted')
       .map((section) => getTomlSectionHeaderKey(section.header))
@@ -180,8 +180,9 @@ function stripRuntimeOwnedTomlSections(
   runtimeProjectHeaders = new Set<string>()
 ): string {
   const lines = config.split('\n')
-  const sections = getTomlSections(config)
-  const firstSectionIndex = sections[0]?.start ?? -1
+  const sourceSections = getTomlSections(config)
+  const sections = deduplicateProjectTomlSections(sourceSections)
+  const firstSectionIndex = sourceSections[0]?.start ?? -1
   const preamble = firstSectionIndex === -1 ? config : lines.slice(0, firstSectionIndex).join('\n')
   return joinTomlBlocks([
     preamble,
@@ -246,7 +247,38 @@ function isRuntimeProjectTomlSection(header: string): boolean {
 }
 
 function getTomlSectionHeaderKey(header: string): string {
-  return header.trim()
+  // Why: CRLF-split headers may retain a trailing CR; keys must match LF forms.
+  return header.replace(/\r$/, '').trim()
+}
+
+// Why: CRLF mirror churn can leave duplicate [projects.*] tables; collapse by
+// header key so install/sync cannot grow unbounded copies of the same trust block.
+function deduplicateProjectTomlSections(sections: TomlSection[]): TomlSection[] {
+  const deduplicated: TomlSection[] = []
+  const projectIndexes = new Map<string, number>()
+  for (const section of sections) {
+    if (!isRuntimeProjectTomlSection(section.header)) {
+      deduplicated.push(section)
+      continue
+    }
+    const key = getTomlSectionHeaderKey(section.header)
+    const existingIndex = projectIndexes.get(key)
+    if (existingIndex === undefined) {
+      projectIndexes.set(key, deduplicated.length)
+      deduplicated.push(section)
+      continue
+    }
+    const existing = deduplicated[existingIndex]
+    if (
+      existing &&
+      getProjectTrustLevel(existing.block) !== 'untrusted' &&
+      getProjectTrustLevel(section.block) === 'untrusted'
+    ) {
+      // Why: revocation must survive self-healing regardless of duplicate order.
+      deduplicated[existingIndex] = section
+    }
+  }
+  return deduplicated
 }
 
 function getProjectTrustLevel(block: string): 'trusted' | 'untrusted' | null {

@@ -399,6 +399,73 @@ describe('syncSystemConfigIntoManagedCodexHome', () => {
 
     expect(existsSync(getRuntimeConfigPath())).toBe(false)
   })
+
+  it('deduplicates a CRLF system project header against an LF runtime header', () => {
+    mkdirSync(join(userDataDir, 'codex-runtime-home', 'home'), { recursive: true })
+    const projectHeader = '[projects."C:/Users/jinwo/orca/workspaces/orca/repo"]'
+    writeFileSync(
+      getRuntimeConfigPath(),
+      [projectHeader, 'trust_level = "trusted"', ''].join('\n'),
+      'utf-8'
+    )
+    writeFileSync(
+      getSystemConfigPath(),
+      [projectHeader, 'trust_level = "trusted"', ''].join('\r\n'),
+      'utf-8'
+    )
+
+    syncSystemConfigIntoManagedCodexHome()
+
+    const runtimeConfig = readFileSync(getRuntimeConfigPath(), 'utf-8')
+    expect(runtimeConfig.match(/\[projects\./g)).toHaveLength(1)
+    expect(runtimeConfig).toContain(`${projectHeader}\ntrust_level = "trusted"`)
+  })
+
+  it('self-heals duplicate project tables in a CRLF runtime config', () => {
+    mkdirSync(join(userDataDir, 'codex-runtime-home', 'home'), { recursive: true })
+    const projectHeader = '[projects."C:/Users/jinwo/orca/workspaces/orca/repo"]'
+    writeFileSync(
+      getRuntimeConfigPath(),
+      [
+        projectHeader,
+        'trust_level = "trusted"',
+        '',
+        projectHeader,
+        'trust_level = "trusted"',
+        ''
+      ].join('\r\n'),
+      'utf-8'
+    )
+    writeFileSync(getSystemConfigPath(), 'model = "gpt-5"\n', 'utf-8')
+
+    syncSystemConfigIntoManagedCodexHome()
+
+    const runtimeConfig = readFileSync(getRuntimeConfigPath(), 'utf-8')
+    expect(runtimeConfig.match(/\[projects\./g)).toHaveLength(1)
+    expect(runtimeConfig).toContain('trust_level = "trusted"')
+  })
+
+  it('applies a CRLF system revocation to an LF runtime project', () => {
+    mkdirSync(join(userDataDir, 'codex-runtime-home', 'home'), { recursive: true })
+    const projectHeader = '[projects."/repo"]'
+    writeFileSync(
+      getRuntimeConfigPath(),
+      [projectHeader, 'trust_level = "trusted"', ''].join('\n'),
+      'utf-8'
+    )
+    writeFileSync(
+      getSystemConfigPath(),
+      [projectHeader, 'trust_level = "untrusted"', ''].join('\r\n'),
+      'utf-8'
+    )
+
+    syncSystemConfigIntoManagedCodexHome()
+
+    const runtimeConfig = readFileSync(getRuntimeConfigPath(), 'utf-8')
+    expect(runtimeConfig.match(/\[projects\./g)).toHaveLength(1)
+    expect(runtimeConfig).toContain('trust_level = "untrusted"')
+    expect(runtimeConfig).not.toContain('trust_level = "trusted"')
+  })
 })
 
 describe('prepareSystemConfigForFreshRuntimeMirror', () => {

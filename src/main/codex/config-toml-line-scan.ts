@@ -89,7 +89,9 @@ export function updateTomlLineScanState(state: TomlLineScanState, line: string):
 }
 
 export function getTomlTableHeader(line: string): string | null {
-  const match = /^(\s*\[\[?.+\]\]?\s*)(?:#.*)?$/.exec(line)
+  // Why: CRLF configs keep a trailing \r after split('\n'); mirror headers must
+  // still parse the same as LF so project trust dedupe/revocation stay correct.
+  const match = /^(\s*\[\[?.+\]\]?\s*)(?:#.*)?$/.exec(line.replace(/\r$/, ''))
   return match?.[1] ?? null
 }
 
