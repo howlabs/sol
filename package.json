@@ -1,6 +1,6 @@
 {
   "name": "sol",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Minimal IDE for parallel AI agent development",
   "homepage": "https://github.com/howlabs/sol",
   "author": "howlabs",
