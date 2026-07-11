@@ -373,6 +373,36 @@ describe('maybeAutoRenameBranchOnFirstWork', () => {
     expect(onRenamed).not.toHaveBeenCalled()
   })
 
+  it('surfaces a failed upstream probe and retries instead of settling silently (issue #7808)', async () => {
+    const localizedError = new Error(
+      'Command failed: git rev-parse --abbrev-ref HEAD@{u}\n' +
+        "Schwerwiegend: Kein Upstream-Branch für Branch 'you/Nautilus' konfiguriert."
+    )
+    const plainResponder = gitResponder({ currentBranch: 'you/Nautilus', hasUpstream: false })
+    gitExecFileAsyncMock.mockImplementation(async (args: string[]) => {
+      if (args[0] === 'rev-parse' && args.some((arg) => arg.includes('@{u}'))) {
+        throw localizedError
+      }
+      return plainResponder(args)
+    })
+    const { deps, onRenamed, setRenameError } = makeDeps()
+    await maybeAutoRenameBranchOnFirstWork(workingEvent(), deps)
+    expect(generateBranchNameMock).not.toHaveBeenCalled()
+    expect(onRenamed).not.toHaveBeenCalled()
+    expect(setRenameError).toHaveBeenCalledWith(
+      WORKTREE_ID,
+      expect.stringContaining('Schwerwiegend')
+    )
+
+    gitExecFileAsyncMock.mockImplementation(plainResponder)
+    await maybeAutoRenameBranchOnFirstWork(workingEvent(), deps)
+    expect(gitExecFileAsyncMock).toHaveBeenCalledWith(
+      ['branch', '-m', 'you/fix-auth'],
+      expect.objectContaining({ cwd: '/repo/wt' })
+    )
+    expect(setRenameError).toHaveBeenLastCalledWith(WORKTREE_ID, null)
+  })
+
   it('leaves ineligible branches untouched even when their leaf is a creature name', async () => {
     const { deps, onRenamed } = makeDeps({ canRenameOrcaCreatedBranch: () => false })
     await maybeAutoRenameBranchOnFirstWork(workingEvent(), deps)

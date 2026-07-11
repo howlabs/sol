@@ -203,6 +203,10 @@ describe('promptGuardGitEnv credential-interactivity disable (STA-1292)', () => 
     expect(config['credential.helper']).toBeUndefined()
     // Existing prompt guards remain intact.
     expect(env.GIT_TERMINAL_PROMPT).toBe('0')
+    // Why: machine-parsed git stderr must stay untranslated (issue #7808).
+    expect(env.LANGUAGE).toBe('en')
+    expect(env.LC_ALL).toBe('en_US.UTF-8')
+    expect(env.LANG).toBe('en_US.UTF-8')
   })
 })
 
