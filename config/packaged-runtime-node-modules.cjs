@@ -22,7 +22,6 @@ const PACKAGED_RUNTIME_PACKAGE_ROOTS = [
   'jsonc-parser',
   'node-pty',
   'posthog-node',
-  'qrcode',
   'ssh2',
   'tweetnacl',
   'ws',

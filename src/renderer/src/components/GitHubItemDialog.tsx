@@ -224,6 +224,16 @@ import {
   validateTaskPageGitHubDuplicateTarget,
   type TaskPageGitHubCloseAction
 } from '@/components/task-page-github-status-actions'
+import {
+  CHECK_SORT_ORDER,
+  formatCheckTimestamp,
+  getCheckConclusion,
+  getCheckCounts,
+  getCheckDetailsKey,
+  getChecksSummaryLabel,
+  getCheckStatusLabel
+} from '@/components/github/pr-check-status'
+import { getStateLabel, getStateTone } from '@/components/github/work-item-state'
 
 // Why: the GH item dialog can be opened from any work-item list surface and
 // doesn't have the full owner/repo context the list's cache entry carries.
@@ -353,43 +363,6 @@ function formatRelativeTime(input: string): string {
   }
   const diffDays = Math.round(diffHours / 24)
   return formatter.format(diffDays, 'day')
-}
-
-function getStateLabel(item: GitHubWorkItem): string {
-  if (item.type === 'pr') {
-    if (item.state === 'merged') {
-      return 'Merged'
-    }
-    if (item.state === 'draft') {
-      return 'Draft'
-    }
-    if (item.state === 'closed') {
-      return 'Closed'
-    }
-    return 'Open'
-  }
-  return item.state === 'closed' ? 'Closed' : 'Open'
-}
-
-function getStateTone(item: GitHubWorkItem): string {
-  if (item.type === 'pr') {
-    if (item.state === 'merged') {
-      return 'border-purple-500/30 bg-purple-500/10 text-purple-600 dark:text-purple-300'
-    }
-    if (item.state === 'draft') {
-      return 'border-slate-500/30 bg-slate-500/10 text-slate-600 dark:text-slate-300'
-    }
-    if (item.state === 'closed') {
-      return 'border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-300'
-    }
-    return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300'
-  }
-  if (item.state === 'closed') {
-    // Why: closed issues can mean completed/resolved; keep them neutral instead
-    // of using destructive red, which is reserved for PR closed-without-merge.
-    return 'border-ring/50 bg-primary/10 text-foreground'
-  }
-  return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300'
 }
 
 function WorkItemStateBadge({
@@ -4134,125 +4107,6 @@ function CommentReplyForm({
       </div>
     </div>
   )
-}
-
-const CHECK_SORT_ORDER: Record<string, number> = {
-  failure: 0,
-  timed_out: 0,
-  action_required: 0,
-  cancelled: 1,
-  pending: 2,
-  neutral: 3,
-  skipped: 4,
-  success: 5
-}
-
-function getCheckConclusion(check: PRCheckDetail): NonNullable<PRCheckDetail['conclusion']> {
-  return check.conclusion ?? 'pending'
-}
-
-function getCheckStatusLabel(check: PRCheckDetail): string {
-  const conclusion = getCheckConclusion(check)
-  if (conclusion === 'success') {
-    return 'Successful'
-  }
-  if (conclusion === 'failure') {
-    return 'Failed'
-  }
-  if (conclusion === 'cancelled') {
-    return 'Cancelled'
-  }
-  if (conclusion === 'timed_out') {
-    return 'Timed out'
-  }
-  if (conclusion === 'action_required') {
-    return 'Action required'
-  }
-  if (conclusion === 'neutral') {
-    return 'Neutral'
-  }
-  if (conclusion === 'skipped') {
-    return 'Skipped'
-  }
-  if (check.status === 'queued') {
-    return 'Queued'
-  }
-  if (check.status === 'in_progress') {
-    return 'In progress'
-  }
-  return 'Pending'
-}
-
-function getCheckCounts(checks: PRCheckDetail[]): {
-  passing: number
-  failing: number
-  needsAction: number
-  pending: number
-  skipped: number
-  neutral: number
-} {
-  return checks.reduce(
-    (counts, check) => {
-      const conclusion = getCheckConclusion(check)
-      if (conclusion === 'success') {
-        counts.passing += 1
-      } else if (conclusion === 'action_required') {
-        counts.needsAction += 1
-      } else if (['failure', 'cancelled', 'timed_out'].includes(conclusion)) {
-        counts.failing += 1
-      } else if (conclusion === 'skipped') {
-        counts.skipped += 1
-      } else if (conclusion === 'neutral') {
-        counts.neutral += 1
-      } else {
-        counts.pending += 1
-      }
-      return counts
-    },
-    { passing: 0, failing: 0, needsAction: 0, pending: 0, skipped: 0, neutral: 0 }
-  )
-}
-
-function getChecksSummaryLabel(checks: PRCheckDetail[]): string {
-  const counts = getCheckCounts(checks)
-  if (checks.length === 0) {
-    return 'No checks found'
-  }
-  if (counts.failing > 0) {
-    return `${counts.failing} ${counts.failing === 1 ? 'check' : 'checks'} failing`
-  }
-  // Why: action_required (e.g. a workflow awaiting approval) blocks merge but is
-  // not a failure; call it out distinctly so users know a manual step is needed.
-  if (counts.needsAction > 0) {
-    return `${counts.needsAction} ${counts.needsAction === 1 ? 'check needs' : 'checks need'} action`
-  }
-  if (counts.pending > 0) {
-    return `${counts.pending} ${counts.pending === 1 ? 'check' : 'checks'} pending`
-  }
-  if (counts.passing === checks.length) {
-    return 'All checks passing'
-  }
-  return `${counts.passing} of ${checks.length} checks passing`
-}
-
-function getCheckDetailsKey(check: PRCheckDetail): string {
-  return String(check.checkRunId ?? check.workflowRunId ?? check.url ?? check.name)
-}
-
-function formatCheckTimestamp(input: string | null | undefined): string | null {
-  if (!input) {
-    return null
-  }
-  const date = new Date(input)
-  if (Number.isNaN(date.getTime())) {
-    return null
-  }
-  return date.toLocaleString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit'
-  })
 }
 
 function ChecksTab({
