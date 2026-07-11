@@ -238,7 +238,7 @@ export function createMainWindow(
     ...(savedBounds ? { x: savedBounds.x, y: savedBounds.y } : {}),
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
-    title: opts?.title ?? 'Orca',
+    title: opts?.title ?? 'Sol',
     show: false,
     // Why: macOS swallows the app-activating click by default, so clicking
     // back into Orca needed a second click without this option.

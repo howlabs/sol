@@ -57,7 +57,7 @@ export function createSystemTray(opts: SystemTrayOptions): Tray | null {
   tray = new Tray(baseTrayImage)
   // Why: reflect any attention event that fired before the tray existed.
   applyTrayImage()
-  tray.setToolTip('Orca')
+  tray.setToolTip('Sol')
   const menu = Menu.buildFromTemplate([
     { label: translateMain('tray.openOrca', 'Open Orca'), click: () => opts.onOpen() },
     { type: 'separator' },

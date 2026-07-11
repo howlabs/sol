@@ -356,7 +356,7 @@ export class CliInstaller {
     }
 
     if (this.platform === 'win32') {
-      return join(this.localAppDataPath, 'Programs', 'Orca', 'resources', 'bin', 'orca.cmd')
+      return join(this.localAppDataPath, 'Programs', 'Sol', 'resources', 'bin', 'sol.cmd')
     }
 
     return null
@@ -1137,7 +1137,7 @@ export function getBundledLauncherPath(
     return join(resourcesPath, 'bin', LINUX_COMMAND_NAME)
   }
   if (platform === 'win32') {
-    return join(resourcesPath, 'bin', 'orca.cmd')
+    return join(resourcesPath, 'bin', 'sol.cmd')
   }
   return null
 }

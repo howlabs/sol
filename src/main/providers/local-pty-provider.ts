@@ -467,7 +467,7 @@ export class LocalPtyProvider implements IPtyProvider {
       ...args.env,
       TERM: 'xterm-256color',
       COLORTERM: 'truecolor',
-      TERM_PROGRAM: 'Orca',
+      TERM_PROGRAM: 'Sol',
       // Why: TUIs feature-gate on TERM_PROGRAM_VERSION (Neovim's termcap
       // autodetection, bat/delta paging hints). Sourced from ORCA_APP_VERSION
       // which main/index.ts seeds from app.getVersion() at startup; the
