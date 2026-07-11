@@ -1,34 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { monaco } from '@/lib/monaco-setup'
 import { computeEditorFontSize } from '@/lib/editor-font-zoom'
 import { resolveDocumentTheme } from '@/lib/document-theme'
+import { highlightCode, type HighlightedLine } from '@/lib/shiki-highlighter'
 import { useAppStore } from '@/store'
 import { cn } from '@/lib/utils'
-
-let pythonLanguageRegistrationPromise: Promise<void> | null = null
-
-async function ensureColorizationLanguage(language: string): Promise<void> {
-  if (language !== 'python') {
-    return
-  }
-  pythonLanguageRegistrationPromise ??=
-    import('monaco-editor/esm/vs/basic-languages/python/python.js').then(
-      ({ conf, language: pythonTokens }) => {
-        // Why: notebook excerpts colorize without mounting Monaco editors. Load
-        // Python tokens only on demand so non-notebook users do not pay at startup.
-        if (!monaco.languages.getLanguages().some((item) => item.id === 'python')) {
-          monaco.languages.register({
-            id: 'python',
-            extensions: ['.py', '.pyw'],
-            aliases: ['Python', 'py']
-          })
-        }
-        monaco.languages.setLanguageConfiguration('python', conf)
-        monaco.languages.setMonarchTokensProvider('python', pythonTokens)
-      }
-    )
-  await pythonLanguageRegistrationPromise
-}
 
 type MonacoCodeExcerptProps = {
   lines: string[]
@@ -54,37 +29,33 @@ export default function MonacoCodeExcerpt({
   const fontFamily = settings?.terminalFontFamily || 'monospace'
   const isDark = resolveDocumentTheme(settings?.theme ?? 'system')
   const code = useMemo(() => lines.join('\n'), [lines])
-  const [htmlLines, setHtmlLines] = useState<string[]>(() => lines.map(() => ''))
-
-  useEffect(() => {
-    monaco.editor.setTheme(isDark ? 'vs-dark' : 'vs')
-  }, [isDark])
+  const [highlightedLines, setHighlightedLines] = useState<HighlightedLine[]>(() => [])
 
   useEffect(() => {
     if (lines.length === 0) {
-      setHtmlLines([])
+      setHighlightedLines([])
       return
     }
 
     let cancelled = false
-    // Why: notebook languages like Python are loaded lazily by Monaco. The
-    // async colorizer waits for that tokenizer; colorizeModelLine can render
-    // only default-token spans if called before the contribution finishes.
-    void ensureColorizationLanguage(language)
-      .catch(() => undefined)
-      .then(() => monaco.editor.colorize(code, language, { tabSize: 2 }))
-      .then((html) => {
+    void highlightCode(code, language, isDark)
+      .then((result) => {
         if (cancelled) {
           return
         }
-        const nextLines = html.split('<br/>').slice(0, lines.length)
-        setHtmlLines(nextLines)
+        setHighlightedLines(result.lines.slice(0, lines.length))
+      })
+      .catch(() => {
+        if (cancelled) {
+          return
+        }
+        setHighlightedLines([])
       })
 
     return () => {
       cancelled = true
     }
-  }, [code, language, lines])
+  }, [code, language, isDark, lines])
 
   return (
     <div
@@ -95,7 +66,7 @@ export default function MonacoCodeExcerpt({
         const lineNumber = firstLineNumber + index
         const isCommentedLine =
           lineNumber >= highlightedStartLine && lineNumber <= highlightedEndLine
-        const html = htmlLines[index] || (codeLine ? undefined : '&nbsp;')
+        const tokens = highlightedLines[index]
         return (
           <div
             key={lineNumber}
@@ -104,11 +75,14 @@ export default function MonacoCodeExcerpt({
             <span className="w-12 shrink-0 select-none border-r border-border/40 px-2 text-right text-muted-foreground tabular-nums">
               {lineNumber}
             </span>
-            {html ? (
-              <code
-                className="min-w-max flex-1 whitespace-pre px-3 text-foreground"
-                dangerouslySetInnerHTML={{ __html: html }}
-              />
+            {tokens && tokens.length > 0 ? (
+              <code className="min-w-max flex-1 whitespace-pre px-3 text-foreground">
+                {tokens.map((token, tokenIndex) => (
+                  <span key={tokenIndex} style={token.color ? { color: token.color } : undefined}>
+                    {token.content}
+                  </span>
+                ))}
+              </code>
             ) : (
               <code className="min-w-max flex-1 whitespace-pre px-3 text-foreground">
                 {codeLine || ' '}
