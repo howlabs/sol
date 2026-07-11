@@ -98,7 +98,7 @@ function shouldDisableOrcaControlMaster(
   target: SshTarget,
   options?: SystemSshBuildArgsOptions
 ): boolean {
-  // Why: unresolved ssh_config aliases could otherwise share one Orca socket
+  // Why: unresolved ssh_config aliases could otherwise share one Sol socket
   // while OpenSSH routes them through mutable HostName/ProxyJump settings.
   const unresolvedConfigBackedTarget =
     isOpenSshConfigBackedTarget(target) && options?.resolvedConfig == null
@@ -118,7 +118,7 @@ function hasUserConfiguredControlMaster(
     return false
   }
   // Why: ControlPersist/ControlPath alone can reuse a master someone else
-  // created, but they do not create the setup-burst master Orca needs.
+  // created, but they do not create the setup-burst master Sol needs.
   return (
     hasEnabledControlMaster(resolvedConfig.controlMaster) &&
     hasEnabledControlPath(resolvedConfig.controlPath)

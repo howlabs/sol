@@ -161,7 +161,7 @@ function showLocalBaseRefRefreshToast(result: LocalBaseRefRefreshResult | undefi
     {
       description: translate(
         'auto.store.slices.worktrees.903b51c2ed',
-        'Workspace created from {{value0}}, but Orca could not fast-forward local {{value1}} because {{value2}}',
+        'Workspace created from {{value0}}, but Sol could not fast-forward local {{value1}} because {{value2}}',
         { value0: result.baseRef, value1: result.localBranch, value2: reason }
       )
     }
@@ -582,7 +582,7 @@ function notifyRuntimeScopeForbiddenIfNeeded(error: unknown): boolean {
       id: RUNTIME_SCOPE_FORBIDDEN_TOAST_ID,
       description: translate(
         'auto.store.slices.worktrees.runtimeScopeForbiddenDescription',
-        'Workspaces are unavailable on a mobile-scope pairing. Reconnect using the browser access link from Settings → Runtime Environments → Share this Orca server.'
+        'Workspaces are unavailable on a mobile-scope pairing. Reconnect using the browser access link from Settings → Runtime Environments → Share this Sol server.'
       )
     }
   )
@@ -3164,7 +3164,7 @@ export const createWorktreeSlice: StateCreator<AppState, [], [], WorktreeSlice> 
       const worktreeBeforeRemoval = get()
         .allWorktrees()
         .find((entry) => entry.id === worktreeId)
-      // Why: forget-local always clears Orca's own records via the local IPC
+      // Why: forget-local always clears Sol's own records via the local IPC
       // handler regardless of the workspace's execution host — the whole point
       // is that the remote (SSH relay / runtime) is gone or unreachable.
       const target = getActiveRuntimeTarget(settingsForWorktreeOwner(get(), worktreeId))

@@ -352,7 +352,7 @@ export class ClaudeUsageStore {
     } catch (error) {
       // Why: Claude usage is a local analytics feature, not primary workspace
       // state. A corrupt cache should degrade to a fresh rebuild instead of
-      // preventing Orca from booting, but we leave the file on disk for debugging.
+      // preventing Sol from booting, but we leave the file on disk for debugging.
       console.error('[claude-usage] Failed to load persisted state, starting fresh:', error)
       return getDefaultState()
     }
@@ -522,8 +522,8 @@ export class ClaudeUsageStore {
       topModel,
       topProject,
       // Why: the empty-state UX is scope/range specific. Using global persisted
-      // data here makes the Orca-only view render empty charts instead of the
-      // intended "no usage for this scope" message when only off-Orca logs exist.
+      // data here makes the Sol-only view render empty charts instead of the
+      // intended "no usage for this scope" message when only off-Sol logs exist.
       hasAnyClaudeData: filteredSessions.length > 0 || filteredDaily.length > 0
     }
   }
@@ -809,7 +809,7 @@ export class ClaudeUsageStore {
       estimatedCostUsd,
       estimatedCostSource: estimatedCostUsd === null ? null : 'api_equivalent',
       providerSessionId: session.sessionId,
-      // Why: Orca terminal tab ids and Claude usage session ids are different
+      // Why: Sol terminal tab ids and Claude usage session ids are different
       // systems today, so attribution is intentionally limited to one local
       // provider session in the run's worktree/time window.
       attribution: 'provider_session_time_window',

@@ -82,7 +82,7 @@ function seedRemoteRepo(target: DockerSshRelayTarget): void {
       `cd ${shellQuote(DOCKER_SSH_RELAY_REMOTE_REPO_PATH)}`,
       'git init',
       'git config user.email e2e@test.local',
-      'git config user.name "Orca Docker SSH E2E"',
+      'git config user.name "Sol Docker SSH E2E"',
       'printf "remote relay perf\\n" > README.md',
       'git add README.md',
       'git commit -m initial'
@@ -122,7 +122,7 @@ export function startDockerSshRelayTarget(testInfo: TestInfo): DockerSshRelayTar
           'printf "%s\\n" "$AUTHORIZED_KEY" > /root/.ssh/authorized_keys',
           'chmod 600 /root/.ssh/authorized_keys',
           'git config --global user.email e2e@test.local',
-          'git config --global user.name "Orca Docker SSH E2E"',
+          'git config --global user.name "Sol Docker SSH E2E"',
           'exec /usr/sbin/sshd -D -e'
         ].join(' && ')
       ],

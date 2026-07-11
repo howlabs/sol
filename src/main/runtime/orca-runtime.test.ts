@@ -10274,7 +10274,7 @@ describe('OrcaRuntimeService', () => {
     expect(futureCursorRead.limited).toBe(false)
   })
 
-  // Why: PR #2553 fixed Orca CLI terminal reads so older retained output stays
+  // Why: PR #2553 fixed Sol CLI terminal reads so older retained output stays
   // reachable by cursor; this guards that pagination without allowing previews
   // to regress into full-transcript RPC payloads.
   it('keeps terminal read payloads bounded while retained output remains pageable', async () => {
@@ -17198,7 +17198,7 @@ describe('OrcaRuntimeService', () => {
   })
 
   it('keeps the activated headless tab active across PTY republishes (serve focus-jump regression)', async () => {
-    // Why: in `orca serve`, focusTerminal has no renderer to persist the remote
+    // Why: in `sol-ide serve`, focusTerminal has no renderer to persist the remote
     // client's tab choice before PTY republishes.
     let nextPty = 0
     const spawn = vi.fn().mockImplementation(async () => ({ id: `headless-pty-${++nextPty}` }))
@@ -20862,7 +20862,7 @@ describe('OrcaRuntimeService', () => {
     ).rejects.toThrow('selector_not_found')
   })
 
-  it('rejects SSH lineage updates when Orca worktree identity is missing', async () => {
+  it('rejects SSH lineage updates when Sol worktree identity is missing', async () => {
     const remoteRepo = {
       id: 'remote-repo',
       path: '/home/user/repo',
@@ -20929,7 +20929,7 @@ describe('OrcaRuntimeService', () => {
     expect(setWorktreeLineage).not.toHaveBeenCalled()
   })
 
-  it('rejects local lineage updates when Orca worktree identity is missing', async () => {
+  it('rejects local lineage updates when Sol worktree identity is missing', async () => {
     const tempRoot = await mkdtemp(join(tmpdir(), 'orca-runtime-lineage-'))
     const repoPath = join(tempRoot, 'repo')
     const childPath = join(tempRoot, 'child')
@@ -21106,7 +21106,7 @@ describe('OrcaRuntimeService', () => {
     expect(removeWorkspaceLineage).toHaveBeenCalledWith(`worktree:${childId}`)
   })
 
-  it('strips Orca provenance fields from runtime metadata updates', async () => {
+  it('strips Sol provenance fields from runtime metadata updates', async () => {
     const metaById: Record<string, WorktreeMeta> = {
       [TEST_WORKTREE_ID]: makeWorktreeMeta({ instanceId: 'child-instance' })
     }
@@ -22098,7 +22098,7 @@ describe('OrcaRuntimeService', () => {
       expect.objectContaining({
         code: 'LINEAGE_PARENT_CONTEXT_MISSING',
         message:
-          'Worktree created, but Orca could not validate the current directory as a parent context.'
+          'Worktree created, but Sol could not validate the current directory as a parent context.'
       })
     ])
   })
@@ -23077,7 +23077,7 @@ describe('OrcaRuntimeService', () => {
       }
     ])
 
-    const draftUrl = 'https://github.com/stablyai/orca/issues/123'
+    const draftUrl = 'https://github.com/howlabs/sol/issues/123'
     const result = await runtime.createManagedWorktree({
       repoSelector: 'id:repo-1',
       name: 'runtime-startup-draft',
@@ -23397,7 +23397,7 @@ describe('OrcaRuntimeService', () => {
     const result = await runtime.createManagedWorktree({
       repoSelector: TEST_REPO_ID,
       name: 'runtime-fallback-draft',
-      startupDraft: 'https://github.com/stablyai/orca/issues/456',
+      startupDraft: 'https://github.com/howlabs/sol/issues/456',
       createdWithAgent: 'codex',
       activate: true
     })
@@ -23486,7 +23486,7 @@ describe('OrcaRuntimeService', () => {
     const result = await runtime.createManagedWorktree({
       repoSelector: 'id:repo-1',
       name: 'runtime-startup-setup-split',
-      startupDraft: 'https://github.com/stablyai/orca/issues/123',
+      startupDraft: 'https://github.com/howlabs/sol/issues/123',
       setupDecision: 'run',
       activate: true
     })
@@ -23674,7 +23674,7 @@ describe('OrcaRuntimeService', () => {
       }
     ])
 
-    const draftUrl = 'https://github.com/stablyai/orca/issues/789'
+    const draftUrl = 'https://github.com/howlabs/sol/issues/789'
     const result = await runtime.createManagedWorktree({
       repoSelector: 'id:repo-1',
       name: 'runtime-explicit-draft',
@@ -23757,7 +23757,7 @@ describe('OrcaRuntimeService', () => {
     const result = await runtime.createManagedWorktree({
       repoSelector: 'id:repo-1',
       name: 'runtime-blank-draft',
-      startupDraft: 'https://github.com/stablyai/orca/issues/123',
+      startupDraft: 'https://github.com/howlabs/sol/issues/123',
       activate: true
     })
 
@@ -23849,7 +23849,7 @@ describe('OrcaRuntimeService', () => {
       getForegroundProcess: async () => null
     })
 
-    const draftUrl = 'https://github.com/stablyai/orca/pull/456'
+    const draftUrl = 'https://github.com/howlabs/sol/pull/456'
     const result = await runtime.createManagedWorktree({
       repoSelector: TEST_REPO_ID,
       name: 'mobile-startup-draft',
@@ -23955,7 +23955,7 @@ describe('OrcaRuntimeService', () => {
       const result = await runtime.createManagedWorktree({
         repoSelector: TEST_REPO_ID,
         name: 'mobile-codex-draft',
-        startupDraft: 'https://github.com/stablyai/orca/issues/789'
+        startupDraft: 'https://github.com/howlabs/sol/issues/789'
       })
 
       expect(detectRemoteAgentsMock).not.toHaveBeenCalled()
@@ -26015,7 +26015,7 @@ describe('OrcaRuntimeService', () => {
     }
   })
 
-  it('force-removes a legacy Orca-created runtime orphaned worktree directory after Git tracking is gone', async () => {
+  it('force-removes a legacy Sol-created runtime orphaned worktree directory after Git tracking is gone', async () => {
     const parentDir = await mkdtemp(join(tmpdir(), 'orca-runtime-orphan-'))
     const repoPath = join(parentDir, 'repo')
     const orphanPath = join(parentDir, 'orphan')
@@ -26071,7 +26071,7 @@ describe('OrcaRuntimeService', () => {
     }
   })
 
-  it('prompts then force-removes an Orca-created runtime unregistered leftover directory with no git marker', async () => {
+  it('prompts then force-removes a Sol-created runtime unregistered leftover directory with no git marker', async () => {
     const parentDir = await mkdtemp(join(tmpdir(), 'orca-runtime-leftover-'))
     const repoPath = join(parentDir, 'repo')
     const leftoverPath = join(parentDir, 'leftover')
@@ -26141,7 +26141,7 @@ describe('OrcaRuntimeService', () => {
     }
   })
 
-  it('rejects an Orca-created runtime unregistered local directory with a git directory', async () => {
+  it('rejects a Sol-created runtime unregistered local directory with a git directory', async () => {
     const parentDir = await mkdtemp(join(tmpdir(), 'orca-runtime-standalone-'))
     const repoPath = join(parentDir, 'repo')
     const standalonePath = join(parentDir, 'standalone')

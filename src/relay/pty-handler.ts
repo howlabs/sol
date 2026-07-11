@@ -60,7 +60,7 @@ type ManagedPty = {
   exitListenerNotified?: boolean
   /** Renderer-supplied paneKey from spawn env (ORCA_PANE_KEY). Captured so
    *  external observers (the relay-hook-server cache) can evict per-pane
-   *  state when this PTY exits. Symmetric with Orca's local pty.ts. */
+   *  state when this PTY exits. Symmetric with Sol's local pty.ts. */
   paneKey?: string
   tabId?: string
   /** Attach-only identity metadata supplied over RPC. Kept separate from
@@ -346,7 +346,7 @@ export class PtyHandler {
     }
     const submit = process.platform === 'win32' ? '\r' : '\n'
     // Why: a multiline startup prompt is pasted literally via bracketed paste
-    // only when the Orca shell-ready wrapper is active (waitForShellReady) —
+    // only when the Sol shell-ready wrapper is active (waitForShellReady) —
     // that is the bash/zsh overlay that arms bracketed-paste mode. Other remote
     // shells keep the raw submit path so the ESC[200~ markers are not echoed.
     const payload = buildStartupCommandSubmission(startup.command, {
@@ -611,7 +611,7 @@ export class PtyHandler {
       cols,
       rows,
       cwd,
-      // Why: relay shells inherit process.env; never let an ambient Orca marker
+      // Why: relay shells inherit process.env; never let an ambient Sol marker
       // enable shell-ready behavior unless this spawn explicitly requested it.
       env: { ...spawnEnv, ORCA_SHELL_READY_MARKER: '0', ...shellLaunch.env }
     })

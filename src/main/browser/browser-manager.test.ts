@@ -128,7 +128,7 @@ describe('browserManager', () => {
     expect(shellOpenExternalMock).toHaveBeenCalledWith('http://localhost:3000/')
   })
 
-  it('routes safe popup URLs into a new Orca browser tab for the owning renderer', () => {
+  it('routes safe popup URLs into a new Sol browser tab for the owning renderer', () => {
     const rendererSendMock = vi.fn()
     const guest = {
       id: 103,
@@ -622,7 +622,7 @@ describe('browserManager', () => {
     expect(restoreScript).toContain('state.setActiveTabType("terminal");')
   })
 
-  it('does not focus the Orca window while preparing a screenshot', async () => {
+  it('does not focus the Sol window while preparing a screenshot', async () => {
     const rendererExecuteJavaScriptMock = vi.fn().mockResolvedValueOnce({
       prevTabType: 'terminal',
       prevActiveWorktreeId: 'wt-1',
@@ -672,7 +672,7 @@ describe('browserManager', () => {
     expect(browserWindowFromWebContentsMock).not.toHaveBeenCalled()
   })
 
-  it('offers opening a link in another Orca browser tab from the guest context menu', () => {
+  it('offers opening a link in another Sol browser tab from the guest context menu', () => {
     const rendererSendMock = vi.fn()
     const guest = {
       id: 104,

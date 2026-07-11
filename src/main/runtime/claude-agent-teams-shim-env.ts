@@ -80,10 +80,10 @@ function bundledLauncherPath(): string | null {
     return join(process.resourcesPath, 'bin', 'orca')
   }
   if (process.platform === 'linux') {
-    return join(process.resourcesPath, 'bin', 'orca-ide')
+    return join(process.resourcesPath, 'bin', 'sol-ide')
   }
   if (process.platform === 'win32') {
-    return join(process.resourcesPath, 'bin', 'orca.cmd')
+    return join(process.resourcesPath, 'bin', 'sol.cmd')
   }
   return null
 }

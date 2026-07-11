@@ -2,7 +2,7 @@ import type { Terminal } from '@xterm/xterm'
 
 // Why: xterm draws every cell's glyph in isolation, so Arabic output shows
 // disconnected letterforms in logical (reversed) order — upstream has no
-// BiDi/shaping support (xtermjs/xterm.js#701, Orca #5262). Joining each RTL
+// BiDi/shaping support (xtermjs/xterm.js#701, Sol #5262). Joining each RTL
 // run into one cell range makes both renderers (WebGL atlas, DOM row factory)
 // draw the run as a single string, letting the browser apply contextual
 // shaping and BiDi ordering inside the run's grid-aligned cell box. The

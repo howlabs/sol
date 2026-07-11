@@ -14,7 +14,7 @@ import { resolveExplicitTerminalTitleAgentType } from '../../../shared/terminal-
 import { resolveCompatibleAgentTypeForOwner } from '../../../shared/agent-title-owner'
 import type { TerminalTab, TuiAgent } from '../../../shared/types'
 
-// A shell name, or the tab's neutral default title — where Orca's
+// A shell name, or the tab's neutral default title — where Sol's
 // inferred-interrupt reset parks it. Blank titles are no evidence either way.
 function titleShowsNoAgent(title: string, defaultTitle?: string): boolean {
   const trimmed = title.trim()
@@ -173,7 +173,7 @@ export function resolveTabAgentFromSignals(args: {
  *    because it is pane-scoped proof of reuse: a codex launch later reused for
  *    claude leaves a claude sleeping record, and while the pane is asleep this
  *    is the only live identity signal (its PTY, hooks, and process are gone).
- * 4. launchAgent — what Orca launched here; instant bootstrap before hooks
+ * 4. launchAgent — what Sol launched here; instant bootstrap before hooks
  *    arrive, cleared once hook/process/title evidence shows the launched
  *    agent exited.
  * 5. Title — legacy/unknown-session fallback, and the live override when a pane

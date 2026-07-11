@@ -21,8 +21,8 @@ function runtimeHost(
   return {
     id: 'runtime:env-1',
     kind: 'runtime',
-    label: 'Remote Orca',
-    detail: 'Orca server',
+    label: 'Remote Sol',
+    detail: 'Sol server',
     health: 'available',
     ...overrides
   } as ExecutionHostRegistryEntry
@@ -53,7 +53,7 @@ describe('buildSetupHostOptions', () => {
       })[0]
     ).toMatchObject({
       isAvailable: true,
-      detail: 'Orca server'
+      detail: 'Sol server'
     })
   })
 
@@ -69,7 +69,7 @@ describe('buildSetupHostOptions', () => {
       })[0]
     ).toMatchObject({
       isAvailable: false,
-      detail: 'Update Orca on this host to set up projects'
+      detail: 'Update Sol on this host to set up projects'
     })
   })
 })

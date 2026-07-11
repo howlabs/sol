@@ -323,7 +323,7 @@ export class RuntimeBrowserCommands {
 
   // Why: agent-browser drives navigation via CDP, which bypasses Electron's
   // webview event system. The renderer's did-navigate / page-title-updated
-  // listeners never fire, leaving the Zustand store (and thus the Orca UI's
+  // listeners never fire, leaving the Zustand store (and thus the Sol UI's
   // address bar and tab title) stale. Push updates from main → renderer after
   // any navigation-causing command so the UI stays in sync.
   private notifyRendererNavigation(browserPageId: string, url: string, title: string): void {

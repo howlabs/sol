@@ -225,7 +225,7 @@ function createOutOfProcessLauncher(runtimeDir: string): DaemonLauncher {
         // Why: a protocol-healthy daemon can outlive the app bundle that
         // launched it. In dev this happens after deleting/rebuilding a
         // worktree; in packaged apps it happens when the stable
-        // /Applications/Orca.app path is replaced during update.
+        // /Applications/Sol.app path is replaced during update.
         const identity = await getDaemonLaunchIdentity(runtimeDir, socketPath, tokenPath, entryPath)
         const stalePackagedBundle =
           app.isPackaged &&
@@ -305,7 +305,7 @@ function createOutOfProcessLauncher(runtimeDir: string): DaemonLauncher {
         // because stderr was thrown away). The pipe is destroyed on readiness.
         detached: true,
         stdio: ['ignore', 'ignore', 'pipe', 'ipc'],
-        // Why: run the relocated Orca.exe copy instead of the install-dir one.
+        // Why: run the relocated Sol.exe copy instead of the install-dir one.
         // It is byte-identical, so run-as-node behavior is unchanged; only the
         // image path moves out of the updater's kill zone.
         ...(relocatedHost ? { execPath: relocatedHost.execPath } : {}),
@@ -719,7 +719,7 @@ async function runRestartDaemon(): Promise<RestartDaemonResult> {
 // Why: disconnect from the daemon without killing it. The daemon runs as a
 // separate process and survives app quit — sessions stay alive for warm
 // reattach on next launch. Leave history sessions marked "unclean" here so a
-// later daemon crash while Orca is closed is still recoverable on next launch.
+// later daemon crash while Sol is closed is still recoverable on next launch.
 export async function disconnectDaemon(): Promise<void> {
   await adapter?.disconnectOnly()
   adapter = null

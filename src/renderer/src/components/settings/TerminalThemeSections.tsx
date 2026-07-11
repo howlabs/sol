@@ -109,7 +109,7 @@ export function TerminalThemeCatalogSection({
   const pickerDescription = isLightTarget
     ? translate(
         'auto.components.settings.TerminalThemeSections.d56af60e6f',
-        'Choose the theme used when Orca is in light mode.'
+        'Choose the theme used when Sol is in light mode.'
       )
     : translate(
         'auto.components.settings.TerminalThemeSections.7add204bd5',

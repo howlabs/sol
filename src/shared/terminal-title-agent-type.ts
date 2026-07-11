@@ -180,7 +180,7 @@ export function getAgentLabel(title: string): string | null {
     return 'Aider'
   }
   // Why: the cursor-agent native title is the literal string "Cursor Agent"
-  // (verified against the 2026.04.17 release) — Orca synthesizes the same
+  // (verified against the 2026.04.17 release) — Sol synthesizes the same
   // label from hook events so the braille-spinner + agent-name path lights
   // up working/permission/idle transitions in the renderer. Match before
   // `isClaudeAgent` because Claude's generic braille heuristic would

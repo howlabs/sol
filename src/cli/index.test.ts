@@ -258,13 +258,13 @@ describe('orca root help', () => {
     expect(createHelp).not.toContain('checkout/workspace')
     expect(createHelp).not.toContain('caller workspace')
     expect(createHelp).not.toContain('current workspace')
-    expect(createHelp).not.toContain('active Orca workspace')
+    expect(createHelp).not.toContain('active Sol workspace')
     expect(createHelp).not.toContain('folderWorkspaceId')
     expect(createHelp).toContain('folder:<id>')
     expect(createHelp).toContain('folder:<folderId>')
     expect(createHelp).toContain('worktree:<id>')
     expect(createHelp).toContain(
-      '--no-parent only affects Orca lineage; omit --base-branch to use the repo default base'
+      '--no-parent only affects Sol lineage; omit --base-branch to use the repo default base'
     )
 
     logSpy.mockClear()
@@ -426,7 +426,7 @@ describe('orca cli worktree awareness', () => {
   })
 
   it('resolves the invocation cwd from ORCA_CLI_CWD when no cwd is passed', async () => {
-    // Why: the SSH relay bridge runs the CLI on the Orca host with the remote
+    // Why: the SSH relay bridge runs the CLI on the Sol host with the remote
     // shell's cwd carried in ORCA_CLI_CWD (#7716); cwd-based selectors must
     // resolve against it, not the host process cwd.
     process.env.ORCA_CLI_CWD = '/tmp/repo/feature/src'
@@ -458,7 +458,7 @@ describe('orca cli worktree awareness', () => {
   })
 
   it.skipIf(process.platform === 'win32')(
-    'prepares and starts Claude Agent Teams in the current Orca terminal',
+    'prepares and starts Claude Agent Teams in the current Sol terminal',
     async () => {
       process.env.ORCA_PANE_KEY = 'tab-1:11111111-1111-4111-8111-111111111111'
       queueFixtures(
@@ -1141,7 +1141,7 @@ describe('orca cli worktree awareness', () => {
             hostId: 'local',
             repoId: 'repo-local',
             path: '/tmp/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             setupState: 'ready',
             setupMethod: 'legacy-repo',
             createdAt: 1,
@@ -1153,7 +1153,7 @@ describe('orca cli worktree awareness', () => {
             hostId: 'runtime:gpu',
             repoId: 'repo-gpu',
             path: '/srv/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             setupState: 'ready',
             setupMethod: 'legacy-repo',
             createdAt: 1,
@@ -1211,7 +1211,7 @@ describe('orca cli worktree awareness', () => {
             hostId: 'runtime:gpu',
             repoId: 'repo-gpu',
             path: '/srv/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             setupState: 'ready',
             setupMethod: 'legacy-repo',
             createdAt: 1,
@@ -2251,7 +2251,7 @@ describe('orca cli worktree awareness', () => {
         projects: [
           {
             id: 'github:stablyai/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             badgeColor: '#7c3aed',
             providerIdentity: {
               provider: 'github',
@@ -2283,7 +2283,7 @@ describe('orca cli worktree awareness', () => {
             hostId: 'local',
             repoId: 'repo-local',
             path: '/tmp/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             setupState: 'ready',
             setupMethod: 'legacy-repo',
             createdAt: 1,
@@ -2295,7 +2295,7 @@ describe('orca cli worktree awareness', () => {
             hostId: 'runtime:gpu',
             repoId: 'repo-remote',
             path: '/srv/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             setupState: 'ready',
             setupMethod: 'legacy-repo',
             createdAt: 1,
@@ -2323,7 +2323,7 @@ describe('orca cli worktree awareness', () => {
         result: {
           project: {
             id: 'github:stablyai/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             badgeColor: '#7c3aed',
             sourceRepoIds: ['repo-1'],
             createdAt: 1,
@@ -2335,7 +2335,7 @@ describe('orca cli worktree awareness', () => {
             hostId: 'local',
             repoId: 'repo-1',
             path: path.resolve('/tmp/orca'),
-            displayName: 'Orca',
+            displayName: 'Sol',
             setupState: 'ready',
             setupMethod: 'imported-existing-folder',
             createdAt: 1,
@@ -2344,7 +2344,7 @@ describe('orca cli worktree awareness', () => {
           repo: {
             id: 'repo-1',
             path: path.resolve('/tmp/orca'),
-            displayName: 'Orca',
+            displayName: 'Sol',
             badgeColor: '#7c3aed',
             addedAt: 1
           }
@@ -2366,7 +2366,7 @@ describe('orca cli worktree awareness', () => {
         '--kind',
         'git',
         '--display-name',
-        'Orca',
+        'Sol',
         '--json'
       ],
       '/tmp/orca/worktrees/feature'
@@ -2377,7 +2377,7 @@ describe('orca cli worktree awareness', () => {
       hostId: 'local',
       path: path.resolve('/tmp/orca/worktrees'),
       kind: 'git',
-      displayName: 'Orca'
+      displayName: 'Sol'
     })
   })
 
@@ -3413,7 +3413,7 @@ describe('orca cli worktree awareness', () => {
             worktreeId: 'repo::/tmp/repo/feature',
             worktreeName: 'feature',
             repoId: 'repo',
-            repoName: 'Orca',
+            repoName: 'Sol',
             cpu: 2.5,
             memory: 1024 * 1024,
             sessions: [
@@ -3634,7 +3634,7 @@ describe('orca cli worktree awareness', () => {
             hostId: 'local',
             repoId: 'repo-local',
             path: '/tmp/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             setupState: 'ready',
             setupMethod: 'legacy-repo',
             createdAt: 1,
@@ -3646,7 +3646,7 @@ describe('orca cli worktree awareness', () => {
             hostId: 'runtime:gpu',
             repoId: 'repo-gpu',
             path: '/srv/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             setupState: 'ready',
             setupMethod: 'legacy-repo',
             createdAt: 1,
@@ -3712,7 +3712,7 @@ describe('orca cli worktree awareness', () => {
             hostId: 'runtime:gpu',
             repoId: 'repo-gpu',
             path: '/srv/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             setupState: 'ready',
             setupMethod: 'legacy-repo',
             createdAt: 1,
@@ -4340,7 +4340,7 @@ describe('orca cli worktree awareness', () => {
         result: {
           project: {
             id: 'github:stablyai/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             badgeColor: '#7c3aed',
             sourceRepoIds: [],
             createdAt: 1,
@@ -4405,7 +4405,7 @@ describe('orca cli worktree awareness', () => {
         result: {
           project: {
             id: 'github:stablyai/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             badgeColor: '#7c3aed',
             sourceRepoIds: [],
             createdAt: 1,
@@ -4470,7 +4470,7 @@ describe('orca cli worktree awareness', () => {
         result: {
           project: {
             id: 'github:stablyai/orca',
-            displayName: 'Orca',
+            displayName: 'Sol',
             badgeColor: '#7c3aed',
             sourceRepoIds: [],
             createdAt: 1,

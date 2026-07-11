@@ -112,7 +112,7 @@ function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
   // Why: the macOS app-menu (named after the app) is mandatory on darwin and
   // owns hide/hideOthers/unhide/services/quit roles that only make sense in
   // the system menu bar. On Windows/Linux that menu would render as a
-  // redundant "Orca" entry with roles that don't apply, so we omit it there
+  // redundant "Sol" entry with roles that don't apply, so we omit it there
   // and distribute its items across File / Help instead.
   const macAppMenu: Electron.MenuItemConstructorOptions = {
     label: app.name,
@@ -156,7 +156,7 @@ function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
         accelerator: 'CmdOrCtrl+V',
         click: () => {
           // Why: a focused terminal/native-chat pane is not a native editable
-          // control, so raw Electron paste cannot know which Orca surface owns it.
+          // control, so raw Electron paste cannot know which Sol surface owns it.
           BrowserWindow.getFocusedWindow()?.webContents.send('ui:appMenuPaste')
         }
       },

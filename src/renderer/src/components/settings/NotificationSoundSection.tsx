@@ -122,7 +122,7 @@ export function NotificationSoundSection({
           soundSearch?.description ??
           translate(
             'auto.components.settings.NotificationsPane.2a2033c388',
-            'Choose the alert Orca plays when a desktop notification is delivered.'
+            'Choose the alert Sol plays when a desktop notification is delivered.'
           )
         }
         keywords={soundSearch?.keywords}
@@ -135,7 +135,7 @@ export function NotificationSoundSection({
           )}
           description={translate(
             'auto.components.settings.NotificationsPane.2a2033c388',
-            'Choose the alert Orca plays when a desktop notification is delivered.'
+            'Choose the alert Sol plays when a desktop notification is delivered.'
           )}
           control={
             <Select

@@ -90,7 +90,7 @@ export function KeybindingsFileActions(): React.JSX.Element {
           ? error.message
           : translate(
               'auto.components.settings.KeybindingsFileActions.dd532a01ce',
-              'Failed to open keybindings in Orca.'
+              'Failed to open keybindings in Sol.'
             )
       )
     }
@@ -136,7 +136,7 @@ export function KeybindingsFileActions(): React.JSX.Element {
         <FileText className="size-3" />
         {translate(
           'auto.components.settings.KeybindingsFileActions.1c2be2b2c6',
-          'Edit File in Orca'
+          'Edit File in Sol'
         )}
       </Button>
       <DropdownMenu>

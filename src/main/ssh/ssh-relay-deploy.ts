@@ -248,7 +248,7 @@ async function deployAndLaunchRelayInner(
   const hostPlatform = await detectRemoteHostPlatform(conn)
   if (!hostPlatform) {
     throw new Error(
-      'Unsupported remote platform. Orca relay supports: linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64, win32-arm64.'
+      'Unsupported remote platform. Sol relay supports: linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64, win32-arm64.'
     )
   }
   const platform = hostPlatform.relayPlatform
@@ -258,7 +258,7 @@ async function deployAndLaunchRelayInner(
   if (!localRelayDir) {
     throw new Error(
       `Relay package for ${platform} not found locally. ` +
-        `This may be a packaging issue — try reinstalling Orca.`
+        `This may be a packaging issue — try reinstalling Sol.`
     )
   }
   // Why: read the content-hashed full version from the local build's .version
@@ -358,7 +358,7 @@ async function uploadRelay(
   if (!localRelayDir || !existsSync(localRelayDir)) {
     throw new Error(
       `Relay package for ${platform} not found. Searched: ${getLocalRelayCandidates(platform).join(', ')}. ` +
-        `This may be a packaging issue — try reinstalling Orca.`
+        `This may be a packaging issue — try reinstalling Sol.`
     )
   }
 
@@ -682,7 +682,7 @@ async function launchRelay(
         )
   const escapedDir = shellEscape(remoteDir)
   const escapedNode = shellEscape(nodePath)
-  // Why: remoteRelayDir is shared by every Orca target for the same remote
+  // Why: remoteRelayDir is shared by every Sol target for the same remote
   // account. Hashing the target ID into the socket name prevents one target
   // from attaching to another target's live relay.
   const sockName = relaySocketNameForInstanceId(relayInstanceId)

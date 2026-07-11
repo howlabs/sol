@@ -2408,7 +2408,7 @@ function RemoteBrowserPagePane({
                     >
                       {translate(
                         'auto.components.browser.pane.BrowserPane.b5b87d6cbb',
-                        'Open Link In Orca Browser'
+                        'Open Link In Sol Browser'
                       )}
                     </button>
                     <button
@@ -3545,13 +3545,13 @@ function BrowserPagePane({
           // when no user-visible navigation happened. If we sync that into the
           // tab model on every activation, switching tabs flashes the blue
           // loading dot and makes hidden tabs look like they are reloading.
-          // Only explicit navigation/load events should drive Orca's loading UI.
+          // Only explicit navigation/load events should drive Sol's loading UI.
           canGoBack: webview.canGoBack(),
           canGoForward: webview.canGoForward()
         })
       } catch {
         // Why: Electron only exposes these getters after the guest fully
-        // attaches. Ignoring the transient failure avoids crashing Orca while
+        // attaches. Ignoring the transient failure avoids crashing Sol while
         // the webview guest becomes ready.
       }
     },
@@ -3743,7 +3743,7 @@ function BrowserPagePane({
           trackNextLoadingEventRef.current = false
           // Why: some webview failures still emit did-stop-loading on the
           // original destination URL. If we clear loadError here, the failed
-          // navigation falls back to a blank Chromium surface even though Orca
+          // navigation falls back to a blank Chromium surface even though Sol
           // already knows this exact load failed.
           onUpdatePageStateRef.current(browserTab.id, {
             loading: false,
@@ -3841,7 +3841,7 @@ function BrowserPagePane({
       }
       if (event.errorCode === -3) {
         // Why: Chromium reports redirect/cancel races as ERR_ABORTED (-3) even
-        // when the replacement navigation succeeds. Ignore that noise so Orca
+        // when the replacement navigation succeeds. Ignore that noise so Sol
         // does not show a false load failure for a working page.
         return
       }
@@ -3903,8 +3903,8 @@ function BrowserPagePane({
     if (needsInitialNavigation) {
       // Why: connection-refused localhost tabs can fail before Electron wires up
       // event delivery if src is assigned too early. Attach listeners first so
-      // Orca never misses the initial did-fail-load signal for a new tab.
-      // Only non-blank initial tabs should light up Orca's loading indicator.
+      // Sol never misses the initial did-fail-load signal for a new tab.
+      // Only non-blank initial tabs should light up Sol's loading indicator.
       const initialUrl =
         normalizeBrowserNavigationUrl(initialBrowserUrlRef.current) ?? ORCA_BROWSER_BLANK_URL
       trackNextLoadingEventRef.current = initialUrl !== ORCA_BROWSER_BLANK_URL
@@ -4025,7 +4025,7 @@ function BrowserPagePane({
       webview.src !== normalizedUrl &&
       declaredSrc !== normalizedUrl
     ) {
-      // Why: browserTab.url changes are Orca-driven navigations (address bar,
+      // Why: browserTab.url changes are Sol-driven navigations (address bar,
       // terminal link open, retry target update). Gate the next did-start-loading
       // event so only real navigations, not tab activation churn, show loading UI.
       trackNextLoadingEventRef.current = normalizedUrl !== ORCA_BROWSER_BLANK_URL
@@ -4077,7 +4077,7 @@ function BrowserPagePane({
 
     // Why: some Electron builds paint Chromium's internal chrome-error page
     // without delivering a timely did-fail-load event to the renderer webview.
-    // Polling only while the active tab is "loading" gives Orca a last-resort
+    // Polling only while the active tab is "loading" gives Sol a last-resort
     // path to swap the black guest surface without waking every retained
     // inactive browser pane on a 250ms loop.
     detectChromiumErrorPage()
@@ -4765,7 +4765,7 @@ function BrowserPagePane({
                     >
                       {translate(
                         'auto.components.browser.pane.BrowserPane.b5b87d6cbb',
-                        'Open Link In Orca Browser'
+                        'Open Link In Sol Browser'
                       )}
                     </button>
                     <button
@@ -5459,7 +5459,7 @@ function BrowserPagePane({
                             'Open failed page in default browser'
                           )}
                           onClick={() => {
-                            // Why: page failures inside Orca can still be recoverable
+                            // Why: page failures inside Sol can still be recoverable
                             // in the system browser, especially for OAuth, captive
                             // portals, or enterprise auth flows that rely on a full
                             // browser profile. Keep this action in the failed-state

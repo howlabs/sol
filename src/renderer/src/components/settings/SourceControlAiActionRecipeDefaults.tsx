@@ -190,7 +190,7 @@ export function SourceControlAiActionRecipeDefaults({
           title={ACTION_RECIPES_SEARCH_ENTRY.title}
           description={translate(
             'auto.components.settings.SourceControlAiActionRecipeDefaults.bf84dea6af',
-            'Use variables only when you want Orca to inject context. Leave the agent as default to follow your normal agent preference.'
+            'Use variables only when you want Sol to inject context. Leave the agent as default to follow your normal agent preference.'
           )}
         />
         {SOURCE_CONTROL_ACTION_IDS.map((actionId) => {

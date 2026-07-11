@@ -1,4 +1,4 @@
-export const ORCA_SKILLS_REPOSITORY_URL = 'https://github.com/stablyai/orca'
+export const ORCA_SKILLS_REPOSITORY_URL = 'https://github.com/howlabs/sol'
 
 export const ORCA_CLI_SKILL_NAME = 'orca-cli'
 export const ORCHESTRATION_SKILL_NAME = 'orchestration'

@@ -199,7 +199,7 @@ const JSON_INSTALLERS = [
 
 const MANAGED_HOOKS_DIR_NEEDLE = '/.orca/agent-hooks/'
 
-// Walk the parsed config and assert every Orca-managed command carrier (a node
+// Walk the parsed config and assert every Sol-managed command carrier (a node
 // with a `command`/`bash`/`powershell` string pointing at the managed script
 // dir) has a positive config-level timeout sibling (`timeout` or the
 // provider-specific `timeoutSec`). Returns the count of managed carriers found

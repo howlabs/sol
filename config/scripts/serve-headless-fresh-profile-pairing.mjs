@@ -92,7 +92,7 @@ process.on('SIGINT', () => stopChild('SIGINT'))
 process.on('SIGTERM', () => stopChild('SIGTERM'))
 
 /**
- * Parses wrapper flags and forwards everything else to `orca serve`.
+ * Parses wrapper flags and forwards everything else to `sol-ide serve`.
  */
 function parseArgs(args) {
   const serveArgs = []
@@ -250,7 +250,7 @@ function printReadyLine(line) {
   if (!payload || payload.type !== 'orca_server_ready') {
     return false
   }
-  console.log(`Orca server ready: ${payload.endpoint ?? 'websocket unavailable'}`)
+  console.log(`Sol server ready: ${payload.endpoint ?? 'websocket unavailable'}`)
   if (payload.pairing?.endpoint) {
     console.log(`Pairing endpoint: ${payload.pairing.endpoint}`)
   }

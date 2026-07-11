@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Orca startup-time benchmark.
+ * Sol startup-time benchmark.
  *
  * Launches the built app (out/) against a synthetic userData fixture that
  * mimics a long-lived real profile (tens of thousands of Chromium cache
@@ -110,7 +110,7 @@ function parseArgs(argv) {
 /**
  * Build a userData tree shaped like a real long-lived profile. The file count
  * drives the win32 icacls walk cost; contents are irrelevant, so files are
- * tiny. Layout mirrors Chromium cache dirs plus a few Orca-owned dirs.
+ * tiny. Layout mirrors Chromium cache dirs plus a few Sol-owned dirs.
  */
 function ensureFixture(fixtureDir, options) {
   const { fileCount, stateProfile, sessionTabs, githubRepos } = options

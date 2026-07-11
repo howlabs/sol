@@ -288,7 +288,7 @@ describe('runRemoteOrcaCli', () => {
     )
 
     expect(result.exitCode).toBe(1)
-    expect(result.stderr).toContain('Unsupported SSH Orca CLI command: worktree list')
-    expect(result.stderr).toContain('full Orca CLI bridge unavailable')
+    expect(result.stderr).toContain('Unsupported SSH Sol CLI command: worktree list')
+    expect(result.stderr).toContain('full Sol CLI bridge unavailable')
   })
 })

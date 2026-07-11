@@ -129,7 +129,7 @@ function localManagedCodexEvents(): string[] {
 }
 
 describe('CodexHookService', () => {
-  it('installs PermissionRequest with trust so Codex approval prompts reach Orca', () => {
+  it('installs PermissionRequest with trust so Codex approval prompts reach Sol', () => {
     const systemCodexHome = join(tmpHome, '.codex')
     mkdirSync(systemCodexHome, { recursive: true })
     writeFileSync(
@@ -305,10 +305,10 @@ describe('CodexHookService', () => {
 
       try {
         const payload = JSON.stringify({ prompt: '你好世界', hook_event_name: 'UserPromptSubmit' })
-        // Why: this suite may run inside an Orca-launched terminal whose env
+        // Why: this suite may run inside a Sol-launched terminal whose env
         // already carries ORCA_AGENT_HOOK_ENDPOINT/PORT/TOKEN. The managed
         // script sources that endpoint file, so leave it out or the hook posts
-        // to the live Orca instead of this test's listener.
+        // to the live Sol instead of this test's listener.
         const cleanEnv = { ...process.env }
         for (const key of Object.keys(cleanEnv)) {
           if (key.startsWith('ORCA_')) {
@@ -342,7 +342,7 @@ describe('CodexHookService', () => {
     }
   )
 
-  it('keeps hooks isolated by Orca userData instead of mutating system ~/.codex', () => {
+  it('keeps hooks isolated by Sol userData instead of mutating system ~/.codex', () => {
     const systemCodexHome = join(tmpHome, '.codex')
     const systemHooksPath = join(systemCodexHome, 'hooks.json')
     const existingSystemHooks = '{"hooks":{"Stop":[{"hooks":[{"command":"user-hook"}]}]}}\n'
@@ -802,7 +802,7 @@ describe('CodexHookService', () => {
     expect(stopCommands).not.toContain('user-hook-old')
   })
 
-  it('refreshes runtime user hooks without installing Orca-managed hooks', () => {
+  it('refreshes runtime user hooks without installing Sol-managed hooks', () => {
     const systemCodexHome = join(tmpHome, '.codex')
     const systemHooksPath = join(systemCodexHome, 'hooks.json')
     mkdirSync(systemCodexHome, { recursive: true })
@@ -872,7 +872,7 @@ describe('CodexHookService', () => {
     expect(runtimeToml).not.toContain(':permission_request:0:0')
   })
 
-  it('removes legacy Orca-managed hooks from system ~/.codex during install', () => {
+  it('removes legacy Sol-managed hooks from system ~/.codex during install', () => {
     const systemCodexHome = join(tmpHome, '.codex')
     const systemHooksPath = join(systemCodexHome, 'hooks.json')
     const legacyScriptPath = join(
@@ -942,7 +942,7 @@ describe('CodexHookService', () => {
     expect(systemToml).not.toContain(':session_start:0:0')
   })
 
-  it('removes very large legacy Orca-managed hook lists from system ~/.codex', () => {
+  it('removes very large legacy Sol-managed hook lists from system ~/.codex', () => {
     const systemCodexHome = join(tmpHome, '.codex')
     const systemHooksPath = join(systemCodexHome, 'hooks.json')
     const legacyScriptPath = join(
@@ -983,7 +983,7 @@ describe('CodexHookService', () => {
     expect(systemHooks.hooks.Stop).toBeUndefined()
   }, 30_000)
 
-  it('removes the legacy Orca Codex profile file when it only contains managed hooks', () => {
+  it('removes the legacy Sol Codex profile file when it only contains managed hooks', () => {
     const systemCodexHome = join(tmpHome, '.codex')
     const profilePath = join(systemCodexHome, 'orca-agent-status.config.toml')
     mkdirSync(systemCodexHome, { recursive: true })
@@ -1006,7 +1006,7 @@ describe('CodexHookService', () => {
     expect(existsSync(profilePath)).toBe(false)
   })
 
-  it('removes only the legacy Orca block from a user-edited Codex profile file', () => {
+  it('removes only the legacy Sol block from a user-edited Codex profile file', () => {
     const systemCodexHome = join(tmpHome, '.codex')
     const profilePath = join(systemCodexHome, 'orca-agent-status.config.toml')
     mkdirSync(systemCodexHome, { recursive: true })

@@ -6,7 +6,7 @@ import { app, ipcMain, net } from 'electron'
 // endpoint rejects. Electron's net module runs in the main process and is not
 // subject to CORS, so we proxy the submission through IPC. This mirrors the
 // same pattern used by updater-changelog.ts and updater-nudge.ts.
-const FEEDBACK_API_URL = 'https://www.onorca.dev/v1/feedback'
+const FEEDBACK_API_URL = 'https://github.com/howlabs/sol/v1/feedback'
 const FEEDBACK_API_FALLBACK_URL = 'https://api.onorca.dev/v1/feedback'
 const FEEDBACK_REQUEST_TIMEOUT_MS = 10_000
 const DIAGNOSTIC_BUNDLE_CONTENT_TYPE = 'application/x-ndjson'
@@ -49,7 +49,7 @@ type InternalFeedbackSubmitArgs = FeedbackSubmitArgs & {
 }
 
 // Why: the Slack notification and any follow-up investigation need to know
-// which Orca build and which OS the feedback came from. The main process is
+// which Sol build and which OS the feedback came from. The main process is
 // the only place with trusted access to these values (app.getVersion and the
 // node os module), so we enrich the payload here rather than trusting the
 // renderer.

@@ -1072,13 +1072,13 @@ describe('repos:addRemote', () => {
   it('clones a repo on an SSH target and registers the cloned path', async () => {
     const result = await handlers.get('repos:cloneRemote')!(null, {
       connectionId: 'conn-1',
-      url: 'https://github.com/stablyai/orca.git',
+      url: 'https://github.com/howlabs/sol.git',
       destination: '/home/user'
     })
 
     expect(mockFilesystemProvider.createDir).toHaveBeenCalledWith('/home/user')
     expect(mockGitProvider.clone).toHaveBeenCalledWith(
-      ['clone', '--progress', '--', 'https://github.com/stablyai/orca.git', 'orca'],
+      ['clone', '--progress', '--', 'https://github.com/howlabs/sol.git', 'orca'],
       '/home/user',
       expect.objectContaining({
         signal: expect.any(AbortSignal),
@@ -1118,7 +1118,7 @@ describe('repos:addRemote', () => {
 
     await handlers.get('repos:cloneRemote')!(null, {
       connectionId: 'conn-1',
-      url: 'https://github.com/stablyai/orca.git',
+      url: 'https://github.com/howlabs/sol.git',
       destination: '/home/user'
     })
 
@@ -1142,7 +1142,7 @@ describe('repos:addRemote', () => {
 
     const result = await handlers.get('repos:cloneRemote')!(null, {
       connectionId: 'conn-1',
-      url: 'https://github.com/stablyai/orca.git',
+      url: 'https://github.com/howlabs/sol.git',
       destination: '/home/user'
     })
 
@@ -1167,12 +1167,12 @@ describe('repos:addRemote', () => {
 
     const result = await handlers.get('repos:cloneRemote')!(null, {
       connectionId: 'conn-1',
-      url: 'https://github.com/stablyai/orca.git',
+      url: 'https://github.com/howlabs/sol.git',
       destination: '/home/user'
     })
 
     expect(mockGitProvider.clone).toHaveBeenCalledWith(
-      ['clone', '--progress', '--', 'https://github.com/stablyai/orca.git', 'orca'],
+      ['clone', '--progress', '--', 'https://github.com/howlabs/sol.git', 'orca'],
       '/home/user',
       expect.objectContaining({
         signal: expect.any(AbortSignal),
@@ -1195,7 +1195,7 @@ describe('repos:addRemote', () => {
     await expect(
       handlers.get('repos:cloneRemote')!(null, {
         connectionId: 'conn-1',
-        url: 'https://github.com/stablyai/orca.git',
+        url: 'https://github.com/howlabs/sol.git',
         destination: '/home/user'
       })
     ).rejects.toThrow('repository not found')
@@ -1214,7 +1214,7 @@ describe('repos:addRemote', () => {
 
     const firstClone = handlers.get('repos:cloneRemote')!(null, {
       connectionId: 'conn-1',
-      url: 'https://github.com/stablyai/orca.git',
+      url: 'https://github.com/howlabs/sol.git',
       destination: '/home/user'
     })
     await waitForAssertion(() => expect(mockGitProvider.clone).toHaveBeenCalledTimes(1))
@@ -1222,7 +1222,7 @@ describe('repos:addRemote', () => {
     await expect(
       handlers.get('repos:cloneRemote')!(null, {
         connectionId: 'conn-1',
-        url: 'https://github.com/stablyai/orca.git',
+        url: 'https://github.com/howlabs/sol.git',
         destination: '/home/user'
       })
     ).rejects.toThrow('A clone is already in progress for this SSH destination')
@@ -1236,7 +1236,7 @@ describe('repos:addRemote', () => {
 
     await handlers.get('repos:cloneRemote')!(null, {
       connectionId: 'conn-1',
-      url: 'https://github.com/stablyai/orca.git',
+      url: 'https://github.com/howlabs/sol.git',
       destination: '~/projects'
     })
 
@@ -1244,7 +1244,7 @@ describe('repos:addRemote', () => {
       path: '~/projects'
     })
     expect(mockGitProvider.clone).toHaveBeenCalledWith(
-      ['clone', '--progress', '--', 'https://github.com/stablyai/orca.git', 'orca'],
+      ['clone', '--progress', '--', 'https://github.com/howlabs/sol.git', 'orca'],
       '/home/ubuntu/projects',
       expect.any(Object)
     )
@@ -1257,7 +1257,7 @@ describe('repos:addRemote', () => {
     await expect(
       handlers.get('repos:cloneRemote')!(null, {
         connectionId: 'conn-1',
-        url: 'https://github.com/stablyai/orca.git',
+        url: 'https://github.com/howlabs/sol.git',
         destination: '/home/user'
       })
     ).rejects.toThrow('destination already exists')
@@ -1276,7 +1276,7 @@ describe('repos:addRemote', () => {
 
     const clonePromise = handlers.get('repos:cloneRemote')!(null, {
       connectionId: 'conn-1',
-      url: 'https://github.com/stablyai/orca.git',
+      url: 'https://github.com/howlabs/sol.git',
       destination: '/home/user'
     })
     await waitForAssertion(() => expect(mockGitProvider.clone).toHaveBeenCalledTimes(1))
@@ -1293,7 +1293,7 @@ describe('repos:addRemote', () => {
     await expect(
       handlers.get('repos:cloneRemote')!(null, {
         connectionId: 'conn-1',
-        url: 'https://github.com/stablyai/orca.git',
+        url: 'https://github.com/howlabs/sol.git',
         destination: 'relative/path'
       })
     ).rejects.toThrow('Clone destination must be an absolute path on the SSH host')
@@ -1734,7 +1734,7 @@ describe('repos:add + repos:clone', () => {
     expect(result).toHaveProperty('repo.badgeColor', DEFAULT_REPO_BADGE_COLOR)
   })
 
-  it('defaults new git repos:add records to hiding non-Orca worktrees', async () => {
+  it('defaults new git repos:add records to hiding non-Sol worktrees', async () => {
     const result = await handlers.get('repos:add')!(null, { path: '/tmp/from-add', kind: 'git' })
 
     expect(mockStore.addRepo).toHaveBeenCalledWith(

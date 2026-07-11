@@ -14,10 +14,10 @@ describe('getUntitledFileRoot', () => {
   it('falls back to the file root when no worktree path exists', () => {
     expect(
       getUntitledFileRoot({
-        filePath: '/Users/alice/Library/Application Support/Orca/notes/untitled.md',
+        filePath: '/Users/alice/Library/Application Support/Sol/notes/untitled.md',
         relativePath: 'untitled.md'
       })
-    ).toBe('/Users/alice/Library/Application Support/Orca/notes')
+    ).toBe('/Users/alice/Library/Application Support/Sol/notes')
   })
 
   it('handles nested untitled relative paths', () => {

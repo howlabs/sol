@@ -750,7 +750,7 @@ describe('createPtySubprocess', () => {
     }
   })
 
-  it('does not inherit parent Orca pane identity when caller omits pane env', () => {
+  it('does not inherit parent Sol pane identity when caller omits pane env', () => {
     const proc = mockPtyProcess()
     spawnMock.mockReturnValue(proc)
     const saved = {
@@ -780,7 +780,7 @@ describe('createPtySubprocess', () => {
     expect(env.ORCA_WORKTREE_ID).toBeUndefined()
   })
 
-  it('preserves explicit child Orca pane identity over parent env', () => {
+  it('preserves explicit child Sol pane identity over parent env', () => {
     const proc = mockPtyProcess()
     spawnMock.mockReturnValue(proc)
     const saved = {
@@ -2095,8 +2095,8 @@ describe('createPtySubprocess', () => {
       ['-d', 'Ubuntu', '--', 'sh', '-c', expect.stringContaining(`cd '${expectedLinuxCwd}'`)],
       expect.objectContaining({
         env: expect.objectContaining({
-          CODEX_HOME: '/home/jin/.local/share/orca/codex-accounts/a/home',
-          ORCA_CODEX_HOME: '/home/jin/.local/share/orca/codex-accounts/a/home',
+          CODEX_HOME: '/home/jin/.local/share/sol/codex-accounts/a/home',
+          ORCA_CODEX_HOME: '/home/jin/.local/share/sol/codex-accounts/a/home',
           WSLENV: expect.stringContaining('CODEX_HOME')
         })
       })
@@ -2133,7 +2133,7 @@ describe('createPtySubprocess', () => {
     )
   })
 
-  it('marks Orca terminal handles for WSL env import in daemon WSL terminals', () => {
+  it('marks Sol terminal handles for WSL env import in daemon WSL terminals', () => {
     const proc = mockPtyProcess()
     spawnMock.mockReturnValue(proc)
     const platform = Object.getOwnPropertyDescriptor(process, 'platform')

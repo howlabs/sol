@@ -298,7 +298,7 @@ describe('handleOscLink', () => {
     expect(openUrlMock).not.toHaveBeenCalled()
   })
 
-  it('uses the system browser for shift+cmd/ctrl+click even when Orca browser tabs are enabled', () => {
+  it('uses the system browser for shift+cmd/ctrl+click even when Sol browser tabs are enabled', () => {
     setPlatform('Windows')
     storeState.settings = { openLinksInApp: true }
 
@@ -322,7 +322,7 @@ describe('handleOscLink', () => {
     expect(createBrowserTabMock).not.toHaveBeenCalled()
   })
 
-  it('opens local .html file paths in Orca browser tabs with the platform modifier', async () => {
+  it('opens local .html file paths in Sol browser tabs with the platform modifier', async () => {
     setPlatform('Macintosh')
 
     openDetectedFilePath('/tmp/report.html', null, null, deps)
@@ -340,7 +340,7 @@ describe('handleOscLink', () => {
     expect(openFilePathMock).not.toHaveBeenCalled()
   })
 
-  it('also opens local .htm paths in Orca browser tabs with the platform modifier', async () => {
+  it('also opens local .htm paths in Sol browser tabs with the platform modifier', async () => {
     setPlatform('Macintosh')
 
     openDetectedFilePath('/tmp/legacy.HTM', null, null, deps)
@@ -356,7 +356,7 @@ describe('handleOscLink', () => {
     expect(openFilePathMock).not.toHaveBeenCalled()
   })
 
-  it('opens local file paths in Orca and reveals default column 1 with the platform modifier', async () => {
+  it('opens local file paths in Sol and reveals default column 1 with the platform modifier', async () => {
     setPlatform('Macintosh')
 
     openDetectedFilePath('/tmp/src/main.ts', 42, null, deps)
@@ -377,7 +377,7 @@ describe('handleOscLink', () => {
     expect(openFilePathMock).not.toHaveBeenCalled()
   })
 
-  it('preserves explicit column for Orca opens from :line:column links', async () => {
+  it('preserves explicit column for Sol opens from :line:column links', async () => {
     setPlatform('Macintosh')
 
     openDetectedFilePath('/tmp/src/main.ts', 42, 7, deps)
@@ -408,7 +408,7 @@ describe('handleOscLink', () => {
     expect(setPendingEditorRevealMock).not.toHaveBeenCalled()
   })
 
-  it('falls back to Orca when shift+cmd/ctrl-click system default open fails', async () => {
+  it('falls back to Sol when shift+cmd/ctrl-click system default open fails', async () => {
     setPlatform('Macintosh')
     openFilePathMock.mockResolvedValueOnce(false)
 
@@ -481,7 +481,7 @@ describe('handleOscLink', () => {
     expect(openFilePathMock).not.toHaveBeenCalled()
   })
 
-  it('opens local file URL links in Orca with the platform modifier on desktop', async () => {
+  it('opens local file URL links in Sol with the platform modifier on desktop', async () => {
     setPlatform('Windows')
 
     expect(handleOscLink('file:///tmp/test.txt', { metaKey: false, ctrlKey: true }, deps)).toBe(
@@ -570,7 +570,7 @@ describe('handleOscLink', () => {
     expect(openFileMock).not.toHaveBeenCalled()
   })
 
-  it('opens #L file URL links in Orca and preserves anchors', async () => {
+  it('opens #L file URL links in Sol and preserves anchors', async () => {
     setPlatform('Macintosh')
 
     handleOscLink('file:///tmp/test.txt#L42', { metaKey: true, ctrlKey: false }, deps)
@@ -787,7 +787,7 @@ describe('handleOscLink', () => {
     )
   })
 
-  it('opens SSH file links through Orca without local authorization', async () => {
+  it('opens SSH file links through Sol without local authorization', async () => {
     setPlatform('Macintosh')
     vi.mocked(getConnectionId).mockReturnValue('ssh-1')
 
@@ -956,7 +956,7 @@ describe('handleOscLink', () => {
     expect(openFileMock).not.toHaveBeenCalled()
   })
 
-  it('ignores stale async completion so latest local click wins for Orca open and reveal', async () => {
+  it('ignores stale async completion so latest local click wins for Sol open and reveal', async () => {
     setPlatform('Macintosh')
     const firstStat = createDeferred<{ isDirectory: boolean }>()
     const secondStat = createDeferred<{ isDirectory: boolean }>()
@@ -1202,7 +1202,7 @@ describe('createFilePathLinkProvider range bounds', () => {
     expect(pkg!.range.end.x).toBe(pkgStartIndex + 'package.json'.length)
   })
 
-  it('shows the Orca plus default-app hint for local file link hover', async () => {
+  it('shows the Sol plus default-app hint for local file link hover', async () => {
     setPlatform('Macintosh')
     const { provider, linkTooltip } = createProviderSetup([makeBufferLine('CLAUDE.md')])
 
@@ -1307,7 +1307,7 @@ describe('createFilePathLinkProvider range bounds', () => {
     expect(linkTooltip.textContent).toBe('/repo (Ctrl+click to switch workspace)')
   })
 
-  it('shows the Orca hint for SSH file link hover', async () => {
+  it('shows the Sol hint for SSH file link hover', async () => {
     setPlatform('Macintosh')
     vi.mocked(getConnectionId).mockReturnValue('ssh-1')
     const { provider, linkTooltip } = createProviderSetup([makeBufferLine('CLAUDE.md')])
@@ -1318,7 +1318,7 @@ describe('createFilePathLinkProvider range bounds', () => {
     expect(links[0]).toBeDefined()
     links[0]!.hover?.({} as MouseEvent, links[0]!.text)
 
-    expect(linkTooltip.textContent).toBe('/repo/CLAUDE.md (⌘+click to open in Orca)')
+    expect(linkTooltip.textContent).toBe('/repo/CLAUDE.md (⌘+click to open in Sol)')
   })
 
   it('bounds the terminal path-exists cache while preserving recent probes', async () => {
@@ -1710,7 +1710,7 @@ describe('createFilePathLinkProvider range bounds', () => {
   it('does not intercept regular URL clicks in the file-path fallback', async () => {
     setPlatform('Macintosh')
     const rows = [
-      makeBufferLine('PR opened: https://github.com/stablyai/orca-marketing-website/pull/82')
+      makeBufferLine('PR opened: https://github.com/howlabs/sol-marketing-website/pull/82')
     ]
     const { terminal, element } = makeFallbackTerminal(rows)
     const disposable = installFilePathLinkClickFallback(1, terminal, {
@@ -1749,7 +1749,7 @@ describe('createFilePathLinkProvider range bounds', () => {
     setPlatform('Macintosh')
     storeState.settings = { openLinksInApp: false }
     const rows = [
-      makeBufferLine('PR opened: https://github.com/stablyai/orca-marketing-website/pull/82')
+      makeBufferLine('PR opened: https://github.com/howlabs/sol-marketing-website/pull/82')
     ]
     const { terminal, element } = makeFallbackTerminal(rows)
     const disposable = installHttpLinkClickFallback(terminal, { worktreeId: 'wt-1' })
@@ -1782,7 +1782,7 @@ describe('createFilePathLinkProvider range bounds', () => {
     setPlatform('Macintosh')
     storeState.settings = { openLinksInApp: false }
     const rows = [
-      makeBufferLine('PR opened: https://github.com/stablyai/orca-marketing-website/pull/82')
+      makeBufferLine('PR opened: https://github.com/howlabs/sol-marketing-website/pull/82')
     ]
     const { terminal, element } = makeFallbackTerminal(rows)
     const disposable = installHttpLinkClickFallback(terminal, { worktreeId: 'wt-1' })
@@ -1803,7 +1803,7 @@ describe('createFilePathLinkProvider range bounds', () => {
     } as unknown as MouseEvent)
 
     expect(openUrlMock).toHaveBeenCalledWith(
-      'https://github.com/stablyai/orca-marketing-website/pull/82'
+      'https://github.com/howlabs/sol-marketing-website/pull/82'
     )
     expect(preventDefault).toHaveBeenCalled()
     expect(stopPropagation).not.toHaveBeenCalled()
@@ -1816,7 +1816,7 @@ describe('createFilePathLinkProvider range bounds', () => {
   it('does not steal macOS ctrl-click context-menu gestures in the URL fallback', async () => {
     setPlatform('Macintosh')
     storeState.settings = { openLinksInApp: false }
-    const rows = [makeBufferLine('Open https://github.com/stablyai/orca/pull/2914')]
+    const rows = [makeBufferLine('Open https://github.com/howlabs/sol/pull/2914')]
     const { terminal, element } = makeFallbackTerminal(rows)
     const disposable = installHttpLinkClickFallback(terminal, { worktreeId: 'wt-1' })
     const mouseUp = getRegisteredBubbleMouseUpHandler(element)
@@ -1845,7 +1845,7 @@ describe('createFilePathLinkProvider range bounds', () => {
     setPlatform('Macintosh')
     storeState.settings = { openLinksInApp: false, openLinksInAppPreferencePrompted: false }
     const rows = [
-      makeBufferLine('PR opened: https://github.com/stablyai/orca-marketing-website/pull/82')
+      makeBufferLine('PR opened: https://github.com/howlabs/sol-marketing-website/pull/82')
     ]
     const requestOpenLinksInAppPreference = vi.fn(async () => {
       storeState.settings = { openLinksInApp: true, openLinksInAppPreferencePrompted: true }
@@ -1872,7 +1872,7 @@ describe('createFilePathLinkProvider range bounds', () => {
     } as unknown as MouseEvent)
 
     expect(requestOpenLinksInAppPreference).toHaveBeenCalledWith(
-      'https://github.com/stablyai/orca-marketing-website/pull/82'
+      'https://github.com/howlabs/sol-marketing-website/pull/82'
     )
     expect(openUrlMock).not.toHaveBeenCalled()
     expect(createBrowserTabMock).not.toHaveBeenCalled()
@@ -1881,7 +1881,7 @@ describe('createFilePathLinkProvider range bounds', () => {
 
     expect(createBrowserTabMock).toHaveBeenCalledWith(
       'wt-1',
-      'https://github.com/stablyai/orca-marketing-website/pull/82',
+      'https://github.com/howlabs/sol-marketing-website/pull/82',
       { activate: true }
     )
     expect(preventDefault).toHaveBeenCalled()
@@ -1893,7 +1893,7 @@ describe('createFilePathLinkProvider range bounds', () => {
   it('does not double-open URLs when xterm already handled the mouseup', () => {
     setPlatform('Macintosh')
     storeState.settings = { openLinksInApp: false }
-    const rows = [makeBufferLine('Open https://github.com/stablyai/orca/pull/2914')]
+    const rows = [makeBufferLine('Open https://github.com/howlabs/sol/pull/2914')]
     const { terminal, element } = makeFallbackTerminal(rows)
     const disposable = installHttpLinkClickFallback(terminal, { worktreeId: 'wt-1' })
     const mouseUp = getRegisteredBubbleMouseUpHandler(element)

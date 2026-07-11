@@ -351,7 +351,7 @@ function expectZdotdirSourceContext(content: string, fileName: '.zprofile' | '.z
 }
 
 function expectFinalZdotdirRestoreContext(content: string) {
-  expect(content).toContain("after Orca's last wrapper file has loaded")
+  expect(content).toContain("after Sol's last wrapper file has loaded")
   expect(content).toContain('export ZDOTDIR="$_orca_home"')
 }
 
@@ -378,8 +378,8 @@ describePosix('local PTY shell-ready launch config', () => {
 
   it('falls back to HOME for ORCA_ORIG_ZDOTDIR when inherited ZDOTDIR points at a wrapper dir', async () => {
     // Why: mirrors the daemon path — guards the same zsh recursion loop for
-    // PTYs spawned by the renderer/local provider when Orca is launched from
-    // inside an Orca terminal (e.g. `pn dev`).
+    // PTYs spawned by the renderer/local provider when Sol is launched from
+    // inside a Sol terminal (e.g. `pn dev`).
     const previousZdotdir = process.env.ZDOTDIR
     const previousHome = process.env.HOME
     process.env.ZDOTDIR = '/some/other/orca/shell-ready/zsh'
@@ -403,7 +403,7 @@ describePosix('local PTY shell-ready launch config', () => {
     }
   })
 
-  it('uses inherited ORCA_ORIG_ZDOTDIR when ZDOTDIR is an Orca wrapper dir', async () => {
+  it('uses inherited ORCA_ORIG_ZDOTDIR when ZDOTDIR is a Sol wrapper dir', async () => {
     const previousZdotdir = process.env.ZDOTDIR
     const previousOrigZdotdir = process.env.ORCA_ORIG_ZDOTDIR
     const previousHome = process.env.HOME
@@ -772,7 +772,7 @@ path=(/custom/bin $path)
 `
       )
 
-      // Generate the Orca wrapper
+      // Generate the Sol wrapper
       const { getShellReadyLaunchConfig } = await importFreshLocalPtyShellReady()
       const config = getShellReadyLaunchConfig('/bin/zsh')
 
@@ -791,7 +791,7 @@ path=(/custom/bin $path)
       // Why: attribution shims are intentionally restored after user rcfiles;
       // this test isolates zsh top-level path scoping, not attribution ordering.
       delete cleanEnv.ORCA_ATTRIBUTION_SHIM_DIR
-      cleanEnv.ZDOTDIR = config.env.ZDOTDIR // Point to Orca wrapper dir
+      cleanEnv.ZDOTDIR = config.env.ZDOTDIR // Point to Sol wrapper dir
 
       const result = spawnSync(
         'zsh',
@@ -814,7 +814,7 @@ path=(/custom/bin $path)
 
     it('preserves top-level .zshenv path and function side effects', async () => {
       // Why: .zshenv is the normal place for always-on zsh env/path setup.
-      // Dropping those side effects regresses non-Orca zsh startup semantics.
+      // Dropping those side effects regresses non-Sol zsh startup semantics.
       const xdgZshDir = join(testHome, '.config', 'zsh')
       mkdirSync(xdgZshDir, { recursive: true })
       writeFileSync(
@@ -925,7 +925,7 @@ export ZDOTDIR="$HOME/.config/zsh"
       const cleanEnv: Record<string, string | undefined> = { ...process.env, HOME: testHome }
       delete cleanEnv.ZDOTDIR
       delete cleanEnv.ORCA_ORIG_ZDOTDIR
-      cleanEnv.ZDOTDIR = config.env.ZDOTDIR // Point to Orca wrapper dir
+      cleanEnv.ZDOTDIR = config.env.ZDOTDIR // Point to Sol wrapper dir
 
       const result = spawnSync(
         'zsh',
@@ -959,7 +959,7 @@ export MY_VAR=foo
       const cleanEnv: Record<string, string | undefined> = { ...process.env, HOME: testHome }
       delete cleanEnv.ZDOTDIR
       delete cleanEnv.ORCA_ORIG_ZDOTDIR
-      cleanEnv.ZDOTDIR = config.env.ZDOTDIR // Point to Orca wrapper dir
+      cleanEnv.ZDOTDIR = config.env.ZDOTDIR // Point to Sol wrapper dir
 
       const result = spawnSync('zsh', ['-c', 'echo "ORCA_ORIG_ZDOTDIR=${ORCA_ORIG_ZDOTDIR}"'], {
         env: cleanEnv as NodeJS.ProcessEnv,
@@ -1401,7 +1401,7 @@ export MY_VAR=foo
       writeFileSync(join(testHome, '.zshenv'), `export ZDOTDIR="${currentZdotdir}"\n`)
 
       const previousOrcaZdotdir = process.env.ORCA_ORIG_ZDOTDIR
-      process.env.ORCA_ORIG_ZDOTDIR = '/opt/orca-old/shell-ready/zsh' // stale wrapper path
+      process.env.ORCA_ORIG_ZDOTDIR = '/opt/sol-old/shell-ready/zsh' // stale wrapper path
 
       try {
         const { getShellReadyLaunchConfig } = await importFreshLocalPtyShellReady()
@@ -1410,7 +1410,7 @@ export MY_VAR=foo
         const cleanEnv: Record<string, string | undefined> = {
           ...process.env,
           HOME: testHome,
-          ORCA_ORIG_ZDOTDIR: '/opt/orca-old/shell-ready/zsh'
+          ORCA_ORIG_ZDOTDIR: '/opt/sol-old/shell-ready/zsh'
         }
         delete cleanEnv.ZDOTDIR
         cleanEnv.ZDOTDIR = config.env.ZDOTDIR

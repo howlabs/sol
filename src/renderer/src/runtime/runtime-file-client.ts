@@ -506,7 +506,7 @@ export async function importExternalPathsToRuntime(
     } catch (error) {
       if (createdDirectoryImportRoot) {
         // Why: match local directory imports by removing the no-clobber root
-        // Orca created when a nested runtime upload fails halfway through.
+        // Sol created when a nested runtime upload fails halfway through.
         await callRuntimeRpc(
           target,
           'files.delete',

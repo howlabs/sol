@@ -68,7 +68,7 @@ type Props = {
   selectedRepoIds: ReadonlySet<string>
 }
 
-const ORCA_FEATURE_REQUEST_URL = 'https://github.com/stablyai/orca/issues/new'
+const ORCA_FEATURE_REQUEST_URL = 'https://github.com/howlabs/sol/issues/new'
 
 function listProjectViewsForRuntime(
   settings: Parameters<typeof getActiveRuntimeTarget>[0],
@@ -404,7 +404,7 @@ export default function ProjectViewWrapper({ selectedRepoIds }: Props): React.JS
     origin: GitHubItemDialogProjectOrigin
   } | null>(null)
   // Why: the slug dialog is only opened for rows whose repo isn't registered
-  // in Orca (matched repos go through the full GitHubItemDialog above), so
+  // in Sol (matched repos go through the full GitHubItemDialog above), so
   // there's no `matchedRepo` to track here. The repo-not-in-orca modal —
   // owned by this parent, not the slug dialog — handles "Start work".
   const [slugDialog, setSlugDialog] = useState<{
@@ -424,7 +424,7 @@ export default function ProjectViewWrapper({ selectedRepoIds }: Props): React.JS
   )
   if (resolvedDialogRepoItem !== dialogRepoItem) {
     // Why: repo-backed Project dialogs cannot edit after their repo leaves
-    // Orca; clear them before the modal tree receives stale repo ids.
+    // Sol; clear them before the modal tree receives stale repo ids.
     setDialogRepoItem(resolvedDialogRepoItem)
   }
   const resolvedDialogRepo = resolvedDialogRepoItem
@@ -977,7 +977,7 @@ export default function ProjectViewWrapper({ selectedRepoIds }: Props): React.JS
         />
       ) : null}
 
-      {/* Slug-only simplified dialog for rows whose repo isn't added to Orca.
+      {/* Slug-only simplified dialog for rows whose repo isn't added to Sol.
           Why: no Start-work affordance lives inside the slug dialog — the
           parent's `handleStartWork`/`repoNotInOrca` modal owns that flow, so
           having a duplicate (always-disabled or always-routing-to-fallback)
@@ -998,14 +998,14 @@ export default function ProjectViewWrapper({ selectedRepoIds }: Props): React.JS
             <DialogTitle>
               {translate(
                 'auto.components.github.project.ProjectViewWrapper.7037c8f5f1',
-                'Repository not in Orca'
+                'Repository not in Sol'
               )}
             </DialogTitle>
             <DialogDescription>
               {resolvedMissingRepoDialogs.repoNotInOrca
                 ? translate(
                     'auto.components.github.project.ProjectViewWrapper.1850fceac8',
-                    "{{value0}}/{{value1}} isn't added to Orca. Add it to start work, or open in GitHub.",
+                    "{{value0}}/{{value1}} isn't added to Sol. Add it to start work, or open in GitHub.",
                     {
                       value0: resolvedMissingRepoDialogs.repoNotInOrca.owner,
                       value1: resolvedMissingRepoDialogs.repoNotInOrca.repo
@@ -1227,7 +1227,7 @@ function ViewTabStrip({
                 ? v.name
                 : translate(
                     'auto.components.github.project.ProjectViewWrapper.2edf5e7e77',
-                    "{{value0}} — Orca doesn't support {{value1}} project views yet. File a feature request at {{value2}}.",
+                    "{{value0}} — Sol doesn't support {{value1}} project views yet. File a feature request at {{value2}}.",
                     { value0: v.name, value1: layoutLabel, value2: ORCA_FEATURE_REQUEST_URL }
                   )
             }
@@ -1247,7 +1247,7 @@ function ViewTabStrip({
         if (supported) {
           return tab
         }
-        const unsupportedMessage = `Orca doesn't support ${layoutLabel} project views yet.`
+        const unsupportedMessage = `Sol doesn't support ${layoutLabel} project views yet.`
         return (
           <HoverCard key={v.id} openDelay={200} closeDelay={100}>
             <HoverCardTrigger asChild>
@@ -1269,7 +1269,7 @@ function ViewTabStrip({
                   {unsupportedMessage}{' '}
                   {translate(
                     'auto.components.github.project.ProjectViewWrapper.1bf8c01c8b',
-                    'Switch to a Table view to work with this project in Orca.'
+                    'Switch to a Table view to work with this project in Sol.'
                   )}
                 </p>
                 <Button
@@ -1323,9 +1323,9 @@ function ErrorState({
   }
   const copy =
     error.type === 'too_large'
-      ? `This view has ${totalCount ?? 'many'} items — too large to render in Orca. Narrow the view's filter on GitHub.`
+      ? `This view has ${totalCount ?? 'many'} items — too large to render in Sol. Narrow the view's filter on GitHub.`
       : error.type === 'unsupported_layout'
-        ? 'Orca only renders table views yet. This is a Board or Roadmap view.'
+        ? 'Sol only renders table views yet. This is a Board or Roadmap view.'
         : error.type === 'not_found'
           ? 'Could not find this project or view.'
           : error.type === 'schema_drift'

@@ -64,7 +64,7 @@ function formatDevInstanceLabel(branch, worktreeName) {
 }
 
 function createDockTitle(branch, label) {
-  return `Orca: ${branch || label || 'dev'}`
+  return `Sol: ${branch || label || 'dev'}`
 }
 
 function seedDevInstanceIdentityEnv() {
@@ -116,7 +116,7 @@ function sanitizeMacAppBundleName(value) {
       .join('')
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 120) || 'Orca'
+      .slice(0, 120) || 'Sol'
   )
 }
 
@@ -136,7 +136,7 @@ function prepareMacDevElectronApp() {
     electronVersion = JSON.parse(readFileSync(electronPackagePath, 'utf8')).version ?? null
   } catch {}
 
-  const title = process.env.ORCA_DEV_DOCK_TITLE || 'Orca: dev'
+  const title = process.env.ORCA_DEV_DOCK_TITLE || 'Sol: dev'
   const identityKey = process.env.ORCA_DEV_INSTANCE_KEY || repoRoot
   const bundleLayoutVersion = 'dock-title-app-preserve-framework-symlinks-v4'
   const hash = createHash('sha1')
@@ -151,7 +151,7 @@ function prepareMacDevElectronApp() {
   const appBundleName = `${sanitizeMacAppBundleName(title)}.app`
   const appPath = path.join(distDir, appBundleName)
   const markerPath = path.join(distDir, 'orca-dev-electron-app.json')
-  const bundleId = `com.stablyai.orca.dev.${sanitizeBundleIdPart(hash)}`
+  const bundleId = `com.howlabs.sol.dev.${sanitizeBundleIdPart(hash)}`
   process.env.ORCA_DEV_MACOS_BUNDLE_ID = bundleId
   const expectedMarker = JSON.stringify(
     { title, appBundleName, bundleId, sourceAppPath, electronVersion, bundleLayoutVersion },
@@ -295,11 +295,11 @@ function prepareDevCliWrapper() {
     chmodSync(wrapperPath, 0o755)
 
     mkdirSync(userDataBinDir, { recursive: true })
-    for (const commandName of ['orca-dev', 'orca']) {
+    for (const commandName of ['orca-dev', 'sol']) {
       const userDataWrapperPath = path.join(userDataBinDir, commandName)
-      // Why: dev Orca terminals prepend this directory to PATH; refreshing the
-      // `orca` alias prevents stale global/userData wrappers from hijacking
-      // Orca-owned commands such as `orca claude-teams`.
+      // Why: dev Sol terminals prepend this directory to PATH; refreshing the
+      // `sol` alias prevents stale global/userData wrappers from hijacking
+      // Sol-owned commands such as `orca claude-teams`.
       writeFileSync(userDataWrapperPath, wrapperContent, 'utf8')
       chmodSync(userDataWrapperPath, 0o755)
     }

@@ -133,10 +133,10 @@ describe('detectRepoIcon', () => {
     const repoPath = await makeTempRepoDir()
     await writeFile(
       join(repoPath, 'package.json'),
-      JSON.stringify({ homepage: 'https://github.com/stablyai/orca' })
+      JSON.stringify({ homepage: 'https://github.com/howlabs/sol' })
     )
     await gitExecFileAsync(['init'], { cwd: repoPath })
-    await gitExecFileAsync(['remote', 'add', 'origin', 'https://github.com/stablyai/orca.git'], {
+    await gitExecFileAsync(['remote', 'add', 'origin', 'https://github.com/howlabs/sol.git'], {
       cwd: repoPath
     })
 
@@ -169,7 +169,7 @@ describe('detectRepoIcon', () => {
 
     await expect(detectRepoIconAndUpstream({ repoPath, kind: 'git' })).resolves.toEqual({
       gitRemoteIdentity: {
-        canonicalKey: 'github.com/stablyai/orca',
+        canonicalKey: 'github.com/howlabs/sol',
         remoteName: 'upstream',
         remoteUrl: 'git@github.com:stablyai/orca.git'
       },

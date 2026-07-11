@@ -651,18 +651,15 @@ describe('orca cli browser waits and viewport flags', () => {
     )
   })
 
-  it('does not tell users Orca is down for a generic runtime timeout', async () => {
+  it('does not tell users Sol is down for a generic runtime timeout', async () => {
     callMock.mockRejectedValueOnce(
-      new RuntimeClientError(
-        'runtime_timeout',
-        'Timed out waiting for the Orca runtime to respond.'
-      )
+      new RuntimeClientError('runtime_timeout', 'Timed out waiting for the Sol runtime to respond.')
     )
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     await main(['wait', '--selector', '#ready', '--worktree', 'all'], '/tmp/not-an-orca-worktree')
 
-    expect(errorSpy).toHaveBeenCalledWith('Timed out waiting for the Orca runtime to respond.')
+    expect(errorSpy).toHaveBeenCalledWith('Timed out waiting for the Sol runtime to respond.')
   })
 
   it('passes the mobile viewport flag through to browser.viewport', async () => {

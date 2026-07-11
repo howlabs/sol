@@ -164,8 +164,8 @@ export function classifyWorktreeOwnership(args: {
   }
 
   if (canClassifyAsExternal(args.worktree.path, args.knownOrcaLayouts)) {
-    // Why: a plain `git worktree add` can target Orca's nested workspace
-    // folder. Only metadata proves Orca created it.
+    // Why: a plain `git worktree add` can target Sol's nested workspace
+    // folder. Only metadata proves Sol created it.
     return 'external'
   }
 

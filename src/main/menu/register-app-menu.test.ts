@@ -15,7 +15,7 @@ vi.mock('electron', () => ({
     setApplicationMenu: setApplicationMenuMock
   },
   app: {
-    name: 'Orca'
+    name: 'Sol'
   }
 }))
 
@@ -143,7 +143,7 @@ describe('registerAppMenu', () => {
     // Why: Check for Updates lives under the app-name menu on macOS and
     // under Help on Windows/Linux. The click behavior must be identical
     // either way.
-    const parentLabel = isMac ? 'Orca' : 'Help'
+    const parentLabel = isMac ? 'Sol' : 'Help'
     const item = getSubmenu(getTemplate(), parentLabel).find(
       (entry) => entry.label === 'Check for Updates...'
     )
@@ -199,7 +199,7 @@ describe('registerAppMenu', () => {
     expect(paletteItem?.accelerator).toBeUndefined()
   })
 
-  it('routes Edit > Paste through Orca coordinated paste ownership', () => {
+  it('routes Edit > Paste through Sol coordinated paste ownership', () => {
     const send = vi.fn()
     getFocusedWindowMock.mockReturnValue({ webContents: { send } })
     registerAppMenu(buildMenuOptions())
@@ -220,10 +220,10 @@ describe('registerAppMenu', () => {
     registerAppMenu(buildMenuOptions())
 
     const template = getTemplate()
-    // Why: no redundant app-named "Orca" menu should exist on non-mac — the
+    // Why: no redundant app-named "Sol" menu should exist on non-mac — the
     // app-menu contents (Settings, Exit, Check for Updates, About) have been
     // redistributed so users see them in File / Help instead.
-    expect(template.find((item) => item.label === 'Orca')).toBeUndefined()
+    expect(template.find((item) => item.label === 'Sol')).toBeUndefined()
 
     const fileLabels = getSubmenu(template, 'File').map((item) => item.label)
     expect(fileLabels).not.toContain(`Export as PDF...\t${isMac ? '⌘⇧E' : 'Ctrl+Shift+E'}`)
@@ -234,15 +234,15 @@ describe('registerAppMenu', () => {
 
     const helpLabels = getSubmenu(template, 'Help').map((item) => item.label)
     expect(helpLabels).toEqual(expect.arrayContaining(['Report Crash...', 'Check for Updates...']))
-    expect(helpLabels).not.toContain('Getting Started with Orca')
-    expect(helpLabels).not.toContain('Explore Orca')
+    expect(helpLabels).not.toContain('Getting Started with Sol')
+    expect(helpLabels).not.toContain('Explore Sol')
   })
 
   it.runIf(isMac)('keeps the macOS app-named menu with Settings and quit roles', () => {
     registerAppMenu(buildMenuOptions())
 
     const template = getTemplate()
-    const appSubmenu = getSubmenu(template, 'Orca')
+    const appSubmenu = getSubmenu(template, 'Sol')
     const appLabels = appSubmenu.map((item) => item.label)
     expect(appLabels).toEqual(
       expect.arrayContaining(['Check for Updates...', `Settings\t${isMac ? '⌘,' : 'Ctrl+,'}`])

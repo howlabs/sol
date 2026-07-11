@@ -116,7 +116,7 @@ describe('NotificationsPane', () => {
     expect(toastMessage).toHaveBeenCalledWith(
       'Test notification requested',
       expect.objectContaining({
-        description: 'If no macOS banner appeared, enable Allow notifications for Orca.',
+        description: 'If no macOS banner appeared, enable Allow notifications for Sol.',
         action: expect.objectContaining({ label: 'Open Settings' })
       })
     )
@@ -224,7 +224,7 @@ describe('NotificationsPane', () => {
     expect(toastError).toHaveBeenCalledWith(
       'Windows did not show the notification',
       expect.objectContaining({
-        description: 'Enable notifications for Orca in Windows Settings.',
+        description: 'Enable notifications for Sol in Windows Settings.',
         action: expect.objectContaining({ label: 'Open Settings' })
       })
     )

@@ -19,11 +19,11 @@ vi.mock('sonner', () => ({
 function cliStatus(overrides: Partial<CliInstallStatus> = {}): CliInstallStatus {
   return {
     platform: 'darwin',
-    commandName: 'orca',
-    commandPath: '/usr/local/bin/orca',
+    commandName: 'sol',
+    commandPath: '/usr/local/bin/sol',
     pathDirectory: '/usr/local/bin',
     pathConfigured: true,
-    launcherPath: '/Applications/Orca.app/Contents/MacOS/orca',
+    launcherPath: '/Applications/Sol.app/Contents/MacOS/orca',
     installMethod: 'symlink',
     supported: true,
     state: 'installed',

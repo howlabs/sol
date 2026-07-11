@@ -1,6 +1,6 @@
 /**
  * Pi-compatible agent kinds. Pi consumes the `PI_CODING_AGENT_DIR` env contract
- * and Orca's managed extension installer targets `~/.pi/agent`.
+ * and Sol's managed extension installer targets `~/.pi/agent`.
  */
 export type PiAgentKind = 'pi'
 

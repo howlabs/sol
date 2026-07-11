@@ -49,7 +49,7 @@ describe('tui agent startup plans', () => {
     expect(plan?.launchCommand).toBe('claude "fix ^"quoted^" ^& ^%PATH^%"')
   })
 
-  it('does not launch Codex with the Orca profile when agent status hooks are enabled', () => {
+  it('does not launch Codex with the Sol profile when agent status hooks are enabled', () => {
     const plan = buildAgentStartupPlan({
       agent: 'codex',
       prompt: 'fix it',
@@ -79,7 +79,7 @@ describe('tui agent startup plans', () => {
     })
   })
 
-  it('launches Claude without Orca settings injection', () => {
+  it('launches Claude without Sol settings injection', () => {
     const plan = buildAgentStartupPlan({
       agent: 'claude',
       prompt: 'fix it',
@@ -91,7 +91,7 @@ describe('tui agent startup plans', () => {
     expect(plan?.launchCommand).not.toContain('--settings')
   })
 
-  it('uses the Linux Orca CLI command for Claude Agent Teams launches', () => {
+  it('uses the Linux Sol CLI command for Claude Agent Teams launches', () => {
     const plan = buildAgentStartupPlan({
       agent: 'claude-agent-teams',
       prompt: '',
@@ -100,13 +100,13 @@ describe('tui agent startup plans', () => {
       allowEmptyPromptLaunch: true
     })
 
-    expect(plan?.launchCommand).toBe('orca-ide claude-teams')
+    expect(plan?.launchCommand).toBe('sol-ide claude-teams')
   })
 
-  it('uses the plain orca shim for Claude Agent Teams on Linux SSH remotes', () => {
-    // Why: the SSH relay deploys the CLI shim as `orca` (not the local-only
-    // `orca-ide` GNOME-screen-reader workaround), so a remote launch must not
-    // emit `orca-ide claude-teams` — that name is not on the remote PATH and
+  it('uses the plain sol shim for Claude Agent Teams on Linux SSH remotes', () => {
+    // Why: the SSH relay deploys the CLI shim as `sol` (not the local-only
+    // `sol-ide` GNOME-screen-reader workaround), so a remote launch must not
+    // emit `sol-ide claude-teams` — that name is not on the remote PATH and
     // `claude-teams` is rejected by the relay's CLI switch (issue #6500).
     const plan = buildAgentStartupPlan({
       agent: 'claude-agent-teams',
@@ -117,11 +117,11 @@ describe('tui agent startup plans', () => {
       allowEmptyPromptLaunch: true
     })
 
-    expect(plan?.launchCommand).toBe('orca claude-teams')
+    expect(plan?.launchCommand).toBe('sol claude-teams')
   })
 
-  it('keeps the Windows orca.cmd shim for Claude Agent Teams on SSH remotes', () => {
-    // Why: the Windows remote shim is also `orca.cmd`, matching the local
+  it('keeps the Windows sol.cmd shim for Claude Agent Teams on SSH remotes', () => {
+    // Why: the Windows remote shim is also `sol.cmd`, matching the local
     // win32 override, so remoteness must not alter the Windows command.
     const plan = buildAgentStartupPlan({
       agent: 'claude-agent-teams',
@@ -132,11 +132,11 @@ describe('tui agent startup plans', () => {
       allowEmptyPromptLaunch: true
     })
 
-    expect(plan?.launchCommand).toBe('orca.cmd claude-teams')
+    expect(plan?.launchCommand).toBe('sol.cmd claude-teams')
   })
 
-  it('keeps the Linux orca-ide wrapper for local (non-remote) Claude Agent Teams', () => {
-    // Why: the `orca-ide` rename is still required for a local Linux desktop
+  it('keeps the Linux sol-ide wrapper for local (non-remote) Claude Agent Teams', () => {
+    // Why: the `sol-ide` rename is still required for a local Linux desktop
     // install (avoids shadowing the GNOME Orca screen reader), so an explicit
     // isRemote:false must preserve it.
     const plan = buildAgentStartupPlan({
@@ -148,7 +148,7 @@ describe('tui agent startup plans', () => {
       allowEmptyPromptLaunch: true
     })
 
-    expect(plan?.launchCommand).toBe('orca-ide claude-teams')
+    expect(plan?.launchCommand).toBe('sol-ide claude-teams')
   })
 
   it('launches OpenClaude as a distinct argv agent', () => {

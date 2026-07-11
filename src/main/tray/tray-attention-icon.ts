@@ -1,6 +1,6 @@
 import { nativeImage, type NativeImage } from 'electron'
 
-// Why: amber-500 (#f59e0b) is Orca's "needs attention / unread" color, matching
+// Why: amber-500 (#f59e0b) is Sol's "needs attention / unread" color, matching
 // the renderer launcher dot and the tab-unread bell.
 const DOT_RGB = { r: 0xf5, g: 0x9e, b: 0x0b }
 // A near-white halo separates the dot from the icon glyph on any tray theme.

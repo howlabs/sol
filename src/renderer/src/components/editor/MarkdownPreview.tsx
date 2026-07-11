@@ -291,7 +291,7 @@ const markdownPreviewSanitizeSchema = {
   protocols: {
     ...defaultSchema.protocols,
     // Why: markdown preview owns file:// click routing and authorizes the
-    // user-selected path before opening it in Orca. Sanitization must preserve
+    // user-selected path before opening it in Sol. Sanitization must preserve
     // the target so the click handler can make that security decision.
     href: [...(defaultSchema.protocols?.href ?? []), 'file'],
     src: [...(defaultSchema.protocols?.src ?? []), 'file']
@@ -1321,7 +1321,7 @@ export default function MarkdownPreview({
 
           if (target.protocol === 'http:' || target.protocol === 'https:') {
             // Why: route through openHttpLink (not raw shell.openUrl) so a plain
-            // click honors the "open links in Orca" setting; openHttpLink keeps
+            // click honors the "open links in Sol" setting; openHttpLink keeps
             // remote runtimes on the system browser. (Cmd/Ctrl+Shift-click is
             // handled above; this path only sees non-escape-hatch clicks.)
             openHttpLink(
@@ -1356,7 +1356,7 @@ export default function MarkdownPreview({
           if (!targetWorktree) {
             if (sourceRoutingWorktreeId && worktreeRoot) {
               // Why: floating markdown files are owned by a synthetic workspace,
-              // so there may be no repo worktree even though Orca can stat/open
+              // so there may be no repo worktree even though Sol can stat/open
               // links relative to the source file root.
               void activateMarkdownLink(href, {
                 sourceFilePath: filePath,

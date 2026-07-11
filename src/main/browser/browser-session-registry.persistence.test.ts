@@ -35,7 +35,7 @@ function installModuleMocks(
   const sessionFromPartitionMock = vi.fn((partition: string) => ({
     partition,
     setUserAgent: vi.fn(),
-    getUserAgent: vi.fn(() => 'Mozilla/5.0 Electron/31 Orca'),
+    getUserAgent: vi.fn(() => 'Mozilla/5.0 Electron/31 Sol'),
     setPermissionRequestHandler: vi.fn(),
     setPermissionCheckHandler: vi.fn(),
     setDevicePermissionHandler: vi.fn(),

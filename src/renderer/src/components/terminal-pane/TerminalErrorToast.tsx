@@ -69,7 +69,7 @@ export function TerminalErrorToast({
                 'If this persists, please'
               )}{' '}
               <a
-                href="https://github.com/stablyai/orca/issues"
+                href="https://github.com/howlabs/sol/issues"
                 style={{ color: '#fca5a5', textDecoration: 'underline' }}
               >
                 {translate(

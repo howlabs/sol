@@ -40,7 +40,7 @@ const ANTIGRAVITY_EVENTS = [
   },
   { eventName: 'Stop', schema: 'direct', windowsWrapperFileName: 'antigravity-stop.cmd' },
   // Why: Antigravity requires PreToolUse hooks to make permission decisions.
-  // Orca's hook is observational, so installing there can block user tools.
+  // Sol's hook is observational, so installing there can block user tools.
   {
     eventName: 'PostToolUse',
     schema: 'tool',
@@ -123,7 +123,7 @@ function getManagedScript(target: 'local' | 'posix' = 'local'): string {
     'payload=$(cat)',
     'if [ -z "$payload" ]; then',
     // Why: some Antigravity hook events can arrive without stdin. Still post
-    // the event name so Orca shows a status row instead of silently dropping it.
+    // the event name so Sol shows a status row instead of silently dropping it.
     "  payload='{}'",
     'fi',
     // Timeout caps best-effort hook posts if the local listener stalls.

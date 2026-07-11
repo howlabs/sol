@@ -95,7 +95,7 @@ function createHarness(args: {
       ...args.env
     },
     title: args.title ?? 'node',
-    argv: args.argv ?? ['node', '/usr/bin/orca']
+    argv: args.argv ?? ['node', '/usr/bin/sol']
   }
 
   const context = {

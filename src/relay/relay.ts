@@ -9,7 +9,7 @@
    daemon reconnect, and handler registration. Splitting the orchestration
    would hide the startup order, which is the important invariant here. */
 
-// Orca Relay — lightweight daemon deployed to remote hosts.
+// Sol Relay — lightweight daemon deployed to remote hosts.
 // Communicates over stdin/stdout using the framed JSON-RPC protocol.
 // The Electron app (client) deploys this script via SCP and launches
 // it via an SSH exec channel.
@@ -500,7 +500,7 @@ async function main(): Promise<void> {
   // ── Agent-hook server ─────────────────────────────────────────────
   // Why: hosts a loopback HTTP receiver inside the relay process so agent
   // CLIs running in remote PTYs can post hook events without leaving the
-  // host. Each parsed payload is forwarded to Orca via an `agent.hook`
+  // host. Each parsed payload is forwarded to Sol via an `agent.hook`
   // JSON-RPC notification on the existing SSH channel — see
   // docs/design/agent-status-over-ssh.md §2-§5.
   const hookServer = new RelayAgentHookServer({
@@ -512,7 +512,7 @@ async function main(): Promise<void> {
       // Why: dispatcher.notify is fire-and-forget — when the SSH channel is
       // mid-reconnect the write callback no-ops and the notification is
       // silently dropped. The per-paneKey cache inside `hookServer` lets us
-      // replay the last status for each live pane after Orca re-wires its
+      // replay the last status for each live pane after Sol re-wires its
       // handler post-`--connect`.
       dispatcher.notify(
         AGENT_HOOK_NOTIFICATION_METHOD,
@@ -564,7 +564,7 @@ async function main(): Promise<void> {
       }
     }
     if (pluginOverlay.hasPiSource()) {
-      // Why: install Orca's guarded extension into the real remote Pi agent
+      // Why: install Sol's guarded extension into the real remote Pi agent
       // dir without redirecting PI_CODING_AGENT_DIR.
       const launchCommandHint = resolveSetupAgentSequenceLaunchCommand(ctx.env, ctx.command)
       const kind = detectPiAgentKindFromCommand(launchCommandHint)
@@ -590,7 +590,7 @@ async function main(): Promise<void> {
     pluginOverlay.clearOverlay(paneKey ?? id)
   })
 
-  // Why: request-driven replay. Orca issues this *after* it re-wires the
+  // Why: request-driven replay. Sol issues this *after* it re-wires the
   // `agent.hook` filter on the new mux post-`--connect`. We forward each
   // cached entry as a fresh notification BEFORE returning so the response
   // strictly trails all replays on the dispatcher's single write callback —
@@ -601,13 +601,13 @@ async function main(): Promise<void> {
     return { replayed }
   })
 
-  // Why: Orca ships the OpenCode plugin / Pi extension source bodies over
+  // Why: Sol ships the OpenCode plugin / Pi extension source bodies over
   // the wire at session-ready (the renderer's bundled hook-service strings
   // change as new agent events are added — pinning them to the relay binary
-  // would force a relay redeploy on every Orca update). Cache them so each
+  // would force a relay redeploy on every Sol update). Cache them so each
   // subsequent PTY spawn can materialize the remote OpenCode overlay and
   // install Pi managed extensions. See docs/design/agent-status-over-ssh.md §4.
-  // Why: bound the per-source size so a buggy/hostile Orca can't OOM the
+  // Why: bound the per-source size so a buggy/hostile Sol can't OOM the
   // relay by pushing a giant string. The HTTP path has HOOK_REQUEST_MAX_BYTES
   // = 1 MB; the JSON-RPC path needs an equivalent ceiling. Real plugin sources
   // are <50 KB today; 256 KB leaves generous headroom.

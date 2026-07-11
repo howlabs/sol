@@ -86,7 +86,7 @@ export function PrivacyPane({ settings }: PrivacyPaneProps): React.JSX.Element {
     <>
       {translate(
         'auto.components.settings.PrivacyPane.8bfdd23a88',
-        'Help us figure out what to build next. Orca sends anonymous counts of which features you use and where things break.'
+        'Help us figure out what to build next. Sol sends anonymous counts of which features you use and where things break.'
       )}{' '}
       <button
         type="button"

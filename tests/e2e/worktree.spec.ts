@@ -1,5 +1,5 @@
 /**
- * E2E tests for the "Create Workspace" flow in Orca.
+ * E2E tests for the "Create Workspace" flow in Sol.
  *
  * Why: the old 'create-worktree' modal was replaced by the composer modal
  * (`activeModal === 'new-workspace-composer'`) in #710. A prior version of
@@ -219,7 +219,7 @@ test.describe('Create Workspace', () => {
     orcaPage
   }) => {
     const title = `E2E smart URL resolution ${Date.now()}`
-    const url = 'https://github.com/stablyai/orca/pull/2049'
+    const url = 'https://github.com/howlabs/sol/pull/2049'
     const linkedWorkspacePattern = new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
 
     try {
@@ -336,7 +336,7 @@ test.describe('Create Workspace', () => {
     orcaPage
   }) => {
     const title = `E2E selected URL resolution ${Date.now()}`
-    const url = 'https://github.com/stablyai/orca/pull/2050'
+    const url = 'https://github.com/howlabs/sol/pull/2050'
     const linkedWorkspacePattern = new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
 
     try {

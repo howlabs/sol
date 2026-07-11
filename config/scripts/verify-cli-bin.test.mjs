@@ -12,7 +12,7 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { verifyPackageCliBin } from './verify-cli-bin.mjs'
 
-/** Builds a temporary Orca-style project fixture with a compiled CLI entrypoint. */
+/** Builds a temporary Sol-style project fixture with a compiled CLI entrypoint. */
 function makeProjectWithCli(
   content,
   { mode = 0o755, rootPackageType, writeOutPackageJson = true } = {}
@@ -54,7 +54,7 @@ describe('verifyPackageCliBin', () => {
   })
 
   it('rejects package bin targets without a Node shebang', () => {
-    const { projectDir } = makeProjectWithCli('console.log("orca")\n')
+    const { projectDir } = makeProjectWithCli('console.log("sol")\n')
 
     expect(() => verifyPackageCliBin({ projectDir })).toThrow('Node shebang')
   })
@@ -79,7 +79,7 @@ describe('verifyPackageCliBin', () => {
 
   it('rejects a CLI package boundary that is not CommonJS', () => {
     const { projectDir, outPackageJsonPath } = makeProjectWithCli(
-      '#!/usr/bin/env node\nconsole.log("orca")\n'
+      '#!/usr/bin/env node\nconsole.log("sol")\n'
     )
     writeFileSync(outPackageJsonPath, JSON.stringify({ type: 'module' }), 'utf8')
 
@@ -88,7 +88,7 @@ describe('verifyPackageCliBin', () => {
 
   it.skipIf(process.platform === 'win32')('can repair the POSIX executable bit', () => {
     const { projectDir, cliPath } = makeProjectWithCli(
-      '#!/usr/bin/env node\nconsole.log("orca")\n',
+      '#!/usr/bin/env node\nconsole.log("sol")\n',
       { mode: 0o644 }
     )
 
@@ -100,7 +100,7 @@ describe('verifyPackageCliBin', () => {
 
   it('repairs both the package boundary and POSIX executable bit together', () => {
     const { projectDir, cliPath, outPackageJsonPath } = makeProjectWithCli(
-      '#!/usr/bin/env node\nconsole.log("orca")\n',
+      '#!/usr/bin/env node\nconsole.log("sol")\n',
       { mode: 0o644, writeOutPackageJson: false }
     )
 

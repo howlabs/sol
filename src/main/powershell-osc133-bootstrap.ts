@@ -1,6 +1,6 @@
 export { encodePowerShellCommand } from '../shared/powershell-command-encoding'
 
-const POWERSHELL_OSC133_BOOTSTRAP = `# Orca OSC 133 shell integration for PowerShell.
+const POWERSHELL_OSC133_BOOTSTRAP = `# Sol OSC 133 shell integration for PowerShell.
 if ((Test-Path variable:global:__OrcaOsc133State) -and
     $null -ne $Global:__OrcaOsc133State.OriginalPrompt) {
     return
@@ -21,7 +21,7 @@ try {
     $OutputEncoding = [Console]::OutputEncoding
 } catch { Write-Error $_ -ErrorAction Continue }
 
-# Profiles can re-export user defaults after Orca's spawn env is set.
+# Profiles can re-export user defaults after Sol's spawn env is set.
 if ($env:ORCA_OPENCODE_CONFIG_DIR) { $env:OPENCODE_CONFIG_DIR = $env:ORCA_OPENCODE_CONFIG_DIR }
 if ($env:ORCA_MIMOCODE_HOME) { $env:MIMOCODE_HOME = $env:ORCA_MIMOCODE_HOME }
 if ($env:ORCA_CODEX_HOME) { $env:CODEX_HOME = $env:ORCA_CODEX_HOME }

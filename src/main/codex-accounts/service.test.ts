@@ -59,6 +59,7 @@ function createSettings(overrides: Partial<GlobalSettings> = {}): GlobalSettings
     editorAutoSave: false,
     editorAutoSaveDelayMs: 1000,
     editorMinimapEnabled: false,
+    markdownReviewToolsEnabled: true,
     terminalFontSize: 14,
     terminalFontFamily: 'JetBrains Mono',
     terminalFontWeight: 500,
@@ -729,7 +730,7 @@ describe('CodexAccountService config sync', () => {
     )
 
     await expect(service.reauthenticateAccount('account-1')).rejects.toThrow(
-      'Managed Codex home is missing Orca ownership marker.'
+      'Managed Codex home is missing Sol ownership marker.'
     )
     expect(spawnMock).not.toHaveBeenCalled()
     warnSpy.mockRestore()
@@ -745,7 +746,7 @@ describe('CodexAccountService config sync', () => {
 
     const wslManagedHomePath = join(testState.userDataDir, 'wsl-managed-home')
     const wslConfigPath = join(testState.userDataDir, 'wsl-config.toml')
-    const wslLinuxHomePath = '/home/alice/.local/share/orca/codex-accounts/account-id-for-test/home'
+    const wslLinuxHomePath = '/home/alice/.local/share/sol/codex-accounts/account-id-for-test/home'
     writeFileSync(
       wslConfigPath,
       'sandbox_mode = "danger-full-access"\nmodel_instructions_file = "instructions.md"\n',
@@ -860,7 +861,7 @@ describe('CodexAccountService config sync', () => {
     })
 
     const wslManagedHomePath = join(testState.userDataDir, 'wsl-managed-home')
-    const wslLinuxHomePath = '/home/alice/.local/share/orca/codex-accounts/account-id-for-test/home'
+    const wslLinuxHomePath = '/home/alice/.local/share/sol/codex-accounts/account-id-for-test/home'
 
     const execFileSyncMock = vi.fn((_command: string, args: string[]) => {
       const script = decodeEncodedWslBashCommand(String(args.at(-1)))
@@ -931,7 +932,7 @@ describe('CodexAccountService config sync', () => {
     })
 
     const wslManagedHomePath = join(testState.userDataDir, 'wsl-account', 'home')
-    const wslLinuxHomePath = '/home/alice/.local/share/orca/codex-accounts/account-1/home'
+    const wslLinuxHomePath = '/home/alice/.local/share/sol/codex-accounts/account-1/home'
     mkdirSync(wslManagedHomePath, { recursive: true })
     writeFileSync(join(wslManagedHomePath, '.orca-managed-home'), 'account-1\n', 'utf-8')
     writeFileSync(
@@ -1054,7 +1055,7 @@ describe('CodexAccountService config sync', () => {
     })
 
     const wslManagedHomePath = join(testState.userDataDir, 'wsl-account', 'home')
-    const wslLinuxHomePath = '/home/alice/.local/share/orca/codex-accounts/account-1/home'
+    const wslLinuxHomePath = '/home/alice/.local/share/sol/codex-accounts/account-1/home'
 
     const execFileSyncMock = vi.fn((_command: string, args: string[]) => {
       const script = decodeEncodedWslBashCommand(String(args.at(-1)))
@@ -1170,7 +1171,7 @@ describe('CodexAccountService config sync', () => {
     })
 
     const wslManagedHomePath = join(testState.userDataDir, 'wsl-account', 'home')
-    const wslLinuxHomePath = '/home/alice/.local/share/orca/codex-accounts/account-1/home'
+    const wslLinuxHomePath = '/home/alice/.local/share/sol/codex-accounts/account-1/home'
     mkdirSync(wslManagedHomePath, { recursive: true })
     writeFileSync(join(wslManagedHomePath, '.orca-managed-home'), 'account-1\n', 'utf-8')
 
@@ -1373,7 +1374,7 @@ describe('CodexAccountService config sync', () => {
           managedHomePath: wslManagedHomePath,
           managedHomeRuntime: 'wsl',
           wslDistro: 'Ubuntu',
-          wslLinuxHomePath: '/home/alice/.local/share/orca/codex-accounts/wsl-account/home',
+          wslLinuxHomePath: '/home/alice/.local/share/sol/codex-accounts/wsl-account/home',
           providerAccountId: null,
           workspaceLabel: null,
           workspaceAccountId: null,

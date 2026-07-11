@@ -1,29 +1,29 @@
 ---
 name: orchestration
 description: >-
-  Use Orca orchestration for structured multi-agent coordination: threaded
+  Use Sol orchestration for structured multi-agent coordination: threaded
   messages, blocking ask/reply flows, task dispatch, worker_done/escalation
   waits, task DAGs, decision gates, coordinator loops, or decomposing work
   across agents. Use `orca-cli` instead for full ownership handoffs, including
   requests phrased as "hand off", "handoff", "handover", "give this to another
   agent", or "another worktree" when the user did not explicitly ask to
   supervise, monitor, wait for results, or coordinate a DAG. Use `orca-cli` for
-  ordinary terminal control, lightweight terminal prompts, shell commands, Orca
+  ordinary terminal control, lightweight terminal prompts, shell commands, Sol
   worktree management, reading or waiting on terminals, and automation of the
-  browser embedded inside Orca.
+  browser embedded inside Sol.
 ---
 
-# Orca Inter-Agent Orchestration
+# Sol Inter-Agent Orchestration
 
-Orchestration is Orca's structured coordination layer for agent messages, task ownership, dispatch state, and worker completion tracking.
+Orchestration is Sol's structured coordination layer for agent messages, task ownership, dispatch state, and worker completion tracking.
 
 Use this skill when coordination state matters. For lightweight terminal prompts or basic worktree/terminal/built-in-browser control, use `orca-cli`.
 
 ## Tool Boundary
 
-If a task says to use Orca orchestration, the coordinator must create Orca runtime state with `orca orchestration task-create` and `orca orchestration dispatch --inject` or `orca orchestration run`.
+If a task says to use Sol orchestration, the coordinator must create Sol runtime state with `orca orchestration task-create` and `orca orchestration dispatch --inject` or `orca orchestration run`.
 
-Do not substitute non-Orca subagent tools, generic agent-spawn APIs, or chat-only parallel worker features. Those may create useful workers, but they do not create Orca task/dispatch provenance, injected lifecycle preambles, `worker_done` authority, or decision gates.
+Do not substitute non-Sol subagent tools, generic agent-spawn APIs, or chat-only parallel worker features. Those may create useful workers, but they do not create Sol task/dispatch provenance, injected lifecycle preambles, `worker_done` authority, or decision gates.
 
 Before claiming a worker was orchestrated, verify the task/dispatch exists:
 
@@ -32,7 +32,7 @@ orca orchestration task-list --json
 orca orchestration dispatch-show --task <task_id> --json
 ```
 
-If the work was accidentally run outside Orca orchestration, say so plainly. To repair provenance, rerun or revalidate the needed work through a fresh Orca terminal plus injected dispatch; do not retroactively describe the external worker as orchestrated.
+If the work was accidentally run outside Sol orchestration, say so plainly. To repair provenance, rerun or revalidate the needed work through a fresh Sol terminal plus injected dispatch; do not retroactively describe the external worker as orchestrated.
 
 ## When To Use
 
@@ -46,9 +46,9 @@ Do not use orchestration merely because the user says "hand off", "handoff", "ha
 ## Preconditions
 
 - `orca status --json` should show a running runtime.
-- `orca` must be on PATH (`orca-ide` on Linux).
+- `sol` must be on PATH (`sol-ide` on Linux).
 - The orchestration experimental feature must be enabled in Settings > Experimental.
-- `orca orchestration` commands are RPC calls to the running Orca runtime.
+- `orca orchestration` commands are RPC calls to the running Sol runtime.
 
 ## Ownership
 
@@ -86,7 +86,7 @@ orca orchestration inbox [--limit <n>] [--json]
 
 Rules:
 
-- Omit `--from` unless impersonating another terminal; Orca auto-resolves it from the current terminal.
+- Omit `--from` unless impersonating another terminal; Sol auto-resolves it from the current terminal.
 - While supervising workers manually, use `check --wait --types worker_done,escalation,decision_gate --timeout-ms <n>` instead of sleep/poll loops. Reply to `decision_gate` messages with `orca orchestration reply --id <msg_id> --body <answer> --json`, then keep waiting.
 - Treat a `check --wait` timeout or `{count:0}` as a checkpoint, not a worker failure. Long coding tasks routinely run 15-60 minutes; keep using rolling waits unless you receive `worker_done`/`escalation`, the terminal exits or disappears, or the user explicitly asks you to stop.
 - Heartbeats and visible terminal activity mean the worker is alive, not done. Do not stop, close, kill, or restart a worker just because it has not produced a completion message yet.
@@ -148,7 +148,7 @@ New top-level worktree handoff:
 orca worktree create --name <task-name> --no-parent --agent codex --prompt "<task brief>" --json
 ```
 
-Before creating a new worktree from an active feature branch, decide and state whether the desired Orca lineage is child or top-level. Use child worktree lineage only when the new work is conceptually stacked under or dependent on the active worktree. For independent repo-wide fixes, standalone feature work, or unrelated follow-up tasks, create a top-level worktree with `--no-parent`.
+Before creating a new worktree from an active feature branch, decide and state whether the desired Sol lineage is child or top-level. Use child worktree lineage only when the new work is conceptually stacked under or dependent on the active worktree. For independent repo-wide fixes, standalone feature work, or unrelated follow-up tasks, create a top-level worktree with `--no-parent`.
 
 Existing terminal handoff:
 
@@ -169,7 +169,7 @@ orca terminal send --terminal <handle> --text "<task brief>" --enter --json
 
 Wait only for `tui-idle` when needed to avoid losing the prompt. Do not monitor task completion.
 
-`--no-parent` only controls Orca lineage; it does not choose the Git base. If the work should start from the repo default base, omit `--base-branch` so Orca uses that default, or explicitly pass the repo default base (`origin/main`, `origin/master`, or the `orca repo show --repo <selector> --json` value); never base it on the current feature branch unless the user explicitly asks for stacked work or "branch from current". Put current-branch context in the prompt instead.
+`--no-parent` only controls Sol lineage; it does not choose the Git base. If the work should start from the repo default base, omit `--base-branch` so Sol uses that default, or explicitly pass the repo default base (`origin/main`, `origin/master`, or the `orca repo show --repo <selector> --json` value); never base it on the current feature branch unless the user explicitly asks for stacked work or "branch from current". Put current-branch context in the prompt instead.
 
 ## Worker Terminals
 
@@ -181,7 +181,7 @@ orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 60000 --json
 orca orchestration dispatch --task <task_id> --to <handle> --inject --json
 ```
 
-Reuse an idle agent in the required worktree only if the prompt allows reuse; otherwise create a fresh terminal there. Use a new worktree only when explicitly requested or when independent isolated checkout state is intended. For supervised new-worktree workers, decide the desired Orca lineage before creation: use child lineage only when the work is conceptually stacked under or dependent on the active worktree, and use `--no-parent` for independent repo-wide fixes, standalone feature work, or unrelated follow-up tasks. Decide the Git base separately from lineage: `--no-parent` makes the worktree top-level in Orca, while omitted `--base-branch` uses the repo default base.
+Reuse an idle agent in the required worktree only if the prompt allows reuse; otherwise create a fresh terminal there. Use a new worktree only when explicitly requested or when independent isolated checkout state is intended. For supervised new-worktree workers, decide the desired Sol lineage before creation: use child lineage only when the work is conceptually stacked under or dependent on the active worktree, and use `--no-parent` for independent repo-wide fixes, standalone feature work, or unrelated follow-up tasks. Decide the Git base separately from lineage: `--no-parent` makes the worktree top-level in Sol, while omitted `--base-branch` uses the repo default base.
 
 ```bash
 orca worktree create --name <task-name> --agent codex --json
@@ -190,11 +190,11 @@ orca terminal wait --terminal <handle> --for tui-idle --timeout-ms 60000 --json
 orca orchestration dispatch --task <task_id> --to <handle> --inject --json
 ```
 
-For new-worktree workers, read the id from `worktree create`, then use `terminal list` to get the agent handle. Omit `--repo` only inside an Orca-managed worktree; otherwise pass `--repo <selector>`. `--agent` reveals the new worktree and launches the selected agent in its first terminal, so do not create a separate startup terminal. Do not run `worktree create` when the task must stay in the current worktree.
+For new-worktree workers, read the id from `worktree create`, then use `terminal list` to get the agent handle. Omit `--repo` only inside a Sol-managed worktree; otherwise pass `--repo <selector>`. `--agent` reveals the new worktree and launches the selected agent in its first terminal, so do not create a separate startup terminal. Do not run `worktree create` when the task must stay in the current worktree.
 
 Use `orca worktree create --prompt ...` or `orca terminal send ...` for full handoffs or untracked/lightweight prompts. Those paths do not attach `taskId`/`dispatchId`; the worker should not send lifecycle messages unless the prompt supplies a live orchestration preamble.
 
-Sidebar lineage and orchestration lifecycle are related but not identical. A same-worktree worker created with `orca terminal create --worktree active` may appear as a peer terminal/agent under the same worktree in the sidebar even though it is a child dispatch in Orca orchestration state. A visible parent/child worktree relationship requires creating a child worktree, but do that only when the task can safely run from an isolated checkout and does not need uncommitted artifacts from the current working tree.
+Sidebar lineage and orchestration lifecycle are related but not identical. A same-worktree worker created with `orca terminal create --worktree active` may appear as a peer terminal/agent under the same worktree in the sidebar even though it is a child dispatch in Sol orchestration state. A visible parent/child worktree relationship requires creating a child worktree, but do that only when the task can safely run from an isolated checkout and does not need uncommitted artifacts from the current working tree.
 
 Other terminal commands coordinators often need:
 

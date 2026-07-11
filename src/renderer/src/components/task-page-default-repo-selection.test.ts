@@ -23,7 +23,7 @@ describe('getDefaultTaskRepoSelection', () => {
     const selection = getDefaultTaskRepoSelection([
       repo({
         id: 'local-orca',
-        upstream: { owner: 'StablyAI', repo: 'Orca' }
+        upstream: { owner: 'StablyAI', repo: 'Sol' }
       }),
       repo({
         id: 'ssh-orca',
@@ -100,7 +100,7 @@ describe('getTaskProjectPickerRepos', () => {
     const pickerRepos = getTaskProjectPickerRepos([
       repo({
         id: 'local-orca',
-        upstream: { owner: 'StablyAI', repo: 'Orca' }
+        upstream: { owner: 'StablyAI', repo: 'Sol' }
       }),
       repo({
         id: 'ssh-orca',

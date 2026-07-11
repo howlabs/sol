@@ -15,9 +15,9 @@ async function makeFixture(): Promise<{ homePath: string; resourcesPath: string 
   const root = await mkdtemp(join(tmpdir(), 'orca-bare-dispatcher-'))
   created.push(root)
   const resourcesPath = join(root, 'resources')
-  // The bundled orca-ide launcher must exist for the dispatcher to be written.
+  // The bundled sol-ide launcher must exist for the dispatcher to be written.
   await mkdir(join(resourcesPath, 'bin'), { recursive: true })
-  await writeFile(join(resourcesPath, 'bin', 'orca-ide'), '#!/usr/bin/env bash\n', 'utf8')
+  await writeFile(join(resourcesPath, 'bin', 'sol-ide'), '#!/usr/bin/env bash\n', 'utf8')
   return { homePath: join(root, 'home'), resourcesPath }
 }
 
@@ -26,7 +26,7 @@ afterEach(async () => {
 })
 
 describe('installLinuxBareOrcaDispatcher', () => {
-  it('writes an executable bare-orca dispatcher that execs the bundled orca-ide launcher', async () => {
+  it('writes an executable bare-orca dispatcher that execs the bundled sol-ide launcher', async () => {
     const { homePath, resourcesPath } = await makeFixture()
 
     const result = await installLinuxBareOrcaDispatcher({
@@ -35,18 +35,21 @@ describe('installLinuxBareOrcaDispatcher', () => {
       appImagePath: null
     })
 
-    const expectedTarget = join(resourcesPath, 'bin', 'orca-ide')
+    const expectedTarget = join(resourcesPath, 'bin', 'sol-ide')
     expect(result.state).toBe('installed')
     expect(result.target).toBe(expectedTarget)
-    expect(result.dispatcherPath).toBe(join(homePath, '.local', 'bin', 'orca'))
+    expect(result.dispatcherPath).toBe(join(homePath, '.local', 'bin', 'sol'))
 
     const content = await readFile(result.dispatcherPath, 'utf8')
     expect(content).toContain('#!/usr/bin/env bash')
     // Single-quoted so a resources path with shell metacharacters can't break out.
     expect(content).toContain(`exec '${expectedTarget}' "$@"`)
 
-    const mode = (await stat(result.dispatcherPath)).mode & 0o777
-    expect(mode & 0o111).not.toBe(0)
+    // Why: Windows NTFS does not persist POSIX execute bits from chmod.
+    if (process.platform !== 'win32') {
+      const mode = (await stat(result.dispatcherPath)).mode & 0o777
+      expect(mode & 0o111).not.toBe(0)
+    }
   })
 
   it('is idempotent — a second install rewrites its own dispatcher without throwing', async () => {
@@ -72,7 +75,7 @@ describe('installLinuxBareOrcaDispatcher', () => {
     created.push(root)
     const resourcesPath = join(root, 'App Support', 'resources')
     await mkdir(join(resourcesPath, 'bin'), { recursive: true })
-    await writeFile(join(resourcesPath, 'bin', 'orca-ide'), '#!/usr/bin/env bash\n', 'utf8')
+    await writeFile(join(resourcesPath, 'bin', 'sol-ide'), '#!/usr/bin/env bash\n', 'utf8')
 
     const result = await installLinuxBareOrcaDispatcher({
       resourcesPath,
@@ -81,12 +84,12 @@ describe('installLinuxBareOrcaDispatcher', () => {
     })
 
     const content = await readFile(result.dispatcherPath, 'utf8')
-    expect(content).toContain(`exec '${join(resourcesPath, 'bin', 'orca-ide')}' "$@"`)
+    expect(content).toContain(`exec '${join(resourcesPath, 'bin', 'sol-ide')}' "$@"`)
   })
 
   it('execs the stable AppImage (not the ephemeral mount) when running from an AppImage', async () => {
     const { homePath, resourcesPath } = await makeFixture()
-    const appImagePath = join(homePath, 'Applications', 'Orca.AppImage')
+    const appImagePath = join(homePath, 'Applications', 'Sol.AppImage')
 
     const result = await installLinuxBareOrcaDispatcher({ resourcesPath, homePath, appImagePath })
 
@@ -100,7 +103,7 @@ describe('installLinuxBareOrcaDispatcher', () => {
 
   it('skips (does not clobber) a user-owned orca already at ~/.local/bin', async () => {
     const { homePath, resourcesPath } = await makeFixture()
-    const dispatcherPath = join(homePath, '.local', 'bin', 'orca')
+    const dispatcherPath = join(homePath, '.local', 'bin', 'sol')
     await mkdir(join(homePath, '.local', 'bin'), { recursive: true })
     await writeFile(dispatcherPath, '#!/bin/sh\necho my own orca\n', 'utf8')
 
@@ -114,7 +117,7 @@ describe('installLinuxBareOrcaDispatcher', () => {
     expect(await readFile(dispatcherPath, 'utf8')).toBe('#!/bin/sh\necho my own orca\n')
   })
 
-  it('skips when the bundled orca-ide launcher is missing from the build', async () => {
+  it('skips when the bundled sol-ide launcher is missing from the build', async () => {
     const root = await mkdtemp(join(tmpdir(), 'orca-bare-dispatcher-nolauncher-'))
     created.push(root)
 

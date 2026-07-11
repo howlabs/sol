@@ -141,7 +141,7 @@ describe('isGitRepo', () => {
     git(realRepo, ['init', '--quiet'])
     git(realRepo, [
       '-c',
-      'user.name=Orca Test',
+      'user.name=Sol Test',
       '-c',
       'user.email=orca@example.com',
       'commit',

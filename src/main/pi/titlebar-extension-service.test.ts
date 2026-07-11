@@ -104,7 +104,7 @@ describe('PiTitlebarExtensionService', () => {
     })
   }
 
-  it('buildPtyEnv installs Orca extensions into the user agent dir without redirecting the home', () => {
+  it('buildPtyEnv installs Sol extensions into the user agent dir without redirecting the home', () => {
     const svc = new PiTitlebarExtensionService()
     const env = svc.buildPtyEnv('pty-1', piHome, 'pi')
 
@@ -169,7 +169,7 @@ describe('PiTitlebarExtensionService', () => {
     expectPiHomeIntact()
   })
 
-  it('rebuilding updates Orca-owned extensions while preserving user files', () => {
+  it('rebuilding updates Sol-owned extensions while preserving user files', () => {
     const svc = new PiTitlebarExtensionService()
     svc.buildPtyEnv('pty-refresh-1', piHome, 'pi')
     writeFileSync(
@@ -194,7 +194,7 @@ describe('PiTitlebarExtensionService', () => {
     )
   })
 
-  it("does not overwrite a user's same-named Orca extension file", () => {
+  it("does not overwrite a user's same-named Sol extension file", () => {
     const userStatusExtension = 'user-owned status extension'
     writeFileSync(join(piHome, 'extensions', 'orca-agent-status.ts'), userStatusExtension, 'utf-8')
 

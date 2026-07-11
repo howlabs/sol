@@ -129,7 +129,7 @@ try {
   if (isWindowsNativeLockError(err)) {
     console.error(
       '[rebuild] A Windows process appears to be using a native .node file. ' +
-        'Close running Orca/Electron/dev processes for this worktree, then rerun `pnpm install` ' +
+        'Close running Sol/Electron/dev processes for this worktree, then rerun `pnpm install` ' +
         'or `pnpm run rebuild:electron`.'
     )
     if (isPostinstall() && process.env.ORCA_STRICT_NATIVE_REBUILD !== '1') {
@@ -346,7 +346,7 @@ function getPatchedNodePtyRebuildReason() {
     return null
   }
 
-  // Why: Orca patches node-pty's native Unix spawn path; upstream prebuilds can
+  // Why: Sol patches node-pty's native Unix spawn path; upstream prebuilds can
   // load successfully in Electron while missing the patched fd/error handling.
   const nodePtyDir = resolve(projectDir, 'node_modules', 'node-pty')
   const missingArtifact = [
@@ -417,7 +417,7 @@ function loadNativeModule(moduleName) {
       throw new Error(
         'node-pty resolved to ' +
           native.dir +
-          '; expected build/Release so Orca\\'s node-pty patch is active'
+          '; expected build/Release so Sol\\'s node-pty patch is active'
       )
     }
     return

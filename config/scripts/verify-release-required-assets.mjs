@@ -11,22 +11,22 @@ export function getRequiredReleaseAssetNames(tag) {
     'latest-linux-arm64.yml',
     'latest-mac.yml',
     'latest.yml',
-    'orca-linux.AppImage',
-    'orca-linux-arm64.AppImage',
-    `orca-ide_${version}_amd64.deb`,
-    `orca-ide_${version}_arm64.deb`,
-    `orca-ide-${version}.x86_64.rpm`,
-    `orca-ide-${version}.aarch64.rpm`,
-    'orca-windows-setup.exe',
-    'orca-windows-setup.exe.blockmap',
-    `Orca-${version}-mac.zip`,
-    `Orca-${version}-mac.zip.blockmap`,
-    `Orca-${version}-arm64-mac.zip`,
-    `Orca-${version}-arm64-mac.zip.blockmap`,
-    'orca-macos-x64.dmg',
-    'orca-macos-x64.dmg.blockmap',
-    'orca-macos-arm64.dmg',
-    'orca-macos-arm64.dmg.blockmap'
+    'sol-linux.AppImage',
+    'sol-linux-arm64.AppImage',
+    `sol-ide_${version}_amd64.deb`,
+    `sol-ide_${version}_arm64.deb`,
+    `sol-ide-${version}.x86_64.rpm`,
+    `sol-ide-${version}.aarch64.rpm`,
+    'sol-windows-setup.exe',
+    'sol-windows-setup.exe.blockmap',
+    `Sol-${version}-mac.zip`,
+    `Sol-${version}-mac.zip.blockmap`,
+    `Sol-${version}-arm64-mac.zip`,
+    `Sol-${version}-arm64-mac.zip.blockmap`,
+    'sol-macos-x64.dmg',
+    'sol-macos-x64.dmg.blockmap',
+    'sol-macos-arm64.dmg',
+    'sol-macos-arm64.dmg.blockmap'
   ]
 }
 
@@ -150,7 +150,7 @@ async function main() {
   if (!token) {
     throw new Error('GH_TOKEN or GITHUB_TOKEN must be set')
   }
-  const repo = process.env.GITHUB_REPOSITORY || 'stablyai/orca'
+  const repo = process.env.GITHUB_REPOSITORY || 'howlabs/sol'
   const result = await verifyRequiredReleaseAssets({ repo, tag, token })
   console.log(`Verified ${result.checked.length} required release assets for ${repo}@${tag}`)
 }

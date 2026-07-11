@@ -25,7 +25,7 @@ export function getProviderAccountScope(
       ),
       description: translate(
         'auto.components.settings.providerAccountScope.remoteServerCredentials',
-        'Sign-in for this provider is stored on this remote server. Change the default runtime in Settings → Remote Orca Servers → Advanced.'
+        'Sign-in for this provider is stored on this remote server. Change the default runtime in Settings → Remote Sol Servers → Advanced.'
       )
     }
   }
@@ -33,7 +33,7 @@ export function getProviderAccountScope(
     label: getLocalExecutionHostLabel(),
     description: translate(
       'auto.components.settings.providerAccountScope.localCredentials',
-      'Sign-in for this provider is stored on this computer. Manage remote-server credentials in Settings → Remote Orca Servers → Advanced.'
+      'Sign-in for this provider is stored on this computer. Manage remote-server credentials in Settings → Remote Sol Servers → Advanced.'
     )
   }
 }
@@ -52,7 +52,7 @@ export function getProviderRateLimitScope(
       ),
       description: translate(
         'auto.components.settings.providerAccountScope.remoteServerRateLimit',
-        '{{value0}} rate limits come from the CLI on this remote server. Pick another runtime in Settings → Remote Orca Servers → Advanced.',
+        '{{value0}} rate limits come from the CLI on this remote server. Pick another runtime in Settings → Remote Sol Servers → Advanced.',
         { value0: providerLabel }
       )
     }
@@ -61,7 +61,7 @@ export function getProviderRateLimitScope(
     label: getLocalExecutionHostLabel(),
     description: translate(
       'auto.components.settings.providerAccountScope.localRateLimit',
-      '{{value0}} rate limits come from the CLI on this computer. View server budgets in Settings → Remote Orca Servers → Advanced.',
+      '{{value0}} rate limits come from the CLI on this computer. View server budgets in Settings → Remote Sol Servers → Advanced.',
       { value0: providerLabel }
     )
   }

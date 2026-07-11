@@ -11,7 +11,7 @@ const pr: HostedReviewInfo = {
   number: 123,
   title: 'Ready PR',
   state: 'open',
-  url: 'https://github.com/stablyai/orca/pull/123',
+  url: 'https://github.com/howlabs/sol/pull/123',
   status: 'success',
   updatedAt: '2026-05-13T00:00:00.000Z',
   mergeable: 'MERGEABLE'
@@ -114,7 +114,7 @@ describe('isCachedMergedBranchPRCurrentForWorktree', () => {
     number: 55,
     title: 'Merged PR',
     state: 'merged',
-    url: 'https://github.com/stablyai/orca/pull/55',
+    url: 'https://github.com/howlabs/sol/pull/55',
     checksStatus: 'success',
     updatedAt: '2026-07-03T00:00:00.000Z',
     mergeable: 'MERGEABLE',

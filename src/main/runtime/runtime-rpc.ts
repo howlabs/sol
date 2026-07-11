@@ -828,7 +828,7 @@ export class OrcaRuntimeRpcServer {
     await Promise.all(transports.map((t) => t.stop()))
     // Why: we intentionally leave the last metadata file behind instead of
     // deleting it on shutdown. Shared userData paths can briefly host multiple
-    // Orca processes during restarts, updates, or development, and stale
+    // Sol processes during restarts, updates, or development, and stale
     // metadata is safer than letting one process erase another live runtime's
     // bootstrap file.
   }

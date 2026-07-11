@@ -4,7 +4,7 @@
 /**
  * Shell-ready startup command support for local PTYs.
  *
- * Why: when Orca needs to inject a startup command (e.g. issue command runner),
+ * Why: when Sol needs to inject a startup command (e.g. issue command runner),
  * it must wait until the shell has fully initialized before writing. This module
  * provides shell wrapper rcfiles that emit an OSC 777 marker after startup,
  * and a data scanner that detects that marker so the command can be written at
@@ -72,15 +72,15 @@ function shellReadyWrappersExist(root = getShellReadyWrapperRoot()): boolean {
 }
 
 // Why: if our own process inherited ZDOTDIR from a parent shell that was
-// itself an Orca PTY (e.g. the user launched `pn dev` from a terminal inside
-// a running Orca), that ZDOTDIR points at an Orca shell-ready wrapper dir.
+// itself a Sol PTY (e.g. the user launched `pn dev` from a terminal inside
+// a running Sol), that ZDOTDIR points at a Sol shell-ready wrapper dir.
 // Propagating it as the new PTY's ORCA_ORIG_ZDOTDIR makes the wrapper's
 // `source "$ORCA_ORIG_ZDOTDIR/.zshenv"` line source itself recursively —
 // zsh gives "job table full or recursion limit exceeded" and the shell
 // never reaches a usable prompt.
 //
-// Any path component ending in `/shell-ready/zsh` is an Orca wrapper dir
-// (regardless of whether it came from this app's userData, a packaged Orca,
+// Any path component ending in `/shell-ready/zsh` is a Sol wrapper dir
+// (regardless of whether it came from this app's userData, a packaged Sol,
 // or a different dev build). Treat it as if ZDOTDIR were unset so the caller
 // falls back to HOME for the user's real config root.
 function normalizeOriginalZdotdirCandidate(value: string | undefined): string | null {
@@ -113,7 +113,7 @@ function resolveOriginalZshenvSourceDir(): string {
 }
 
 export function getBashShellReadyRcfileContent(): string {
-  return `# Orca bash shell-ready wrapper
+  return `# Sol bash shell-ready wrapper
 [[ -f /etc/profile ]] && source /etc/profile
 if [[ -f "$HOME/.bash_profile" ]]; then
   source "$HOME/.bash_profile"
@@ -122,14 +122,14 @@ elif [[ -f "$HOME/.bash_login" ]]; then
 elif [[ -f "$HOME/.profile" ]]; then
   source "$HOME/.profile"
 fi
-# Why: enable bracketed paste so Orca can deliver a multiline startup prompt as
+# Why: enable bracketed paste so Sol can deliver a multiline startup prompt as
 # a single literal paste (ESC[200~…ESC[201~). Without it, older readline builds
 # treat each embedded newline as Enter and mangle the prompt into PS2
 # continuation. Modern readline defaults this on; force it for the rest.
 [[ $- == *i* ]] && bind 'set enable-bracketed-paste on' 2>/dev/null
 # Why: preserve bash's normal login-shell contract. Many users already source
 # ~/.bashrc from ~/.bash_profile; forcing ~/.bashrc again here would duplicate
-# PATH edits, hooks, and prompt init in Orca startup-command shells.
+# PATH edits, hooks, and prompt init in Sol startup-command shells.
 __orca_restore_attribution_path() {
   [[ -n "\${ORCA_ATTRIBUTION_SHIM_DIR:-}" ]] || return 0
   case "$PATH" in
@@ -146,11 +146,11 @@ __orca_restore_agent_teams_path() {
   export PATH="\${ORCA_AGENT_TEAMS_SHIM_DIR}:$PATH"
 }
 __orca_restore_agent_teams_path
-# Why: user startup files may set the default OpenCode config after Orca's
-# spawn env; restore the Orca-managed config dir before the first prompt.
+# Why: user startup files may set the default OpenCode config after Sol's
+# spawn env; restore the Sol-managed config dir before the first prompt.
 [[ -n "\${ORCA_OPENCODE_CONFIG_DIR:-}" ]] && export OPENCODE_CONFIG_DIR="\${ORCA_OPENCODE_CONFIG_DIR}"
 [[ -n "\${ORCA_MIMOCODE_HOME:-}" ]] && export MIMOCODE_HOME="\${ORCA_MIMOCODE_HOME}"
-# Why: Codex must keep using Orca's runtime CODEX_HOME after profile scripts.
+# Why: Codex must keep using Sol's runtime CODEX_HOME after profile scripts.
 [[ -n "\${ORCA_CODEX_HOME:-}" ]] && export CODEX_HOME="\${ORCA_CODEX_HOME}"
 # Why: emit OSC 133 C/D so terminal-command-lifecycle can drop stale agent
 # status when the foreground command (e.g. an interrupted Claude/Codex CLI)
@@ -239,7 +239,7 @@ trap '__orca_osc133_preexec' DEBUG
 }
 
 export function getZshShellReadyRcfileContent(): string {
-  return `# Orca zsh shell-ready wrapper
+  return `# Sol zsh shell-ready wrapper
 ${getZshStartupFileSourceBlock({
   fileName: '.zshrc',
   interactiveOnly: true,
@@ -265,7 +265,7 @@ if [[ ! -o login ]]; then
   # Why: ~/.zshrc can export the user's default OpenCode config after spawn.
   [[ -n "\${ORCA_OPENCODE_CONFIG_DIR:-}" ]] && export OPENCODE_CONFIG_DIR="\${ORCA_OPENCODE_CONFIG_DIR}"
 [[ -n "\${ORCA_MIMOCODE_HOME:-}" ]] && export MIMOCODE_HOME="\${ORCA_MIMOCODE_HOME}"
-  # Why: Codex must keep using Orca's runtime CODEX_HOME after rc files.
+  # Why: Codex must keep using Sol's runtime CODEX_HOME after rc files.
   [[ -n "\${ORCA_CODEX_HOME:-}" ]] && export CODEX_HOME="\${ORCA_CODEX_HOME}"
 fi
 __orca_osc133_precmd() {
@@ -280,7 +280,7 @@ __orca_osc133_preexec() {
   printf "\\033]133;C\\007"
   __orca_in_command=1
 }
-# Why: prepend so Orca captures $? before user prompt hooks can overwrite it.
+# Why: prepend so Sol captures $? before user prompt hooks can overwrite it.
 precmd_functions=(__orca_osc133_precmd \${precmd_functions[@]})
 preexec_functions=(__orca_osc133_preexec \${preexec_functions[@]})
 if [[ ! -o login ]]; then
@@ -299,11 +299,11 @@ export function ensureShellReadyWrappersAt(root = getShellReadyWrapperRoot()): v
   const bashDir = `${root}/bash`
 
   const zshEnv = getZshEnvTemplate(zshDir)
-  const zshProfile = `# Orca zsh shell-ready wrapper
+  const zshProfile = `# Sol zsh shell-ready wrapper
 ${getZshStartupFileSourceBlock({ fileName: '.zprofile' })}
 `
   const zshRc = getZshShellReadyRcfileContent()
-  const zshLogin = `# Orca zsh shell-ready wrapper
+  const zshLogin = `# Sol zsh shell-ready wrapper
 ${getZshStartupFileSourceBlock({ fileName: '.zlogin', interactiveOnly: true })}
 __orca_restore_attribution_path() {
   [[ -n "\${ORCA_ATTRIBUTION_SHIM_DIR:-}" ]] || return 0
@@ -442,7 +442,7 @@ export function writeStartupCommandWhenShellReady(
   proc: pty.IPty,
   startupCommand: string,
   onExit: (cleanup: () => void) => void,
-  // Why: only Orca-wrapped bash/zsh have bracketed-paste mode active, so
+  // Why: only Sol-wrapped bash/zsh have bracketed-paste mode active, so
   // multiline startup commands are wrapped in ESC[200~/ESC[201~ only there;
   // other shells keep the raw submit path to avoid echoing the markers.
   options: { bracketedPasteSafe?: boolean } = {}
@@ -472,13 +472,13 @@ export function writeStartupCommandWhenShellReady(
       clearTimeout(postReadyTimer)
       postReadyTimer = null
     }
-    // Why: run startup commands inside the same interactive shell Orca keeps
+    // Why: run startup commands inside the same interactive shell Sol keeps
     // open for the pane. Spawning `shell -c <command>; exec shell -l` would
     // avoid the race, but it would also replace the session after the agent
     // exits and break "stay in this terminal" workflows.
     // Why CR on Windows: PowerShell's PSReadLine and cmd.exe submit the line
     // on CR (`\r`) — a bare LF leaves the command typed at the prompt but
-    // unsubmitted, forcing the user to press Enter after Orca launches the
+    // unsubmitted, forcing the user to press Enter after Sol launches the
     // agent or setup script. POSIX shells (bash/zsh) treat either CR or LF as
     // Enter under ICRNL, so CR works there too, but this code path is reached
     // on Windows as well as POSIX via writeStartupCommandWhenShellReady.

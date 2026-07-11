@@ -9,19 +9,19 @@
 // Each Pi process gets its own paneKey through env. Like the OpenCode plugin,
 // the returned source is a string (loaded by jiti from disk inside the pi process), so we
 // keep the source body in plain JS without TS types and avoid pulling pi or
-// any Orca dep into the pi runtime.
+// any Sol dep into the pi runtime.
 import type { PiAgentKind } from '../../shared/pi-agent-kind'
 
 export const ORCA_PI_AGENT_STATUS_EXTENSION_FILE = 'orca-agent-status.ts'
 
 export function getPiAgentStatusExtensionSource(kind: PiAgentKind = 'pi'): string {
   // Why: keep this string self-contained — it runs inside the pi process,
-  // so it cannot import from Orca's main bundle. fs/http coords come from
+  // so it cannot import from Sol's main bundle. fs/http coords come from
   // the same endpoint file the OpenCode plugin reads (process.env is frozen
-  // at PTY spawn, so on Orca restart we have to re-read it from disk).
+  // at PTY spawn, so on Sol restart we have to re-read it from disk).
   return [
     '// Why: no package-specific type import here. Pi exposes the extension API',
-    '// under its own package name; keep this source free of Orca imports.',
+    '// under its own package name; keep this source free of Sol imports.',
     '// Why: warn-once so a recurring parse error on a malformed endpoint',
     '// file does not spam stderr inside the pi TUI on every event.',
     'let warnedBadEndpoint = false',
@@ -104,8 +104,8 @@ export function getPiAgentStatusExtensionSource(kind: PiAgentKind = 'pi'): strin
     '      body,',
     '    })',
     '  } catch {',
-    '    // Why: status reporting must never fail the pi run just because Orca',
-    '    // is unavailable or the loopback request failed (e.g. Orca restart).',
+    '    // Why: status reporting must never fail the pi run just because Sol',
+    '    // is unavailable or the loopback request failed (e.g. Sol restart).',
     '    if (!isWslRuntime()) return',
     '    postViaWindowsCurl(url, coords, body)',
     '  }',
@@ -154,8 +154,8 @@ export function getPiAgentStatusExtensionSource(kind: PiAgentKind = 'pi'): strin
     '}',
     '',
     '// Why: WSL loopback is not the Windows loopback, so a WSL-side POST cannot',
-    '// reach Orca. curl.exe runs on the Windows side, where 127.0.0.1 IS the',
-    '// listener Orca binds. Fire-and-forget: blocking on the spawn would stall',
+    '// reach Sol. curl.exe runs on the Windows side, where 127.0.0.1 IS the',
+    '// listener Sol binds. Fire-and-forget: blocking on the spawn would stall',
     '// the pi event loop (and the TUI) on every hook event.',
     'function postViaWindowsCurl(url: string, coords: { token: string }, body: string): void {',
     '  const curlPath = resolveWindowsCurlPath()',

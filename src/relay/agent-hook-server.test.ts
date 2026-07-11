@@ -64,7 +64,7 @@ describe('RelayAgentHookServer', () => {
       expect(envelope.connectionId).toBeNull()
       expect(envelope.payload.state).toBe('working')
       expect(envelope.payload.prompt).toBe('hi')
-      // Why: the relay forwards body env/version so Orca's warn-once
+      // Why: the relay forwards body env/version so Sol's warn-once
       // protocol diagnostics and remote-location marker survive the wire.
       expect(envelope.env).toBe('remote')
       expect(envelope.version).toBe('1')
@@ -158,7 +158,7 @@ describe('RelayAgentHookServer', () => {
   })
 
   // Why: the relay should still drop malformed HTTP events before they reach
-  // the wire, even though Orca main re-validates at the SSH trust boundary.
+  // the wire, even though Sol main re-validates at the SSH trust boundary.
   it('does not forward when normalizeHookPayload rejects the event', async () => {
     const forward = vi.fn<(envelope: AgentHookRelayEnvelope) => void>()
     const server = new RelayAgentHookServer({ endpointDir: dir, forward })

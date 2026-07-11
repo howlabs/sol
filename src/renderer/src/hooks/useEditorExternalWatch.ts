@@ -744,7 +744,7 @@ function scheduleChangedOnDiskMark(
   }
   const absolutePath = joinPath(notification.worktreePath, notification.relativePath)
   const recentSelfWrite = getRecentSelfWrite(absolutePath, target.runtimeEnvironmentId)
-  // Why: the fs event may be the echo of Orca's own save racing keystrokes
+  // Why: the fs event may be the echo of Sol's own save racing keystrokes
   // typed during the write. Marking on the echo would show a false "changed
   // on disk" banner, so verify disk really differs from our last write.
   if (!recentSelfWrite || recentSelfWrite.content === null) {
@@ -784,7 +784,7 @@ function scheduleSelfWriteAwareExternalReload(
   const runtimeEnvironmentId = file.runtimeEnvironmentId ?? target.runtimeEnvironmentId
   // Why: a recent self-write stamp only proves the path changed recently; an
   // agent can write a newer version inside the same TTL. Compare disk content
-  // with the saved text so we suppress only the echo of Orca's own write.
+  // with the saved text so we suppress only the echo of Sol's own write.
   void readFileForEchoVerification({
     runtimeEnvironmentId,
     filePath: file.filePath,

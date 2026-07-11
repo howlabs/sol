@@ -16,7 +16,7 @@ export const getThemeEntries = createLocalizedCatalog((): SettingsSearchEntry[] 
     title: translate('auto.components.settings.appearance.search.71e06350b4', 'Theme'),
     description: translate(
       'auto.components.settings.appearance.search.0709c794f7',
-      'Choose how Orca looks in the app window.'
+      'Choose how Sol looks in the app window.'
     ),
     keywords: [
       ...translateSearchKeyword('auto.components.settings.appearance.search.262fe1d24f', 'dark'),
@@ -31,13 +31,13 @@ export const getLanguageEntries = createLocalizedCatalog((): SettingsSearchEntry
     title: translate('settings.appearance.language.title', 'Language'),
     description: translate(
       'settings.appearance.language.description',
-      'Choose the language used by the Orca interface.'
+      'Choose the language used by the Sol interface.'
     ),
     keywords: [
       ...translateSearchKeyword('settings.appearance.language.title', 'Language'),
       ...translateSearchKeyword(
         'settings.appearance.language.description',
-        'Choose the language used by the Orca interface.'
+        'Choose the language used by the Sol interface.'
       ),
       ...translateSearchKeyword('settings.appearance.language.system', 'System'),
       ...translateSearchKeyword('settings.appearance.language.english', 'English'),
@@ -77,7 +77,7 @@ export const getTypographyEntries = createLocalizedCatalog((): SettingsSearchEnt
     title: translate('auto.components.settings.appearance.search.ddb991024d', 'IDE Font'),
     description: translate(
       'auto.components.settings.appearance.search.07c7c38fac',
-      'Choose the font used by the Orca interface.'
+      'Choose the font used by the Sol interface.'
     ),
     keywords: [
       ...translateSearchKeyword('auto.components.settings.appearance.search.24094af355', 'font'),
@@ -133,7 +133,7 @@ export const getTitlebarEntries = createLocalizedCatalog((): SettingsSearchEntry
     title: translate('auto.components.settings.appearance.search.fdd31b00d0', 'Titlebar App Name'),
     description: translate(
       'auto.components.settings.appearance.search.18b4c4c30b',
-      'Show Orca in the titlebar.'
+      'Show Sol in the titlebar.'
     ),
     keywords: [
       ...translateSearchKeyword(
@@ -194,7 +194,7 @@ const getSystemTrayEntryCatalog = createLocalizedCatalog((): SettingsSearchEntry
     ),
     description: translate(
       'auto.components.settings.appearance.search.4d5b9427b5',
-      'When enabled, closing the window keeps Orca running in the system tray instead of quitting.'
+      'When enabled, closing the window keeps Sol running in the system tray instead of quitting.'
     ),
     keywords: [
       ...translateSearchKeyword('auto.components.settings.appearance.search.tray.tray', 'tray', {

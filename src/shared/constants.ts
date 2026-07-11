@@ -275,7 +275,7 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     showAutomationsButton: true,
     ctrlTabOrderMode: 'mru',
     // Why: switching worktrees and opening command surfaces from a focused
-    // terminal is a core Orca workflow; users who prefer TUI ownership opt in.
+    // terminal is a core Sol workflow; users who prefer TUI ownership opt in.
     terminalShortcutPolicy: 'orca-first',
     notifications: getDefaultNotificationSettings(),
     diffDefaultView: 'inline',

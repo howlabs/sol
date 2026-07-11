@@ -198,7 +198,7 @@ describe('submitFeedback', () => {
       githubEmail: null
     } as Parameters<typeof submitFeedback>[0])
 
-    expect(fetchMock.mock.calls[0]?.[0]).toBe('https://www.onorca.dev/v1/feedback')
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('https://github.com/howlabs/sol/v1/feedback')
   })
 
   it('forces renderer IPC submissions onto the feedback lane', async () => {

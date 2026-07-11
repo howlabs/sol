@@ -40,7 +40,7 @@ function prepareShellConfigDirEnv(agentId: string): { ok: true; env?: NodeJS.Pro
     return null
   }
   // Why: prefer ORCA_*_SOURCE_* shadows so a headless commit run from inside a
-  // nested Orca PTY restores the user's real config root, never an overlay.
+  // nested Sol PTY restores the user's real config root, never an overlay.
   const sourceVar =
     agentId === 'opencode'
       ? 'ORCA_OPENCODE_SOURCE_CONFIG_DIR'
@@ -53,8 +53,8 @@ function prepareShellConfigDirEnv(agentId: string): { ok: true; env?: NodeJS.Pro
     return { ok: true }
   }
 
-  // Why: GUI-launched Orca may not inherit shell startup exports, but these
-  // vars point the headless CLI at the user's auth/config root. Nested Orca
+  // Why: GUI-launched Sol may not inherit shell startup exports, but these
+  // vars point the headless CLI at the user's auth/config root. Nested Sol
   // launches inherit PTY overlays, so prefer ORCA_*_SOURCE_* when present.
   return { ok: true, env: { ...cloneProcessEnv(), [configVar]: value } }
 }

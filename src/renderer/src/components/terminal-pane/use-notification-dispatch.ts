@@ -120,7 +120,7 @@ export function dispatchTerminalNotification(
       ? !isVisibleForegroundPaneKey(state, worktreeId, event.paneKey)
       : state.activeWorktreeId !== worktreeId || !isOrcaWindowForegroundFocused()
     if (shouldMarkUnread) {
-      // Why: activeWorktreeId is only in-app selection. If Orca is backgrounded,
+      // Why: activeWorktreeId is only in-app selection. If Sol is backgrounded,
       // a selected chat finishing still needs unread/Dock attention.
       state.markWorktreeUnread(worktreeId)
       if (event.paneKey) {

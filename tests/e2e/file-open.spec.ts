@@ -130,7 +130,7 @@ test.describe('File Open & Markdown Preview', () => {
     // Wait for the editor tab to become active
     await expect.poll(async () => getActiveTabType(orcaPage), { timeout: 5_000 }).toBe('editor')
 
-    // The seeded README.md starts with `# Orca E2E Test Repo`, so the rich
+    // The seeded README.md starts with `# Sol E2E Test Repo`, so the rich
     // markdown editor should render a real <h1> with that text. Asserting on
     // the rendered heading (not `markdownViewMode` in the store) is the whole
     // point of this spec — a store-only check passes even if

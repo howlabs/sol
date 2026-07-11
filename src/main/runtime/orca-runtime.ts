@@ -1177,7 +1177,7 @@ function createTerminalRevealWarning(handle: string, error?: unknown): string {
       ? ` Reason: ${error.message.trim()}.`
       : ''
   return [
-    `Terminal ${handle} is running, but Orca could not make it discoverable.${reason}`,
+    `Terminal ${handle} is running, but Sol could not make it discoverable.${reason}`,
     `Run \`orca terminal focus --terminal ${handle}\` to reveal and focus it.`
   ].join(' ')
 }
@@ -5811,7 +5811,7 @@ export class OrcaRuntimeService {
     return this.headlessTerminals.get(ptyId)?.emulator.isAlternateScreen ?? false
   }
 
-  // Why: daemon-backed PTYs that the runtime adopted after an Orca relaunch
+  // Why: daemon-backed PTYs that the runtime adopted after a Sol relaunch
   // start with a fresh headless emulator that has zero scrollback, even though
   // the daemon's on-disk checkpoint and the desktop xterm both contain the
   // full prior history. Without this hydration, mobile subscribers see only
@@ -10063,7 +10063,7 @@ export class OrcaRuntimeService {
     }
     if (!isAbsolute(path)) {
       // Why: remote clients may run in a different cwd than the server. Require
-      // server-side repo paths to be explicit so `orca serve` cwd is irrelevant.
+      // server-side repo paths to be explicit so `sol-ide serve` cwd is irrelevant.
       throw new Error('Project path must be an absolute path')
     }
     if (kind === 'git' && !isGitRepo(path)) {
@@ -12516,7 +12516,7 @@ export class OrcaRuntimeService {
       warnings.push({
         code: 'LINEAGE_PARENT_CONTEXT_MISSING',
         message:
-          'Worktree created, but Orca could not record lineage because instance identity was unavailable.',
+          'Worktree created, but Sol could not record lineage because instance identity was unavailable.',
         details: {
           childHasInstanceId: Boolean(childInstanceId),
           parentHasInstanceId: Boolean(parentInstanceId),
@@ -13410,7 +13410,7 @@ export class OrcaRuntimeService {
         ? { displayName: effectiveRequestedName }
         : {}
     const meta = this.store.setWorktreeMeta(worktreeId, {
-      // Why: worktree IDs are path-derived. If a path is deleted outside Orca
+      // Why: worktree IDs are path-derived. If a path is deleted outside Sol
       // and later recreated, creation must mint a fresh instance identity so
       // stale lineage records tied to the old occupant fail validation.
       instanceId: randomUUID(),
@@ -14172,7 +14172,7 @@ export class OrcaRuntimeService {
     ).finally(() => {
       // Why (§3.3 Lifecycle): evict on BOTH success and rejection. A
       // rejected entry that survived in the Map would wedge every future
-      // create on this repo until Orca restarted (the F2 bug §3.3 pins).
+      // create on this repo until Sol restarted (the F2 bug §3.3 pins).
       this.fetchInflight.delete(key)
     })
 
@@ -14973,7 +14973,7 @@ export class OrcaRuntimeService {
         throw error
       }
       // Why: delete requests can arrive after Git no longer lists the worktree.
-      // Only exact IDs with persisted Orca metadata are accepted here so
+      // Only exact IDs with persisted Sol metadata are accepted here so
       // branch/path selectors cannot resolve to an arbitrary missing path.
       return meta.pushTarget ? { ...removalTarget, pushTarget: meta.pushTarget } : removalTarget
     }
@@ -15284,7 +15284,7 @@ export class OrcaRuntimeService {
         if (await isRuntimeWorktreePathMissing(repo, removalTarget.path, localWorktreeGitOptions)) {
           if (!force && !removedMeta) {
             // Why: without persisted metadata, require the renderer recovery
-            // path before deleting Orca-only state for an unregistered path.
+            // path before deleting Sol-only state for an unregistered path.
             throw new Error(UNREGISTERED_MISSING_WORKTREE_MESSAGE)
           }
           // Why: a manually deleted worktree is already gone from Git and disk.
@@ -15466,7 +15466,7 @@ export class OrcaRuntimeService {
         )
       } catch (error) {
         // Why: Git for Windows can fail long-path directory deletion after
-        // Orca has already validated the target and explicit force delete.
+        // Sol has already validated the target and explicit force delete.
         const recoveredRemovalResult = await recoverLocalWindowsLongPathWorktreeRemoval({
           error,
           force,
@@ -15675,7 +15675,7 @@ export class OrcaRuntimeService {
     const shouldCreateInBackground =
       worktreeSelector !== undefined &&
       ((!requiresRendererFocus && opts.rendererBacked !== true) ||
-        // Why: `orca serve` exposes the local runtime without a renderer
+        // Why: `sol-ide serve` exposes the local runtime without a renderer
         // window. Renderer-backed Codex terminals are preferred for the app,
         // but headless CLI users still need a usable terminal handle.
         (opts.rendererBacked === true && rendererWindow === null))
@@ -16235,7 +16235,7 @@ export class OrcaRuntimeService {
     // Windows/macOS/Linux or an SSH Linux host; quote for the host shell.
     const platform = this.getAgentLaunchPlatformForWorkspace(workspace)
     // Why: an SSH workspace runs the CLI through the relay shim (plain `orca`),
-    // so the Linux-only `orca-ide` rename must not be applied.
+    // so the Linux-only `sol-ide` rename must not be applied.
     const isRemote = workspace.repo ? repoIsRemote(workspace.repo) : repoIsRemote(workspace)
     const queuedShell = resolveLocalWindowsAgentStartupShell({
       platform,
@@ -17135,7 +17135,7 @@ export class OrcaRuntimeService {
     if (windowId !== this.authoritativeWindowId) {
       return
     }
-    // Why: once the authoritative renderer graph disappears, Orca must fail
+    // Why: once the authoritative renderer graph disappears, Sol must fail
     // closed for live-terminal operations instead of guessing from old state.
     if (this.graphStatus !== 'unavailable') {
       this.rendererGraphEpoch += 1
@@ -17529,7 +17529,7 @@ export class OrcaRuntimeService {
       } catch {
         warnings.push({
           code: 'LINEAGE_PARENT_CONTEXT_MISSING',
-          message: 'Worktree created, but Orca could not validate the environment parent context.',
+          message: 'Worktree created, but Sol could not validate the environment parent context.',
           details: { envParentWorkspace: input.envParentWorkspace }
         })
       }
@@ -17598,7 +17598,7 @@ export class OrcaRuntimeService {
         warnings.push({
           code: 'LINEAGE_PARENT_CONTEXT_MISSING',
           message:
-            'Worktree created, but Orca could not validate the caller terminal as a parent context.',
+            'Worktree created, but Sol could not validate the caller terminal as a parent context.',
           details: { callerTerminalHandle: input.callerTerminalHandle }
         })
       }
@@ -17614,7 +17614,7 @@ export class OrcaRuntimeService {
         warnings.push({
           code: 'LINEAGE_PARENT_CONTEXT_MISSING',
           message:
-            'Worktree created, but Orca could not validate the current directory as a parent context.',
+            'Worktree created, but Sol could not validate the current directory as a parent context.',
           details: { cwdParentWorktree: input.cwdParentWorktree }
         })
       }
@@ -17638,7 +17638,7 @@ export class OrcaRuntimeService {
         warnings: [
           {
             code: 'LINEAGE_PARENT_CONTEXT_CONFLICT',
-            message: 'Worktree created, but Orca could not prove which parent context caused it.',
+            message: 'Worktree created, but Sol could not prove which parent context caused it.',
             details: {
               terminalParentWorkspaceKey: candidates.find((c) => c.source === 'terminal-context')
                 ?.parent.workspaceKey,
@@ -17968,7 +17968,7 @@ export class OrcaRuntimeService {
     )
     const worktrees = this.attachLineageToResolvedWorktrees(perRepoWorktrees.flat())
     // Why: terminal polling can be frequent, but git worktree state is still
-    // allowed to change outside Orca. A short TTL avoids shelling out on every
+    // allowed to change outside Sol. A short TTL avoids shelling out on every
     // read without pretending the cache is authoritative for long.
     if (generation === this.resolvedWorktreeGeneration) {
       this.resolvedWorktreeCache = {
@@ -18786,7 +18786,7 @@ export class OrcaRuntimeService {
           title: liveTab.title || tab.title,
           url: liveTab.url || tab.url,
           // Why: bridge "active" means active BrowserView/webContents, not
-          // active Orca tab. Preserve the renderer's app-level session focus.
+          // active Sol tab. Preserve the renderer's app-level session focus.
           isActive: tab.isActive
         })
         continue
@@ -20383,7 +20383,7 @@ export class OrcaRuntimeService {
       if (!worktree) {
         throw new LinearAgentAccessError(
           'linear_issue_required',
-          'Run --current from inside an Orca-managed worktree or pass an issue id.'
+          'Run --current from inside a Sol-managed worktree or pass an issue id.'
         )
       }
     }
@@ -20391,7 +20391,7 @@ export class OrcaRuntimeService {
     if (!worktree) {
       throw new LinearAgentAccessError(
         'linear_issue_required',
-        'Run --current from inside an Orca-managed worktree or pass an issue id.'
+        'Run --current from inside a Sol-managed worktree or pass an issue id.'
       )
     }
 
@@ -20535,7 +20535,7 @@ export class OrcaRuntimeService {
         (cause) =>
           linearError(
             'linear_write_unconfirmed',
-            'Linear may have applied the state change, but Orca could not confirm it.',
+            'Linear may have applied the state change, but Sol could not confirm it.',
             {
               nextSteps: [
                 `Run \`orca linear issue ${target.issue.identifier} --workspace ${target.workspaceId} --json\` and check the current state before retrying.`
@@ -20584,7 +20584,7 @@ export class OrcaRuntimeService {
         (cause) =>
           linearError(
             'linear_write_unconfirmed',
-            'Linear may have applied the task update, but Orca could not confirm it.',
+            'Linear may have applied the task update, but Sol could not confirm it.',
             {
               nextSteps: [
                 `Run \`orca linear issue ${target.issue.identifier} --workspace ${target.workspaceId} --json\` and check the updated field before retrying.`
@@ -21439,7 +21439,7 @@ export class OrcaRuntimeService {
     }
     if (isLinearAuthError(error)) {
       return linearError('linear_auth_expired', 'Linear authentication expired.', {
-        nextSteps: ['Reconnect Linear from Orca settings.']
+        nextSteps: ['Reconnect Linear from Sol settings.']
       })
     }
     return linearError(classifyLinearError(error), linearMessage(error))
@@ -21764,7 +21764,7 @@ export class OrcaRuntimeService {
     }
     if (teams.length === 0 && (getLinearStatus().workspaces?.length ?? 0) === 0) {
       throw linearError('linear_not_connected', 'Linear is not connected.', {
-        nextSteps: ['Connect Linear from Orca settings, then retry the issue create.']
+        nextSteps: ['Connect Linear from Sol settings, then retry the issue create.']
       })
     }
     const matches = teams.filter(
@@ -21970,7 +21970,7 @@ export class OrcaRuntimeService {
           : ''
     return linearError(
       'linear_write_unconfirmed',
-      'Linear may have applied the write, but Orca could not confirm it.',
+      'Linear may have applied the write, but Sol could not confirm it.',
       {
         writeId,
         workspaceId,
@@ -24164,7 +24164,7 @@ function getPtyTerminalState(pty: RuntimePtyWorktreeRecord): RuntimeTerminalStat
 
 function branchSelectorMatches(branch: string, selector: string): boolean {
   // Why: Git worktree data can report local branches as either `refs/heads/foo`
-  // or `foo` depending on which plumbing path produced the record. Orca's
+  // or `foo` depending on which plumbing path produced the record. Sol's
   // branch selectors should accept either form so newly created worktrees stay
   // discoverable without exposing internal ref-shape differences to users.
   return normalizeLocalBranchName(branch) === normalizeLocalBranchName(selector)

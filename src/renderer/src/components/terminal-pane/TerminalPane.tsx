@@ -303,7 +303,7 @@ export default function TerminalPane({
     }
     return connectionId
   })
-  // Which machine's SSH store this target belongs to: a remote Orca server's
+  // Which machine's SSH store this target belongs to: a remote Sol server's
   // per-environment bucket, or null for this machine's local SSH maps. The
   // explicit-owner resolver never lets a merely focused runtime make a
   // local-owned workspace look remote. The paired web client mirrors its one
@@ -655,7 +655,7 @@ export default function TerminalPane({
     useShallow((store) => store.runtimePaneTitlesByTabId[tabId] ?? {})
   )
   // The native-chat toggle joins the pane header's split/close cluster. Eligible
-  // when Orca launched a *supported* agent here or one was detected live for the
+  // when Sol launched a *supported* agent here or one was detected live for the
   // leaf, keyed `${tabId}:${leafId}`. Carry the agent identity, not just "an
   // agent exists", so the gate can reject Grok et al.
   // Scoped to this tab's panes (leafId → agentType) and shallow-compared so an

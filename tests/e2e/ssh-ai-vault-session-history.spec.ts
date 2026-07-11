@@ -85,7 +85,7 @@ test.describe('SSH Agent Session History', () => {
       expect(new Set(scan.remoteHostIds)).toEqual(new Set([sshScope]))
       expect(scan.remoteCommands.join('\n')).toContain("CODEX_HOME='/root/.codex'")
       expect(scan.remoteCommands.join('\n')).toContain(
-        "CODEX_HOME='/root/.local/share/orca/codex-runtime-home/home'"
+        "CODEX_HOME='/root/.local/share/sol/codex-runtime-home/home'"
       )
 
       const defaultSessionTitle = orcaPage.getByText(defaultTitle, { exact: true })
@@ -140,7 +140,7 @@ function seedRemoteAiVaultHistory(
     target,
     [
       'mkdir -p /root/.codex/sessions/2026/07/04',
-      'mkdir -p /root/.local/share/orca/codex-runtime-home/home/sessions/2026/07/04',
+      'mkdir -p /root/.local/share/sol/codex-runtime-home/home/sessions/2026/07/04',
       'mkdir -p /root/.claude/projects/orca'
     ].join(' && ')
   )
@@ -163,7 +163,7 @@ function seedRemoteAiVaultHistory(
   )
   dockerWriteFile(
     target,
-    `/root/.local/share/orca/codex-runtime-home/home/sessions/2026/07/04/${args.runtimeSessionId}.jsonl`,
+    `/root/.local/share/sol/codex-runtime-home/home/sessions/2026/07/04/${args.runtimeSessionId}.jsonl`,
     codexTranscript({
       sessionId: args.runtimeSessionId,
       title: args.runtimeTitle,

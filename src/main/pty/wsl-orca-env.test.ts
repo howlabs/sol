@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { addOrcaWslInteropEnv } from './wsl-orca-env'
 
 describe('addOrcaWslInteropEnv', () => {
-  it('marks the Orca terminal handle for Windows to WSL env import', () => {
+  it('marks the Sol terminal handle for Windows to WSL env import', () => {
     const env: Record<string, string> = { ORCA_TERMINAL_HANDLE: 'term_wsl' }
 
     addOrcaWslInteropEnv(env)
@@ -23,7 +23,7 @@ describe('addOrcaWslInteropEnv', () => {
   it('marks hook env for Windows to WSL import', () => {
     const env: Record<string, string> = {
       ORCA_TERMINAL_HANDLE: 'term_wsl',
-      ORCA_USER_DATA_PATH: 'C:\\Users\\jin\\AppData\\Roaming\\Orca',
+      ORCA_USER_DATA_PATH: 'C:\\Users\\jin\\AppData\\Roaming\\Sol',
       ORCA_PANE_KEY: 'tab-1:leaf-1',
       ORCA_TAB_ID: 'tab-1',
       ORCA_WORKTREE_ID: 'repo::\\\\wsl.localhost\\Ubuntu\\home\\jin\\repo',

@@ -125,7 +125,7 @@ function normalizeFeatureSectionLines(lines: string[], start: number, end: numbe
   if (!hasHooksKey) {
     const firstDeprecatedIndex = deprecatedIndexes.shift()
     if (firstDeprecatedIndex !== undefined) {
-      // Why: Codex 0.133 warns on the old key. Mirror into Orca's runtime
+      // Why: Codex 0.133 warns on the old key. Mirror into Sol's runtime
       // config using the new key without rewriting the user's real config.
       lines[firstDeprecatedIndex] = lines[firstDeprecatedIndex]!.replace(
         /^([ \t]*)codex_hooks([ \t]*=)/,
@@ -153,7 +153,7 @@ function mergeSystemCodexConfigIntoRuntime(runtimeConfig: string, systemConfig: 
       .map((section) => getTomlSectionHeaderKey(section.header))
   )
   // Why: ordinary Codex settings should mirror ~/.codex exactly; runtime hook
-  // trust and project trust are written under Orca's managed CODEX_HOME and
+  // trust and project trust are written under Sol's managed CODEX_HOME and
   // must survive the copy unless the user explicitly revoked project trust in
   // the system config.
   return joinTomlBlocks([

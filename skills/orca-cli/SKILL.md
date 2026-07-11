@@ -1,34 +1,34 @@
 ---
 name: orca-cli
 description: >-
-  Use the public `orca` CLI to operate Orca-managed worktrees, folder contexts,
+  Use the public `sol` CLI to operate Sol-managed worktrees, folder contexts,
   terminals, repos, automations, worktree comments, and the browser embedded
-  inside the Orca app. Use when the user says "$orca-cli", "use orca cli",
-  "Orca worktree", "child worktree", "cardStatus", "spawn codex/claude in a worktree",
-  "read/wait/send Orca terminal", "terminal send", "full handoff", "handover",
-  "give this to another agent", "another worktree", "Orca browser", or
-  "control the browser inside Orca". Prefer this over raw `git worktree`, ad hoc
-  PTYs, or Playwright when the task touches Orca-managed state.
+  inside the Sol app. Use when the user says "$orca-cli", "use orca cli",
+  "Sol worktree", "child worktree", "cardStatus", "spawn codex/claude in a worktree",
+  "read/wait/send Sol terminal", "terminal send", "full handoff", "handover",
+  "give this to another agent", "another worktree", "Sol browser", or
+  "control the browser inside Sol". Prefer this over raw `git worktree`, ad hoc
+  PTYs, or Playwright when the task touches Sol-managed state.
 ---
 
-# Orca CLI
+# Sol CLI
 
-Use `orca` when Orca's running editor/runtime is the source of truth. On Linux, use `orca-ide` wherever this file says `orca`.
+Use `sol` when Sol's running editor/runtime is the source of truth. On Linux, use `sol-ide` wherever this file says `sol`.
 
-**Dev builds (`pnpm dev`):** after `pnpm build:cli`, the dev CLI is exposed as `orca-dev` (the global shim points at this checkout's wrapper + out/cli). Inside a dev Orca's terminals use `orca-dev ...` (or `./config/scripts/orca-dev.mjs ...` for worktree-local invocation that does not depend on the /usr/local/bin symlink). Plain `orca` targets any installed production Orca. The app's own agent preambles use `orca-dev` automatically in dev mode.
+**Dev builds (`pnpm dev`):** after `pnpm build:cli`, the dev CLI is exposed as `orca-dev` (the global shim points at this checkout's wrapper + out/cli). Inside a dev Sol's terminals use `orca-dev ...` (or `./config/scripts/orca-dev.mjs ...` for worktree-local invocation that does not depend on the /usr/local/bin symlink). Plain `sol` targets any installed production Sol. The app's own agent preambles use `orca-dev` automatically in dev mode.
 
-Use plain shell tools when Orca state does not matter.
+Use plain shell tools when Sol state does not matter.
 
 ## Start Here
 
 ```bash
-command -v orca || command -v orca-ide
+command -v orca || command -v sol-ide
 orca status --json
 orca worktree ps --json
 orca terminal list --json
 ```
 
-If Orca is not running, start it:
+If Sol is not running, start it:
 
 ```bash
 orca open --json
@@ -70,7 +70,7 @@ orca terminal send --terminal <handle> --text "<task brief>" --enter --json
 
 ## Worktrees
 
-An Orca worktree is Orca's tracked view of a repo checkout, its metadata, terminals, browser tabs, and UI state.
+A Sol worktree is Sol's tracked view of a repo checkout, its metadata, terminals, browser tabs, and UI state.
 
 Common commands:
 
@@ -98,17 +98,17 @@ orca worktree rm --worktree id:<worktreeId> --force --json
 Selectors:
 
 - `id:<worktreeId>`, `name:<displayName>`, `path:<absolutePath>`, `branch:<branchName>`, `issue:<number>`
-- `active` / `current` for the enclosing Orca-managed worktree from the shell cwd
+- `active` / `current` for the enclosing Sol-managed worktree from the shell cwd
 - For `worktree create --parent-worktree` only, folder/worktree parent context keys are also valid: `folder:<folderId>`, `worktree:<worktreeId>`, `id:folder:<folderId>`, `id:worktree:<worktreeId>`
 
 Lineage rules:
 
-- When creating from inside an Orca-managed worktree or folder context, Orca infers the current parent context when it can.
+- When creating from inside a Sol-managed worktree or folder context, Sol infers the current parent context when it can.
 - Use `--parent-worktree active` when the child worktree relationship should be explicit.
 - Use `--parent-worktree folder:<folderId>` or `--parent-worktree worktree:<worktreeId>` when a folder or worktree parent context should be explicit.
 - Use `--no-parent` only when the new work is independent.
-- `--no-parent` only controls Orca lineage; it does not choose the Git base. For independent top-level work, omit `--base-branch` so Orca uses the repo default base, or explicitly pass the repo default base. Never base it on the current feature branch unless the user asks for stacked work or "branch from current".
-- If `--repo` is omitted, Orca infers the repo from the current Orca worktree when possible.
+- `--no-parent` only controls Sol lineage; it does not choose the Git base. For independent top-level work, omit `--base-branch` so Sol uses the repo default base, or explicitly pass the repo default base. Never base it on the current feature branch unless the user asks for stacked work or "branch from current".
+- If `--repo` is omitted, Sol infers the repo from the current Sol worktree when possible.
 
 Agent/setup flags:
 
@@ -123,13 +123,13 @@ orca worktree create --name task --run-hooks --json
 - `--setup run|skip|inherit` controls repo setup hooks. Default is `inherit`, which follows the repo's setup policy.
 - `--run-hooks` is a legacy alias for `--setup run`; it also reveals/activates the new worktree.
 - `--agent`, `--activate`, and `--run-hooks` reveal the new worktree. Plain create stays in the background.
-- Let Orca choose setup terminal placement from repo settings, including tab vs split behavior. Do not manually create extra setup terminals.
+- Let Sol choose setup terminal placement from repo settings, including tab vs split behavior. Do not manually create extra setup terminals.
 - If an older installed CLI rejects `--agent`, `--prompt`, or `--setup`, create the worktree normally, then run `orca terminal create --worktree <selector> --command "codex"` and `orca terminal send` if a prompt is needed.
 - `worktree create` creates a new checkout. For a fresh agent in the current checkout, use `orca terminal create --worktree active --command "codex" --json`.
 
 ## Worktree Comments
 
-A worktree comment is the short status text shown in Orca's workspace list/card for quick progress visibility.
+A worktree comment is the short status text shown in Sol's workspace list/card for quick progress visibility.
 
 Coding agents should update the active worktree comment at meaningful checkpoints:
 
@@ -137,7 +137,7 @@ Coding agents should update the active worktree comment at meaningful checkpoint
 orca worktree set --worktree active --comment "fix implemented; running integration tests" --json
 ```
 
-Update after meaningful state changes such as repro, fix, validation, handoff, or blocker. Keep comments short/current; failures are best-effort unless Orca state was requested.
+Update after meaningful state changes such as repro, fix, validation, handoff, or blocker. Keep comments short/current; failures are best-effort unless Sol state was requested.
 
 Card status uses `--workspace-status <id>`; defaults are `todo`, `in-progress`, `in-review`, `completed`.
 
@@ -174,13 +174,13 @@ Terminal rules:
 - For structured coordination, invoke the `orchestration` skill; it uses `orca orchestration ...` commands for messages, handoffs, task DAGs, dispatches, inbox/reply flows, and coordinator loops.
 - Use `terminal create --worktree active --command "<agent>"` for a fresh agent in the current worktree. Use `worktree create --agent <agent>` only for a separate checkout.
 - Use `terminal wait --for tui-idle` for agent CLIs such as Claude Code, Gemini, and Codex; always pass `--timeout-ms`.
-- Terminal handles are runtime-scoped. If Orca restarts or returns `terminal_handle_stale`, reacquire with `terminal list`.
+- Terminal handles are runtime-scoped. If Sol restarts or returns `terminal_handle_stale`, reacquire with `terminal list`.
 - For long output, use cursor reads. After a limited tail preview, page from `oldestCursor`; after a cursor read, continue with `nextCursor` while `limited` is true and `nextCursor !== latestCursor`.
 - `--direction horizontal` splits left/right. `--direction vertical` splits top/bottom.
 
 ## Automations
 
-An automation is a scheduled Orca prompt run by a chosen provider against either a repo-created worktree or an existing workspace.
+An automation is a scheduled Sol prompt run by a chosen provider against either a repo-created worktree or an existing workspace.
 
 ```bash
 orca automations list --json
@@ -196,13 +196,13 @@ orca automations remove <automationId> --json
 
 Schedules accept `hourly`, `daily`, `weekdays`, `weekly`, 5-field cron, or RRULE. Use `--time <HH:MM>` with `daily`/`weekdays`/`weekly`, and `--day <0-6>` only with `weekly` where Sunday is `0`.
 
-Use `--repo <selector>` for a new worktree per run, or `--workspace <selector>` / `--workspace-mode existing` for an existing Orca worktree. `--repo` and `--workspace` are mutually exclusive. Use `--reuse-session` only for existing-workspace automations; if the previous terminal is gone, Orca falls back to a fresh session. Prefer `--disabled` while testing setup.
+Use `--repo <selector>` for a new worktree per run, or `--workspace <selector>` / `--workspace-mode existing` for an existing Sol worktree. `--repo` and `--workspace` are mutually exclusive. Use `--reuse-session` only for existing-workspace automations; if the previous terminal is gone, Sol falls back to a fresh session. Prefer `--disabled` while testing setup.
 
 ## Built-In Browser
 
-The built-in browser is Orca's embedded browser tab surface, scoped to Orca worktrees; it is not Chrome/Safari or desktop app UI.
+The built-in browser is Sol's embedded browser tab surface, scoped to Sol worktrees; it is not Chrome/Safari or desktop app UI.
 
-These commands control only Orca's embedded browser tabs. They do not drive external Chrome/Safari/webviews or Orca app chrome/settings.
+These commands control only Sol's embedded browser tabs. They do not drive external Chrome/Safari/webviews or Sol app chrome/settings.
 
 Use a snapshot-interact-re-snapshot loop:
 
@@ -256,7 +256,7 @@ Browser rules:
 - Refs like `@e1` are assigned by `snapshot`, scoped to one tab, and invalidated by navigation or tab switch.
 - Browser commands default to the current worktree and its active tab. Use `--worktree all` only intentionally.
 - For concurrent browser work, run `orca tab list --json`, read `tabs[].browserPageId`, and pass `--page <browserPageId>` on later commands.
-- Use typed tab commands (`orca tab list/create/close/switch`), not `orca exec --command "tab ..."`, so Orca keeps UI state synchronized.
+- Use typed tab commands (`orca tab list/create/close/switch`), not `orca exec --command "tab ..."`, so Sol keeps UI state synchronized.
 - Prefer `wait --text`, `--url`, `--selector`, or `--load` after async page changes instead of bare timeouts.
 - Less common workflows can use typed commands above or `orca exec --command "<agent-browser command>"` passthrough.
 - If `fill` or `type` fails on a custom input, try `orca focus --element @e1 --json` then `orca inserttext --text "text" --json`.

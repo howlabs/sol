@@ -156,7 +156,7 @@ export default function Landing(): React.JSX.Element {
     // oxlint-disable-next-line react-doctor/no-initialize-state -- Why: preflight status is read from an external IPC probe on mount and focus.
     refreshPreflight()
 
-    // Why: users often install/authenticate gh outside Orca. Re-check when the
+    // Why: users often install/authenticate gh outside Sol. Re-check when the
     // window becomes active again so the landing warning clears without relaunch.
     const handleWindowActive = (): void => {
       if (document.visibilityState === 'visible') {
@@ -180,7 +180,7 @@ export default function Landing(): React.JSX.Element {
     }
 
     let cancelled = false
-    // Why: some users complete `gh auth login` without ever leaving the Orca
+    // Why: some users complete `gh auth login` without ever leaving the Sol
     // window. Poll only while a warning is visible so the banner self-clears.
     const intervalId = window.setInterval(() => {
       void window.api.preflight.check({ force: true }).then((status) => {
@@ -232,7 +232,7 @@ export default function Landing(): React.JSX.Element {
             >
               <img
                 src={logo}
-                alt={translate('auto.components.Landing.520304a067', 'Orca logo')}
+                alt={translate('auto.components.Landing.520304a067', 'Sol logo')}
                 className="size-9 dark:invert"
               />
             </div>

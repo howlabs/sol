@@ -255,7 +255,7 @@ export function DeveloperPermissionsPane(): React.JSX.Element {
   }, [refresh])
 
   // Why: after the user flips a permission in System Settings and switches
-  // back to Orca, the chip should reflect the new status without a manual
+  // back to Sol, the chip should reflect the new status without a manual
   // Refresh click. Tied to window focus rather than a polling interval so
   // we don't keep hammering `systemPreferences` while the pane is idle.
   useEffect(() => {
@@ -324,13 +324,13 @@ export function DeveloperPermissionsPane(): React.JSX.Element {
             <ShieldCheck className="size-3.5 shrink-0" />
             {translate(
               'auto.components.settings.DeveloperPermissionsPane.6f011b9bf6',
-              "Terminal tools inherit Orca's macOS privacy envelope."
+              "Terminal tools inherit Sol's macOS privacy envelope."
             )}
           </div>
           <p className="text-[11px] leading-snug text-muted-foreground">
             {translate(
               'auto.components.settings.DeveloperPermissionsPane.6326a4c5cc',
-              'Use these controls when a CLI, local app, or automation tool needs macOS privacy access. Orca does not ask at startup.'
+              'Use these controls when a CLI, local app, or automation tool needs macOS privacy access. Sol does not ask at startup.'
             )}
           </p>
         </div>

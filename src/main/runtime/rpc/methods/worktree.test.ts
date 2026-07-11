@@ -513,7 +513,7 @@ describe('worktree RPC methods', () => {
       makeRequest('worktree.create', {
         repo: 'repo-1',
         name: 'issue-123',
-        startupDraft: 'https://github.com/stablyai/orca/issues/123',
+        startupDraft: 'https://github.com/howlabs/sol/issues/123',
         createdWithAgent: 'codex',
         activate: true
       })
@@ -526,7 +526,7 @@ describe('worktree RPC methods', () => {
         activate: true,
         createdWithAgent: 'codex',
         startup: undefined,
-        startupDraft: 'https://github.com/stablyai/orca/issues/123'
+        startupDraft: 'https://github.com/howlabs/sol/issues/123'
       })
     )
   })

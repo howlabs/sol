@@ -61,7 +61,7 @@ describe('issue source operations', () => {
         number: 923,
         title: 'Use upstream issues',
         state: 'open',
-        html_url: 'https://github.com/stablyai/orca/issues/923',
+        html_url: 'https://github.com/howlabs/sol/issues/923',
         labels: []
       })
     })
@@ -86,7 +86,7 @@ describe('issue source operations', () => {
           number: 923,
           title: 'Use upstream issues',
           state: 'open',
-          html_url: 'https://github.com/stablyai/orca/issues/923',
+          html_url: 'https://github.com/howlabs/sol/issues/923',
           labels: []
         })
       })
@@ -94,7 +94,7 @@ describe('issue source operations', () => {
       .mockResolvedValueOnce({
         stdout: JSON.stringify({
           number: 924,
-          html_url: 'https://github.com/stablyai/orca/issues/924'
+          html_url: 'https://github.com/howlabs/sol/issues/924'
         })
       })
       .mockResolvedValueOnce({ stdout: '' })
@@ -104,7 +104,7 @@ describe('issue source operations', () => {
           user: { login: 'octo', avatar_url: '', type: 'User' },
           body: 'Comment',
           created_at: '2026-06-16T00:00:00.000Z',
-          html_url: 'https://github.com/stablyai/orca/issues/923#issuecomment-1'
+          html_url: 'https://github.com/howlabs/sol/issues/923#issuecomment-1'
         })
       })
       .mockResolvedValueOnce({ stdout: 'bug\nfrontend\n' })
@@ -175,14 +175,14 @@ describe('issue source operations', () => {
     ghExecFileAsyncMock.mockResolvedValueOnce({
       stdout: JSON.stringify({
         number: 924,
-        html_url: 'https://github.com/stablyai/orca/issues/924'
+        html_url: 'https://github.com/howlabs/sol/issues/924'
       })
     })
 
     await expect(createIssue('/repo-root', 'New issue', 'Body')).resolves.toEqual({
       ok: true,
       number: 924,
-      url: 'https://github.com/stablyai/orca/issues/924'
+      url: 'https://github.com/howlabs/sol/issues/924'
     })
     expect(ghExecFileAsyncMock).toHaveBeenCalledWith(
       [
@@ -204,7 +204,7 @@ describe('issue source operations', () => {
     ghExecFileAsyncMock.mockResolvedValueOnce({
       stdout: JSON.stringify({
         number: 925,
-        html_url: 'https://github.com/stablyai/orca/issues/925'
+        html_url: 'https://github.com/howlabs/sol/issues/925'
       })
     })
 
@@ -216,7 +216,7 @@ describe('issue source operations', () => {
     ).resolves.toEqual({
       ok: true,
       number: 925,
-      url: 'https://github.com/stablyai/orca/issues/925'
+      url: 'https://github.com/howlabs/sol/issues/925'
     })
     expect(ghExecFileAsyncMock).toHaveBeenCalledWith(
       [

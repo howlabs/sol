@@ -2,7 +2,7 @@
    writing, and assistant-message retry state are one lifecycle unit; splitting
    them would obscure cleanup ordering across remote PTY reconnects. */
 // Why: relay-side adapter for the shared agent-hook listener pipeline. Hosts
-// a loopback HTTP server (same shape as Orca's main-process server: bind
+// a loopback HTTP server (same shape as Sol's main-process server: bind
 // 127.0.0.1:0, bearer-token auth, /hook/<source> routing) and forwards every
 // parsed payload via a callback so `relay.ts` can re-emit it as an
 // `agent.hook` JSON-RPC notification across the existing SSH channel.
@@ -104,7 +104,7 @@ export class RelayAgentHookServer {
   private state: HookListenerState = createHookListenerState()
   // Why: the shared `HookListenerState.lastStatusByPaneKey` cache only stores
   // `AgentHookEventPayload` (no wire-envelope fields). Replay must still emit
-  // the original `source`/`env`/`version` so Orca's warn-once diagnostics fire
+  // the original `source`/`env`/`version` so Sol's warn-once diagnostics fire
   // identically to the live POST path. Keep this as a per-instance sidecar map
   // so the shared listener type stays unchanged. Invariant: every key present
   // in `state.lastStatusByPaneKey` must also be present here — populated and
@@ -191,7 +191,7 @@ export class RelayAgentHookServer {
   }
 
   /** Request-driven replay: walks the per-paneKey last-payload cache and
-   *  forwards each entry as a fresh notification. Called after Orca has
+   *  forwards each entry as a fresh notification. Called after Sol has
    *  re-wired its `agent.hook` handler on the new mux post-`--connect`.
    *  The relay-driver issues the replay forwards BEFORE returning from the
    *  request handler so the response strictly trails all replayed

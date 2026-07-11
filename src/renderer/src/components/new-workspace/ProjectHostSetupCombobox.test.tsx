@@ -51,7 +51,7 @@ const readyOption: ProjectHostSetupOption = {
   hostId: 'local',
   repoId: 'local-repo',
   label: 'Local Mac',
-  detail: 'Orca',
+  detail: 'Sol',
   path: '/Users/alice/orca'
 }
 
@@ -71,7 +71,7 @@ const unavailableOption: NeedsSetupProjectHostOption = {
   projectId: 'project-1',
   hostId: 'runtime:old',
   label: 'Old server',
-  detail: 'Update Orca on this host to set up projects',
+  detail: 'Update Sol on this host to set up projects',
   isAvailable: false
 }
 
@@ -148,7 +148,7 @@ describe('ProjectHostSetupCombobox', () => {
       '[data-command-value="needs-setup:runtime:old"]'
     )
     expect(unavailableButton).toBeNull()
-    expect(container.textContent).not.toContain('Update Orca on this host')
+    expect(container.textContent).not.toContain('Update Sol on this host')
 
     expect(onValueChange).not.toHaveBeenCalled()
   })

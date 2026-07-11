@@ -231,7 +231,7 @@ export function RepositoryPane({
             )}
             description={translate(
               'auto.components.settings.RepositoryPane.170624bdfb',
-              'Remove this project from Orca.'
+              'Remove this project from Sol.'
             )}
             keywords={[repo.displayName, 'delete', 'project', 'repository']}
             className="absolute top-0 right-0 z-10 w-auto max-w-none"

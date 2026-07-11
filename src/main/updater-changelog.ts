@@ -10,7 +10,7 @@ type ChangelogEntry = {
   releaseNotesUrl: string
 }
 
-const CHANGELOG_URL = 'https://onorca.dev/changelog'
+const CHANGELOG_URL = 'https://github.com/howlabs/sol/releases'
 
 function isValidEntry(entry: ChangelogEntry): boolean {
   return (
@@ -42,13 +42,21 @@ export async function fetchChangelog(
   incomingVersion: string,
   localVersion: string
 ): Promise<ChangelogData | null> {
-  const res = await net.fetch('https://onorca.dev/whats-new/changelog.json', {
-    signal: AbortSignal.timeout(5000)
-  })
-  if (!res.ok) {
+  // Why: Sol has no marketing changelog feed yet. Soft-fail so update UI still
+  // works with GitHub Releases as the notes destination.
+  let json: unknown
+  try {
+    const res = await net.fetch(
+      'https://raw.githubusercontent.com/howlabs/sol/main/docs/whats-new/changelog.json',
+      { signal: AbortSignal.timeout(5000) }
+    )
+    if (!res.ok) {
+      return null
+    }
+    json = await res.json()
+  } catch {
     return null
   }
-  const json: unknown = await res.json()
 
   // Why: the JSON endpoint is external and could serve malformed data.
   // Validate the shape before indexing into it to avoid runtime errors

@@ -539,9 +539,7 @@ describe('fetchCodexRateLimits', () => {
       const bashCommand = spawnArgs.at(-1) as string
       expect(bashCommand).toContain('mkdir -p "$orca_rate_limit_cwd"')
       expect(bashCommand).toContain('cd "$orca_rate_limit_cwd"')
-      expect(bashCommand).toContain(
-        "export CODEX_HOME='/home/alice/.local/share/orca/account/home'"
-      )
+      expect(bashCommand).toContain("export CODEX_HOME='/home/alice/.local/share/sol/account/home'")
       expect(bashCommand).toContain("exec codex '-s' 'read-only' '-a' 'untrusted' 'app-server'")
       expect(spawnOptions).toEqual(
         expect.objectContaining({
@@ -591,9 +589,7 @@ describe('fetchCodexRateLimits', () => {
       const bashCommand = spawnArgs.at(-1) as string
       expect(bashCommand).toContain('mkdir -p "$orca_rate_limit_cwd"')
       expect(bashCommand).toContain('cd "$orca_rate_limit_cwd"')
-      expect(bashCommand).toContain(
-        "export CODEX_HOME='/home/alice/.local/share/orca/account/home'"
-      )
+      expect(bashCommand).toContain("export CODEX_HOME='/home/alice/.local/share/sol/account/home'")
       expect(bashCommand).toContain('exec codex ')
       expect(spawnOptions).toEqual(
         expect.objectContaining({

@@ -62,7 +62,7 @@ export function openTerminal(pane: ManagedPaneInternal): void {
     pane.leafId
   )
 
-  // Activate Orca's Unicode 11 width shim *before* any caller-driven write. CJK / emoji /
+  // Activate Sol's Unicode 11 width shim *before* any caller-driven write. CJK / emoji /
   // ZWJ codepoints get baked into the buffer at the active unicode version on
   // write — if a restore (snapshot, scrollback, cold-restore) writes bytes
   // through xterm while the default v6 width tables are still active, wide

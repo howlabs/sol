@@ -20,10 +20,10 @@ import type { CliInstallMethod, CliInstallStatus } from '../../shared/cli-instal
 import { buildAppImageCliWrapper } from './appimage-cli-wrapper'
 
 const execFileAsync = promisify(execFile)
-const DEFAULT_MAC_COMMAND_PATH = '/usr/local/bin/orca'
+const DEFAULT_MAC_COMMAND_PATH = '/usr/local/bin/sol'
 const DEV_COMMAND_NAME = 'orca-dev'
-const LINUX_COMMAND_NAME = 'orca-ide'
-const LEGACY_LINUX_COMMAND_NAME = 'orca'
+const LINUX_COMMAND_NAME = 'sol-ide'
+const LEGACY_LINUX_COMMAND_NAME = 'sol'
 const DEV_LAUNCHER_DIR = ['cli', 'bin']
 const WINDOWS_PATH_COMMAND_TIMEOUT_MS = 5_000
 
@@ -74,8 +74,8 @@ export class CliInstaller {
       // Why: development builds must not claim the production shell command.
       return DEV_COMMAND_NAME
     }
-    // Why: packaged Linux uses `orca-ide` to avoid shadowing GNOME Orca's /usr/bin/orca.
-    return this.platform === 'linux' ? LINUX_COMMAND_NAME : 'orca'
+    // Why: packaged Linux uses `sol-ide` to avoid shadowing GNOME Orca's /usr/bin/orca.
+    return this.platform === 'linux' ? LINUX_COMMAND_NAME : 'sol'
   }
 
   constructor(options: CliInstallerOptions = {}) {
@@ -103,7 +103,7 @@ export class CliInstaller {
     const candidateMacPath = options.defaultMacCommandPath ?? DEFAULT_MAC_COMMAND_PATH
     this.macCommandPath = existsSync(dirname(candidateMacPath))
       ? candidateMacPath
-      : join(this.homePath, '.local', 'bin', 'orca')
+      : join(this.homePath, '.local', 'bin', 'sol')
     this.privilegedRunner = options.privilegedRunner ?? runMacPrivilegedCommand
     this.userPathReader = options.userPathReader ?? (() => readWindowsUserPath())
     this.userPathWriter = options.userPathWriter ?? ((value) => writeWindowsUserPath(value))
@@ -138,7 +138,7 @@ export class CliInstaller {
         this.isLinuxAppImage() && this.appImagePath
           ? `The AppImage file at ${this.appImagePath} is missing. Move it back or re-run CLI registration from the current AppImage location.`
           : this.isPackaged
-            ? 'The bundled CLI launcher is missing from this Orca build.'
+            ? 'The bundled CLI launcher is missing from this Sol build.'
             : 'Development mode uses a generated launcher for validation only.'
       return {
         platform: this.platform,
@@ -174,7 +174,7 @@ export class CliInstaller {
       throw new Error(status.detail ?? 'CLI registration is unavailable on this build.')
     }
     if (status.state === 'conflict') {
-      throw new Error(`Refusing to replace non-Orca command at ${status.commandPath}.`)
+      throw new Error(`Refusing to replace non-Sol command at ${status.commandPath}.`)
     }
 
     // eslint-disable-next-line unicorn/prefer-ternary -- Why: the install path performs async side effects and is easier to audit as an explicit branch than as an awaited ternary.
@@ -185,7 +185,7 @@ export class CliInstaller {
       await this.installAppImageWrapper(status.commandPath, status.launcherPath)
       await this.removeLegacyLinuxCommandIfManaged(status.launcherPath)
     } else if (this.isWindowsPackagedBundledCommand(status.commandPath, status.launcherPath)) {
-      // Why: packaged Windows already ships resources/bin/orca.cmd. Registration
+      // Why: packaged Windows already ships resources/bin/sol.cmd. Registration
       // only owns the user PATH entry; rewriting the asset makes it recurse.
     } else {
       // Why: mkdir stays here for the Windows wrapper path — the target dir is
@@ -220,10 +220,10 @@ export class CliInstaller {
       return status
     }
     if (status.state === 'conflict') {
-      throw new Error(`Refusing to remove non-Orca command at ${status.commandPath}.`)
+      throw new Error(`Refusing to remove non-Sol command at ${status.commandPath}.`)
     }
     if (status.state === 'stale') {
-      throw new Error(`Refusing to remove a command not owned by Orca at ${status.commandPath}.`)
+      throw new Error(`Refusing to remove a command not owned by Sol at ${status.commandPath}.`)
     }
 
     if (status.installMethod === 'symlink') {
@@ -302,12 +302,12 @@ export class CliInstaller {
       const status = await this.inspectSymlink(commandPath, launcherPath)
       if (status.state !== 'not_installed') {
         if (reachedDefaultCommandPath && !isDefaultCommandPath && status.state === 'conflict') {
-          // Why: a non-Orca command after an empty/default install slot can be
+          // Why: a non-Sol command after an empty/default install slot can be
           // shadowed safely by installing there; no user file needs replacing.
           continue
         }
         // Why: PATH lookup is first-match-wins; use the executable command the
-        // shell will actually run, while preserving conflicts that shadow Orca.
+        // shell will actually run, while preserving conflicts that shadow Sol.
         return commandPath
       }
     }
@@ -337,7 +337,7 @@ export class CliInstaller {
         return join(this.homePath, '.local', 'bin', DEV_COMMAND_NAME)
       }
       if (this.platform === 'win32') {
-        return join(this.localAppDataPath, 'Programs', 'Orca Dev', 'bin', `${DEV_COMMAND_NAME}.cmd`)
+        return join(this.localAppDataPath, 'Programs', 'Sol Dev', 'bin', `${DEV_COMMAND_NAME}.cmd`)
       }
     }
 
@@ -349,14 +349,14 @@ export class CliInstaller {
       // Why: Linux does not have a single privileged global shell-command flow
       // equivalent to macOS's /usr/local/bin integration. ~/.local/bin is the
       // least surprising user-scoped location that many distros already expose.
-      // Why `orca-ide`: GNOME Orca (the screen reader) ships /usr/bin/orca on
-      // most Linux distros. Using `orca-ide` avoids shadowing that system
+      // Why `sol-ide`: GNOME Orca (the screen reader) ships /usr/bin/orca on
+      // most Linux distros. Using `sol-ide` avoids shadowing that system
       // command, matching the executableName already used for the Electron binary.
       return join(this.homePath, '.local', 'bin', LINUX_COMMAND_NAME)
     }
 
     if (this.platform === 'win32') {
-      return join(this.localAppDataPath, 'Programs', 'Orca', 'resources', 'bin', 'orca.cmd')
+      return join(this.localAppDataPath, 'Programs', 'Sol', 'resources', 'bin', 'sol.cmd')
     }
 
     return null
@@ -446,7 +446,7 @@ export class CliInstaller {
         return
       }
 
-      // Why: after the Linux command rename, the old Orca-owned `orca` symlink
+      // Why: after the Linux command rename, the old Sol-owned `sol` symlink
       // would keep shadowing GNOME Orca even though the new command is installed.
       await unlink(legacyCommandPath)
     } catch (error) {
@@ -506,7 +506,7 @@ export class CliInstaller {
           supported: true,
           state: 'conflict',
           currentTarget: null,
-          detail: `${commandPath} exists but is not an Orca launcher script.`
+          detail: `${commandPath} exists but is not a Sol launcher script.`
         })
       }
 
@@ -533,7 +533,7 @@ export class CliInstaller {
           supported: true,
           state: 'not_installed',
           currentTarget: null,
-          detail: `Register ${commandPath} to use Orca from the terminal.`
+          detail: `Register ${commandPath} to use Sol from the terminal.`
         })
       }
       throw error
@@ -558,7 +558,7 @@ export class CliInstaller {
               supported: true,
               state: 'stale',
               currentTarget: managedTarget,
-              detail: `${commandPath} contains an older Orca launcher.`
+              detail: `${commandPath} contains an older Sol launcher.`
             })
           }
         }
@@ -570,7 +570,7 @@ export class CliInstaller {
           supported: true,
           state: 'conflict',
           currentTarget: null,
-          detail: `${commandPath} exists but is not an Orca symlink.`
+          detail: `${commandPath} exists but is not a Sol symlink.`
         })
       }
 
@@ -590,8 +590,8 @@ export class CliInstaller {
         detail: isInstalled
           ? `Registered at ${commandPath}.`
           : isManagedStaleTarget
-            ? `${commandPath} points to an older Orca launcher.`
-            : `${commandPath} points to a non-Orca launcher.`
+            ? `${commandPath} points to an older Sol launcher.`
+            : `${commandPath} points to a non-Sol launcher.`
       })
     } catch (error) {
       if (isMissingError(error)) {
@@ -602,7 +602,7 @@ export class CliInstaller {
           supported: true,
           state: 'not_installed',
           currentTarget: null,
-          detail: `Register ${commandPath} to use Orca from the terminal.`
+          detail: `Register ${commandPath} to use Sol from the terminal.`
         })
       }
       throw error
@@ -625,7 +625,7 @@ export class CliInstaller {
     }
 
     if (this.platform === 'darwin') {
-      // Why: prior packaged installs can leave a symlink to an older Orca.app
+      // Why: prior packaged installs can leave a symlink to an older Sol.app
       // resources launcher, but arbitrary user-owned symlinks must not be replaced.
       return /(?:^|[/\\])[^/\\]+\.app[/\\]Contents[/\\]Resources[/\\]bin[/\\][^/\\]+$/.test(
         resolvedTarget
@@ -652,7 +652,7 @@ export class CliInstaller {
     const siblingDevLauncherDir = resolve(siblingDevUserDataPath, ...DEV_LAUNCHER_DIR)
 
     // Why: development builds generate launchers under the sibling `*-dev`
-    // profile; packaged Orca must be able to reclaim that public command.
+    // profile; packaged Sol must be able to reclaim that public command.
     return (
       basename(siblingDevUserDataPath) === `${basename(packagedUserDataPath)}-dev` &&
       isPathInsideOrEqual(siblingDevLauncherDir, resolvedTarget)
@@ -690,7 +690,7 @@ export class CliInstaller {
           supported: true,
           state: 'conflict',
           currentTarget: null,
-          detail: `${commandPath} exists but is not an Orca launcher script.`
+          detail: `${commandPath} exists but is not a Sol launcher script.`
         })
       }
 
@@ -729,7 +729,7 @@ export class CliInstaller {
           supported: true,
           state: 'not_installed',
           currentTarget: null,
-          detail: `Register ${commandPath} to use Orca from Command Prompt or PowerShell.`
+          detail: `Register ${commandPath} to use Sol from Command Prompt or PowerShell.`
         })
       }
       throw error
@@ -785,7 +785,7 @@ export class CliInstaller {
         pathConfigured,
         state: 'not_installed',
         currentTarget: null,
-        detail: `Register ${status.commandPath} to use Orca from Command Prompt or PowerShell.`
+        detail: `Register ${status.commandPath} to use Sol from Command Prompt or PowerShell.`
       }
     }
 
@@ -860,7 +860,7 @@ async function ensureDevLauncher(args: {
   )
   await mkdir(dirname(launcherPath), { recursive: true })
 
-  // Why: packaged Orca ships real platform launchers under resources/bin, but
+  // Why: packaged Sol ships real platform launchers under resources/bin, but
   // development builds do not have that stable asset layout. Generating a
   // launcher in userData lets us validate the shell-command flow without
   // changing the packaged registration contract.
@@ -876,7 +876,7 @@ async function ensureDevLauncher(args: {
     // Why: dev PTYs prepend userData/cli/bin to PATH, and product-owned
     // commands are documented as `orca ...`. Keep that local alias fresh
     // without claiming the global production command.
-    await writeFile(join(dirname(launcherPath), 'orca'), content, {
+    await writeFile(join(dirname(launcherPath), 'sol'), content, {
       encoding: 'utf8',
       mode: 0o755
     })
@@ -952,7 +952,7 @@ function extractManagedUnixLauncherTarget(content: string): string | null {
   }
 
   // Why: older dev installs wrote a generated shell launcher directly to
-  // /usr/local/bin/orca. Treat only Orca's compiled CLI entrypoints as managed;
+  // /usr/local/bin/sol. Treat only Sol's compiled CLI entrypoints as managed;
   // arbitrary user scripts that happen to launch Electron must stay conflicts.
   return /(?:^|[/\\])(?:out|app\.asar\.unpacked[/\\]out)[/\\]cli[/\\]index\.js$/.test(cliPath)
     ? cliPath
@@ -1073,7 +1073,7 @@ async function writeWindowsUserPath(value: string): Promise<void> {
   await runWindowsPathCommand([
     '-NoProfile',
     '-Command',
-    // Why: PATH registration must stay user-scoped on Windows so the Orca
+    // Why: PATH registration must stay user-scoped on Windows so the Sol
     // desktop app can manage the public shell command without requiring
     // elevation or mutating machine-wide environment state.
     `[Environment]::SetEnvironmentVariable('Path', ${quotePowerShell(value)}, 'User')`
@@ -1131,13 +1131,13 @@ export function getBundledLauncherPath(
   resourcesPath: string
 ): string | null {
   if (platform === 'darwin') {
-    return join(resourcesPath, 'bin', 'orca')
+    return join(resourcesPath, 'bin', 'sol')
   }
   if (platform === 'linux') {
     return join(resourcesPath, 'bin', LINUX_COMMAND_NAME)
   }
   if (platform === 'win32') {
-    return join(resourcesPath, 'bin', 'orca.cmd')
+    return join(resourcesPath, 'bin', 'sol.cmd')
   }
   return null
 }

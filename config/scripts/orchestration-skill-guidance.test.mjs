@@ -19,18 +19,18 @@ function getSection(markdown, heading) {
 }
 
 describe('orchestration skill guidance', () => {
-  it('requires Orca runtime state before claiming a worker was orchestrated', () => {
+  it('requires Sol runtime state before claiming a worker was orchestrated', () => {
     const skill = readSkill()
     const toolBoundary = getSection(skill, 'Tool Boundary')
 
     expect(toolBoundary).toContain(
-      'must create Orca runtime state with `orca orchestration task-create` and `orca orchestration dispatch --inject`'
+      'must create Sol runtime state with `orca orchestration task-create` and `orca orchestration dispatch --inject`'
     )
     expect(toolBoundary).toContain('or `orca orchestration run`')
     expect(toolBoundary).toContain(
-      'Do not substitute non-Orca subagent tools, generic agent-spawn APIs, or chat-only parallel worker features'
+      'Do not substitute non-Sol subagent tools, generic agent-spawn APIs, or chat-only parallel worker features'
     )
-    expect(toolBoundary).toContain('do not create Orca task/dispatch provenance')
+    expect(toolBoundary).toContain('do not create Sol task/dispatch provenance')
     expect(toolBoundary).toContain('injected lifecycle preambles')
     expect(toolBoundary).toContain('`worker_done` authority')
     expect(toolBoundary).toContain('decision gates')
@@ -68,7 +68,7 @@ describe('orchestration skill guidance', () => {
       'read the worker terminal after prompt delivery except to avoid losing the initial prompt'
     )
     expect(skill).toContain(
-      '`--no-parent` only controls Orca lineage; it does not choose the Git base.'
+      '`--no-parent` only controls Sol lineage; it does not choose the Git base.'
     )
     expect(skill).toContain(
       'never base it on the current feature branch unless the user explicitly asks'
@@ -77,7 +77,7 @@ describe('orchestration skill guidance', () => {
       'orca worktree create --name <task-name> --no-parent --agent codex --prompt'
     )
     expect(fullHandoffs).toContain(
-      'Before creating a new worktree from an active feature branch, decide and state whether the desired Orca lineage is child or top-level'
+      'Before creating a new worktree from an active feature branch, decide and state whether the desired Sol lineage is child or top-level'
     )
     expect(fullHandoffs).toContain(
       'Use child worktree lineage only when the new work is conceptually stacked under or dependent on the active worktree'
@@ -145,7 +145,7 @@ describe('orchestration skill guidance', () => {
       'A same-worktree worker created with `orca terminal create --worktree active` may appear as a peer terminal/agent'
     )
     expect(workerTerminals).toContain(
-      'even though it is a child dispatch in Orca orchestration state'
+      'even though it is a child dispatch in Sol orchestration state'
     )
     expect(workerTerminals).toContain(
       'A visible parent/child worktree relationship requires creating a child worktree'
@@ -154,7 +154,7 @@ describe('orchestration skill guidance', () => {
       'only when the task can safely run from an isolated checkout and does not need uncommitted artifacts from the current working tree'
     )
     expect(workerTerminals).toContain(
-      'For supervised new-worktree workers, decide the desired Orca lineage before creation'
+      'For supervised new-worktree workers, decide the desired Sol lineage before creation'
     )
     expect(workerTerminals).toContain(
       'use `--no-parent` for independent repo-wide fixes, standalone feature work, or unrelated follow-up tasks'

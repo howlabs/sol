@@ -736,13 +736,13 @@ describe('registerPtyHandlers', () => {
       const env = await spawnAndGetEnv()
       expect(env.TERM).toBe('xterm-256color')
       expect(env.COLORTERM).toBe('truecolor')
-      expect(env.TERM_PROGRAM).toBe('Orca')
+      expect(env.TERM_PROGRAM).toBe('Sol')
     })
 
     it('advertises OSC 8 hyperlink support via FORCE_HYPERLINK', async () => {
       // Why: the supports-hyperlinks npm package hard-codes a TERM_PROGRAM
       // allowlist (iTerm.app / WezTerm / vscode) and reports false for
-      // TERM_PROGRAM=Orca, so tools like Claude Code emit plain text instead
+      // TERM_PROGRAM=Sol, so tools like Claude Code emit plain text instead
       // of ESC]8;; wrappers. Setting FORCE_HYPERLINK=1 forces the detector to
       // return true; xterm.js + our linkHandler handle the sequences natively.
       const env = await spawnAndGetEnv()
@@ -759,13 +759,13 @@ describe('registerPtyHandlers', () => {
       expect(env.TERM_PROGRAM_VERSION).toBe('0.0.0-dev')
     })
 
-    it('injects the selected Codex home into Orca terminal PTYs', async () => {
+    it('injects the selected Codex home into Sol terminal PTYs', async () => {
       const env = await spawnAndGetEnv(undefined, undefined, () => TEST_CODEX_HOME)
       expect(env.CODEX_HOME).toBe(TEST_CODEX_HOME)
       expect(env.ORCA_CODEX_HOME).toBe(TEST_CODEX_HOME)
     })
 
-    it('injects the OpenCode hook env into Orca terminal PTYs', async () => {
+    it('injects the OpenCode hook env into Sol terminal PTYs', async () => {
       // Why: clear any ambient OPENCODE_CONFIG_DIR so the mock's value is used
       const env = await spawnAndGetEnv(undefined, { OPENCODE_CONFIG_DIR: undefined })
       expect(openCodeBuildPtyEnvMock).toHaveBeenCalledTimes(1)
@@ -777,7 +777,7 @@ describe('registerPtyHandlers', () => {
       expect(env.ORCA_OPENCODE_CONFIG_DIR).toBe(env.OPENCODE_CONFIG_DIR)
     })
 
-    it('mirrors the original OpenCode source dir when launched from an Orca overlay shell', async () => {
+    it('mirrors the original OpenCode source dir when launched from a Sol overlay shell', async () => {
       const env = await spawnAndGetEnv({
         OPENCODE_CONFIG_DIR: '/tmp/parent-orca-opencode-overlay',
         ORCA_OPENCODE_SOURCE_CONFIG_DIR: '/tmp/user-opencode-config'
@@ -791,7 +791,7 @@ describe('registerPtyHandlers', () => {
       expect(env.ORCA_OPENCODE_SOURCE_CONFIG_DIR).toBe('/tmp/user-opencode-config')
     })
 
-    it('does not treat inherited Orca OpenCode config as user config without a source dir', async () => {
+    it('does not treat inherited Sol OpenCode config as user config without a source dir', async () => {
       const env = await spawnAndGetEnv({
         OPENCODE_CONFIG_DIR: '/tmp/parent-orca-opencode-overlay',
         ORCA_OPENCODE_CONFIG_DIR: '/tmp/parent-orca-opencode-overlay'
@@ -803,7 +803,7 @@ describe('registerPtyHandlers', () => {
       expect(env.ORCA_OPENCODE_SOURCE_CONFIG_DIR).toBeUndefined()
     })
 
-    it('restores user OpenCode config when agent status hooks are disabled in a nested Orca shell', async () => {
+    it('restores user OpenCode config when agent status hooks are disabled in a nested Sol shell', async () => {
       const env = await spawnAndGetEnv(
         {
           OPENCODE_CONFIG_DIR: '/tmp/parent-orca-opencode-overlay',
@@ -878,7 +878,7 @@ describe('registerPtyHandlers', () => {
       expect(mimoCodeBuildPtyEnvMock).not.toHaveBeenCalled()
     })
 
-    it('restores user MiMo home when agent status hooks are disabled in a nested Orca shell', async () => {
+    it('restores user MiMo home when agent status hooks are disabled in a nested Sol shell', async () => {
       const env = await spawnAndGetEnv(
         {
           MIMOCODE_HOME: '/tmp/parent-orca-mimocode-overlay',
@@ -898,7 +898,7 @@ describe('registerPtyHandlers', () => {
     })
 
     posixOnlyIt(
-      'reproduces issue #1534: GUI-launched Orca mirrors zshrc-only OpenCode config',
+      'reproduces issue #1534: GUI-launched Sol mirrors zshrc-only OpenCode config',
       async () => {
         // Why: the reporter's app process did not inherit OPENCODE_CONFIG_DIR;
         // their interactive zsh startup later exported a company config repo.
@@ -931,7 +931,7 @@ describe('registerPtyHandlers', () => {
       }
     )
 
-    it('installs Pi managed extensions without redirecting Orca terminal PTY homes', async () => {
+    it('installs Pi managed extensions without redirecting Sol terminal PTY homes', async () => {
       const env = await spawnAndGetEnv(undefined, { PI_CODING_AGENT_DIR: '/tmp/user-pi-agent' })
       expect(piBuildPtyEnvMock).toHaveBeenCalledTimes(1)
       expect(piBuildPtyEnvMock).toHaveBeenCalledWith(expect.any(String), '/tmp/user-pi-agent', 'pi')
@@ -944,7 +944,7 @@ describe('registerPtyHandlers', () => {
       expect(env.ORCA_OMP_STATUS_EXTENSION).toBeUndefined()
     })
 
-    it('mirrors the original Pi source dir when launched from an Orca overlay shell', async () => {
+    it('mirrors the original Pi source dir when launched from a Sol overlay shell', async () => {
       const env = await spawnAndGetEnv({
         PI_CODING_AGENT_DIR: '/tmp/parent-orca-pi-overlay',
         ORCA_PI_SOURCE_AGENT_DIR: '/tmp/user-pi-agent'
@@ -978,7 +978,7 @@ describe('registerPtyHandlers', () => {
       expect(env.ORCA_OMP_STATUS_EXTENSION).toBeUndefined()
     })
 
-    it('restores user Pi config when agent status hooks are disabled in a nested Orca shell', async () => {
+    it('restores user Pi config when agent status hooks are disabled in a nested Sol shell', async () => {
       const env = await spawnAndGetEnv(
         {
           PI_CODING_AGENT_DIR: '/tmp/parent-orca-pi-overlay',
@@ -1020,7 +1020,7 @@ describe('registerPtyHandlers', () => {
       }
     )
 
-    it('injects the agent hook receiver env into Orca terminal PTYs', async () => {
+    it('injects the agent hook receiver env into Sol terminal PTYs', async () => {
       const env = await spawnAndGetEnv()
       // Why: after the daemon-parity refactor, buildAgentHookEnv runs exactly
       // once for a local spawn — inside the shared buildPtyHostEnv helper,
@@ -1076,9 +1076,9 @@ describe('registerPtyHandlers', () => {
       }))
 
       expect(env.ORCA_ENABLE_GIT_ATTRIBUTION).toBe('1')
-      expect(env.ORCA_GIT_COMMIT_TRAILER).toBe('Co-authored-by: Orca <help@stably.ai>')
-      expect(env.ORCA_GH_PR_FOOTER).toBe('Made with [Orca](https://github.com/stablyai/orca) 🐋')
-      expect(env.ORCA_GH_ISSUE_FOOTER).toBe('Made with [Orca](https://github.com/stablyai/orca) 🐋')
+      expect(env.ORCA_GIT_COMMIT_TRAILER).toBe('Co-authored-by: Sol <help@stably.ai>')
+      expect(env.ORCA_GH_PR_FOOTER).toBe('Made with [Sol](https://github.com/howlabs/sol) 🐋')
+      expect(env.ORCA_GH_ISSUE_FOOTER).toBe('Made with [Sol](https://github.com/howlabs/sol) 🐋')
       expect(env.PATH).toContain(expectedAttributionShimDir())
     })
 
@@ -1123,7 +1123,7 @@ describe('registerPtyHandlers', () => {
       expect(env.PATH).toContain(expectedAttributionShimDir())
     })
 
-    it('overrides ambient CODEX_HOME with the Orca-managed home for system default', async () => {
+    it('overrides ambient CODEX_HOME with the Sol-managed home for system default', async () => {
       const env = await spawnAndGetEnv(
         undefined,
         { CODEX_HOME: '/tmp/system-codex-home' },
@@ -1378,11 +1378,11 @@ describe('registerPtyHandlers', () => {
         try {
           const spawnOptions = await daemonSpawnAndGetOptions(
             {},
-            () => 'C:\\Users\\test\\AppData\\Roaming\\Orca\\codex-runtime-home\\home',
+            () => 'C:\\Users\\test\\AppData\\Roaming\\Sol\\codex-runtime-home\\home',
             undefined,
             {
-              CODEX_HOME: 'C:\\Users\\test\\AppData\\Roaming\\Orca\\codex-runtime-home\\home',
-              ORCA_CODEX_HOME: 'C:\\Users\\test\\AppData\\Roaming\\Orca\\codex-runtime-home\\home'
+              CODEX_HOME: 'C:\\Users\\test\\AppData\\Roaming\\Sol\\codex-runtime-home\\home',
+              ORCA_CODEX_HOME: 'C:\\Users\\test\\AppData\\Roaming\\Sol\\codex-runtime-home\\home'
             },
             {
               cwd: '\\\\wsl.localhost\\Ubuntu\\home\\test\\repo',
@@ -1412,11 +1412,11 @@ describe('registerPtyHandlers', () => {
         try {
           const spawnOptions = await daemonSpawnAndGetOptions(
             {},
-            () => 'C:\\Users\\test\\AppData\\Roaming\\Orca\\codex-runtime-home\\home',
+            () => 'C:\\Users\\test\\AppData\\Roaming\\Sol\\codex-runtime-home\\home',
             undefined,
             {
               CODEX_HOME: 'C:\\Users\\test\\.codex',
-              ORCA_CODEX_HOME: 'C:\\Users\\test\\AppData\\Roaming\\Orca\\codex-runtime-home\\home'
+              ORCA_CODEX_HOME: 'C:\\Users\\test\\AppData\\Roaming\\Sol\\codex-runtime-home\\home'
             },
             { shellOverride: 'wsl.exe' }
           )
@@ -1670,7 +1670,7 @@ describe('registerPtyHandlers', () => {
           env: {
             PATH: `/tmp/orca-agent-teams-bin${delimiter}/usr/bin`,
             ORCA_AGENT_TEAMS_TEAM_ID: 'team-test',
-            TERM_PROGRAM: 'Orca',
+            TERM_PROGRAM: 'Sol',
             ORCA_ATTRIBUTION_SHIM_DIR: '/tmp/stale-attribution'
           },
           envToDelete: ['TERM_PROGRAM', 'ORCA_ATTRIBUTION_SHIM_DIR']
@@ -1716,7 +1716,7 @@ describe('registerPtyHandlers', () => {
           {
             PATH: `/tmp/orca-agent-teams-bin${delimiter}/usr/bin`,
             ORCA_AGENT_TEAMS_TEAM_ID: 'team-test',
-            TERM_PROGRAM: 'Orca',
+            TERM_PROGRAM: 'Sol',
             ORCA_ATTRIBUTION_SHIM_DIR: '/tmp/stale-attribution'
           },
           undefined,
@@ -1827,7 +1827,7 @@ describe('registerPtyHandlers', () => {
         // existing-agent-dir guard stays consistent whether Pi's env was
         // carried on the IPC wire or inherited by the daemon via fork. The
         // fallback must reach piTitlebarExtensionService.buildPtyEnv as the
-        // second arg so Orca installs managed extensions in the user's root.
+        // second arg so Sol installs managed extensions in the user's root.
         const env = await daemonSpawnAndGetEnv({}, undefined, undefined, {
           PI_CODING_AGENT_DIR: '/ambient/pi/agent'
         })
@@ -1852,7 +1852,7 @@ describe('registerPtyHandlers', () => {
       it('does not mutate the caller-provided args.env on the daemon path', async () => {
         // Why: the handler clones baseEnv before calling buildPtyHostEnv so
         // IPC-provided env stays pristine. A regression would silently leak
-        // Orca host env (hook tokens, overlay paths) back into the renderer's
+        // Sol host env (hook tokens, overlay paths) back into the renderer's
         // copy of the object, which it may reuse for unrelated IPC calls.
         const daemonSpawn = setupDaemonAdapter()
         const argsEnv: Record<string, string> = { FOO: 'bar' }
@@ -2008,7 +2008,7 @@ describe('registerPtyHandlers', () => {
         const spawnOptions = sshSpawn.mock.calls.at(-1)![0]
         const env = spawnOptions.env
         // Why: every host-local var must be absent over SSH — the hook
-        // server is on the Orca host's 127.0.0.1, dev CLI / attribution /
+        // server is on the Sol host's 127.0.0.1, dev CLI / attribution /
         // overlay / plugin-dir paths only exist on the local disk, so
         // shipping any of them to a remote shell is at best useless and at
         // worst a credential leak.
@@ -4118,7 +4118,7 @@ describe('registerPtyHandlers', () => {
         TMUX: '/tmp/orca-claude-agent-teams/team-stale,0,1',
         ORCA_AGENT_TEAMS_TEAM_ID: 'team-stale',
         ORCA_AGENT_TEAMS_TOKEN: 'stale-token',
-        TERM_PROGRAM: 'Orca',
+        TERM_PROGRAM: 'Sol',
         ORCA_ATTRIBUTION_SHIM_DIR: '/tmp/stale-attribution'
       },
       launchConfig: {
@@ -5658,7 +5658,7 @@ describe('registerPtyHandlers', () => {
     expect(runtime.preAllocateHandleForPty).toHaveBeenCalledWith(expect.any(String))
   })
 
-  it('forwards the trusted Orca terminal handle into managed WSL terminals', async () => {
+  it('forwards the trusted Sol terminal handle into managed WSL terminals', async () => {
     const platform = Object.getOwnPropertyDescriptor(process, 'platform')
     Object.defineProperty(process, 'platform', {
       configurable: true,
@@ -6125,7 +6125,7 @@ describe('registerPtyHandlers', () => {
       registerPtyHandlers(
         mainWindow as never,
         undefined,
-        () => 'C:\\Users\\test\\AppData\\Roaming\\Orca\\codex-runtime-home\\home',
+        () => 'C:\\Users\\test\\AppData\\Roaming\\Sol\\codex-runtime-home\\home',
         () =>
           ({
             terminalWindowsShell: 'wsl.exe',
@@ -6147,7 +6147,7 @@ describe('registerPtyHandlers', () => {
       registerPtyHandlers(
         mainWindow as never,
         undefined,
-        () => 'C:\\Users\\test\\AppData\\Roaming\\Orca\\codex-runtime-home\\home',
+        () => 'C:\\Users\\test\\AppData\\Roaming\\Sol\\codex-runtime-home\\home',
         () =>
           ({
             terminalWindowsShell: 'powershell.exe',

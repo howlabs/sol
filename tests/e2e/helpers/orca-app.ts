@@ -1,5 +1,5 @@
 /**
- * Shared Electron fixture for Orca E2E tests.
+ * Shared Electron fixture for Sol E2E tests.
  *
  * Why: Playwright's native _electron.launch() is used instead of CDP.
  * It launches the Electron app directly from the built output, gives
@@ -53,7 +53,7 @@ type OrcaTestFixtures = {
   seedTestRepo: boolean
   // Why: a few IPC repro specs need to launch the Electron app with a scoped
   // PATH/token environment. Keep this fixture-owned so tests never mutate the
-  // developer's shell or already-running Orca instance.
+  // developer's shell or already-running Sol instance.
   launchEnv: NodeJS.ProcessEnv
 }
 
@@ -152,7 +152,7 @@ function createSeededTestRepo(): string {
 
   writeFileSync(
     path.join(testRepoDir, 'README.md'),
-    '# Orca E2E Test Repo\n\nThis repo was created automatically for Playwright tests.\n'
+    '# Sol E2E Test Repo\n\nThis repo was created automatically for Playwright tests.\n'
   )
   writeFileSync(path.join(testRepoDir, 'CLAUDE.md'), '# CLAUDE.md\n\nTest instructions for E2E.\n')
   writeFileSync(
@@ -179,9 +179,9 @@ function createSeededTestRepo(): string {
 }
 
 /**
- * Extended Playwright test with Orca-specific fixtures.
+ * Extended Playwright test with Sol-specific fixtures.
  *
- * `orcaPage` — the main Orca renderer window.
+ * `orcaPage` — the main Sol renderer window.
  *
  * Test-scoped: each test gets a fresh Electron instance and isolated
  * userData directory so state cannot leak across specs through persistence.
@@ -220,7 +220,7 @@ export const test = base.extend<OrcaTestFixtures, OrcaWorkerFixtures>({
     }
     const headful = shouldLaunchHeadful(testInfo)
     // Why: strip ELECTRON_RUN_AS_NODE before spawning. Some host shells (e.g.
-    // Orca's own agent runtime) set it so Electron behaves as a plain Node
+    // Sol's own agent runtime) set it so Electron behaves as a plain Node
     // binary. Playwright's _electron.launch passes --remote-debugging-port,
     // which Node rejects with "bad option" and the process exits immediately.
     const { ELECTRON_RUN_AS_NODE: _unused, ...cleanEnv } = process.env

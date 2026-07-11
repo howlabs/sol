@@ -434,7 +434,7 @@ export function attachEditorAutosaveController(store: AppStoreApi): () => void {
     for (const file of matchingFiles) {
       if (file.isDirty) {
         // Why: the self-write check keeps this backstop from marking on the
-        // echo of Orca's own save (the combined-Changes reload notification
+        // echo of Sol's own save (the combined-Changes reload notification
         // routes through here and would otherwise bypass the watch hook's
         // echo verification).
         if (!hasRecentSelfWrite(file.filePath, file.runtimeEnvironmentId)) {

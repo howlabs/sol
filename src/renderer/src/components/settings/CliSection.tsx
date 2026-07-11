@@ -62,7 +62,7 @@ function getInstallDescription(platform: string): string {
   if (platform === 'linux') {
     return translate(
       'auto.components.settings.CliSection.installLinux',
-      'Register `orca-ide` in ~/.local/bin.'
+      'Register `sol-ide` in ~/.local/bin.'
     )
   }
   if (platform === 'win32') {
@@ -78,7 +78,7 @@ function getInstallDescription(platform: string): string {
 }
 
 function getFallbackCommandName(platform: string): string {
-  return platform === 'linux' ? 'orca-ide' : 'orca'
+  return platform === 'linux' ? 'sol-ide' : 'orca'
 }
 
 export function CliSection({
@@ -246,10 +246,10 @@ export function CliSection({
   return (
     <section className="space-y-1.5" data-settings-section="cli">
       <SettingsSubsectionHeader
-        title={translate('auto.components.settings.CliSection.c5c0f2641d', 'Orca CLI')}
+        title={translate('auto.components.settings.CliSection.c5c0f2641d', 'Sol CLI')}
         description={translate(
           'auto.components.settings.CliSection.6930feda9e',
-          'Use Orca from your terminal to open the app, manage worktrees, and interact with Orca terminals.'
+          'Use Sol from your terminal to open the app, manage worktrees, and interact with Sol terminals.'
         )}
       />
 
@@ -359,7 +359,7 @@ export function CliSection({
               <p className="select-text text-[11px] leading-snug text-muted-foreground">
                 {translate(
                   'auto.components.settings.CliSection.36a6f919ba',
-                  'Give agents Orca-aware workspace, terminal, and progress workflows.'
+                  'Give agents Sol-aware workspace, terminal, and progress workflows.'
                 )}
               </p>
             </div>
@@ -369,7 +369,7 @@ export function CliSection({
               title={translate('auto.components.settings.CliSection.6053cf736c', 'CLI skill')}
               description={translate(
                 'auto.components.settings.CliSection.e8012c03a1',
-                'Enables agents to use Orca workspace, terminal, and progress commands.'
+                'Enables agents to use Sol workspace, terminal, and progress commands.'
               )}
               command={cliSkillInstallCommand}
               installedCommand={cliSkillUpdateCommand}

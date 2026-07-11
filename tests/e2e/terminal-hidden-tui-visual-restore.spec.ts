@@ -269,7 +269,7 @@ test.describe('Hidden terminal TUI visual restore', () => {
     expect(content).toContain('╭')
     expect(content).toContain('├')
     expect(content).toContain('█')
-    expect(content).not.toContain('Orca skipped hidden terminal output')
+    expect(content).not.toContain('Sol skipped hidden terminal output')
     await expect
       .poll(() => readTuiCursorState(orcaPage), {
         timeout: 5_000,
@@ -357,7 +357,7 @@ test.describe('Hidden terminal TUI visual restore', () => {
     expect(content.indexOf(`LOW_RISK_RESTORE_FRAME_${runId}_41`)).toBeGreaterThan(
       content.indexOf(`LOW_RISK_RESTORE_FRAME_${runId}_40`)
     )
-    expect(content).not.toContain('Orca skipped hidden terminal output')
+    expect(content).not.toContain('Sol skipped hidden terminal output')
     await expect
       .poll(() => readTuiCursorState(orcaPage), {
         timeout: 5_000,

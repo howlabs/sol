@@ -534,7 +534,7 @@ function promoteAgentTeamsShimPath(
   const remaining = currentPath
     .split(delimiter)
     .filter((entry) => entry.length > 0 && entry !== shimPath)
-  // Why: host env injection can prepend Orca's attribution/dev shims. Claude
+  // Why: host env injection can prepend Sol's attribution/dev shims. Claude
   // Agent Teams must still resolve our fake tmux before any real tmux.
   env[currentPathKey] = [shimPath, ...remaining].join(delimiter)
 }
@@ -608,7 +608,7 @@ function resolvePiAgentSourceDir(baseEnv: Record<string, string>): string | unde
   const publicDir = readEnvWithProcessFallback(baseEnv, 'PI_CODING_AGENT_DIR')
   const ownOverlayDir = readEnvWithProcessFallback(baseEnv, 'ORCA_PI_CODING_AGENT_DIR')
   const legacyOmpOverlayDir = readEnvWithProcessFallback(baseEnv, 'ORCA_OMP_CODING_AGENT_DIR')
-  // Why: skip remirroring when PI_CODING_AGENT_DIR is only a restored Orca
+  // Why: skip remirroring when PI_CODING_AGENT_DIR is only a restored Sol
   // overlay (including legacy OMP); fall through to defaults instead.
   if (publicDir && publicDir !== ownOverlayDir && publicDir !== legacyOmpOverlayDir) {
     return publicDir
@@ -663,9 +663,9 @@ function getInheritedAgentHookEnvKeysToDelete(
   return AGENT_HOOK_RUNTIME_ENV_KEYS.filter((key) => env[key] === undefined)
 }
 
-// Why: when agent status is disabled, a nested Orca terminal can still pass
+// Why: when agent status is disabled, a nested Sol terminal can still pass
 // through prior OpenCode or legacy Pi/OMP overlay env. Restore the user's
-// original source dir when Orca recorded one, otherwise strip only values
+// original source dir when Sol recorded one, otherwise strip only values
 // known to be ours.
 function restoreOrStripOverlayEnv(
   baseEnv: Record<string, string>,
@@ -715,9 +715,9 @@ function resolveOpenCodeSourceConfigDir(baseEnv: Record<string, string>): string
 
   const configDir = baseEnv.OPENCODE_CONFIG_DIR ?? process.env.OPENCODE_CONFIG_DIR
   const orcaConfigDir = baseEnv.ORCA_OPENCODE_CONFIG_DIR ?? process.env.ORCA_OPENCODE_CONFIG_DIR
-  // Why: nested Orca terminals inherit OPENCODE_CONFIG_DIR from the parent
-  // PTY. If there is no recorded source dir, that value is Orca-owned, not a
-  // user config. Treating it as user config makes child Orcas mirror Orca's
+  // Why: nested Sol terminals inherit OPENCODE_CONFIG_DIR from the parent
+  // PTY. If there is no recorded source dir, that value is Sol-owned, not a
+  // user config. Treating it as user config makes child Orcas mirror Sol's
   // hook dir and can create large OpenCode runtime trees per terminal.
   if (configDir && orcaConfigDir && configDir === orcaConfigDir) {
     return undefined
@@ -736,7 +736,7 @@ function resolveOpenCodeSourceConfigDir(baseEnv: Record<string, string>): string
 /**
  * Mutates `baseEnv` in place with all host-local PTY env vars and returns it.
  *
- * This is the single source of truth for the env shape an Orca PTY needs
+ * This is the single source of truth for the env shape a Sol PTY needs
  * BEFORE the provider-specific wrapper (LocalPtyProvider's TERM/LANG defaults,
  * DaemonPtyAdapter's subprocess env). Callers are responsible for the SSH
  * guard — if `args.connectionId` is set, do NOT call this function, because
@@ -766,9 +766,9 @@ export function buildPtyHostEnv(
 
   if (opts.agentStatusHooksEnabled) {
     // Why: OPENCODE_CONFIG_DIR is a singular path, not a colon-list, so a user
-    // value cannot coexist with an Orca-only injection. Hand the user's value
+    // value cannot coexist with a Sol-only injection. Hand the user's value
     // (when present) to the hook service and let it materialize a source-scoped
-    // mirror overlay that lets the user's plugins and Orca's status plugin
+    // mirror overlay that lets the user's plugins and Sol's status plugin
     // load together. See docs/opencode-config-dir-collision.md.
     Object.assign(baseEnv, openCodeHookService.buildPtyEnv(id, preexistingOpenCodeConfigDir))
     if (baseEnv.OPENCODE_CONFIG_DIR) {
@@ -776,7 +776,7 @@ export function buildPtyHostEnv(
       // wrappers restore this PTY-scoped value after user startup files run.
       baseEnv.ORCA_OPENCODE_CONFIG_DIR = baseEnv.OPENCODE_CONFIG_DIR
       if (preexistingOpenCodeConfigDir) {
-        // Why: terminals launched from another Orca terminal inherit the overlay
+        // Why: terminals launched from another Sol terminal inherit the overlay
         // as OPENCODE_CONFIG_DIR; keep the original source so overlays do not
         // mirror overlays and drop the user's real config.
         baseEnv.ORCA_OPENCODE_SOURCE_CONFIG_DIR = preexistingOpenCodeConfigDir
@@ -809,11 +809,11 @@ export function buildPtyHostEnv(
     })
   }
 
-  // Why: Claude/Codex native hooks run inside the shell process, so Orca
+  // Why: Claude/Codex native hooks run inside the shell process, so Sol
   // must inject the loopback receiver coordinates before the agent starts.
   // Without these env vars the global hook config cannot map callbacks back
-  // to the correct Orca pane.
-  // Why: nested Orca terminals can inherit another process's hook endpoint or
+  // to the correct Sol pane.
+  // Why: nested Sol terminals can inherit another process's hook endpoint or
   // token. Strip all hook runtime coordinates before injecting this PTY's fresh
   // server values so callbacks route to the owning app/runtime.
   for (const key of AGENT_HOOK_RUNTIME_ENV_KEYS) {
@@ -824,7 +824,7 @@ export function buildPtyHostEnv(
   }
 
   // Why: PI_CODING_AGENT_DIR owns Pi's full config/session root. Keep that
-  // home as the user's normal source of truth and install only Orca-owned,
+  // home as the user's normal source of truth and install only Sol-owned,
   // env-guarded extension files into the selected agent's extension dir.
   if (opts.agentStatusHooksEnabled) {
     clearPiAgentShadowEnv(baseEnv)
@@ -849,8 +849,8 @@ export function buildPtyHostEnv(
     delete baseEnv.ORCA_OMP_STATUS_EXTENSION
   }
 
-  // Why: Codex account switching now materializes auth into an Orca-scoped
-  // runtime home, and Codex launched inside Orca terminals must use that same
+  // Why: Codex account switching now materializes auth into a Sol-scoped
+  // runtime home, and Codex launched inside Sol terminals must use that same
   // prepared home as quota fetches and other entry points. Keep the override
   // PTY-scoped so dev/prod Orcas do not share hooks through ~/.codex.
   if (opts.skipCodexHomeEnv) {
@@ -869,7 +869,7 @@ export function buildPtyHostEnv(
   } else if (!opts.isPackaged) {
     baseEnv.ORCA_USER_DATA_PATH ??= opts.userDataPath
   }
-  // Why: dev mode needs the launcher PATH override so `orca` resolves to the dev build instead of the production binary at /usr/local/bin/orca.
+  // Why: dev mode needs the launcher PATH override so `orca` resolves to the dev build instead of the production binary at /usr/local/bin/sol.
   if (!opts.isPackaged) {
     const devCliBin = join(opts.userDataPath, 'cli', 'bin')
     const inheritedPath = readInheritedPath(baseEnv)
@@ -881,8 +881,8 @@ export function buildPtyHostEnv(
   }
 
   // Why: GitHub attribution should only affect commands launched from
-  // Orca's own PTYs. Injecting lightweight PATH shims at spawn-time keeps
-  // the behavior local to Orca instead of rewriting user git config or
+  // Sol's own PTYs. Injecting lightweight PATH shims at spawn-time keeps
+  // the behavior local to Sol instead of rewriting user git config or
   // touching external shells.
   if (!opts.githubAttributionEnabled) {
     delete baseEnv.ORCA_ENABLE_GIT_ATTRIBUTION
@@ -2641,7 +2641,7 @@ export function registerPtyHandlers(
         tabId?: string
         leafId?: string
         // Why: telemetry-plan.md§Agent launch semantics. The renderer
-        // threads what Orca was *asked* to launch through this field; main
+        // threads what Sol was *asked* to launch through this field; main
         // fires `agent_started` only after `provider.spawn` resolves. Loose
         // typing on the IPC boundary because the main-side schema
         // validator is the single enforcement point — `track()` will drop
@@ -2761,7 +2761,7 @@ export function registerPtyHandlers(
           : null
       // Why: the renderer sets pane env for SSH too. Only forward it to the
       // remote when the relay hook path is enabled; otherwise a newer relay
-      // could emit statuses this Orca build is not prepared to route.
+      // could emit statuses this Sol build is not prepared to route.
       const sshSourceEnv = stripRemotePaneEnvWhenHooksDisabled(args.connectionId, args.env)
       const baseEnvWithAuth = claudeAuth
         ? { ...sshSourceEnv, ...claudeAuth.envPatch }
@@ -3125,7 +3125,7 @@ export function registerPtyHandlers(
         }
         const relayResultId = getRelayPtyId(args.connectionId, result.id)
         if (store && args.connectionId) {
-          // Why: remote PTYs live in the SSH relay grace window after Orca
+          // Why: remote PTYs live in the SSH relay grace window after Sol
           // detaches. Persist their IDs immediately so reconnect can reattach
           // instead of treating the tab as a fresh shell.
           store.upsertSshRemotePtyLease({
@@ -3855,7 +3855,7 @@ export function registerHeadlessPtyRuntime(
   prepareClaudeAuth?: PrepareClaudeAuth,
   store?: Store
 ): void {
-  // Why: headless `orca serve` has no renderer window, but the runtime still
+  // Why: headless `sol-ide serve` has no renderer window, but the runtime still
   // needs the same PTY controller and provider listeners as desktop so remote
   // clients can create, stream, inspect, and stop terminals.
   const headlessWindow = {

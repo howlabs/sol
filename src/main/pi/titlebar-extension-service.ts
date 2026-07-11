@@ -67,7 +67,7 @@ export class PiTitlebarExtensionService {
   }
 
   private getPtyOverlayDir(ptyId: string, kind: PiAgentKind): string {
-    // Why: old Orca versions used PTY-scoped hashed overlays. Keep resolving
+    // Why: old Sol versions used PTY-scoped hashed overlays. Keep resolving
     // that path so new spawns/teardowns can clean stale pre-migration dirs.
     return join(this.getOverlayRoot(kind), toSafeOverlayDirName(ptyId))
   }

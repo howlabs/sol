@@ -23,7 +23,7 @@ export const KO_PHRASE_FIXES_ROUND4 = [
   { pattern: /에이전트 기술/g, replacement: '에이전트 스킬', whenEnIncludes: 'agent skill' },
   { pattern: /오케스트레이션 기술/g, replacement: '오케스트레이션 스킬', whenEnIncludes: 'skill' },
   { pattern: /브라우저 사용 기술/g, replacement: 'Browser Use 스킬', whenEnIncludes: 'skill' },
-  { pattern: /Orca CLI 기술/g, replacement: 'Orca CLI 스킬', whenEnIncludes: 'skill' },
+  { pattern: /Orca CLI 기술/g, replacement: 'Sol CLI 스킬', whenEnIncludes: 'skill' },
   { pattern: /CLI 및 기술/g, replacement: 'CLI 및 스킬', whenEnIncludes: 'skill' },
   { pattern: /로컬 기술/g, replacement: '로컬 스킬', whenEnIncludes: 'skill' },
   { pattern: /스캐닝 기술/g, replacement: '스킬 스캔 중', whenEnIncludes: 'Scanning skills' },

@@ -338,7 +338,7 @@ const WorktreeCard = React.memo(function WorktreeCard({
   // SSH disconnected state
   const sshStatus = useAppStore((s) => {
     // Why: runtime-owned (per-workspace-env) SSH targets are hidden and their relay health is
-    // owned by the runtime layer — Orca suppresses their ssh:state-changed broadcasts, so their
+    // owned by the runtime layer — Sol suppresses their ssh:state-changed broadcasts, so their
     // state is absent here. Don't show a false "disconnected" SSH chip for them.
     if (!repo?.connectionId || isRuntimeOwnedSshTargetId(repo.connectionId)) {
       return null
@@ -355,7 +355,7 @@ const WorktreeCard = React.memo(function WorktreeCard({
     (s) => (s.activeTabTypeByWorktree?.[worktree.id] ?? 'terminal') === 'terminal'
   )
 
-  // Why: runtime ("Orca server") hosts get the same disconnected treatment as
+  // Why: runtime ("Sol server") hosts get the same disconnected treatment as
   // SSH — when the host's runtime environment has no live status, its worktrees
   // are dimmed and marked disconnected instead of looking fully available.
   const isRuntimeDisconnected = useAppStore((s) => {
@@ -660,7 +660,7 @@ const WorktreeCard = React.memo(function WorktreeCard({
         staleWhileRevalidate: true
       })
     }
-    // Why: PRs created outside Orca (for example `gh pr create`) do not emit a
+    // Why: PRs created outside Sol (for example `gh pr create`) do not emit a
     // renderer event; visible-card polling discovers them after an earlier miss.
     return installWindowVisibilityInterval({
       run: refreshHostedReview,
@@ -1482,7 +1482,7 @@ const WorktreeCard = React.memo(function WorktreeCard({
                         )
                       : translate(
                           'auto.components.sidebar.WorktreeCard.runtimeHostProject',
-                          'Project on Orca server'
+                          'Project on Sol server'
                         )}
                   </TooltipContent>
                 </Tooltip>

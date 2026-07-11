@@ -9,7 +9,7 @@ describe('getProviderAccountScope', () => {
     expect(getProviderAccountScope({ activeRuntimeEnvironmentId: null })).toEqual({
       label: LOCAL_HOST_LABEL,
       description:
-        'Sign-in for this provider is stored on this computer. Manage remote-server credentials in Settings → Remote Orca Servers → Advanced.'
+        'Sign-in for this provider is stored on this computer. Manage remote-server credentials in Settings → Remote Sol Servers → Advanced.'
     })
   })
 
@@ -17,7 +17,7 @@ describe('getProviderAccountScope', () => {
     expect(getProviderAccountScope({ activeRuntimeEnvironmentId: ' env-1 ' })).toEqual({
       label: 'Remote server: env-1',
       description:
-        'Sign-in for this provider is stored on this remote server. Change the default runtime in Settings → Remote Orca Servers → Advanced.'
+        'Sign-in for this provider is stored on this remote server. Change the default runtime in Settings → Remote Sol Servers → Advanced.'
     })
   })
 
@@ -25,12 +25,12 @@ describe('getProviderAccountScope', () => {
     expect(getProviderRateLimitScope({ activeRuntimeEnvironmentId: null }, 'GitHub')).toEqual({
       label: LOCAL_HOST_LABEL,
       description:
-        'GitHub rate limits come from the CLI on this computer. View server budgets in Settings → Remote Orca Servers → Advanced.'
+        'GitHub rate limits come from the CLI on this computer. View server budgets in Settings → Remote Sol Servers → Advanced.'
     })
     expect(getProviderRateLimitScope({ activeRuntimeEnvironmentId: ' env-1 ' }, 'GitLab')).toEqual({
       label: 'Remote server: env-1',
       description:
-        'GitLab rate limits come from the CLI on this remote server. Pick another runtime in Settings → Remote Orca Servers → Advanced.'
+        'GitLab rate limits come from the CLI on this remote server. Pick another runtime in Settings → Remote Sol Servers → Advanced.'
     })
   })
 })

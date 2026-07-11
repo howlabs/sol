@@ -1,6 +1,6 @@
-// Why: the SSH relay shim (`~/.orca-relay/bin/orca`) forwards CLI invocations
+// Why: the SSH relay shim (`~/.orca-relay/bin/sol`) forwards CLI invocations
 // to the host app. Instead of re-implementing every command in a hand-rolled
-// switch (the cause of "Unsupported SSH Orca CLI command", #7716), the host
+// switch (the cause of "Unsupported SSH Sol CLI command", #7716), the host
 // runs the real bundled `orca` CLI entry in Electron node mode — the same
 // entry the local shell command uses — so remote invocations get the full
 // command surface (orchestration, worktree, terminal, ...) by construction.
@@ -38,7 +38,7 @@ export type HostCliPassthroughOptions = {
  * working even on broken installs. */
 export class HostCliUnavailableError extends Error {}
 
-// Why: only Orca terminal-context vars may cross from the remote shell into
+// Why: only Sol terminal-context vars may cross from the remote shell into
 // the host CLI process. Remote PATH / ORCA_USER_DATA_PATH are paths on the
 // remote machine (meaningless or instance-hijacking on the host), and
 // NODE_OPTIONS-style vars could alter host execution.
@@ -128,7 +128,7 @@ export async function runHostOrcaCliPassthrough(
       })
     // Why: must match the userData dir the runtime RPC server writes metadata
     // to (see index.ts OrcaRuntimeRpcServer wiring), or the CLI subprocess
-    // reports "Orca is not running" against a healthy app.
+    // reports "Sol is not running" against a healthy app.
     userDataPath = options.userDataPath ?? getCanonicalUserDataPath()
   } catch (err) {
     // Why: no Electron app context (or broken install paths) — degrade to the
@@ -143,7 +143,7 @@ export async function runHostOrcaCliPassthrough(
   const killTimeoutMs = options.killTimeoutMs ?? resolveHostCliKillTimeoutMs(request.argv)
 
   if (!entryExists(cliEntryPath)) {
-    throw new HostCliUnavailableError(`Orca CLI entry not found at ${cliEntryPath}`)
+    throw new HostCliUnavailableError(`Sol CLI entry not found at ${cliEntryPath}`)
   }
 
   const env = buildHostCliEnv({
@@ -176,7 +176,7 @@ export async function runHostOrcaCliPassthrough(
       }
       resolve({
         stdout: stdout.toString(),
-        stderr: `${stderr.toString()}Orca CLI bridge timed out after ${killTimeoutMs}ms on the host.\n`,
+        stderr: `${stderr.toString()}Sol CLI bridge timed out after ${killTimeoutMs}ms on the host.\n`,
         exitCode: 1
       })
     }, killTimeoutMs)
@@ -192,7 +192,7 @@ export async function runHostOrcaCliPassthrough(
       // runnable at all — signal the caller to use the legacy fallback rather
       // than reporting a confusing per-command failure.
       reject(
-        new HostCliUnavailableError(`Failed to launch the Orca CLI on the host: ${err.message}`)
+        new HostCliUnavailableError(`Failed to launch the Sol CLI on the host: ${err.message}`)
       )
     })
 

@@ -29,7 +29,7 @@ import { translate } from '@/i18n/i18n'
 import { getUpdateCheckClickOptions, getUpdateCheckHint } from '@/lib/update-check-click-options'
 
 // Why: Sol is an independent fork — point community links at this repo, not
-// upstream Orca marketing (onorca.dev / Discord / social funnel).
+// upstream Sol marketing (onorca.dev / Discord / social funnel).
 const GITHUB_URL = 'https://github.com/howlabs/sol'
 const NO_UPDATE_CHECK_MODIFIERS = { ctrlKey: false, metaKey: false, shiftKey: false }
 
@@ -89,7 +89,7 @@ export function SidebarSettingsHelpMenu(): React.JSX.Element {
     }
     setIsRestartingOrca(true)
     toast.info(
-      translate('auto.components.sidebar.SidebarSettingsHelpMenu.5161eef55d', 'Restarting Orca…')
+      translate('auto.components.sidebar.SidebarSettingsHelpMenu.5161eef55d', 'Restarting Sol…')
     )
     void window.api.app.restart().catch((error) => {
       if (mountedRef.current) {
@@ -97,7 +97,7 @@ export function SidebarSettingsHelpMenu(): React.JSX.Element {
         toast.error(
           translate(
             'auto.components.sidebar.SidebarSettingsHelpMenu.4e8f5710d3',
-            "Couldn't restart Orca."
+            "Couldn't restart Sol."
           ),
           {
             description: error instanceof Error ? error.message : undefined
@@ -230,7 +230,7 @@ export function SidebarSettingsHelpMenu(): React.JSX.Element {
                   <RotateCw className="size-3.5" />
                   {translate(
                     'auto.components.sidebar.SidebarSettingsHelpMenu.ad3d3ed7f1',
-                    'Restart Orca'
+                    'Restart Sol'
                   )}
                 </DropdownMenuItem>
               </>

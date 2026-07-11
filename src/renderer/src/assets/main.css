@@ -358,7 +358,7 @@
 
 [data-sonner-toaster] [data-sonner-toast][data-styled='true'] [data-close-button] {
   /* Why: Sonner's dark-theme defaults can resolve the close icon and button
-     background to the same color; keep the X readable on both Orca themes. */
+     background to the same color; keep the X readable on both Sol themes. */
   color: var(--popover-foreground);
   background: var(--popover);
   border-color: rgb(0 0 0 / 0.14);
@@ -481,7 +481,7 @@
 /* Keep the sidebar gutter reserved; only the thumb fades in on hover. */
 .worktree-sidebar-scrollbar {
   /* Why: the scrollbar gutter is paint-only in Chromium; this keeps card
-     surfaces clear of Orca's resize handle and right-edge sidebar chrome. */
+     surfaces clear of Sol's resize handle and right-edge sidebar chrome. */
   padding-right: 4px;
   scrollbar-gutter: stable;
   scrollbar-color: transparent transparent;

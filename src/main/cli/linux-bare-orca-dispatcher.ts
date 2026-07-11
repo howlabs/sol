@@ -6,11 +6,11 @@ import { buildAppImageCliWrapper, quoteShell } from './appimage-cli-wrapper'
 import { getBundledLauncherPath } from './cli-installer'
 
 // Why: marks a dispatcher this function wrote so repeat serve starts overwrite
-// our own file idempotently but never clobber a user's own ~/.local/bin/orca.
+// our own file idempotently but never clobber a user's own ~/.local/bin/sol.
 const DISPATCHER_MARKER = '# orca-serve-bare-orca-dispatcher'
 
 export type LinuxBareOrcaDispatcherOptions = {
-  /** Packaged app resources root; the bundled `orca-ide` launcher lives under it. */
+  /** Packaged app resources root; the bundled `sol-ide` launcher lives under it. */
   resourcesPath: string
   /** Test seam — defaults to the real home directory. */
   homePath?: string
@@ -26,21 +26,21 @@ export type LinuxBareOrcaDispatcherState =
 export type LinuxBareOrcaDispatcherResult = {
   state: LinuxBareOrcaDispatcherState
   dispatcherPath: string
-  /** What the dispatcher execs: the stable AppImage, or the bundled orca-ide. */
+  /** What the dispatcher execs: the stable AppImage, or the bundled sol-ide. */
   target: string | null
 }
 
-// Why: on Linux the CLI installs as `orca-ide`, not bare `orca`, to avoid
+// Why: on Linux the CLI installs as `sol-ide`, not bare `sol`, to avoid
 // shadowing GNOME Orca's /usr/bin/orca. But the Claude Team launcher typed into
 // the initial managed terminal invokes the literal `orca claude-teams`, so a
-// headless serve box needs a bare-`orca` dispatcher on the managed-terminal PATH
+// headless serve box needs a bare-`sol` dispatcher on the managed-terminal PATH
 // (~/.local/bin, which patchPackagedProcessPath puts ahead of /usr/bin). It is a
 // plain file, not a managed symlink, so CliInstaller.removeLegacyLinuxCommandIfManaged
 // never reclaims it.
 export async function installLinuxBareOrcaDispatcher(
   options: LinuxBareOrcaDispatcherOptions
 ): Promise<LinuxBareOrcaDispatcherResult> {
-  const dispatcherPath = join(options.homePath ?? homedir(), '.local', 'bin', 'orca')
+  const dispatcherPath = join(options.homePath ?? homedir(), '.local', 'bin', 'sol')
   const appImagePath = options.appImagePath ?? process.env.APPIMAGE ?? null
 
   const resolved = resolveDispatcherScript(options.resourcesPath, appImagePath)
@@ -49,7 +49,7 @@ export async function installLinuxBareOrcaDispatcher(
   }
 
   // Why: only (re)write a dispatcher we previously created; leave a user's own
-  // `orca` untouched rather than silently clobbering it on every serve start.
+  // `sol` untouched rather than silently clobbering it on every serve start.
   if (existsSync(dispatcherPath) && !(await isOwnedDispatcher(dispatcherPath))) {
     return { state: 'skipped-foreign', dispatcherPath, target: resolved.target }
   }

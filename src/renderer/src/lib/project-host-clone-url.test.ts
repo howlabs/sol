@@ -26,7 +26,7 @@ describe('getProjectHostCloneUrl', () => {
           }
         })
       )
-    ).toBe('https://github.com/stablyai/orca.git')
+    ).toBe('https://github.com/howlabs/sol.git')
   })
 
   it('returns null when provider identity is missing or incomplete', () => {

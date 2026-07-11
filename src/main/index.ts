@@ -1,4 +1,4 @@
-/* eslint-disable max-lines -- Why: this is Orca's main-process entry point;
+/* eslint-disable max-lines -- Why: this is Sol's main-process entry point;
    it owns app lifecycle, service wiring, window creation, and hook/daemon
    startup. Splitting by line count would fragment tightly coupled startup
    logic across files without a cleaner ownership seam. */
@@ -224,7 +224,7 @@ const expectedRendererReload = createWebContentsTimedFlag()
 const recoveryReloadInFlight = createWebContentsTimedFlag()
 let firstWindowStartupServicesReady: Promise<void> = Promise.resolve()
 // Why: GPU child crashes clustered right after launch indicate a broken driver;
-// track them so Orca can move this build onto software rendering.
+// track them so Sol can move this build onto software rendering.
 const gpuLaunchTimeMs = Date.now()
 const gpuCrashFallbackTracker = new GpuCrashFallbackTracker({
   windowMs: DEFAULT_GPU_CRASH_FALLBACK_WINDOW_MS,
@@ -234,7 +234,7 @@ let gpuFallbackActiveThisLaunch = false
 let localPtyStartupReady: Promise<void> = Promise.resolve()
 const AGENT_STATE_CRASH_BREADCRUMB_MIN_INTERVAL_MS = 30_000
 const isServeMode = process.argv.includes('--serve')
-// Why: on Windows a CLI-shaped launch (Orca.exe <unpacked CLI entry>) that lost
+// Why: on Windows a CLI-shaped launch (Sol.exe <unpacked CLI entry>) that lost
 // ELECTRON_RUN_AS_NODE would otherwise boot the GUI, lose the single-instance
 // lock to a running window, and exit silently. Redirect it to node mode here,
 // before the lock gate below can bounce it.
@@ -315,7 +315,7 @@ function maybeAutoRenameBranchOnFirstWorkFromHook(event: {
       canRenameOrcaCreatedBranch: (worktreeId) => {
         const meta = currentStore.getWorktreeMeta(worktreeId)
         // Why: a user/imported branch can coincidentally be named after a creature.
-        // Only worktrees Orca stamped at creation are safe to auto-rename.
+        // Only worktrees Sol stamped at creation are safe to auto-rename.
         return !!meta?.orcaCreationSource && meta.preserveBranchOnDelete !== true
       },
       setDisplayName: (worktreeId, displayName) => {
@@ -394,7 +394,7 @@ const devAgentHookEndpointNamespace = devInstanceIdentity.isDev
   : undefined
 
 installUncaughtPipeErrorGuard()
-// Why: propagate the Orca app version into `process.env` so PTY-env
+// Why: propagate the Sol app version into `process.env` so PTY-env
 // construction in both main (local-pty-provider) and the forked daemon
 // (pty-subprocess) can set `TERM_PROGRAM_VERSION` without re-importing
 // electron. The daemon inherits `process.env` via fork (daemon-init.ts:93).
@@ -531,7 +531,7 @@ function recordAgentStateCrashBreadcrumb(agentType: string, state: string): void
 // `pnpm dev` exit silently. In dev we accept that `orca-runtime.json` may race
 // (the bundled `orca-dev` CLI routes to whichever instance wrote last). Agent
 // hook endpoint files are namespaced per dev instance when the hook server
-// starts below. Packaged Orca keeps the lock to protect against the corruption
+// starts below. Packaged Sol keeps the lock to protect against the corruption
 // documented in PR #1326 / issue #1312.
 const bypassSingleInstanceLock = shouldBypassSingleInstanceLock({
   isDev: is.dev,
@@ -569,14 +569,14 @@ if (!hasSingleInstanceLock) {
 // prevents from ever dispatching.
 if (hasSingleInstanceLock) {
   // Why: dev parent shutdown coupling is only for electron-vite desktop runs.
-  // `orca serve` may be launched through a CLI shim or background shell whose
+  // `sol-ide serve` may be launched through a CLI shim or background shell whose
   // parent lifetime is not the intended server lifetime.
   const shouldCoupleToDevParent = is.dev && !isServeMode
   installDevParentDisconnectQuit(shouldCoupleToDevParent)
   installDevParentWatchdog(shouldCoupleToDevParent)
   installDevParentSignalQuit(shouldCoupleToDevParent)
   // Why: must run after configureDevUserDataPath (which redirects userData to
-  // orca-dev in dev mode) but before app.setName('Orca') inside whenReady
+  // orca-dev in dev mode) but before app.setName('Sol') inside whenReady
   // (which would change the resolved path on case-sensitive filesystems).
   initDataPath()
   // Why: same timing constraint as initDataPath — capture the userData path
@@ -619,7 +619,7 @@ ipcMain.handle(
 function startDesktopFirstWindowStartupServices(): Promise<void> {
   logStartupMilestone('first-window-startup-services-start')
   const startupServices = startFirstWindowStartupServices({
-    // Why: the persistent-terminal daemon is desktop-only. Headless `orca serve`
+    // Why: the persistent-terminal daemon is desktop-only. Headless `sol-ide serve`
     // registers its PTY runtime separately and must not spawn the desktop daemon
     // or hook loopback listener.
     startDaemonPtyProvider: async (signal) => {
@@ -634,7 +634,7 @@ function startDesktopFirstWindowStartupServices(): Promise<void> {
       await agentHookServer.start({
         env: app.isPackaged ? 'production' : 'development',
         // Why: hooks source this endpoint file at invocation time, so old PTY
-        // env still reaches the current Orca process after an app restart.
+        // env still reaches the current Sol process after an app restart.
         // Dev uses a namespace because all worktrees share `orca-dev`.
         userDataPath: app.getPath('userData'),
         endpointNamespace: devAgentHookEndpointNamespace
@@ -655,7 +655,7 @@ function startDesktopFirstWindowStartupServices(): Promise<void> {
     },
     onAgentHookServerError: (error) => {
       // Why: Claude/Codex/Gemini/OpenCode/Cursor hook callbacks are sidebar
-      // enrichment only. Orca must still boot if the loopback receiver fails.
+      // enrichment only. Sol must still boot if the loopback receiver fails.
       console.error('[agent-hooks] Failed to start local hook server:', error)
     }
   })
@@ -717,7 +717,7 @@ function prepareCodexRuntimeHomeForLaunch(target?: CodexAccountSelectionTarget):
   return runtimeHomePath
 }
 
-// Why: tray "Open Orca" / left-click restores the window the close handler may
+// Why: tray "Open Sol" / left-click restores the window the close handler may
 // have hidden to the tray; if the window was fully torn down, reopen it the
 // same way macOS dock re-activation does (guarded against update relaunch).
 function showMainWindowFromTray(): void {
@@ -1099,9 +1099,9 @@ async function presentRendererRecoveryPrompt(recentRecoveryCount: number): Promi
     buttons: ['Reload', 'Quit'],
     defaultId: 0,
     cancelId: 1,
-    title: 'Orca keeps failing to load',
+    title: 'Sol keeps failing to load',
     message: 'The app window crashed repeatedly and stopped reloading automatically.',
-    detail: `Orca tried to recover ${recentRecoveryCount} times in a row without success. This is often a graphics-driver or installation problem. Reload to try again, or quit and relaunch Orca.`
+    detail: `Sol tried to recover ${recentRecoveryCount} times in a row without success. This is often a graphics-driver or installation problem. Reload to try again, or quit and relaunch Sol.`
   }
   const { response } = window
     ? await dialog.showMessageBox(window, options)
@@ -1412,7 +1412,7 @@ async function printServeReady(options: ServeOptions): Promise<void> {
     )
     return
   }
-  console.log(`Orca server ready: ${endpoint ?? 'websocket unavailable'}`)
+  console.log(`Sol server ready: ${endpoint ?? 'websocket unavailable'}`)
   if (pairing.available) {
     if (pairing.webClientUrl) {
       console.log(`Web client URL: ${pairing.webClientUrl}`)
@@ -1423,7 +1423,7 @@ async function printServeReady(options: ServeOptions): Promise<void> {
 
 function installServeSignalHandlers(): void {
   const quit = (): void => {
-    // Why: foreground `orca serve` is controlled by the parent CLI/terminal,
+    // Why: foreground `sol-ide serve` is controlled by the parent CLI/terminal,
     // so POSIX termination signals should follow Electron's normal quit path
     // and flush runtime metadata, daemon checkpoints, and telemetry.
     app.quit()
@@ -1853,8 +1853,8 @@ app.whenReady().then(async () => {
   runtimeService.setAutomationService(automations)
   runtimeService.setAccountServices({ claudeAccounts, codexAccounts, rateLimits })
   runtimeService.setCommitMessageAgentEnvironmentResolvers({
-    // Why: local Codex hooks and auth now live in Orca's managed runtime home
-    // even for the system-default path, so every Orca-launched Codex process
+    // Why: local Codex hooks and auth now live in Sol's managed runtime home
+    // even for the system-default path, so every Sol-launched Codex process
     // must resolve CODEX_HOME through the runtime-home service.
     prepareForCodexLaunch: prepareCodexRuntimeHomeForLaunch,
     prepareForClaudeLaunch: (target) => claudeRuntimeAuth!.prepareForClaudeLaunch(target)
@@ -1868,7 +1868,7 @@ app.whenReady().then(async () => {
   nativeTheme.themeSource = store.getSettings().theme ?? 'system'
   if (shouldInstallManagedHooks(is.dev)) {
     // Why: the persisted off switch must run before any auto-install path so
-    // users who removed Orca-managed hooks do not see them silently reappear on launch.
+    // users who removed Sol-managed hooks do not see them silently reappear on launch.
     if (isAgentStatusHooksEnabled(store.getSettings())) {
       runManagedHookInstallers(MANAGED_AGENT_HOOK_INSTALLERS)
     } else {
@@ -1971,7 +1971,7 @@ app.whenReady().then(async () => {
   // assign a random available port per instance while still exercising the
   // full WebSocket startup path.
   const isE2E = Boolean(process.env.ORCA_E2E_USER_DATA_DIR)
-  // Why: a developer running `pnpm dev` while the packaged Orca is also open
+  // Why: a developer running `pnpm dev` while the packaged Sol is also open
   // would otherwise race the packaged app for 6768 and silently fall back to
   // a random OS-assigned port — breaking deterministic runtime pairing/repro
   // scripts against the dev instance. Pin the first dev instance to 6769 so
@@ -2039,7 +2039,7 @@ app.whenReady().then(async () => {
     // renderer, so the command is never created and an in-terminal `orca …` fails
     // with command-not-found. Run the idempotent installer here for the platforms
     // where it puts a resolvable command on the managed-terminal PATH: macOS (bare
-    // `orca` in /usr/local/bin or ~/.local/bin) and Linux (`orca-ide`; bare `orca`
+    // `orca` in /usr/local/bin or ~/.local/bin) and Linux (`sol-ide`; bare `orca`
     // is added by the dispatcher below). Windows is excluded — there install() would
     // only mutate the persistent user-registry PATH without helping the current
     // serve's child terminals. Best-effort: a failure must not block serve start.
@@ -2063,7 +2063,7 @@ app.whenReady().then(async () => {
         )
       }
     }
-    // Why: on Linux the CLI installs as `orca-ide`, NOT bare `orca` (above), but the
+    // Why: on Linux the CLI installs as `sol-ide`, NOT bare `orca` (above), but the
     // Claude Team launcher typed into the initial managed terminal invokes bare `orca`.
     // Drop a bare-`orca` dispatcher on ~/.local/bin (ahead of /usr/bin on the managed
     // terminal PATH) so `orca claude-teams` resolves. Best-effort: a failure must not
@@ -2160,7 +2160,7 @@ app.on('will-quit', (e) => {
   setUnreadDockBadgeCount(0)
   agentHookServer.stop()
   stats?.flush()
-  // Why: agent-browser daemon processes would otherwise linger after Orca quits,
+  // Why: agent-browser daemon processes would otherwise linger after Sol quits,
   // holding ports and leaving stale session state on disk.
   runtime?.getAgentBrowserBridge()?.destroyAllSessions()
   // Why: headless offscreen browser windows are main-process owned; tear them
@@ -2230,7 +2230,7 @@ app.on('will-quit', (e) => {
 })
 
 app.on('window-all-closed', () => {
-  // Why: headless `orca serve` has no desktop window, and offscreen browser
+  // Why: headless `sol-ide serve` has no desktop window, and offscreen browser
   // windows are disposable implementation details. Closing/crashing the last
   // one must not take down terminal/runtime RPC for the VM workspace — the
   // policy fn returns false for serve mode so the app stays alive.

@@ -455,7 +455,7 @@ function createWebPreloadApi(): Partial<PreloadApi> {
     app: {
       getIdentity: () =>
         Promise.resolve({
-          name: 'Orca',
+          name: 'Sol',
           isDev: false,
           devLabel: null,
           devBranch: null,
@@ -1054,7 +1054,7 @@ function createRuntimeEnvironmentsApi(): NonNullable<Partial<PreloadApi>['runtim
     addFromPairingCode: async ({ name, pairingCode }) => {
       const offer = parseWebPairingInput(pairingCode)
       if (!offer) {
-        throw new Error('Invalid Orca pairing code.')
+        throw new Error('Invalid Sol pairing code.')
       }
       closeActiveRuntimeClients()
       activeEnvironment = createStoredWebRuntimeEnvironment({ name, offer })
@@ -1143,7 +1143,7 @@ function createReposApi(): NonNullable<Partial<PreloadApi>['repos']> {
       invalidateRuntimeWorktreeCaches()
     },
     // Why: host-scoped forget targets a disconnected/removed SSH host owned by
-    // the desktop app. A paired web client talks to a single Orca runtime and
+    // the desktop app. A paired web client talks to a single Sol runtime and
     // has no ghost-host state to reconcile.
     removeForHost: () => {
       throw new Error('Forgetting a host is unavailable in paired web clients.')
@@ -2334,7 +2334,7 @@ function createPreflightApi(): NonNullable<Partial<PreloadApi>['preflight']> {
 function createCliApi(): NonNullable<Partial<PreloadApi>['cli']> {
   const status = {
     platform: getBrowserPlatform(),
-    commandName: getBrowserPlatform() === 'linux' ? 'orca-ide' : 'orca',
+    commandName: getBrowserPlatform() === 'linux' ? 'sol-ide' : 'sol',
     commandPath: null,
     pathDirectory: null,
     pathConfigured: false,
@@ -2344,7 +2344,7 @@ function createCliApi(): NonNullable<Partial<PreloadApi>['cli']> {
     state: 'unsupported',
     currentTarget: null,
     unsupportedReason: 'launch_mode_unavailable',
-    detail: 'CLI registration is managed on the Orca server, not in the web browser.'
+    detail: 'CLI registration is managed on the Sol server, not in the web browser.'
   } as const
   return {
     getInstallStatus: () => Promise.resolve(status),
@@ -2378,7 +2378,7 @@ function createAgentHooksApi(): NonNullable<Partial<PreloadApi>['agentHooks']> {
       state: 'not_installed',
       configPath: '',
       managedHooksPresent: false,
-      detail: 'Agent hook status is only available on the Orca server.'
+      detail: 'Agent hook status is only available on the Sol server.'
     } as const)
   return {
     claudeStatus: () => status('claude'),
@@ -2793,13 +2793,13 @@ function resolveEnvironment(selector: string): StoredWebRuntimeEnvironment {
     // a fresh web-* environment id even when it points at the same active server.
     return environment
   }
-  throw new Error(`Unknown Orca runtime environment: ${selector}`)
+  throw new Error(`Unknown Sol runtime environment: ${selector}`)
 }
 
 function requireActiveEnvironment(): StoredWebRuntimeEnvironment {
   activeEnvironment = activeEnvironment ?? readStoredWebRuntimeEnvironment()
   if (!activeEnvironment) {
-    throw new Error('Pair this web client with an Orca server first.')
+    throw new Error('Pair this web client with a Sol server first.')
   }
   return activeEnvironment
 }
@@ -2943,7 +2943,7 @@ function getStoredOnboarding(): OnboardingState {
     return closed
   }
   const closed = closeWebOnboarding(getDefaultOnboardingState())
-  // Why: pairing already means the user has an Orca server. Desktop first-run
+  // Why: pairing already means the user has a Sol server. Desktop first-run
   // onboarding would incorrectly probe browser-local tools and block the client.
   writeJson(ONBOARDING_STORAGE_KEY, closed)
   return closed
@@ -3248,7 +3248,7 @@ function mapRepoPathArg(args: unknown): unknown {
     ...record,
     // Why: runtime repo selectors accept loose path/name forms, but duplicate
     // checked-out repos can make those ambiguous. The renderer already passes
-    // Orca's repo id on task calls, so prefer the explicit selector.
+    // Sol's repo id on task calls, so prefer the explicit selector.
     repo: repoId ? `id:${repoId}` : record.repoPath
   }
 }

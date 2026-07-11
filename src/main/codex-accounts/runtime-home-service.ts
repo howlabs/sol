@@ -1,5 +1,5 @@
 /* eslint-disable max-lines -- Why: this service owns the single runtime-home
-contract for Codex inside Orca. Keeping path resolution, system-default
+contract for Codex inside Sol. Keeping path resolution, system-default
 snapshots, auth materialization, and recovery together prevents account-switch
 semantics from drifting across PTY launch, login, and quota fetch paths. */
 import {
@@ -94,11 +94,11 @@ export class CodexRuntimeHomeService {
   // account. When null, runtime auth follows the user's system-default
   // ~/.codex/auth.json instead of being written back to a managed account.
   private lastSyncedAccountId: string | null = null
-  // Why: tracks the auth.json content Orca last wrote to the runtime CODEX_HOME.
+  // Why: tracks the auth.json content Sol last wrote to the runtime CODEX_HOME.
   // Between syncs, if the file differs, Codex CLI refreshed the token — so
-  // Orca writes back the refreshed token to managed storage before overwriting.
+  // Sol writes back the refreshed token to managed storage before overwriting.
   // On managed→system-default transition, if the file differs, an external
-  // login (e.g. `codex auth login`) overwrote it — so Orca adopts the file as
+  // login (e.g. `codex auth login`) overwrote it — so Sol adopts the file as
   // the new system default instead of restoring a stale snapshot.
   private lastWrittenAuthJson: string | null = null
   // Why: WSL terminals have their own stable runtime homes per distro. They
@@ -124,7 +124,7 @@ export class CodexRuntimeHomeService {
     )
     // Why: WSL-managed homes are never materialized into host ~/.codex.
     // Treating one as "last synced" makes cold start look like a host-account
-    // transition and can restore/delete host auth that Orca never touched.
+    // transition and can restore/delete host auth that Sol never touched.
     this.lastSyncedAccountId = this.getWslManagedHomePath(activeAccount)
       ? null
       : normalizeCodexRuntimeSelection(settings).host
@@ -313,9 +313,9 @@ export class CodexRuntimeHomeService {
           this.persistRuntimeLogoutMarker(null)
           this.lastWrittenAuthJson = null
         } else if (this.lastWrittenAuthJson === null) {
-          // Why: Orca-launched Codex sessions now use an Orca-owned CODEX_HOME
+          // Why: Sol-launched Codex sessions now use a Sol-owned CODEX_HOME
           // even when no managed account is selected. Seed that runtime home
-          // from the user's current system-default auth once so dev/prod Orca
+          // from the user's current system-default auth once so dev/prod Sol
           // terminals stay logged in without mutating ~/.codex on startup.
           this.restoreSystemDefaultSnapshot({ detectExternalLogin: false })
         } else {
@@ -352,7 +352,7 @@ export class CodexRuntimeHomeService {
     }
 
     // Why: Codex CLI refreshes expired OAuth tokens in CODEX_HOME/auth.json.
-    // If we detect the runtime file differs from what Orca last wrote, the CLI
+    // If we detect the runtime file differs from what Sol last wrote, the CLI
     // must have refreshed — so we preserve those tokens back to managed
     // storage before overwriting runtime with managed state.
     if (this.lastSyncedAccountId === activeAccount.id) {
@@ -438,7 +438,7 @@ export class CodexRuntimeHomeService {
         }
         return 'rejected'
       }
-      // Why: after app restart, Orca has no last-written baseline. Identity
+      // Why: after app restart, Sol has no last-written baseline. Identity
       // alone cannot prove runtime auth is newer than managed storage.
       if (
         lastWrittenAuthJson === null &&
@@ -798,7 +798,7 @@ export class CodexRuntimeHomeService {
     // Why: old live Codex PTYs can still write refreshed tokens into the
     // shared runtime home after the user switches accounts. Never persist
     // that write into the newly active managed account unless the auth claims
-    // still match the account Orca believes is selected.
+    // still match the account Sol believes is selected.
     const selectedEmail = this.firstNonNull(
       this.normalizeField(activeAccount.email),
       managedIdentity?.email
@@ -846,7 +846,7 @@ export class CodexRuntimeHomeService {
 
     // Why: stale managed Codex PTYs share the same runtime home. Only read a
     // runtime refresh back into ~/.codex when the auth still claims the same
-    // system-default identity Orca mirrored earlier.
+    // system-default identity Sol mirrored earlier.
     if (
       systemDefaultIdentity.email &&
       runtimeIdentity.email &&
@@ -1369,7 +1369,7 @@ export class CodexRuntimeHomeService {
           systemDefaultAuth === mirroredSystemDefaultAuth &&
           this.runtimeAuthMatchesSystemDefaultIdentity(runtimeAuth, mirroredSystemDefaultAuth)
         ) {
-          // Why: system-default Codex now refreshes tokens inside Orca's
+          // Why: system-default Codex now refreshes tokens inside Sol's
           // runtime CODEX_HOME. Read that refresh back to ~/.codex so the next
           // sync does not overwrite fresh runtime credentials with stale ones.
           this.writeSystemDefaultAuth(runtimeAuth)
@@ -1378,7 +1378,7 @@ export class CodexRuntimeHomeService {
           return
         }
         // Why: the unmanaged path used to read ~/.codex directly. Mirror later
-        // external logins/logouts into Orca's runtime home so ordinary Orca
+        // external logins/logouts into Sol's runtime home so ordinary Sol
         // Codex sessions keep matching the user's current system-default state.
         this.captureSystemDefaultSnapshot({ force: true })
         this.writeRuntimeAuth(systemDefaultAuth)
@@ -1400,8 +1400,8 @@ export class CodexRuntimeHomeService {
     }
 
     if (options.detectExternalLogin && !existsSync(runtimeAuthPath)) {
-      // Why: once Orca owns the runtime CODEX_HOME, deleting auth.json there is
-      // a local logout signal for Orca-launched Codex sessions, not a reason to
+      // Why: once Sol owns the runtime CODEX_HOME, deleting auth.json there is
+      // a local logout signal for Sol-launched Codex sessions, not a reason to
       // rewrite the user's real ~/.codex snapshot back into place.
       this.persistRuntimeLogoutMarker()
       this.lastWrittenAuthJson = null
@@ -1458,9 +1458,9 @@ export class CodexRuntimeHomeService {
   }
 
   private clearRuntimeAuthAfterSystemDefaultLogout(runtimeAuthPath: string): void {
-    // Why: when the real ~/.codex auth disappears, Orca should treat that as an
+    // Why: when the real ~/.codex auth disappears, Sol should treat that as an
     // external logout for unmanaged sessions, even if runtime auth had already
-    // refreshed inside Orca's CODEX_HOME.
+    // refreshed inside Sol's CODEX_HOME.
     rmSync(runtimeAuthPath, { force: true })
     this.captureSystemDefaultSnapshot({ force: true })
     this.persistRuntimeLogoutMarker()

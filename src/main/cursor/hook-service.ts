@@ -72,9 +72,9 @@ function getManagedScript(target: 'local' | 'posix' = 'local'): string {
       '@echo off',
       'setlocal',
       // Why: see claude/hook-service.ts for rationale. The endpoint file holds
-      // the live port/token for this Orca install; sourcing it here lets a
+      // the live port/token for this Sol install; sourcing it here lets a
       // surviving PTY reach the current server even though its env points at
-      // the prior Orca's coordinates.
+      // the prior Sol's coordinates.
       'if defined ORCA_AGENT_HOOK_ENDPOINT if exist "%ORCA_AGENT_HOOK_ENDPOINT%" call "%ORCA_AGENT_HOOK_ENDPOINT%" 2>nul',
       'if "%ORCA_AGENT_HOOK_PORT%"=="" exit /b 0',
       'if "%ORCA_AGENT_HOOK_TOKEN%"=="" exit /b 0',
@@ -88,7 +88,7 @@ function getManagedScript(target: 'local' | 'posix' = 'local'): string {
   return [
     '#!/bin/sh',
     // Why: see claude/hook-service.ts for rationale. Sourcing refreshes
-    // PORT/TOKEN/ENV/VERSION from the current Orca so a surviving PTY keeps
+    // PORT/TOKEN/ENV/VERSION from the current Sol so a surviving PTY keeps
     // reporting after a restart.
     'if [ -n "$ORCA_AGENT_HOOK_ENDPOINT" ] && [ -r "$ORCA_AGENT_HOOK_ENDPOINT" ]; then',
     '  . "$ORCA_AGENT_HOOK_ENDPOINT" 2>/dev/null || :',
@@ -252,7 +252,7 @@ export class CursorHookService {
     return this.getStatus()
   }
 
-  // Why: install Orca's managed Cursor hooks on the remote box. Mirrors
+  // Why: install Sol's managed Cursor hooks on the remote box. Mirrors
   // ClaudeHookService.installRemote — POSIX-only, uses the same SFTP-backed
   // primitives, and emits Cursor's documented schema (top-level `command`
   // on each definition + top-level `version: 1`) so cursor-agent on the
@@ -296,7 +296,7 @@ export class CursorHookService {
       // Why: script-then-config order so a partial-failure mid-install at
       // worst leaves a working script no settings.json points at — see
       // ClaudeHookService.installRemote.
-      // Why: SSH remotes use POSIX `.sh` hook paths even when Orca itself is
+      // Why: SSH remotes use POSIX `.sh` hook paths even when Sol itself is
       // running on Windows; never derive remote script syntax from local OS.
       await writeManagedScriptRemote(sftp, remoteScriptPath, getManagedScript('posix'))
       await writeHooksJsonRemote(sftp, remoteConfigPath, nextConfig)

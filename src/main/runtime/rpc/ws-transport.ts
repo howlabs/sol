@@ -1,4 +1,4 @@
-// Why: the WebSocket transport enables mobile clients to connect to the Orca
+// Why: the WebSocket transport enables mobile clients to connect to the Sol
 // runtime over the local network. When TLS cert/key are provided it uses wss://
 // to prevent passive sniffing; otherwise it falls back to plain ws://. Per-device
 // tokens (validated by the message handler in OrcaRuntimeRpcServer) provide auth
@@ -149,7 +149,7 @@ export class WebSocketTransport implements RpcTransport {
       return
     }
 
-    // Why: when the preferred port is occupied (e.g. another Orca instance is
+    // Why: when the preferred port is occupied (e.g. another Sol instance is
     // already running), fall back to an OS-assigned port so mobile pairing
     // still works. The QR code reads resolvedPort after start, so it will
     // advertise the correct port regardless. A persisted fallback port is

@@ -2,13 +2,13 @@ import type { App } from 'electron'
 import { writeStartupDiagnosticLine, type StartupDiagnosticSink } from './startup-diagnostics'
 
 export const SINGLE_INSTANCE_LOCK_FAILURE_MESSAGE =
-  '[single-instance] Another Orca instance is already running for this userData profile; exiting this launch after requesting the existing window. If no Orca process is running, this may be an Electron/macOS single-instance lock failure.'
+  '[single-instance] Another Sol instance is already running for this userData profile; exiting this launch after requesting the existing window. If no Sol process is running, this may be an Electron/macOS single-instance lock failure.'
 export const SINGLE_INSTANCE_LOCK_BYPASS_ENV = 'ORCA_BYPASS_SINGLE_INSTANCE_LOCK'
 export const SINGLE_INSTANCE_LOCK_BYPASS_MESSAGE =
-  '[single-instance] ORCA_BYPASS_SINGLE_INSTANCE_LOCK=1 is set; bypassing the packaged macOS single-instance lock for diagnostics. Do not use this with another Orca instance running for the same profile.'
+  '[single-instance] ORCA_BYPASS_SINGLE_INSTANCE_LOCK=1 is set; bypassing the packaged macOS single-instance lock for diagnostics. Do not use this with another Sol instance running for the same profile.'
 
 /**
- * Why: Orca writes two canonical discovery files into `<userData>/`:
+ * Why: Sol writes two canonical discovery files into `<userData>/`:
  * `orca-runtime.json` (RPC endpoint + authToken for the bundled CLI) and
  * `agent-hooks/endpoint.env` (hook port + token for cursor-agent/claude/codex
  * scripts). Without a single-instance lock, every AppImage/.app double-click

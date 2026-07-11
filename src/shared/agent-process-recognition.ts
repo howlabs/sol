@@ -69,7 +69,7 @@ for (const [agent, config] of Object.entries(TUI_AGENT_CONFIG) as [
   ]) {
     const normalized = normalizeProcessName(candidate)
     if (normalized) {
-      // Why: claude-agent-teams is an Orca wrapper whose child process is the
+      // Why: claude-agent-teams is a Sol wrapper whose child process is the
       // real `claude` binary. Do not let wrapper configs overwrite canonical
       // CLI ownership for the same foreground process name.
       if (!PROCESS_TO_AGENT.has(normalized)) {

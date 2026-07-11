@@ -306,9 +306,9 @@ function retireLegacyInstructionsForClearedTextActionRecipes(
 // path, causing dev and production instances to share the same file and silently
 // overwrite each other.
 //
-// It also must not be resolved lazily on every call, because app.setName('Orca')
+// It also must not be resolved lazily on every call, because app.setName('Sol')
 // runs before the Store constructor and would change the resolved path from
-// lowercase 'orca' to uppercase 'Orca'. On case-sensitive filesystems (Linux)
+// lowercase 'orca' to uppercase 'Sol'. On case-sensitive filesystems (Linux)
 // this would look in the wrong directory and lose existing user data.
 //
 // Solution: index.ts calls initDataPath() right after configureDevUserDataPath()
@@ -342,7 +342,7 @@ function getGithubCacheFile(): string {
   return join(dirname(getDataFile()), 'orca-github-cache.json')
 }
 
-// Why: worktrees deleted outside Orca (git CLI worktree remove, rm -rf,
+// Why: worktrees deleted outside Sol (git CLI worktree remove, rm -rf,
 // agent scripts) purge renderer session state but nothing removed their
 // worktreeMeta, so the map grew monotonically (63% dead entries measured on
 // a heavy install). GC is deliberately narrow: local-host entries only
@@ -2735,7 +2735,7 @@ export class Store {
 
   private load(allowBackupRecovery = true): PersistedState {
     // Capture once, at the top: this is the unambiguous "has the user run
-    // Orca before?" signal used by the telemetry cohort migration below.
+    // Sol before?" signal used by the telemetry cohort migration below.
     // Field-based inference (e.g., `settings.telemetry` presence) does not
     // work on the telemetry release itself — `telemetry` is new here, so it
     // would be absent on every pre-telemetry install and misclassify existing

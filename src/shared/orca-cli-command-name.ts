@@ -1,9 +1,10 @@
+/** Public shell command name for the Sol CLI on each platform. */
 export function getOrcaCliCommandNameForPlatform(platform: NodeJS.Platform): string {
   if (platform === 'linux') {
-    return 'orca-ide'
+    return 'sol-ide'
   }
   if (platform === 'win32') {
-    return 'orca.cmd'
+    return 'sol.cmd'
   }
-  return 'orca'
+  return 'sol'
 }

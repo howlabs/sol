@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils'
 import type { GitHubViewer } from '../../../../shared/types'
 import { translate } from '@/i18n/i18n'
 
-// Why: Sol fork feedback goes to this repo, not upstream Orca community channels.
+// Why: Sol fork feedback goes to this repo, not upstream Sol community channels.
 const GITHUB_ISSUES_URL = 'https://github.com/howlabs/sol/issues/'
 
 type SubmitIdentity = {

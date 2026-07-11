@@ -49,8 +49,8 @@ describe('parseGitLabIssueOrMRNumber', () => {
   })
 
   it('rejects GitHub URLs (no /-/ separator)', () => {
-    expect(parseGitLabIssueOrMRNumber('https://github.com/stablyai/orca/issues/923')).toBeNull()
-    expect(parseGitLabIssueOrMRNumber('https://github.com/stablyai/orca/pull/123')).toBeNull()
+    expect(parseGitLabIssueOrMRNumber('https://github.com/howlabs/sol/issues/923')).toBeNull()
+    expect(parseGitLabIssueOrMRNumber('https://github.com/howlabs/sol/pull/123')).toBeNull()
   })
 
   it('rejects unparseable input', () => {

@@ -14,11 +14,11 @@ function claudeProjectsDir(): string {
   return join(homedir(), '.claude', 'projects')
 }
 
-// Why: Orca launches Codex with ORCA_CODEX_HOME pointing at its own managed
-// runtime home, so Orca-started Codex rollout files land under
+// Why: Sol launches Codex with ORCA_CODEX_HOME pointing at its own managed
+// runtime home, so Sol-started Codex rollout files land under
 // `<managed home>/sessions`, NOT `~/.codex/sessions`. Search the managed home
 // first (that's where this main process's Codex sessions actually live), then
-// fall back to CODEX_HOME/~/.codex so a non-Orca Codex transcript still resolves.
+// fall back to CODEX_HOME/~/.codex so a non-Sol Codex transcript still resolves.
 // Duplicates are filtered so a managed-home symlink to ~/.codex isn't scanned twice.
 function codexSessionsDirs(): string[] {
   const candidates = [

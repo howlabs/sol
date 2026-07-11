@@ -1682,7 +1682,7 @@ export function keybindingIsActiveInContext(
   if (options.context !== 'terminal') {
     return true
   }
-  // Why: Orca-first preserves existing app shortcut behavior inside terminals.
+  // Why: Sol-first preserves existing app shortcut behavior inside terminals.
   // Terminal-first is the explicit escape hatch for shells and TUIs.
   if (normalizeTerminalShortcutPolicy(options.terminalShortcutPolicy) === 'orca-first') {
     return true

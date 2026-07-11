@@ -4,7 +4,7 @@ import { GLOBAL_FLAGS } from '../args'
 export const PROJECT_COMMAND_SPECS: CommandSpec[] = [
   {
     path: ['project', 'list'],
-    summary: 'List durable projects known to Orca',
+    summary: 'List durable projects known to Sol',
     usage: 'orca project list [--json]',
     allowedFlags: [...GLOBAL_FLAGS],
     examples: ['orca project list', 'orca project list --json']
@@ -44,8 +44,8 @@ export const PROJECT_COMMAND_SPECS: CommandSpec[] = [
       'SSH targets are cloned through the desktop UI because the desktop client owns SSH connections.'
     ],
     examples: [
-      'orca project setup-clone --project github:stablyai/orca --host local --url https://github.com/stablyai/orca.git --destination ~/src',
-      'orca project setup-clone --project github:stablyai/orca --host runtime:gpu --url https://github.com/stablyai/orca.git --destination /srv --json'
+      'orca project setup-clone --project github:stablyai/orca --host local --url https://github.com/howlabs/sol.git --destination ~/src',
+      'orca project setup-clone --project github:stablyai/orca --host runtime:gpu --url https://github.com/howlabs/sol.git --destination /srv --json'
     ]
   },
   {
@@ -68,7 +68,7 @@ export const PROJECT_COMMAND_SPECS: CommandSpec[] = [
     ],
     notes: [
       'Creates setup metadata without registering a repo compatibility record.',
-      'Use setup-existing-folder when Orca should import and manage an actual checkout path now.'
+      'Use setup-existing-folder when Sol should import and manage an actual checkout path now.'
     ],
     examples: [
       'orca project setup-create --project github:stablyai/orca --host runtime:gpu --state setting-up --method provisioned --json'

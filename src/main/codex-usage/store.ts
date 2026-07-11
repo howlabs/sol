@@ -110,7 +110,7 @@ function getDefaultState(): CodexUsagePersistedState {
 
 export function normalizePersistedState(state: CodexUsagePersistedState): CodexUsagePersistedState {
   if (state.schemaVersion !== SCHEMA_VERSION) {
-    // Why: Orca-scoped Codex projections now depend on locationModelBreakdown.
+    // Why: Sol-scoped Codex projections now depend on locationModelBreakdown.
     // Reusing an older cache would silently serve wrong model/session rows
     // until the next forced rescan, so schema changes must invalidate stale
     // persisted analytics instead of best-effort patching partial data.
@@ -831,7 +831,7 @@ export class CodexUsageStore {
       estimatedCostUsd: hasKnownCost ? estimatedCostUsd : null,
       estimatedCostSource: hasKnownCost ? 'api_equivalent' : null,
       providerSessionId: session.sessionId,
-      // Why: Orca terminal tab ids and Codex usage session ids are different
+      // Why: Sol terminal tab ids and Codex usage session ids are different
       // systems today, so attribution is intentionally limited to one local
       // provider session in the run's worktree/time window.
       attribution: 'provider_session_time_window',

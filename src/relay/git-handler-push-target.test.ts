@@ -123,7 +123,7 @@ describe('resolveRelayPushTarget', () => {
       branchRemote: forkUrl,
       remotes: ['origin', 'pr-contributor-orca'],
       remoteUrls: {
-        origin: 'https://github.com/stablyai/orca.git',
+        origin: 'https://github.com/howlabs/sol.git',
         'pr-contributor-orca': forkUrl
       }
     })

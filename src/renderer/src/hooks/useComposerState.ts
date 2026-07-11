@@ -522,7 +522,7 @@ export function getInitialAutoManagedWorkspaceName({
   initialLinkedWorkItem?: LinkedWorkItemSummary | null
 }): string {
   // Why: command-palette prefilled names are user input unless they exactly
-  // match the linked item seed Orca generated for a source selection.
+  // match the linked item seed Sol generated for a source selection.
   const candidateName = draftName ?? initialName
   const seedName = getLinkedWorkItemSeedName(draftLinkedWorkItem ?? initialLinkedWorkItem)
   return candidateName && seedName && candidateName === seedName ? candidateName : ''
@@ -777,8 +777,8 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
         )
     return getAgentLaunchPlatformForRepo(selectedRepo, projectRuntime)
   }, [activeRepoId, projects, repos, selectedRepo, settings, worktreesByRepo])
-  // Why: SSH remotes deploy the CLI shim as plain `orca`, so the Linux-only
-  // `orca-ide` rename must not be applied to remote launch commands.
+  // Why: SSH remotes deploy the CLI shim as plain `sol`, so the Linux-only
+  // `sol-ide` rename must not be applied to remote launch commands.
   const selectedRepoIsRemote = selectedRepo ? repoIsRemote(selectedRepo) : false
   const selectedRepoProjectId =
     selectedWorkspaceTarget.status === 'ready' ? selectedWorkspaceTarget.target.projectId : null

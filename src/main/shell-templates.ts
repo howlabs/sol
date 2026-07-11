@@ -7,8 +7,8 @@ function quotePosixSingle(value: string): string {
 
 export function getZshEnvTemplate(zshDir: string, headerPrefix = ''): string {
   const header = headerPrefix
-    ? `Orca ${headerPrefix} zsh shell-ready wrapper`
-    : 'Orca zsh shell-ready wrapper'
+    ? `Sol ${headerPrefix} zsh shell-ready wrapper`
+    : 'Sol zsh shell-ready wrapper'
   return `# ${header}
 _orca_spawn_orig_zdotdir="\${ORCA_ORIG_ZDOTDIR:-}"
 _orca_user_zdotdir="\${_orca_spawn_orig_zdotdir:-$HOME}"
@@ -17,7 +17,7 @@ _orca_zshenv_path=""
 unset ORCA_ZSHENV_SOURCE_DIR
 
 # Normalize fallback and source roots before reading user .zshenv so nested
-# Orca PTYs never source another Orca wrapper recursively.
+# Sol PTYs never source another Sol wrapper recursively.
 while [[ "\${_orca_user_zdotdir}" == */ ]]; do
   _orca_user_zdotdir="\${_orca_user_zdotdir%/}"
 done
@@ -92,7 +92,7 @@ esac
 if [[ ${checks.join(' && ')} ]]; then
   _orca_wrapper_zdotdir="$ZDOTDIR"
   # Why: user startup files resolve plugin/config paths from their own ZDOTDIR;
-  # Orca restores its wrapper dir afterward so zsh still loads wrapper files.
+  # Sol restores its wrapper dir afterward so zsh still loads wrapper files.
   export ZDOTDIR="$_orca_home"
   source "$_orca_home/${options.fileName}"
   export ZDOTDIR="$_orca_wrapper_zdotdir"
@@ -142,7 +142,7 @@ export function getZshFinalZdotdirRestoreBlock(homeExpression = '"${ORCA_ORIG_ZD
 case "\${_orca_home%/}" in
   */shell-ready/zsh) _orca_home="$HOME" ;;
 esac
-# Why: after Orca's last wrapper file has loaded, the interactive shell should
+# Why: after Sol's last wrapper file has loaded, the interactive shell should
 # expose the same ZDOTDIR a normal zsh startup would expose.
 export ZDOTDIR="$_orca_home"
 unset _orca_home

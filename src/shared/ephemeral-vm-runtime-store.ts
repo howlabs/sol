@@ -146,7 +146,7 @@ function readEphemeralVmRuntimeStore(userDataPath: string): EphemeralVmRuntimeSt
   } catch {
     throw new EphemeralVmRuntimeStoreError(
       'runtime_error',
-      `Could not read Orca ephemeral VM runtimes at ${path}; the file is invalid.`
+      `Could not read Sol ephemeral VM runtimes at ${path}; the file is invalid.`
     )
   }
 }

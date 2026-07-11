@@ -301,7 +301,7 @@ export class BrowserManager {
     return renderer
   }
 
-  // Why: screenshot sessions target guest page ids, but Orca's visible browser
+  // Why: screenshot sessions target guest page ids, but Sol's visible browser
   // chrome is keyed by workspace ids. If we activate the page id directly, the
   // webview stays hidden under the terminal pane and Page.captureScreenshot
   // times out even though the guest still exists.
@@ -490,7 +490,7 @@ export class BrowserManager {
                 ${JSON.stringify(prev?.targetBrowserPageId)} &&
               typeof state.setActiveBrowserPage === 'function'
             ) {
-              // Why: Orca remembers the last browser workspace/page even when
+              // Why: Sol remembers the last browser workspace/page even when
               // the user is currently in terminal/editor view. Screenshot prep
               // temporarily switches that hidden browser selection state, so
               // restore it independently of the visible tab type.
@@ -526,7 +526,7 @@ export class BrowserManager {
     }
 
     // Why: agent browser commands need a paintable webview for lazy-loading
-    // sites, but must not steal the user's visible Orca tab/worktree.
+    // sites, but must not steal the user's visible Sol tab/worktree.
     const acquirePromise = renderer
       .executeJavaScript(
         `(async function() {
@@ -565,7 +565,7 @@ export class BrowserManager {
 
     // Why: background throttling must be disabled so agent-driven screenshots
     // (Page.captureScreenshot via CDP proxy) can capture frames even when the
-    // Orca window is not the focused foreground app. With throttling enabled,
+    // Sol window is not the focused foreground app. With throttling enabled,
     // the compositor stops producing frames and capturePage() returns empty.
     guest.setBackgroundThrottling(false)
     guest.setWindowOpenHandler(({ url }) => {
@@ -574,10 +574,10 @@ export class BrowserManager {
       const externalUrl = normalizeExternalBrowserUrl(url)
 
       // Why: popup-capable guests are required for OAuth and target=_blank
-      // flows, but Orca still does not host child windows itself. For normal
-      // web URLs, route the request into Orca's own browser-tab model first so
+      // flows, but Sol still does not host child windows itself. For normal
+      // web URLs, route the request into Sol's own browser-tab model first so
       // the user stays in the IDE. Only fall back to the system browser when
-      // Orca cannot safely host the destination or when the guest is not yet
+      // Sol cannot safely host the destination or when the guest is not yet
       // associated with a trusted browser tab/renderer.
       if (browserTabId && browserUrl && this.openLinkInOrcaTab(browserTabId, browserUrl)) {
         this.forwardOrQueuePopupEvent(guest.id, {
@@ -860,7 +860,7 @@ export class BrowserManager {
     // Cancel all active grab ops before tearing down registrations
     this.grabSessionController.cancelAll('evicted')
     for (const downloadId of this.downloadsById.keys()) {
-      this.cancelDownloadInternal(downloadId, 'Orca is shutting down.')
+      this.cancelDownloadInternal(downloadId, 'Sol is shutting down.')
     }
     browserDownloadDestinationReservations.clear()
     for (const browserTabId of this.webContentsIdByTabId.keys()) {
@@ -1007,7 +1007,7 @@ export class BrowserManager {
         item.cancel()
       } catch {
         // Why: failing setSavePath can leave Electron in a partially finalized
-        // state; cancellation is best-effort after Orca has made the UI terminal.
+        // state; cancellation is best-effort after Sol has made the UI terminal.
       }
       return
     }
@@ -1062,7 +1062,7 @@ export class BrowserManager {
     return true
   }
 
-  // Why: guest browser surfaces are intentionally isolated from Orca's preload
+  // Why: guest browser surfaces are intentionally isolated from Sol's preload
   // bridge, so renderer code cannot directly call Electron WebContents APIs on
   // them. Main owns the devtools escape hatch and only after tab→guest lookup.
   async openDevTools(browserTabId: string): Promise<boolean> {
@@ -1662,7 +1662,7 @@ export class BrowserManager {
     } catch {
       // Why: DownloadItem.cancel can throw after the item has already
       // finalized. Cleanup here is best-effort because the UI state is the
-      // source of truth for whether Orca still considers the request active.
+      // source of truth for whether Sol still considers the request active.
     }
 
     if (shouldSendCancel) {
@@ -1776,7 +1776,7 @@ export class BrowserManager {
     }
     // Why: the guest context menu knows which browser tab the click came from,
     // but only the renderer owns the worktree/tab model. Forward the validated
-    // URL back to that renderer so it can open a sibling Orca browser tab in
+    // URL back to that renderer so it can open a sibling Sol browser tab in
     // the same worktree without letting the guest process mutate app state.
     renderer.send('browser:open-link-in-orca-tab', {
       browserPageId: browserTabId,

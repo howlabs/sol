@@ -696,7 +696,7 @@ function Settings(): React.JSX.Element {
         neededSectionIds.has('accounts') ||
         neededSectionIds.has('agents') ||
         needsRepoWindowsRuntimeCapabilities))
-  // Why: General owns the Orca CLI controls, including WSL skill-location setup.
+  // Why: General owns the Sol CLI controls, including WSL skill-location setup.
   const windowsTerminalCapabilities = useWindowsTerminalCapabilities(
     shouldLoadWindowsTerminalCapabilities,
     true,
@@ -1021,7 +1021,7 @@ function Settings(): React.JSX.Element {
                   )}
                   description={translate(
                     'auto.components.settings.Settings.21f09426ea',
-                    'Optional. Orca works with your existing provider logins; add accounts only if you want Orca to help switch between them.'
+                    'Optional. Sol works with your existing provider logins; add accounts only if you want Sol to help switch between them.'
                   )}
                   badge={translate(
                     'auto.hooks.useSettingsNavigationMetadata.7c79d3b7bf',
@@ -1046,7 +1046,7 @@ function Settings(): React.JSX.Element {
                   title={translate('auto.components.settings.Settings.00c3a7950d', 'Orchestration')}
                   description={translate(
                     'auto.components.settings.Settings.475980f53d',
-                    'Coordinate multiple coding agents through Orca.'
+                    'Coordinate multiple coding agents through Sol.'
                   )}
                   searchEntries={getSectionSearchEntries('orchestration')}
                 >
@@ -1284,7 +1284,7 @@ function Settings(): React.JSX.Element {
                   title={translate('auto.components.settings.Settings.954a8f5aef', 'Stats & Usage')}
                   description={translate(
                     'auto.components.settings.Settings.8acf3f22e0',
-                    'Orca stats plus Claude, Codex, and OpenCode usage analytics.'
+                    'Sol stats plus Claude, Codex, and OpenCode usage analytics.'
                   )}
                   searchEntries={getSectionSearchEntries('stats')}
                 >
@@ -1295,18 +1295,18 @@ function Settings(): React.JSX.Element {
                   id="servers"
                   title={translate(
                     'auto.components.settings.Settings.bd0181eeca',
-                    'Remote Orca Servers'
+                    'Remote Sol Servers'
                   )}
                   badge="Beta"
                   description={
                     isWebClient
                       ? translate(
                           'auto.components.settings.Settings.7686cb5c36',
-                          'Connect this browser to a saved Orca server.'
+                          'Connect this browser to a saved Sol server.'
                         )
                       : translate(
                           'auto.components.settings.Settings.b5ee17826b',
-                          'Pair remote Orca runtimes for persistent sessions, richer remote state, and web or mobile handoff.'
+                          'Pair remote Sol runtimes for persistent sessions, richer remote state, and web or mobile handoff.'
                         )
                   }
                   searchEntries={getSectionSearchEntries('servers')}

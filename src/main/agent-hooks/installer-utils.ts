@@ -37,7 +37,7 @@ export type HooksConfig = {
   [key: string]: unknown
 }
 
-// Why: host-level backstop (seconds) for Orca-managed status hooks. The shell
+// Why: host-level backstop (seconds) for Sol-managed status hooks. The shell
 // wrapper's curl `--max-time 1.5` is the normal dead-endpoint bound; this caps a
 // hook the agent host itself runs in case that transport budget is bypassed.
 // Intentionally independent of Copilot's `timeoutSec: 5` — both managed budgets
@@ -88,7 +88,7 @@ export function createManagedCommandMatcher(
 ): (command: string | undefined) => boolean {
   const scriptStem = scriptFileName.replace(/\.(?:cmd|sh)$/, '')
   // Why: local Windows installs use .cmd, while SSH/POSIX installs and older
-  // entries use .sh. A platform switch should still sweep stale Orca hooks.
+  // entries use .sh. A platform switch should still sweep stale Sol hooks.
   const needles = [
     `agent-hooks/${scriptFileName}`,
     `agent-hooks/${scriptStem}.cmd`,
@@ -117,7 +117,7 @@ function decodePowerShellEncodedCommand(command: string): string | null {
   }
 }
 
-// Why: prod, dev, and parallel Orca instances must write the same managed
+// Why: prod, dev, and parallel Sol instances must write the same managed
 // settings entry instead of racing between per-userData script paths.
 export function getSharedManagedScriptPath(scriptFileName: string): string {
   return join(homedir(), '.orca', 'agent-hooks', scriptFileName)
@@ -277,7 +277,7 @@ export function hookDefinitionHasManagedCommand(
   )
 }
 
-// Why: temp+rename so concurrent Orca instances writing this shared path can't
+// Why: temp+rename so concurrent Sol instances writing this shared path can't
 // produce a torn script that an in-flight `/bin/sh <scriptPath>` would source.
 export function writeManagedScript(scriptPath: string, content: string): void {
   const dir = dirname(scriptPath)

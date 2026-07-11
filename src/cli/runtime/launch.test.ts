@@ -21,7 +21,7 @@ class FakeChildProcess extends EventEmitter {
 describe('serveOrcaApp', () => {
   beforeEach(() => {
     spawnMock.mockReset()
-    process.env.ORCA_APP_EXECUTABLE = '/Applications/Orca.app/Contents/MacOS/Orca'
+    process.env.ORCA_APP_EXECUTABLE = '/Applications/Sol.app/Contents/MacOS/Sol'
   })
 
   afterEach(() => {
@@ -47,7 +47,7 @@ describe('serveOrcaApp', () => {
     await expect(serveOrcaApp({ json: true })).resolves.toBe(0)
 
     expect(spawnMock).toHaveBeenCalledWith(
-      '/Applications/Orca.app/Contents/MacOS/Orca',
+      '/Applications/Sol.app/Contents/MacOS/Sol',
       ['--serve', '--serve-json'],
       expect.objectContaining({
         cwd: resolve(__dirname, '../../..')
@@ -78,7 +78,7 @@ describe('serveOrcaApp', () => {
     ).resolves.toBe(0)
 
     expect(spawnMock).toHaveBeenCalledWith(
-      '/Applications/Orca.app/Contents/MacOS/Orca',
+      '/Applications/Sol.app/Contents/MacOS/Sol',
       ['--serve', '--serve-json', '--serve-port', '6768', '--serve-pairing-address', '100.64.1.20'],
       expect.objectContaining({
         cwd: resolve(__dirname, '../../..')
@@ -133,7 +133,7 @@ describe('serveOrcaApp', () => {
     await expect(result).resolves.toBe(0)
 
     expect(spawnMock).toHaveBeenCalledWith(
-      '/Applications/Orca.app/Contents/MacOS/Orca',
+      '/Applications/Sol.app/Contents/MacOS/Sol',
       [
         '--serve',
         '--serve-pairing-address',

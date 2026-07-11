@@ -119,7 +119,7 @@ export function launchAgentInNewTab(args: LaunchAgentInNewTabArgs): LaunchAgentI
         )
       : CLIENT_PLATFORM)
   // Why: SSH remotes deploy the CLI shim as plain `orca`, so the Linux-only
-  // `orca-ide` rename must not be applied for remote launches.
+  // `sol-ide` rename must not be applied for remote launches.
   const isRemote = repo ? repoIsRemote(repo) : false
   const queuedShell = resolveLocalWindowsAgentStartupShell({
     platform: resolvedLaunchPlatform,
@@ -342,7 +342,7 @@ export function launchAgentInNewTab(args: LaunchAgentInNewTabArgs): LaunchAgentI
     }).then((delivered) => {
       if (delivered) {
         if (agent === 'command-code' && submitPastedPrompt) {
-          // Why: Command Code has no prompt-submit hook; when Orca submits a
+          // Why: Command Code has no prompt-submit hook; when Sol submits a
           // generated prompt after readiness, seed working at delivery time.
           seedCommandCodeSubmittedPromptStatus(tab.id, trimmedPrompt)
         }

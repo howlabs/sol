@@ -239,7 +239,7 @@ function normalizeBrowserTitle(title: string | null | undefined, url: string): s
     title === ORCA_BROWSER_BLANK_URL ||
     !title
   ) {
-    // Why: blank pages render through Orca's inert data: URL guest. Persisting
+    // Why: blank pages render through Sol's inert data: URL guest. Persisting
     // that internal bootstrap URL as the page/workspace title leaks an
     // implementation detail into the tab strip and makes every blank page look
     // broken. Keep the user-facing label stable as "New Tab" instead.

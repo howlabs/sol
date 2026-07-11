@@ -88,10 +88,10 @@ export const AGENT_KIND_VALUES = [
 export const agentKindSchema = z.enum(AGENT_KIND_VALUES)
 export type AgentKind = z.infer<typeof agentKindSchema>
 
-// Trimmed to a small set of values Orca's PTY-typed-command launch architecture
+// Trimmed to a small set of values Sol's PTY-typed-command launch architecture
 // can emit:
 //   - `binary_not_found` — `provider.spawn` ENOENT (the *shell* binary is
-//     missing). The agent CLI being missing is invisible: Orca spawns a
+//     missing). The agent CLI being missing is invisible: Sol spawns a
 //     healthy shell and types the command, and bash/zsh's "command not found"
 //     surfaces only as terminal output.
 //   - `paste_readiness_timeout` — bracketed-paste readiness wait timed out.
@@ -101,7 +101,7 @@ export type AgentKind = z.infer<typeof agentKindSchema>
 //     unclassifiable shell-spawn errors).
 // Provider-side errors (`auth_expired`, `rate_limited`, `network_timeout`,
 // `provider_*`) happen inside the agent CLI subprocess and are not observable
-// to Orca — see telemetry-plan.md §Decision: Defer per-incident error fields.
+// to Sol — see telemetry-plan.md §Decision: Defer per-incident error fields.
 // Adding a new value is additive-safe; do it when the call site lands, not in
 // anticipation.
 export const errorClassSchema = z.enum(['binary_not_found', 'paste_readiness_timeout', 'unknown'])
@@ -978,7 +978,7 @@ const activationChecklistItemCompletedSchema = z
 
 // Why: see docs/agent-on-path-detection.md. Disambiguates `on_path: false`
 // rows on dashboard 1562016 — distinguishes shell-hydration failure (where
-// `on_path` is misleading because Orca's view of PATH is incomplete) from
+// `on_path` is misleading because Sol's view of PATH is incomplete) from
 // genuinely-not-on-PATH (where the field is reporting accurately). Closed
 // enum kept in lockstep with `ShellHydrationFailureReason` via a compile-time
 // guard below.

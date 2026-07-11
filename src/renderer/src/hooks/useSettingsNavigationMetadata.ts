@@ -155,7 +155,7 @@ export function buildSettingsNavigationMetadata({
       title: translate('auto.hooks.useSettingsNavigationMetadata.58a868e8e4', 'Orchestration'),
       description: translate(
         'auto.hooks.useSettingsNavigationMetadata.cd50cec5d7',
-        'Coordinate multiple coding agents through Orca.'
+        'Coordinate multiple coding agents through Sol.'
       ),
       icon: Network,
       searchEntries: getOrchestrationPaneSearchEntries(),
@@ -310,7 +310,7 @@ export function buildSettingsNavigationMetadata({
       title: translate('auto.hooks.useSettingsNavigationMetadata.d72a58b5b9', 'Stats & Usage'),
       description: translate(
         'auto.hooks.useSettingsNavigationMetadata.b351014180',
-        'Orca stats plus Claude, Codex, and OpenCode usage analytics.'
+        'Sol stats plus Claude, Codex, and OpenCode usage analytics.'
       ),
       icon: BarChart3,
       searchEntries: getStatsPaneSearchEntries(),
@@ -333,13 +333,10 @@ export function buildSettingsNavigationMetadata({
       : []),
     {
       id: 'servers',
-      title: translate(
-        'auto.hooks.useSettingsNavigationMetadata.de0c2907a1',
-        'Remote Orca Servers'
-      ),
+      title: translate('auto.hooks.useSettingsNavigationMetadata.de0c2907a1', 'Remote Sol Servers'),
       description: isWebClient
-        ? 'Connect this browser to a saved Orca server.'
-        : 'Pair remote Orca runtimes for persistent sessions, richer remote state, and web or mobile handoff.',
+        ? 'Connect this browser to a saved Sol server.'
+        : 'Pair remote Sol runtimes for persistent sessions, richer remote state, and web or mobile handoff.',
       icon: Server,
       searchEntries: [runtimeEnvironmentsSearchEntry],
       group: 'remote',

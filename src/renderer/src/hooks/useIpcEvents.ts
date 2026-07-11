@@ -2002,10 +2002,10 @@ export function useIpcEvents(): void {
         if (getRuntimeEnvironmentIdForWorktree(store, sourcePage.worktreeId)) {
           return
         }
-        // Why: the guest process can request "open this link in Orca", but it
-        // does not own Orca's worktree/tab model. Resolve the source page's
+        // Why: the guest process can request "open this link in Sol", but it
+        // does not own Sol's worktree/tab model. Resolve the source page's
         // worktree and create a new outer browser tab so the link opens as a
-        // separate tab in the outer Orca tab bar.
+        // separate tab in the outer Sol tab bar.
         store.createBrowserTab(sourcePage.worktreeId, url, { title: url })
       })
     )

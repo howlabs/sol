@@ -106,7 +106,7 @@ jobs:
           else
             gh release create "$tag" \
               --repo "$GITHUB_REPOSITORY" \
-              --title "Orca Mobile Android $tag" \
+              --title "Sol Mobile Android $tag" \
               --prerelease \
               --latest=false \
               --generate-notes \

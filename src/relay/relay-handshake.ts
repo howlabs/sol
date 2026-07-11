@@ -1,4 +1,4 @@
-// Wire-level handshake helpers for the Orca relay.
+// Wire-level handshake helpers for the Sol relay.
 //
 // Why this lives in its own module: oxlint enforces a 300-line limit (with
 // blanks/comments stripped) on .ts files, and relay.ts already runs near that

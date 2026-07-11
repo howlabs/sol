@@ -129,7 +129,7 @@ export class CodexAccountService {
       await this.runCodexLogin(managedHomePath)
       const identity = this.readIdentityFromHome(managedHomePath)
       if (!identity.email) {
-        throw new Error('Codex login completed, but Orca could not resolve the account email.')
+        throw new Error('Codex login completed, but Sol could not resolve the account email.')
       }
 
       const now = Date.now()
@@ -184,7 +184,7 @@ export class CodexAccountService {
     await this.runCodexLogin(managedHomePath)
     const identity = this.readIdentityFromHome(managedHomePath)
     if (!identity.email) {
-      throw new Error('Codex login completed, but Orca could not resolve the account email.')
+      throw new Error('Codex login completed, but Sol could not resolve the account email.')
     }
 
     const settings = this.store.getSettings()
@@ -355,7 +355,7 @@ export class CodexAccountService {
     mkdirSync(managedHomePath, { recursive: true })
     // Why: Codex expects CODEX_HOME to be a concrete directory it can own. We
     // pre-create the directory and leave a marker so future cleanup code can
-    // prove the path belongs to Orca before deleting anything.
+    // prove the path belongs to Sol before deleting anything.
     writeFileSync(join(managedHomePath, '.orca-managed-home'), `${accountId}\n`, 'utf-8')
     return {
       managedHomePath: this.assertManagedHomePath(managedHomePath),
@@ -389,7 +389,7 @@ export class CodexAccountService {
       throw new Error('Could not resolve the active WSL home directory for Codex login.')
     }
 
-    const wslLinuxHomePath = `${home.replace(/\/$/, '')}/.local/share/orca/codex-accounts/${accountId}/home`
+    const wslLinuxHomePath = `${home.replace(/\/$/, '')}/.local/share/sol/codex-accounts/${accountId}/home`
     const markerPath = `${wslLinuxHomePath}/.orca-managed-home`
     execFileSync(
       'wsl.exe',
@@ -457,7 +457,7 @@ export class CodexAccountService {
     }
 
     const trustedManagedHomePath = this.assertManagedHomePath(managedHomePath)
-    // Why: Orca account switching is meant to swap Codex credentials and quota
+    // Why: Sol account switching is meant to swap Codex credentials and quota
     // identity, not silently fork the user's sandbox/config defaults. Syncing
     // one canonical config into every managed home keeps auth isolated per
     // account while preserving consistent Codex behavior. Managed homes are
@@ -490,7 +490,7 @@ export class CodexAccountService {
       return this.readCanonicalConfig()
     }
 
-    const managedRootMarker = '/.local/share/orca/codex-accounts/'
+    const managedRootMarker = '/.local/share/sol/codex-accounts/'
     const markerIndex = wslInfo.linuxPath.indexOf(managedRootMarker)
     if (markerIndex < 0) {
       return null
@@ -557,7 +557,7 @@ export class CodexAccountService {
     }
 
     // Why: explicit re-auth is allowed to recover from a lost empty container,
-    // but only at the exact Orca-owned account path persisted for this account.
+    // but only at the exact Sol-owned account path persisted for this account.
     mkdirSync(expectedManagedHomePath, { recursive: true })
     writeFileSync(join(expectedManagedHomePath, '.orca-managed-home'), `${account.id}\n`, 'utf-8')
     return this.assertManagedHomePath(expectedManagedHomePath)
@@ -571,7 +571,7 @@ export class CodexAccountService {
       account.managedHomeRuntime !== 'wsl' ||
       account.wslDistro !== wslInfo.distro ||
       account.wslLinuxHomePath !== wslInfo.linuxPath ||
-      !wslInfo.linuxPath.endsWith(`/.local/share/orca/codex-accounts/${account.id}/home`)
+      !wslInfo.linuxPath.endsWith(`/.local/share/sol/codex-accounts/${account.id}/home`)
     ) {
       return
     }
@@ -621,10 +621,10 @@ export class CodexAccountService {
     const wslInfo = parseWslUncPath(candidatePath)
     if (wslInfo) {
       if (
-        !wslInfo.linuxPath.includes('/.local/share/orca/codex-accounts/') ||
+        !wslInfo.linuxPath.includes('/.local/share/sol/codex-accounts/') ||
         !wslInfo.linuxPath.endsWith('/home')
       ) {
-        throw new Error('Managed WSL Codex home is outside Orca account storage.')
+        throw new Error('Managed WSL Codex home is outside Sol account storage.')
       }
 
       if (process.platform === 'win32') {
@@ -641,7 +641,7 @@ export class CodexAccountService {
                 [
                   'set -euo pipefail',
                   `candidate=${shellQuote(wslInfo.linuxPath)}`,
-                  'managed_root="${HOME%/}/.local/share/orca/codex-accounts"',
+                  'managed_root="${HOME%/}/.local/share/sol/codex-accounts"',
                   'candidate_real=$(readlink -f -- "$candidate")',
                   'managed_root_real=$(readlink -f -- "$managed_root")',
                   'test -f "$candidate_real/.orca-managed-home"',
@@ -656,20 +656,20 @@ export class CodexAccountService {
           }
           return toWindowsWslPath(canonicalLinuxPath, wslInfo.distro)
         } catch (error) {
-          throw new Error('Managed WSL Codex home is outside Orca account storage.', {
+          throw new Error('Managed WSL Codex home is outside Sol account storage.', {
             cause: error
           })
         }
       }
 
       if (wslInfo.linuxPath.split('/').includes('..')) {
-        throw new Error('Managed WSL Codex home is outside Orca account storage.')
+        throw new Error('Managed WSL Codex home is outside Sol account storage.')
       }
       if (!existsSync(candidatePath)) {
         throw new Error('Managed Codex home directory does not exist on disk.')
       }
       if (!existsSync(join(candidatePath, '.orca-managed-home'))) {
-        throw new Error('Managed Codex home is missing Orca ownership marker.')
+        throw new Error('Managed Codex home is missing Sol ownership marker.')
       }
       return candidatePath
     }
@@ -707,11 +707,11 @@ export class CodexAccountService {
       relativePath === '' || relativePath.startsWith('..') || relativePath.includes(`..${sep}`)
 
     if (escaped) {
-      throw new Error('Managed Codex home escaped Orca account storage.')
+      throw new Error('Managed Codex home escaped Sol account storage.')
     }
 
     if (!existsSync(join(canonicalCandidate, '.orca-managed-home'))) {
-      throw new Error('Managed Codex home is missing Orca ownership marker.')
+      throw new Error('Managed Codex home is missing Sol ownership marker.')
     }
 
     return canonicalCandidate
@@ -738,7 +738,7 @@ export class CodexAccountService {
               'set -euo pipefail',
               `candidate=${shellQuote(linuxHomePath)}`,
               `expected_marker=${shellQuote(expectedAccountId)}`,
-              'managed_root="${HOME%/}/.local/share/orca/codex-accounts"',
+              'managed_root="${HOME%/}/.local/share/sol/codex-accounts"',
               'candidate_real=$(readlink -f -- "$candidate" 2>/dev/null || true)',
               'managed_root_real=$(readlink -f -- "$managed_root" 2>/dev/null || true)',
               'test -n "$candidate_real"',

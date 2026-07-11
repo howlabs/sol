@@ -205,7 +205,7 @@ describe('runBackgroundWorktreeCreation', () => {
         id: 'repo-1',
         connectionId: null,
         gitRemoteIdentity: {
-          canonicalKey: 'github.com/stablyai/orca',
+          canonicalKey: 'github.com/howlabs/sol',
           remoteName: 'origin',
           remoteUrl: 'git@github.com:stablyai/orca.git'
         }

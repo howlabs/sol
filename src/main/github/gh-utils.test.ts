@@ -64,7 +64,7 @@ describe('github owner/repo resolution', () => {
       owner: 'TheBoredTeam',
       repo: 'boring.notch'
     })
-    expect(parseGitHubOwnerRepo('ssh://git@github.com/stablyai/orca.git')).toEqual({
+    expect(parseGitHubOwnerRepo('ssh://git@github.com/howlabs/sol.git')).toEqual({
       owner: 'stablyai',
       repo: 'orca'
     })
@@ -253,7 +253,7 @@ describe('github owner/repo resolution', () => {
       .mockResolvedValueOnce({ stdout: 'git@github.com:acme/orca.git\n' })
 
     await expect(resolvePRRepositoryCandidates('/repo')).resolves.toEqual({
-      candidates: [{ owner: 'Acme', repo: 'Orca' }],
+      candidates: [{ owner: 'Acme', repo: 'Sol' }],
       headRepo: { owner: 'acme', repo: 'orca' }
     })
   })

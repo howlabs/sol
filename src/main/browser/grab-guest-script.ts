@@ -10,7 +10,7 @@ build step that adds complexity without improving auditability. */
 // ephemeral: it installs on arm, resolves once on finalize, and fully removes
 // itself on teardown.
 //
-// Why a string builder rather than a bundled file: Orca's browser guests have
+// Why a string builder rather than a bundled file: Sol's browser guests have
 // no preload and no Node access. The injected code must be a plain JS string
 // that runs in the page's own world. Keeping it as a template here lets main
 // version it alongside the rest of the grab lifecycle.

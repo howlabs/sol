@@ -60,7 +60,7 @@ function isValidAgentStatusDropTabId(value: unknown): value is string {
   )
 }
 
-// Why: install/remove are intentionally not exposed to the renderer. Orca
+// Why: install/remove are intentionally not exposed to the renderer. Sol
 // auto-installs managed hooks at app startup (see src/main/index.ts), so a
 // renderer-triggered remove would be silently reverted on the next launch
 // and mislead the user.

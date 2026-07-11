@@ -1,7 +1,7 @@
 import { defineConfig } from '@stablyai/playwright-test'
 
 /**
- * Playwright config for Orca E2E tests.
+ * Playwright config for Sol E2E tests.
  *
  * Run:
  *   pnpm run test:e2e              — build + run all tests (headless)

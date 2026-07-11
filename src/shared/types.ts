@@ -255,11 +255,11 @@ export type Repo = {
    *  identically to `'auto'`; writers leave it undefined on creation so
    *  existing persisted records stay forward-compatible. */
   issueSourcePreference?: IssueSourcePreference
-  /** Controls Orca's fork-default-branch sync offer for repos with upstream metadata. */
+  /** Controls Sol's fork-default-branch sync offer for repos with upstream metadata. */
   forkSyncMode?: ForkSyncMode
-  /** Canonical identity for the repo remote Orca should use for provider-level grouping. */
+  /** Canonical identity for the repo remote Sol should use for provider-level grouping. */
   gitRemoteIdentity?: GitRemoteIdentity | null
-  /** Controls whether worktrees Orca did not create appear in the sidebar. */
+  /** Controls whether worktrees Sol did not create appear in the sidebar. */
   externalWorktreeVisibility?: ExternalWorktreeVisibility
   /** True when the repo predates hidden-by-default external worktrees. */
   externalWorktreeVisibilityLegacy?: boolean
@@ -479,12 +479,12 @@ export type Worktree = {
   /** User-authored sidebar ordering. Higher values render earlier in Manual sort. */
   manualOrder?: number
   lastActivityAt: number
-  /** Set once when Orca creates the worktree. Absent for worktrees discovered
+  /** Set once when Sol creates the worktree. Absent for worktrees discovered
    *  on disk or persisted before this field existed. Used by the sidebar to
    *  grant newly-created worktrees a short grace window at the top of Recent,
    *  immune to ambient PTY-bump reordering in other worktrees. */
   createdAt?: number
-  /** Agent selected when Orca originally created the worktree. Used only to
+  /** Agent selected when Sol originally created the worktree. Used only to
    *  seed a replacement terminal if the user later reopens the worktree after
    *  closing every visible surface. */
   createdWithAgent?: TuiAgent
@@ -502,7 +502,7 @@ export type Worktree = {
   sparsePresetId?: string
   /** Intended create base for stale-base probes. Persisted metadata, not UI drift state. */
   baseRef?: string
-  /** Remote/branch Orca should publish review commits to when it created this worktree. */
+  /** Remote/branch Sol should publish review commits to when it created this worktree. */
   pushTarget?: GitPushTarget
   /** Path-derived worktree ids this worktree had before folder renames. */
   priorWorktreeIds?: string[]
@@ -537,7 +537,7 @@ export type GitPushTarget = {
   remoteName: string
   branchName: string
   remoteUrl?: string
-  /** True when Orca added this remote while preparing a fork-PR worktree. */
+  /** True when Sol added this remote while preparing a fork-PR worktree. */
   remoteCreated?: boolean
 }
 
@@ -601,14 +601,14 @@ export type WorktreeMeta = {
   sparsePresetId?: string
   /** Intended create base for stale-base probes. Persisted metadata, not UI drift state. */
   baseRef?: string
-  /** True when Orca checked out a pre-existing local branch that delete must not prune. */
+  /** True when Sol checked out a pre-existing local branch that delete must not prune. */
   preserveBranchOnDelete?: boolean
   /** See {@link Worktree.pushTarget}. Persisted so refreshed worktree lists keep the target. */
   pushTarget?: GitPushTarget
-  /** Explicit marker stamped when Orca creates the worktree. */
+  /** Explicit marker stamped when Sol creates the worktree. */
   orcaCreatedAt?: number
   orcaCreationSource?: 'desktop' | 'runtime' | 'cli' | 'ssh'
-  /** Workspace layout active when Orca created the worktree. */
+  /** Workspace layout active when Sol created the worktree. */
   orcaCreationWorkspaceLayout?: OrcaWorkspaceLayout
   /** User-assigned workspace board status for manual sidebar organization. */
   workspaceStatus?: WorkspaceStatus
@@ -814,7 +814,7 @@ export type TerminalTab = {
   worktreeId: string
   title: string
   /** Stable fallback label for default-named terminals ("Terminal 1", etc.).
-   *  Why: agent CLIs overwrite the live title via OSC updates, but Orca still
+   *  Why: agent CLIs overwrite the live title via OSC updates, but Sol still
    *  needs the original terminal label for numbering and reset behavior. */
   defaultTitle?: string
   /** Stable opt-in label derived from the first known agent prompt. */
@@ -839,7 +839,7 @@ export type TerminalTab = {
   /** Why: explorer-created terminals can start below the workspace root while
    *  still belonging to that workspace for tab/session ownership. */
   startupCwd?: string
-  /** Why: the coding-harness agent Orca launched in this tab. Lets the tab bar
+  /** Why: the coding-harness agent Sol launched in this tab. Lets the tab bar
    *  show the provider icon immediately, before the agent emits its first hook
    *  event (a freshly-launched, idle agent reports no live status yet). Live
    *  hook status overrides this once the agent does anything. Plain terminals
@@ -911,7 +911,7 @@ export type BrowserPage = {
 export type BrowserWorkspace = {
   id: string
   worktreeId: string
-  /** Stable display label for the outer Orca tab ("Browser 1", "Browser 2", …).
+  /** Stable display label for the outer Sol tab ("Browser 1", "Browser 2", …).
    *  Optional so sessions persisted before this field was added fall back
    *  gracefully to the URL-derived label in getBrowserTabLabel. */
   label?: string
@@ -927,7 +927,7 @@ export type BrowserWorkspace = {
   activePageId?: string | null
   pageIds?: string[]
   // Why: the active page owns real browser chrome state now, but the top-level
-  // Orca tab strip still renders one workspace entry. Mirror the active page's
+  // Sol tab strip still renders one workspace entry. Mirror the active page's
   // title/url/loading metadata here so existing workspace-level UI can stay
   // stable while Phase 2 introduces nested browser pages.
   url: string
@@ -1509,7 +1509,7 @@ export type GitHubPRReviewCommentInput = {
 }
 
 export type GitHubWorkItemDetails = {
-  // Why: main-process doesn't know Orca's Repo.id, so this inner item omits
+  // Why: main-process doesn't know Sol's Repo.id, so this inner item omits
   // repoId. The renderer stamps it when routing the details through the store.
   item: Omit<GitHubWorkItem, 'repoId'>
   body: string
@@ -2333,7 +2333,7 @@ export type ClaudeManagedAccountRuntimeSelection = {
  *  flow and for the default-agent setting. Extend this union as new agents are added. */
 export type TuiAgent =
   | 'claude' // Claude Code
-  | 'claude-agent-teams' // Claude Code Agent Teams via Orca native panes
+  | 'claude-agent-teams' // Claude Code Agent Teams via Sol native panes
   | 'openclaude' // OpenClaude
   | 'codex' // OpenAI Codex
   | 'opencode' // OpenCode
@@ -2461,7 +2461,7 @@ export type GlobalSettings = {
   /** Set once the user dismisses the "local main is behind" suggestion toast, so
    *  the nudge to enable refreshLocalBaseRefOnWorktreeCreate never shows again. */
   localBaseRefSuggestionDismissed: boolean
-  /** When enabled, Orca renames a workspace's auto-generated creature branch to
+  /** When enabled, Sol renames a workspace's auto-generated creature branch to
    *  a short name derived from the first prompt once work begins. Users can
    *  still turn this off from global Git settings. */
   autoRenameBranchFromWork: boolean
@@ -2543,7 +2543,7 @@ export type GlobalSettings = {
   terminalQuickCommands?: TerminalQuickCommand[]
   windowBackgroundBlur?: boolean
   /** Why: Windows-only. When on, the close (X) button hides the window to the
-   *  system tray instead of quitting Orca; off keeps the default quit-on-close.
+   *  system tray instead of quitting Sol; off keeps the default quit-on-close.
    *  The tray icon itself is always present on Windows regardless of this flag. */
   minimizeToTrayOnClose?: boolean
   /** Why: Windows terminals conventionally use right-click as a paste gesture.
@@ -2556,7 +2556,7 @@ export type GlobalSettings = {
    *  modern choice for an IDE context. Only consulted on Windows. */
   terminalWindowsShell: string
   /** Why: when WSL is the Windows default shell, users with multiple distros
-   *  need Orca to launch terminals and scan agents in the same chosen distro
+   *  need Sol to launch terminals and scan agents in the same chosen distro
    *  instead of whatever WSL currently marks as its global default. */
   terminalWindowsWslDistro?: string | null
   /** Why: account/auth location is independent from the user's preferred
@@ -2589,7 +2589,7 @@ export type GlobalSettings = {
    *  conservative default while making the capability one toggle away. */
   terminalAllowOsc52Clipboard: boolean
   /** Experimental Claude Code Agent Teams integration. Native panes use a
-   *  tmux-compatible shim so teammate output stays on Orca's normal PTY path. */
+   *  tmux-compatible shim so teammate output stays on Sol's normal PTY path. */
   claudeAgentTeamsMode?: ClaudeAgentTeamsMode
   /** Where the repo setup script runs on workspace create. Defaults to a
    *  background "Setup" tab so the user's main terminal stays immediately
@@ -2604,7 +2604,7 @@ export type GlobalSettings = {
   /** Why: corporate TLS-intercepting proxies can break Electron HTTP/2 downloads;
    *  this opt-in compatibility mode applies Chromium's process-wide HTTP/1.1 switch. */
   electronHttp1CompatibilityMode?: boolean
-  /** Why: opening arbitrary links inside Orca uses an isolated guest browser surface.
+  /** Why: opening arbitrary links inside Sol uses an isolated guest browser surface.
    *  The setting stays opt-in so existing workflows continue to use the system browser
    *  until the user explicitly wants worktree-scoped in-app browsing. */
   openLinksInApp: boolean
@@ -2636,7 +2636,7 @@ export type GlobalSettings = {
    *  default branch. Only affects the compare/diff view, not the PR/rebase
    *  merge target. Per-user, not per-workspace. */
   sourceControlCompareAgainstUpstream: boolean
-  /** Whether to show the Orca app name in the titlebar. */
+  /** Whether to show the Sol app name in the titlebar. */
   showTitlebarAppName: boolean
   /** Why: some users do not use the Tasks feature and prefer to keep the
    *  left sidebar free of its button entirely. Hiding the button here also
@@ -2648,7 +2648,7 @@ export type GlobalSettings = {
   /** Controls how Ctrl+Tab chooses the next visible tab. Optional for
    *  profiles saved before this setting existed; readers default to MRU. */
   ctrlTabOrderMode?: CtrlTabOrderMode
-  /** Why: Orca-first preserves fast workspace/app control from agent TUIs.
+  /** Why: Sol-first preserves fast workspace/app control from agent TUIs.
    *  Terminal-first is opt-in for users who want shell/TUI bindings to win. */
   terminalShortcutPolicy?: TerminalShortcutPolicy
   /** Legacy pre-file-backed keyboard shortcut overrides. New writes go to
@@ -2667,13 +2667,13 @@ export type GlobalSettings = {
   promptCacheTtlMs: number
   /** Why: Codex rate-limit account routing is a durable app preference owned by
    *  the main process, not transient UI state. Persisting the selected managed
-   *  auth here lets Orca prepare shared ~/.codex before the renderer hydrates,
+   *  auth here lets Sol prepare shared ~/.codex before the renderer hydrates,
    *  while keeping this scope explicitly separate from Codex usage analytics
    *  and external terminal sessions. */
   codexManagedAccounts: CodexManagedAccount[]
   activeCodexManagedAccountId: string | null
   activeCodexManagedAccountIdsByRuntime?: CodexManagedAccountRuntimeSelection
-  /** Why: Claude Code keeps conversations under one shared config root. Orca
+  /** Why: Claude Code keeps conversations under one shared config root. Sol
    *  persists only per-account auth material here so switching accounts does
    *  not fork prior chat/session context the way CLAUDE_CONFIG_DIR swapping would. */
   claudeManagedAccounts: ClaudeManagedAccount[]
@@ -2695,7 +2695,7 @@ export type GlobalSettings = {
    *  hidden for existing profiles without overriding later user opt-ins. */
   claudeAgentTeamsDefaultDisabledMigrated?: boolean
   /** Why: worktree deletion is destructive (git worktree remove + rm -rf of the
-   *  working directory), so Orca shows a confirmation dialog by default. Users
+   *  working directory), so Sol shows a confirmation dialog by default. Users
    *  who delete frequently can opt into skipping the dialog via a "Don't ask
    *  again" checkbox inside it or from the General settings pane. We keep this
    *  defaulted to false so first-time behavior stays safe. */
@@ -2749,10 +2749,10 @@ export type GlobalSettings = {
   geminiCliOAuthEnabled: boolean
   /** Per-agent CLI command overrides. A missing key means use the catalog default binary name. */
   agentCmdOverrides: Partial<Record<TuiAgent, string>>
-  /** Why: Orca bridges Codex session history from the user's real Codex home into
+  /** Why: Sol bridges Codex session history from the user's real Codex home into
    *  its managed home so /resume finds it, but defaults to ~/.codex. Users who run
    *  Codex with a custom CODEX_HOME can point history discovery at that folder here.
-   *  History-only: this does not change which account/config/hooks Orca uses. */
+   *  History-only: this does not change which account/config/hooks Sol uses. */
   codexSessionSourceHome?: {
     /** Absolute host path; empty/undefined falls back to ~/.codex. */
     host?: string
@@ -2775,7 +2775,7 @@ export type GlobalSettings = {
    *  path, so this gates that close behind a confirmation prompt to prevent
    *  accidental loss. Defaults on. */
   confirmClosePinnedTab: boolean
-  /** When true, Orca requests local awake assertions while hook-reported agents are working. */
+  /** When true, Sol requests local awake assertions while hook-reported agents are working. */
   keepComputerAwakeWhileAgentsRun: boolean
   /** Why: macOS terminals must choose between letting Option compose layout
    *  characters (@ on German, € on French) or treating Option as Meta/Esc for
@@ -3198,7 +3198,7 @@ export type PersistedUIState = {
   lastUpdateCheckAt: number | null
   pendingUpdateNudgeId?: string | null
   dismissedUpdateNudgeId?: string | null
-  /** Whether Orca has already attempted to trigger the macOS notification
+  /** Whether Sol has already attempted to trigger the macOS notification
    *  permission dialog via a startup notification. Prevents re-firing on
    *  every launch. */
   notificationPermissionRequested?: boolean
@@ -3227,7 +3227,7 @@ export type PersistedUIState = {
    *  available from Settings > Browser and the toolbar overflow menu. */
   browserImportHintHidden?: boolean
   /** Why: Windows-only. Set once after the window first hides to the system
-   *  tray, so the "Orca is still running" notification shows only on first use. */
+   *  tray, so the "Sol is still running" notification shows only on first use. */
   trayMinimizeNoticeShown?: boolean
   /** One-shot rollout notice for manual project ordering becoming the default.
    *  Absent or true means the sidebar callout stays hidden. */
@@ -3528,7 +3528,7 @@ export type AppMemory = UsageValues & {
   main: UsageValues
   renderer: UsageValues
   other: UsageValues
-  /** Oldest-first memory samples (bytes) for the whole Orca app, one per
+  /** Oldest-first memory samples (bytes) for the whole Sol app, one per
    *  successful collection. Used to render the sparkline in the dashboard.
    *  Empty before the first snapshot is recorded. */
   history: number[]

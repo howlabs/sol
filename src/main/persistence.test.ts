@@ -338,8 +338,8 @@ describe('Store', () => {
         makeRepo({
           id: 'local-repo',
           path: '/Users/alice/orca',
-          displayName: 'Orca',
-          upstream: { owner: 'StablyAI', repo: 'Orca' }
+          displayName: 'Sol',
+          upstream: { owner: 'StablyAI', repo: 'Sol' }
         }),
         makeRepo({
           id: 'remote-repo',
@@ -5683,7 +5683,7 @@ describe('Store', () => {
 
   it('missing terminalMacOptionAsAlt in persisted file defaults to "auto" and flags migrated', async () => {
     // Existing file predates the setting entirely. Treat like upgrade from
-    // pre-Option-as-Alt Orca: land on 'auto' and mark migrated so we don't
+    // pre-Option-as-Alt Sol: land on 'auto' and mark migrated so we don't
     // re-examine.
     writeDataFile({
       schemaVersion: 1,
@@ -8850,7 +8850,7 @@ describe('Store', () => {
   // inference because the `telemetry` field is new in this release: keying
   // on its presence would misclassify every pre-telemetry install as fresh,
   // silently flipping existing users to default-on and violating the social
-  // contract they installed Orca under.
+  // contract they installed Sol under.
 
   it('classifies a truly fresh install as new-user cohort (file absent → optedIn=true)', async () => {
     // No data file written — truly fresh install of the telemetry release.

@@ -18,12 +18,12 @@ function isDisabledByEnv(): boolean {
 
 /**
  * Wrap a macOS shell spawn in `/usr/bin/login -flpq <user> …` so terminal children
- * get their own TCC identity instead of collapsing into Orca's bundle id — signed
+ * get their own TCC identity instead of collapsing into Sol's bundle id — signed
  * CLIs like `op` otherwise re-prompt every launch because tccd attributes the grant
- * to Orca and never persists it (#6996). This mirrors how Terminal.app spawns shells.
+ * to Sol and never persists it (#6996). This mirrors how Terminal.app spawns shells.
  *
  * Why the env(1) interposition: login(1) overwrites SHELL from the account DB even
- * under -p, so `/usr/bin/env SHELL=<shell>` re-asserts the shell Orca actually runs
+ * under -p, so `/usr/bin/env SHELL=<shell>` re-asserts the shell Sol actually runs
  * without disturbing login's attribution (skipped when the shell path contains `=`).
  *
  * No-op off macOS, when already wrapped, or when disabled via {@link DISABLE_ENV_VAR}.

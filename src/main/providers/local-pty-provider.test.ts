@@ -396,7 +396,7 @@ describe('LocalPtyProvider', () => {
     it('honors explicit terminal env overrides after deleting requested defaults', async () => {
       provider.configure({
         buildSpawnEnv: (_id, env) => {
-          env.TERM_PROGRAM = 'Orca'
+          env.TERM_PROGRAM = 'Sol'
           env.ORCA_ATTRIBUTION_SHIM_DIR = '/tmp/orca-attribution'
           env.PATH = `/tmp/orca-attribution:${env.PATH ?? ''}`
           return env
@@ -569,9 +569,9 @@ describe('LocalPtyProvider', () => {
 
       const spawnCall = spawnMock.mock.calls.at(-1)!
       expect(spawnCall[0]).toBe('wsl.exe')
-      expect(spawnCall[2].env.CODEX_HOME).toBe('/home/jin/.local/share/orca/codex-accounts/a/home')
+      expect(spawnCall[2].env.CODEX_HOME).toBe('/home/jin/.local/share/sol/codex-accounts/a/home')
       expect(spawnCall[2].env.ORCA_CODEX_HOME).toBe(
-        '/home/jin/.local/share/orca/codex-accounts/a/home'
+        '/home/jin/.local/share/sol/codex-accounts/a/home'
       )
       expect(spawnCall[2].env.WSLENV).toContain('CODEX_HOME')
       expect(spawnCall[2].env.WSLENV).toContain('ORCA_CODEX_HOME')
@@ -648,7 +648,7 @@ describe('LocalPtyProvider', () => {
       expect(pwshAvailable).not.toHaveBeenCalled()
     })
 
-    it('marks Orca terminal handle for WSL import when buildSpawnEnv opts in', async () => {
+    it('marks Sol terminal handle for WSL import when buildSpawnEnv opts in', async () => {
       Object.defineProperty(process, 'platform', { configurable: true, value: 'win32' })
       const savedCodexHome = process.env.CODEX_HOME
       const savedOrcaCodexHome = process.env.ORCA_CODEX_HOME
@@ -707,7 +707,7 @@ describe('LocalPtyProvider', () => {
       expect(spawnCall[2].env.WSLENV ?? '').not.toContain(POWERLEVEL10K_WIZARD_DISABLE_ENV)
     })
 
-    it('does not inherit parent Orca pane identity when caller omits pane env', async () => {
+    it('does not inherit parent Sol pane identity when caller omits pane env', async () => {
       const saved = {
         ORCA_PANE_KEY: process.env.ORCA_PANE_KEY,
         ORCA_TAB_ID: process.env.ORCA_TAB_ID,
@@ -735,7 +735,7 @@ describe('LocalPtyProvider', () => {
       expect(spawnCall[2].env.ORCA_WORKTREE_ID).toBeUndefined()
     })
 
-    it('preserves explicit child Orca pane identity over parent env', async () => {
+    it('preserves explicit child Sol pane identity over parent env', async () => {
       const saved = {
         ORCA_PANE_KEY: process.env.ORCA_PANE_KEY,
         ORCA_TAB_ID: process.env.ORCA_TAB_ID,

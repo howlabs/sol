@@ -2811,7 +2811,7 @@ export default function AutomationsPage(): React.JSX.Element {
                         selectedAutomationRunPage.scheduledFor,
                         relativeNow
                       ),
-                      'Orca',
+                      'Sol',
                       selectedAutomationRunPageWorkspaceDisplay?.detailLabel ?? 'No workspace'
                     ]}
                     detail={

@@ -71,7 +71,7 @@ export function GeneralEditorSettingsSection({
         )}
         description={translate(
           'auto.components.settings.GeneralEditorSettingsSection.d21136d9ef',
-          'Configure how Orca persists file edits.'
+          'Configure how Sol persists file edits.'
         )}
       />
 
@@ -107,7 +107,7 @@ export function GeneralEditorSettingsSection({
         )}
         description={translate(
           'auto.components.settings.GeneralEditorSettingsSection.1bec6d8318',
-          'How long Orca waits after your last edit before saving automatically.'
+          'How long Sol waits after your last edit before saving automatically.'
         )}
         keywords={['autosave', 'delay', 'milliseconds']}
       >
@@ -118,7 +118,7 @@ export function GeneralEditorSettingsSection({
           )}
           description={translate(
             'auto.components.settings.GeneralEditorSettingsSection.1bec6d8318',
-            'How long Orca waits after your last edit before saving automatically.'
+            'How long Sol waits after your last edit before saving automatically.'
           )}
           value={settings.editorAutoSaveDelayMs}
           defaultValue={DEFAULT_EDITOR_AUTO_SAVE_DELAY_MS}

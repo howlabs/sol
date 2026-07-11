@@ -265,7 +265,7 @@ function bestEffortRestrictWindowsPath(targetPath: string, isDirectory: boolean)
     },
     () => {
       // Why: errors are intentionally ignored — credential-file hardening should not
-      // prevent Orca from starting on Windows machines where PowerShell ACL APIs are
+      // prevent Sol from starting on Windows machines where PowerShell ACL APIs are
       // unavailable or locked down.
     }
   )

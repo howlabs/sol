@@ -211,7 +211,7 @@ describe('createPaneForegroundAgentTracker', () => {
   })
 
   it('confirms duplicate 133;D pairs instead of fast-pathing past the pending confirmation', async () => {
-    // Why: user shell integrations (iTerm/VS Code) double up Orca's OSC 133, so
+    // Why: user shell integrations (iTerm/VS Code) double up Sol's OSC 133, so
     // every D arrives twice ~50ms apart. The second D cancels the first D's
     // confirming read; it must reschedule the confirmation, not trust the D.
     readForegroundProcess.mockResolvedValue('grok')

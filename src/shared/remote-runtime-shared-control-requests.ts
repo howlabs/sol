@@ -33,7 +33,7 @@ export function requestSharedControl<TResult>(args: {
       // error so reconnect+replay runs instead of keeping a zombie socket.
       args.onTimeout?.(
         remoteRuntimeUnavailableError(
-          'Remote Orca runtime did not answer in time; resetting the control connection.'
+          'Remote Sol runtime did not answer in time; resetting the control connection.'
         )
       )
     }, args.timeoutMs)

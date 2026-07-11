@@ -294,7 +294,7 @@ function Terminal(): React.JSX.Element | null {
   )
 
   // Why: the TabBar is rendered into the titlebar via a portal so tabs share
-  // the same row as the "Orca" title. The target element is created by App.tsx.
+  // the same row as the "Sol" title. The target element is created by App.tsx.
   const titlebarTabsTarget = document.getElementById('titlebar-tabs')
 
   useEffect(() => {

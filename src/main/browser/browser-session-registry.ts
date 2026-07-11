@@ -505,7 +505,7 @@ class BrowserSessionRegistry {
       // Why: `media` (camera/mic) must defer to macOS TCC instead of being
       // denied outright. Denying at the session layer would make pages inside
       // isolated browser profiles throw NotAllowedError even after the user
-      // granted Camera/Microphone to Orca — the same bug we fixed for the
+      // granted Camera/Microphone to Sol — the same bug we fixed for the
       // default partition. macOS TCC still gates the actual stream, so
       // granting here only forwards what the OS has already authorized.
       if (permission === 'media') {

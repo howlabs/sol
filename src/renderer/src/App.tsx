@@ -1630,7 +1630,7 @@ function App(): React.JSX.Element {
           <div className="titlebar-traffic-light-pad" />
         ) : hasCustomTitleBar ? (
           /* Why: on Windows/Linux the native title bar is removed, so we render
-             the Orca logo as a non-interactive identity anchor and a ··· button
+             the Sol logo as a non-interactive identity anchor and a ··· button
              that pops up the application menu (the same menu revealed by Alt
              on the default autoHideMenuBar). */
           <>
@@ -1660,10 +1660,10 @@ function App(): React.JSX.Element {
                 <ContextMenuTrigger asChild>
                   <div
                     className="titlebar-app-name"
-                    aria-label={translate('auto.App.5096cbbc86', 'Orca')}
+                    aria-label={translate('auto.App.5096cbbc86', 'Sol')}
                   >
                     <span className="titlebar-app-name-main">
-                      {translate('auto.App.5096cbbc86', 'Orca')}
+                      {translate('auto.App.5096cbbc86', 'Sol')}
                     </span>
                   </div>
                 </ContextMenuTrigger>
@@ -1861,7 +1861,7 @@ function App(): React.JSX.Element {
                       leftTitlebarChromeLayout.shouldMount ? (
                         /* Why: left column wraps the sidebar with a titlebar-height
                      header above it. The header holds the same controls
-                     (traffic lights, sidebar toggle, "Orca" title, agent badge)
+                     (traffic lights, sidebar toggle, "Sol" title, agent badge)
                      that the full-width titlebar held while the center and right
                      columns keep their own top strips at the same 36px height.
                      When the sidebar is collapsed, take this header out of flex
@@ -2013,7 +2013,7 @@ function App(): React.JSX.Element {
                               title={translate('auto.App.b7a714db1e', 'This page hit an error.')}
                               description={translate(
                                 'auto.App.03a14f6b5b',
-                                'Retry the page or navigate to another Orca surface.'
+                                'Retry the page or navigate to another Sol surface.'
                               )}
                             >
                               {activeView === 'settings' ? <Settings /> : null}

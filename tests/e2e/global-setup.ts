@@ -42,7 +42,7 @@ export default function globalSetup(): void {
     console.log('[e2e] Build complete.')
   }
   if (process.env.ORCA_E2E_SSH_LOCALHOST === '1' || process.env.ORCA_E2E_SSH_DOCKER === '1') {
-    // Why: the SSH specs deploy Orca's relay from out/relay. The
+    // Why: the SSH specs deploy Sol's relay from out/relay. The
     // normal Electron E2E build does not produce that bundle, so build it only
     // for explicit SSH runs.
     console.log('[e2e] Building SSH relay bundle for SSH E2E...')
@@ -68,7 +68,7 @@ export default function globalSetup(): void {
   // Seed test data files
   writeFileSync(
     path.join(testRepoDir, 'README.md'),
-    '# Orca E2E Test Repo\n\nThis repo was created automatically for Playwright tests.\n'
+    '# Sol E2E Test Repo\n\nThis repo was created automatically for Playwright tests.\n'
   )
   writeFileSync(path.join(testRepoDir, 'CLAUDE.md'), '# CLAUDE.md\n\nTest instructions for E2E.\n')
   writeFileSync(

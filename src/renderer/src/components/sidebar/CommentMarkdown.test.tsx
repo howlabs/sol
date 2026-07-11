@@ -12,7 +12,7 @@ describe('CommentMarkdown', () => {
       />
     )
 
-    expect(markup).toContain('href="https://github.com/stablyai/orca/issues/2316"')
+    expect(markup).toContain('href="https://github.com/howlabs/sol/issues/2316"')
     expect(markup).toContain('<strong><a')
   })
 
@@ -38,8 +38,8 @@ describe('CommentMarkdown', () => {
     )
 
     expect(markup).toContain('href="https://example.com/already-linked"')
-    expect(markup).not.toContain('href="https://github.com/stablyai/orca/issues/2316"')
-    expect(markup).not.toContain('href="https://github.com/stablyai/orca/issues/2317"')
+    expect(markup).not.toContain('href="https://github.com/howlabs/sol/issues/2316"')
+    expect(markup).not.toContain('href="https://github.com/howlabs/sol/issues/2317"')
   })
 
   it('keeps remote compact markdown images as links', () => {
@@ -73,7 +73,7 @@ describe('CommentMarkdown', () => {
   })
 
   it('keeps non-attachment document links as links', () => {
-    const url = 'https://github.com/stablyai/orca/pull/5265'
+    const url = 'https://github.com/howlabs/sol/pull/5265'
     const markup = renderToStaticMarkup(<CommentMarkdown variant="document" content={url} />)
 
     expect(markup).not.toContain('<video')
@@ -103,7 +103,7 @@ describe('CommentMarkdown', () => {
     expect(tree.children[0]?.children).toHaveLength(referenceCount * 2 - 1)
     expect(tree.children[0]?.children[0]).toMatchObject({
       type: 'link',
-      url: 'https://github.com/stablyai/orca/issues/1'
+      url: 'https://github.com/howlabs/sol/issues/1'
     })
   })
 

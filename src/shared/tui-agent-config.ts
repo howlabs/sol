@@ -39,7 +39,7 @@ export type TuiAgentConfig = {
   draftPromptFlag?: string
   /** Why: agents that don't expose a `--prefill <text>`-style CLI flag but
    * CAN read an env var on startup to seed their input box without
-   * submitting. Today only pi uses this (via Orca's overlay-installed
+   * submitting. Today only pi uses this (via Sol's overlay-installed
    * `orca-prefill` extension reading `ORCA_PI_PREFILL`). Equivalent in
    * effect to `draftPromptFlag`: avoids the bracketed-paste-after-ready
    * race when the agent's startup output is long (pi prints banner,
@@ -58,7 +58,7 @@ export type TuiAgentConfig = {
   /** Why: most TUIs need both bracketed-paste enablement and a quiet render
    * window before pasted bytes reliably land in the composer. Codex can use
    * a stronger signal from its own renderer: chat_composer.rs writes the
-   * `›` prompt only when the composer row exists, so Orca can paste as soon
+   * `›` prompt only when the composer row exists, so Sol can paste as soon
    * as that prompt appears after bracketed paste is enabled. */
   draftPasteReadySignal?: DraftPasteReadySignal
 }
@@ -72,21 +72,21 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     // Why: `claude --prefill <text>` lands the TUI with `<text>` in the
     // input box, nothing submitted. Strictly better than the paste-after-
     // ready fallback because it eliminates the readiness race entirely.
-    // See PR https://github.com/stablyai/orca/pull/926 for context.
+    // See PR https://github.com/howlabs/sol/pull/926 for context.
     draftPromptFlag: '--prefill'
   },
   'claude-agent-teams': {
-    // Why: this is an Orca-provided launch mode, not a separate upstream
-    // binary. Detection follows the Orca CLI and requires Claude below.
-    detectCmd: 'orca',
-    detectCmdAliases: ['orca-dev', 'orca-ide'],
-    // Why: the Orca shim alone exists on fresh installs. Require Claude too so
+    // Why: this is a Sol-provided launch mode, not a separate upstream
+    // binary. Detection follows the Sol CLI and requires Claude below.
+    detectCmd: 'sol',
+    detectCmdAliases: ['sol-dev', 'sol-ide', 'orca', 'orca-dev'],
+    // Why: the Sol shim alone exists on fresh installs. Require Claude too so
     // onboarding does not report Agent Teams when no agent CLI is installed.
     detectRequiredCommands: ['claude'],
     // Why: native Windows and WSL use Claude's in-process Agent Teams fallback,
-    // not the Orca native-pane/tmux-shim wrapper exposed by this agent entry.
+    // not the Sol native-pane/tmux-shim wrapper exposed by this agent entry.
     detectUnsupportedRuntimes: ['win32', 'wsl'],
-    launchCmd: 'orca claude-teams',
+    launchCmd: 'sol claude-teams',
     launchCmdByPlatform: {
       linux: `${getOrcaCliCommandNameForPlatform('linux')} claude-teams`,
       win32: `${getOrcaCliCommandNameForPlatform('win32')} claude-teams`
@@ -135,7 +135,7 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     promptInjectionMode: 'argv',
     // Why: pi has no `--prefill` flag, and bracketed-paste-after-ready
     // races against its multi-second startup output (banner + skills +
-    // extensions list) so the paste frequently never lands. Orca's
+    // extensions list) so the paste frequently never lands. Sol's
     // overlay installs an `orca-prefill` pi extension (see
     // src/main/pi/titlebar-extension-service.ts) that reads this env var
     // on session_start and calls `pi.ui.setEditorText(text)`. Same
@@ -193,7 +193,7 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     detectCmd: 'command-code',
     // Why: Command Code's documented positional prompt starts the turn, while
     // paste-after-start can leave the prompt sitting in the composer. `--trust`
-    // mirrors the preflight trust behavior Orca applies to other first-run
+    // mirrors the preflight trust behavior Sol applies to other first-run
     // TUIs so launch prompts do not consume the task text.
     launchCmd: 'command-code --trust',
     expectedProcess: 'command-code',
@@ -234,7 +234,7 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
   hermes: {
     detectCmd: 'hermes',
     // Why: bare `hermes` opens the classic REPL in recent Hermes releases;
-    // `--tui` starts the full-screen agent UI Orca is designed to host.
+    // `--tui` starts the full-screen agent UI Sol is designed to host.
     launchCmd: 'hermes --tui',
     expectedProcess: 'hermes',
     promptInjectionMode: 'stdin-after-start'
@@ -250,9 +250,9 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     launchCmd: 'copilot',
     expectedProcess: 'copilot',
     // Why: `copilot --prompt <text>` runs non-interactively and exits on
-    // completion, which would kill the TUI session Orca is hosting.
+    // completion, which would kill the TUI session Sol is hosting.
     // `-i/--interactive <prompt>` starts an interactive session with the
-    // initial prompt pre-executed — the behavior Orca needs.
+    // initial prompt pre-executed — the behavior Sol needs.
     promptInjectionMode: 'flag-interactive',
     // Why: Copilot's first-launch trust menu used to swallow our bracketed
     // paste. Pre-appending the workspace path to `trustedFolders` in
@@ -272,7 +272,7 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     launchCmd: 'devin',
     expectedProcess: 'devin',
     // Why: `devin -- <prompt>` auto-submits immediately (docs.devin.ai/cli).
-    // `stdin-after-start` starts the REPL with no argv prompt; Orca then sends
+    // `stdin-after-start` starts the REPL with no argv prompt; Sol then sends
     // `followupPrompt` to the PTY as plain input + Enter after startup (not
     // bracketed paste). Use `draftPrompt` / agent-paste-draft for review-before-send.
     promptInjectionMode: 'stdin-after-start'
@@ -292,8 +292,8 @@ export function getTuiAgentLaunchCommand(
   platform: NodeJS.Platform,
   opts?: { isRemote?: boolean }
 ): string {
-  // Why: the SSH relay shim is always named `orca` on Unix, so the local-only
-  // `orca-ide` rename (avoids shadowing the GNOME Orca screen reader) must not
+  // Why: the SSH relay shim is always named `sol` on Unix, so the local-only
+  // `sol-ide` rename (avoids shadowing the GNOME Orca screen reader) must not
   // leak to Linux remotes — the remote has no such desktop binary on PATH.
   if (opts?.isRemote && platform === 'linux') {
     return config.launchCmd

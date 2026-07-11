@@ -9,9 +9,14 @@ export type NudgeConfig = {
 
 export async function fetchNudge(): Promise<NudgeConfig | null> {
   try {
-    const res = await net.fetch('https://onorca.dev/whats-new/nudge.json', {
-      signal: AbortSignal.timeout(5000)
-    })
+    // Why: Sol does not ship marketing nudges; keep the fetch path for
+    // future self-hosted config, but default to no nudge when missing.
+    const res = await net.fetch(
+      'https://raw.githubusercontent.com/howlabs/sol/main/docs/whats-new/nudge.json',
+      {
+        signal: AbortSignal.timeout(5000)
+      }
+    )
     if (!res.ok) {
       return null
     }

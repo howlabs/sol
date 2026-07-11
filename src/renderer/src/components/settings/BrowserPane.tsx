@@ -119,7 +119,7 @@ export function BrowserPane({ settings, updateSettings }: BrowserPaneProps): Rea
               ? translate('auto.components.settings.BrowserPane.86b7c83fee', 'This computer')
               : translate(
                   'auto.components.settings.BrowserPane.c0f85056d9',
-                  'Browser profiles on this Orca server.'
+                  'Browser profiles on this Sol server.'
                 )
         })),
     [

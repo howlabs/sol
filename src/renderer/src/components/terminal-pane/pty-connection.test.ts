@@ -4249,7 +4249,7 @@ describe('connectPanePty', () => {
         launchAgent: 'codex',
         launchConfig: { agentArgs: '', agentEnv: {} },
         launchToken: 'launch-token-1',
-        draftPrompt: 'https://github.com/stablyai/orca/issues/42'
+        draftPrompt: 'https://github.com/howlabs/sol/issues/42'
       }
     })
 
@@ -4262,7 +4262,7 @@ describe('connectPanePty', () => {
 
     expect(window.api.pty.writeAccepted).toHaveBeenCalledWith(
       'pty-codex',
-      '\x1b[200~https://github.com/stablyai/orca/issues/42\x1b[201~'
+      '\x1b[200~https://github.com/howlabs/sol/issues/42\x1b[201~'
     )
   })
 
@@ -4287,7 +4287,7 @@ describe('connectPanePty', () => {
           launchAgent: 'codex',
           launchConfig: { agentArgs: '', agentEnv: {} },
           launchToken: 'launch-token-1',
-          draftPrompt: 'https://github.com/stablyai/orca/issues/42'
+          draftPrompt: 'https://github.com/howlabs/sol/issues/42'
         }
       }) as never
     )
@@ -4579,7 +4579,7 @@ describe('connectPanePty', () => {
     expect(mockStoreState.removeAgentStatus).not.toHaveBeenCalled()
   })
 
-  it('clears pre-hook launch config when an Orca-started command exits', async () => {
+  it('clears pre-hook launch config when a Sol-started command exits', async () => {
     const { connectPanePty } = await import('./pty-connection')
 
     const capturedDataCallback: { current: ((data: string) => void) | null } = { current: null }
@@ -9082,7 +9082,7 @@ describe('connectPanePty', () => {
 
     expect(transport.serializeBuffer).not.toHaveBeenCalled()
     expect(pane.terminal.write).not.toHaveBeenCalledWith(
-      expect.stringContaining('Orca skipped hidden terminal output'),
+      expect.stringContaining('Sol skipped hidden terminal output'),
       expect.any(Function)
     )
     expect(pane.terminal.write).not.toHaveBeenCalledWith(
@@ -9594,7 +9594,7 @@ describe('connectPanePty', () => {
       expect(getMainBufferSnapshot).toHaveBeenCalledTimes(4)
       expect(pane.terminal.write).toHaveBeenCalledWith(
         expect.stringContaining(
-          'Orca skipped hidden terminal output because main recovery was unavailable.'
+          'Sol skipped hidden terminal output because main recovery was unavailable.'
         ),
         expect.any(Function)
       )

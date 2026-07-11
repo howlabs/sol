@@ -467,7 +467,7 @@ export class LocalPtyProvider implements IPtyProvider {
       ...args.env,
       TERM: 'xterm-256color',
       COLORTERM: 'truecolor',
-      TERM_PROGRAM: 'Orca',
+      TERM_PROGRAM: 'Sol',
       // Why: TUIs feature-gate on TERM_PROGRAM_VERSION (Neovim's termcap
       // autodetection, bat/delta paging hints). Sourced from ORCA_APP_VERSION
       // which main/index.ts seeds from app.getVersion() at startup; the
@@ -476,13 +476,13 @@ export class LocalPtyProvider implements IPtyProvider {
       // Why: opt tools (Claude Code, ls --hyperlink, etc.) into emitting OSC 8
       // hyperlinks. The `supports-hyperlinks` npm package gates on a hard-coded
       // TERM_PROGRAM allowlist (iTerm.app / WezTerm / vscode) and returns false
-      // for TERM_PROGRAM=Orca, so callers drop OSC 8 output entirely and emit
-      // bare text instead. xterm.js in Orca parses OSC 8 and the pane's
+      // for TERM_PROGRAM=Sol, so callers drop OSC 8 output entirely and emit
+      // bare text instead. xterm.js in Sol parses OSC 8 and the pane's
       // linkHandler routes clicks, so forcing the advertisement is safe and
       // restores clickable refs like `owner/repo#123` / `PR#123`.
       FORCE_HYPERLINK: '1'
     } as Record<string, string>
-    // Why: Orca can be launched from an Orca terminal while developing. Pane
+    // Why: Sol can be launched from a Sol terminal while developing. Pane
     // identity belongs to the child PTY, not the parent shell that spawned app.
     removeUnspecifiedPaneIdentityEnv(spawnEnv, args.env)
     removeAppImageRuntimeEnv(spawnEnv)
@@ -554,7 +554,7 @@ export class LocalPtyProvider implements IPtyProvider {
             }
           }
         } else if (isHostCodexHomeForWsl(finalEnv.CODEX_HOME)) {
-          // Why: Orca's selected Codex runtime home is host-local. WSL Codex
+          // Why: Sol's selected Codex runtime home is host-local. WSL Codex
           // must use its Linux-side ~/.codex instead of a Windows path.
           delete finalEnv.CODEX_HOME
           delete finalEnv.ORCA_CODEX_HOME
@@ -805,7 +805,7 @@ export class LocalPtyProvider implements IPtyProvider {
     ptyDisposables.set(id, disposables)
 
     if (args.command && !startupCommandDeliveredInShellArgs) {
-      // Why: only Orca-wrapped POSIX bash/zsh have bracketed-paste mode armed
+      // Why: only Sol-wrapped POSIX bash/zsh have bracketed-paste mode armed
       // (bash via `bind`, zsh on by default), so multiline startup prompts can
       // be pasted literally there; other shells keep the raw submit path.
       const spawnedShellName = getSpawnedShellName(shellPath).toLowerCase()

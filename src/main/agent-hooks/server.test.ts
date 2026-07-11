@@ -4036,7 +4036,7 @@ describe('Codex hook normalization', () => {
   })
 
   it('PermissionRequest maps to waiting and surfaces the pending tool input', () => {
-    // Why: Codex asks for user attention through PermissionRequest. Orca's
+    // Why: Codex asks for user attention through PermissionRequest. Sol's
     // sidebar red dot depends on this becoming `waiting`; treating it like
     // PreToolUse would leave the pane looking busy while it is blocked on the
     // user.
@@ -5457,7 +5457,7 @@ describe('Endpoint file lifecycle', () => {
     // Why: stop() deliberately does NOT unlink the endpoint file. A stale file
     // points at a dead port — the fail-open path (hook POSTs silently fail,
     // same as pre-endpoint-file). Unlinking would introduce a TOCTOU race with a
-    // concurrent Orca instance sharing userData that could rewrite the file
+    // concurrent Sol instance sharing userData that could rewrite the file
     // between our token check and unlink. The next successful start()
     // overwrites the file atomically; tmp-file orphan hygiene is handled by
     // the sweep inside writeEndpointFile().

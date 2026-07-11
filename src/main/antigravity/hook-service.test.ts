@@ -187,7 +187,7 @@ describe('AntigravityHookService', () => {
     })
   })
 
-  it('preserves user-authored hook bundles and entries in Orca bundle', () => {
+  it('preserves user-authored hook bundles and entries in Sol bundle', () => {
     const configPath = join(homeDir, '.gemini', 'config', 'hooks.json')
     mkdirSync(dirname(configPath), { recursive: true })
     writeFileSync(
@@ -198,7 +198,7 @@ describe('AntigravityHookService', () => {
             PreInvocation: [{ type: 'command', command: '/usr/local/bin/user-hook' }]
           },
           'orca-status': {
-            PreInvocation: [{ type: 'command', command: '/usr/local/bin/orca-extra' }]
+            PreInvocation: [{ type: 'command', command: '/usr/local/bin/sol-extra' }]
           }
         },
         null,
@@ -214,7 +214,7 @@ describe('AntigravityHookService', () => {
     }
     expect(config['user-hook'].PreInvocation[0].command).toBe('/usr/local/bin/user-hook')
     const commands = config['orca-status'].PreInvocation.map((entry) => entry.command)
-    expect(commands).toContain('/usr/local/bin/orca-extra')
+    expect(commands).toContain('/usr/local/bin/sol-extra')
     expect(commands.some((command) => command.includes(ANTIGRAVITY_PRE_INVOCATION_COMMAND))).toBe(
       true
     )

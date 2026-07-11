@@ -112,7 +112,7 @@ export class RuntimeClient {
         ok: true,
         result: {
           // Why: remote status proves the paired runtime is reachable, not
-          // that this client machine has a local Orca desktop process.
+          // that this client machine has a local Sol desktop process.
           app: {
             running: false,
             pid: null
@@ -185,7 +185,7 @@ export class RuntimeClient {
 
     throw new RuntimeClientError(
       'runtime_open_timeout',
-      'Timed out waiting for Orca to start. Run the Orca app manually and try again.'
+      'Timed out waiting for Sol to start. Run the Sol app manually and try again.'
     )
   }
 }

@@ -44,7 +44,7 @@ export async function discoverAiVaultSessionSources(args: {
   const codexSessionsDirs = uniqueCodexSessionsDirs([
     options.codexSessionsDir ?? CODEX_SESSIONS_DIR,
     ...wslHomeDirs.map((homeDir) => join(homeDir, '.codex', 'sessions')),
-    // Why: Orca-launched WSL Codex sessions use an Orca-owned CODEX_HOME,
+    // Why: Sol-launched WSL Codex sessions use a Sol-owned CODEX_HOME,
     // not the user's default ~/.codex history root.
     ...wslHomeDirs.map((homeDir) =>
       join(homeDir, '.local', 'share', 'orca', 'codex-runtime-home', 'home', 'sessions')

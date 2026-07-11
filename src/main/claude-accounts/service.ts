@@ -143,7 +143,7 @@ export class ClaudeAccountService {
     try {
       const captured = await this.runClaudeLoginAndCapture(managedAuth)
       if (!captured.identity.email) {
-        throw new Error('Claude login completed, but Orca could not resolve the account email.')
+        throw new Error('Claude login completed, but Sol could not resolve the account email.')
       }
       await this.writeManagedAuth(accountId, managedAuthPath, captured)
 
@@ -192,7 +192,7 @@ export class ClaudeAccountService {
       wslLinuxAuthPath: account.wslLinuxAuthPath ?? null
     })
     if (!captured.identity.email) {
-      throw new Error('Claude login completed, but Orca could not resolve the account email.')
+      throw new Error('Claude login completed, but Sol could not resolve the account email.')
     }
 
     const settings = this.store.getSettings()
@@ -766,7 +766,7 @@ export class ClaudeAccountService {
       throw new Error('Could not resolve the active WSL home directory for Claude login.')
     }
 
-    const wslLinuxAuthPath = `${home.replace(/\/$/, '')}/.local/share/orca/claude-accounts/${accountId}/auth`
+    const wslLinuxAuthPath = `${home.replace(/\/$/, '')}/.local/share/sol/claude-accounts/${accountId}/auth`
     const markerPath = `${wslLinuxAuthPath}/.orca-managed-claude-auth`
     execFileSync(
       'wsl.exe',
@@ -800,10 +800,10 @@ export class ClaudeAccountService {
     const wslInfo = parseWslUncPath(candidatePath)
     if (wslInfo) {
       if (
-        !wslInfo.linuxPath.includes('/.local/share/orca/claude-accounts/') ||
+        !wslInfo.linuxPath.includes('/.local/share/sol/claude-accounts/') ||
         !wslInfo.linuxPath.endsWith('/auth')
       ) {
-        throw new Error('Managed WSL Claude auth storage is outside Orca account storage.')
+        throw new Error('Managed WSL Claude auth storage is outside Sol account storage.')
       }
       if (process.platform === 'win32') {
         try {
@@ -819,7 +819,7 @@ export class ClaudeAccountService {
                 [
                   'set -euo pipefail',
                   `candidate=${shellQuote(wslInfo.linuxPath)}`,
-                  'managed_root="${HOME%/}/.local/share/orca/claude-accounts"',
+                  'managed_root="${HOME%/}/.local/share/sol/claude-accounts"',
                   'candidate_real=$(readlink -f -- "$candidate")',
                   'managed_root_real=$(readlink -f -- "$managed_root")',
                   'test -f "$candidate_real/.orca-managed-claude-auth"',
@@ -837,7 +837,7 @@ export class ClaudeAccountService {
           }
           return toWindowsWslPath(canonicalLinuxPath, wslInfo.distro)
         } catch (error) {
-          throw new Error('Managed WSL Claude auth storage is outside Orca account storage.', {
+          throw new Error('Managed WSL Claude auth storage is outside Sol account storage.', {
             cause: error
           })
         }
@@ -846,7 +846,7 @@ export class ClaudeAccountService {
         !existsSync(candidatePath) ||
         !existsSync(join(candidatePath, '.orca-managed-claude-auth'))
       ) {
-        throw new Error('Managed Claude auth storage is not owned by Orca.')
+        throw new Error('Managed Claude auth storage is not owned by Sol.')
       }
       return candidatePath
     }
@@ -860,7 +860,7 @@ export class ClaudeAccountService {
       adoptLegacyMarker: true
     })
     if (!trustedPath) {
-      throw new Error('Managed Claude auth storage is not owned by Orca.')
+      throw new Error('Managed Claude auth storage is not owned by Sol.')
     }
     return trustedPath
   }

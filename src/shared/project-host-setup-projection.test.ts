@@ -90,8 +90,8 @@ describe('project host setup projection', () => {
       repo({
         id: 'local-repo',
         path: '/Users/alice/orca',
-        displayName: 'Orca',
-        upstream: { owner: 'StablyAI', repo: 'Orca' }
+        displayName: 'Sol',
+        upstream: { owner: 'StablyAI', repo: 'Sol' }
       }),
       repo({
         id: 'remote-repo',
@@ -106,7 +106,7 @@ describe('project host setup projection', () => {
     expect(projection.projects[0]).toMatchObject({
       id: 'github:stablyai/orca',
       sourceRepoIds: ['local-repo', 'remote-repo'],
-      providerIdentity: { provider: 'github', owner: 'StablyAI', repo: 'Orca' }
+      providerIdentity: { provider: 'github', owner: 'StablyAI', repo: 'Sol' }
     })
     expect(getProjectHostSetupsForProject(projection.setups, 'github:stablyai/orca')).toHaveLength(
       2
@@ -118,7 +118,7 @@ describe('project host setup projection', () => {
       repo({
         id: 'local-repo',
         path: '/Users/alice/orca',
-        displayName: 'Orca',
+        displayName: 'Sol',
         repoIcon: {
           type: 'image',
           src: 'https://github.com/stablyai.png?size=64',
@@ -158,7 +158,7 @@ describe('project host setup projection', () => {
         path: '/Users/alice/stably/orca',
         displayName: 'orca',
         gitRemoteIdentity: {
-          canonicalKey: 'github.com/stablyai/orca',
+          canonicalKey: 'github.com/howlabs/sol',
           remoteName: 'origin',
           remoteUrl: 'git@github.com:stablyai/orca.git'
         }

@@ -101,10 +101,10 @@ export function StatsPane(): React.JSX.Element {
       {summary ? (
         <section className="space-y-1.5">
           <SettingsSubsectionHeader
-            title={translate('auto.components.stats.StatsPane.orcaActivityTitle', 'Orca activity')}
+            title={translate('auto.components.stats.StatsPane.orcaActivityTitle', 'Sol activity')}
             description={translate(
               'auto.components.stats.StatsPane.orcaActivityDescription',
-              'Agents spawned, time worked, and pull requests created in this Orca install.'
+              'Agents spawned, time worked, and pull requests created in this Sol install.'
             )}
           />
           {summary.totalAgentsSpawned === 0 && summary.totalPRsCreated === 0 ? (

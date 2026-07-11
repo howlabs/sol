@@ -48,17 +48,17 @@ function getManagedScript(
       'setlocal',
       ...(options.skipWhenDevinImportsClaude
         ? [
-            // Why: Devin imports .claude hooks by default. Skip Orca's managed
+            // Why: Devin imports .claude hooks by default. Skip Sol's managed
             // Claude hook there so status posts stay attributed to Devin.
             'if not "%DEVIN_PROJECT_DIR%"=="" exit /b 0'
           ]
         : []),
-      // Why: the endpoint file holds the *live* port/token for this Orca
-      // install. A PTY that survived an Orca restart has stale PORT/TOKEN
+      // Why: the endpoint file holds the *live* port/token for this Sol
+      // install. A PTY that survived a Sol restart has stale PORT/TOKEN
       // baked into its env from the old instance — loading `endpoint.cmd`
       // (`set KEY=VALUE` lines) via `call` refreshes them so the hook
       // reaches the current server. Falls through to PTY env if the file
-      // is missing (first run / pre-endpoint-file / running outside Orca).
+      // is missing (first run / pre-endpoint-file / running outside Sol).
       'if defined ORCA_AGENT_HOOK_ENDPOINT if exist "%ORCA_AGENT_HOOK_ENDPOINT%" call "%ORCA_AGENT_HOOK_ENDPOINT%" 2>nul',
       'if "%ORCA_AGENT_HOOK_PORT%"=="" exit /b 0',
       'if "%ORCA_AGENT_HOOK_TOKEN%"=="" exit /b 0',
@@ -78,18 +78,18 @@ function getManagedScript(
     '#!/bin/sh',
     ...(options.skipWhenDevinImportsClaude
       ? [
-          // Why: Devin imports .claude hooks by default. Skip Orca's managed
+          // Why: Devin imports .claude hooks by default. Skip Sol's managed
           // Claude hook there so status posts stay attributed to Devin.
           'if [ -n "$DEVIN_PROJECT_DIR" ]; then',
           '  exit 0',
           'fi'
         ]
       : []),
-    // Why: the endpoint file holds the *live* port/token for this Orca
-    // install. PTYs that survive an Orca restart have stale PORT/TOKEN
+    // Why: the endpoint file holds the *live* port/token for this Sol
+    // install. PTYs that survive a Sol restart have stale PORT/TOKEN
     // baked into their env from the old instance — sourcing the file here
     // lets us reach the new server. Falls back to PTY env if the file is
-    // missing (first-run / pre-endpoint-file scripts / running outside Orca).
+    // missing (first-run / pre-endpoint-file scripts / running outside Sol).
     // Why: suppress stderr on the `.` builtin. A TOCTOU race (endpoint unlinked
     // between the `[ -r ]` test and the source) or a malformed line (e.g. CRLF
     // bled in from a cross-platform userData copy) would otherwise print a
@@ -217,7 +217,7 @@ export class ClaudeHookService {
     return this.getStatus()
   }
 
-  // Why: install Orca's Claude hook settings on the remote box rather than the
+  // Why: install Sol's Claude hook settings on the remote box rather than the
   // local machine. Caller passes the user's SFTP handle plus the resolved
   // remote `$HOME`; POSIX-only by design (Windows-remote deferred).
   async installRemote(sftp: SFTPWrapper, remoteHome: string): Promise<AgentHookInstallStatus> {
@@ -258,7 +258,7 @@ export class ClaudeHookService {
       // order means a partial-failure mid-install at worst leaves the user
       // with a working script no settings.json points at (a no-op), instead
       // of broken settings.json.
-      // Why: SSH remotes use POSIX `.sh` hook paths even when Orca itself is
+      // Why: SSH remotes use POSIX `.sh` hook paths even when Sol itself is
       // running on Windows; never derive remote script syntax from local OS.
       await writeManagedScriptRemote(
         sftp,

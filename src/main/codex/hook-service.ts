@@ -48,7 +48,7 @@ import { syncSystemConfigIntoManagedCodexHome } from './codex-config-mirror'
 // Why: PreToolUse/PostToolUse give the dashboard a live readout of the
 // in-flight tool (name + input preview) between UserPromptSubmit and Stop.
 // PermissionRequest is the human-input boundary: the managed script exits
-// without a decision so Codex still shows its normal approval UI, while Orca
+// without a decision so Codex still shows its normal approval UI, while Sol
 // can flip the pane to the red waiting state.
 const CODEX_EVENTS = [
   'SessionStart',
@@ -65,7 +65,7 @@ function getConfigPath(): string {
 
 function writeCodexHooksJson(configPath: string, hooks: Record<string, HookDefinition[]>): void {
   // Why: Codex rejects unknown top-level hooks.json fields, so plugin manager
-  // bookkeeping such as `_managed` must not survive Orca's rewrite.
+  // bookkeeping such as `_managed` must not survive Sol's rewrite.
   writeHooksJson(configPath, { hooks })
 }
 
@@ -257,7 +257,7 @@ function commandUsesCodexPluginOnlyPlaceholder(command: string | undefined): boo
 }
 
 function removeCodexPluginEnvironmentCommands(definitions: HookDefinition[]): HookDefinition[] {
-  // Why: Orca mirrors system hooks into a plain runtime hooks.json. Plugin
+  // Why: Sol mirrors system hooks into a plain runtime hooks.json. Plugin
   // placeholders only work for Codex plugin hook sources, so copying those
   // commands here strips the environment they require and turns them into 127s.
   return removeManagedCommands(definitions, commandUsesCodexPluginOnlyPlaceholder)
@@ -299,9 +299,9 @@ function getRuntimeHooksWithSystemUserHooks(
       continue
     }
 
-    // Why: runtime hooks are derived from the user's system hooks plus Orca's
+    // Why: runtime hooks are derived from the user's system hooks plus Sol's
     // managed hooks. Reusing old runtime user-hook copies would keep deleted or
-    // edited ~/.codex/hooks.json entries alive for new Orca-launched sessions.
+    // edited ~/.codex/hooks.json entries alive for new Sol-launched sessions.
     nextHooks[eventName] = dedupeHookDefinitions(systemUserDefinitions)
   }
 
@@ -327,7 +327,7 @@ function getTrustedSystemUserHookSignatures(
     trustEntries = readHookTrustEntries(getSystemCodexConfigTomlPath())
   } catch (error) {
     // Why: a hand-broken system config.toml should only disable user-hook
-    // trust mirroring; Orca's managed runtime hooks can still be installed.
+    // trust mirroring; Sol's managed runtime hooks can still be installed.
     console.warn('[codex-hook-service] failed to read system hook trust entries', error)
     return signatures
   }
@@ -478,7 +478,7 @@ function buildHookTrustHeaderKeyPattern(key: string): string {
     const quoted = [`"${escapeRegex(escapeTomlString(variant))}"`]
     if (!variant.includes("'")) {
       // Why: tolerate raw-backslash literal keys left by Codex/manual approval
-      // while Orca repairs mirrored runtime trust across both Windows variants.
+      // while Sol repairs mirrored runtime trust across both Windows variants.
       quoted.push(`'${escapeRegex(variant)}'`)
     }
     return quoted
@@ -562,11 +562,11 @@ function cleanupLegacySystemManagedHooks(): void {
     }
   }
 
-  // Why: Codex hooks moved to Orca's managed CODEX_HOME; old entries in
-  // ~/.codex would keep external Codex sessions reporting into Orca.
+  // Why: Codex hooks moved to Sol's managed CODEX_HOME; old entries in
+  // ~/.codex would keep external Codex sessions reporting into Sol.
   if (removedManagedHook) {
-    // Why: this is the user's system hooks file, not Orca's runtime copy.
-    // Remove only stale Orca hook entries and preserve other managers' metadata.
+    // Why: this is the user's system hooks file, not Sol's runtime copy.
+    // Remove only stale Sol hook entries and preserve other managers' metadata.
     writeHooksJson(legacyConfigPath, { ...config, hooks: nextHooks })
   }
   removeMatchingTrustEntries(getSystemCodexConfigTomlPath(), trustEntries)
@@ -601,8 +601,8 @@ function cleanupLegacyCodexProfileHooks(): void {
   if (next === existing) {
     return
   }
-  // Why: #2778 wrote Orca hooks into a Codex profile file. Runtime CODEX_HOME
-  // supersedes that representation, so remove only Orca's marked block.
+  // Why: #2778 wrote Sol hooks into a Codex profile file. Runtime CODEX_HOME
+  // supersedes that representation, so remove only Sol's marked block.
   if (next.trim().length === 0) {
     unlinkSync(profilePath)
   } else {
@@ -629,7 +629,7 @@ function removeRuntimeManagedHookTrustEntries(configPath: string): void {
       CODEX_EVENTS.map((event) => CODEX_EVENT_LABEL[event])
     )
     // Why: only drop entries WE wrote. The same config.toml can contain
-    // user-approved trust entries for non-Orca commands, so match by hash
+    // user-approved trust entries for non-Sol commands, so match by hash
     // equivalence to our managed command — a sourcePath-only filter would
     // wipe the user's manually-approved entries.
     const ourKeys: string[] = []
@@ -680,9 +680,9 @@ function getManagedScript(target: 'local' | 'posix' = 'local'): string {
       '@echo off',
       'setlocal',
       // Why: see claude/hook-service.ts for rationale. The endpoint file holds
-      // the live port/token for this Orca install; sourcing it here lets a
+      // the live port/token for this Sol install; sourcing it here lets a
       // surviving PTY reach the current server even though its env points at
-      // the prior Orca's coordinates.
+      // the prior Sol's coordinates.
       'if defined ORCA_AGENT_HOOK_ENDPOINT if exist "%ORCA_AGENT_HOOK_ENDPOINT%" call "%ORCA_AGENT_HOOK_ENDPOINT%" 2>nul',
       'if "%ORCA_AGENT_HOOK_PORT%"=="" exit /b 0',
       'if "%ORCA_AGENT_HOOK_TOKEN%"=="" exit /b 0',
@@ -696,7 +696,7 @@ function getManagedScript(target: 'local' | 'posix' = 'local'): string {
   return [
     '#!/bin/sh',
     // Why: see claude/hook-service.ts for rationale. Sourcing refreshes
-    // PORT/TOKEN/ENV/VERSION from the current Orca so a surviving PTY keeps
+    // PORT/TOKEN/ENV/VERSION from the current Sol so a surviving PTY keeps
     // reporting after a restart.
     'if [ -n "$ORCA_AGENT_HOOK_ENDPOINT" ] && [ -r "$ORCA_AGENT_HOOK_ENDPOINT" ]; then',
     '  . "$ORCA_AGENT_HOOK_ENDPOINT" 2>/dev/null || :',
@@ -938,7 +938,7 @@ export class CodexHookService {
       syncSystemConfigIntoManagedCodexHome()
       // Why: system user hook approvals are mirrored into runtime CODEX_HOME.
       // If the user later revokes approval in ~/.codex/config.toml, preserving
-      // all old runtime [hooks.state.*] blocks would keep Orca Codex trusted.
+      // all old runtime [hooks.state.*] blocks would keep Sol Codex trusted.
       // Upsert first so duplicate repair can preserve a disabled managed copy
       // before stale cleanup removes old managed hook keys.
       upsertHookTrustEntries(tomlPath, trustEntries)
@@ -1016,11 +1016,11 @@ export class CodexHookService {
       config.hooks = nextHooks
       // Why: script/settings first, trust TOML last. A partial trust write
       // leaves Codex asking for approval rather than executing a missing script.
-      // Why: SSH remotes use POSIX `.sh` hook paths even when Orca itself is
+      // Why: SSH remotes use POSIX `.sh` hook paths even when Sol itself is
       // running on Windows; never derive remote script syntax from local OS.
       await writeManagedScriptRemote(sftp, remoteScriptPath, getManagedScript('posix'))
       // Why: SSH installs edit the user's remote ~/.codex/hooks.json directly.
-      // Preserve non-Orca top-level metadata while replacing the hooks tree.
+      // Preserve non-Sol top-level metadata while replacing the hooks tree.
       await writeHooksJsonRemote(sftp, remoteConfigPath, { ...config, hooks: nextHooks })
       try {
         const existingToml = (await readTextFileRemote(sftp, remoteTomlPath)) ?? ''
@@ -1083,8 +1083,8 @@ export class CodexHookService {
       const tomlPath = getCodexConfigTomlPath()
       const trustEntries = hookPlan.trustEntries.map(({ entry }) => entry)
       syncSystemConfigIntoManagedCodexHome()
-      // Why: this path is used when Orca status hooks are disabled. The
-      // runtime CODEX_HOME should keep user hooks, but not Orca-managed trust.
+      // Why: this path is used when Sol status hooks are disabled. The
+      // runtime CODEX_HOME should keep user hooks, but not Sol-managed trust.
       // Write current mirrored user trust first so stale cleanup compares
       // against current hashes while deleting old managed hook keys.
       upsertHookTrustEntries(tomlPath, trustEntries)

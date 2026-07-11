@@ -23,7 +23,7 @@ import {
 } from '../agent-hooks/installer-utils-remote'
 
 // Why: Copilot's user-level hook files can use VS Code-compatible PascalCase
-// names, which match the event vocabulary already normalized by Orca's hook
+// names, which match the event vocabulary already normalized by Sol's hook
 // server and avoid wrapper-side event remapping.
 const COPILOT_EVENTS = [
   'SessionStart',
@@ -34,7 +34,7 @@ const COPILOT_EVENTS = [
   'PostToolUseFailure',
   // Why: GitHub's current reference documents subagentStart with only the
   // camelCase payload shape. The wrapper passes the event name separately, so
-  // Orca can normalize it without depending on a PascalCase payload.
+  // Sol can normalize it without depending on a PascalCase payload.
   'subagentStart',
   'SubagentStop',
   'PreCompact',
@@ -119,7 +119,7 @@ function getManagedScript(target: 'local' | 'posix' = 'local'): string {
     return [
       "Write-Output '{}'",
       // Why: endpoint.cmd is cmd syntax, not PowerShell. Parse its `set KEY=...`
-      // lines so surviving PTYs can refresh to the current Orca server.
+      // lines so surviving PTYs can refresh to the current Sol server.
       'if ($env:ORCA_AGENT_HOOK_ENDPOINT -and (Test-Path -LiteralPath $env:ORCA_AGENT_HOOK_ENDPOINT)) {',
       '  try {',
       '    Get-Content -LiteralPath $env:ORCA_AGENT_HOOK_ENDPOINT | ForEach-Object {',
@@ -348,7 +348,7 @@ export class CopilotHookService {
       config.version = 1
       delete config.disableAllHooks
       config.hooks = nextHooks
-      // Why: SSH remotes use POSIX scripts regardless of Orca's local OS. Write
+      // Why: SSH remotes use POSIX scripts regardless of Sol's local OS. Write
       // the script before hooks/orca.json so a partial install cannot point
       // Copilot at a missing managed command.
       await writeManagedScriptRemote(sftp, remoteScriptPath, getManagedScript('posix'))

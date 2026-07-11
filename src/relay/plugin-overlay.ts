@@ -42,7 +42,7 @@ const PI_AGENT_HOME_DIR_NAME: Record<PiAgentKind, string> = {
 
 function safeDirName(input: string): string {
   // Why: paneKey embeds tabId:paneId where tabId may itself contain
-  // filesystem-unsafe characters in some Orca builds. Hash to a fixed-width
+  // filesystem-unsafe characters in some Sol builds. Hash to a fixed-width
   // hex name so any input produces a portable directory name.
   return createHash('sha256').update(input).digest('hex').slice(0, 32)
 }
@@ -82,9 +82,9 @@ export class PluginOverlayManager {
     this.legacyOmpRoot = join(home, RELAY_HOOKS_DIR, LEGACY_OMP_OVERLAY_SUBDIR)
   }
 
-  /** Replace the cached source bodies. Called from relay.ts when Orca sends
+  /** Replace the cached source bodies. Called from relay.ts when Sol sends
    *  `agent_hook.installPlugins`. The first install enables the augmenter
-   *  output; subsequent installs (e.g. Orca version upgrade in flight) refresh
+   *  output; subsequent installs (e.g. Sol version upgrade in flight) refresh
    *  the cached source so future spawns see the new strings.
    *  Note: existing running agents keep whatever source they loaded at
    *  process start. Future PTYs pick up the refreshed source when the relay
@@ -180,7 +180,7 @@ export class PluginOverlayManager {
           return null
         }
         // Why: OPENCODE_CONFIG_DIR is a single config root. Mirror the user's
-        // remote root into the overlay before adding Orca's plugin so status
+        // remote root into the overlay before adding Sol's plugin so status
         // reporting does not hide their auth, models, keybinds, or plugins.
         this.mirrorOpenCodeConfig(existingConfigDir, dir)
       }

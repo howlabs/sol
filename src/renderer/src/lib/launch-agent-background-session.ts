@@ -69,7 +69,7 @@ export async function launchAgentBackgroundSession(
       )
     : CLIENT_PLATFORM
   // Why: SSH remotes deploy the CLI shim as plain `orca`, so the Linux-only
-  // `orca-ide` rename must not be applied for remote launches.
+  // `sol-ide` rename must not be applied for remote launches.
   const isRemote = repo ? repoIsRemote(repo) : false
   const trimmedPrompt = prompt?.trim() ?? ''
   const hasPrompt = trimmedPrompt.length > 0

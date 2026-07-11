@@ -368,7 +368,7 @@ describe('canCleanupUnregisteredOrcaLeftoverDirectory', () => {
     expect(isGitRepository).not.toHaveBeenCalled()
   })
 
-  it('rejects no-marker cleanup when only the Orca path shape matches', async () => {
+  it('rejects no-marker cleanup when only the Sol path shape matches', async () => {
     const isGitRepository = vi.fn().mockResolvedValue(false)
 
     await expect(

@@ -428,7 +428,7 @@ describe('repo slice runtime routing', () => {
       store.getState().setupProjectClone({
         projectId: project.id,
         hostId: 'local',
-        url: 'https://github.com/stablyai/orca.git',
+        url: 'https://github.com/howlabs/sol.git',
         destination: '/workspace',
         displayName: 'Project'
       })
@@ -439,7 +439,7 @@ describe('repo slice runtime routing', () => {
     })
 
     expect(reposClone).toHaveBeenCalledWith({
-      url: 'https://github.com/stablyai/orca.git',
+      url: 'https://github.com/howlabs/sol.git',
       destination: '/workspace'
     })
     expect(projectsSetupExistingFolder).toHaveBeenCalledWith({
@@ -493,7 +493,7 @@ describe('repo slice runtime routing', () => {
       store.getState().setupProjectClone({
         projectId: project.id,
         hostId: 'runtime:env-1',
-        url: 'https://github.com/stablyai/orca.git',
+        url: 'https://github.com/howlabs/sol.git',
         destination: '/srv',
         displayName: 'Project'
       })
@@ -507,7 +507,7 @@ describe('repo slice runtime routing', () => {
       selector: 'env-1',
       method: 'repo.clone',
       params: {
-        url: 'https://github.com/stablyai/orca.git',
+        url: 'https://github.com/howlabs/sol.git',
         destination: '/srv'
       },
       timeoutMs: 10 * 60_000
@@ -557,7 +557,7 @@ describe('repo slice runtime routing', () => {
       store.getState().setupProjectClone({
         projectId: project.id,
         hostId: 'ssh:ssh-1',
-        url: 'https://github.com/stablyai/orca.git',
+        url: 'https://github.com/howlabs/sol.git',
         destination: '/srv',
         displayName: 'Project'
       })
@@ -569,7 +569,7 @@ describe('repo slice runtime routing', () => {
 
     expect(reposCloneRemote).toHaveBeenCalledWith({
       connectionId: 'ssh-1',
-      url: 'https://github.com/stablyai/orca.git',
+      url: 'https://github.com/howlabs/sol.git',
       destination: '/srv'
     })
     expect(projectsSetupExistingFolder).toHaveBeenCalledWith({

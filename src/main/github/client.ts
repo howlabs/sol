@@ -3000,7 +3000,7 @@ export async function getPRForBranchOutcome(
     const shouldPreserveMergedFallback =
       !explicitHeadHidesMergedImplicitPR &&
       (fallbackConfirmedMergedBranch || options.acceptMergedFallbackPR === true)
-    // Why: a currently visible PR can be merged outside Orca; when the caller
+    // Why: a currently visible PR can be merged outside Sol; when the caller
     // marks the fallback as visible review state, keep its lifecycle fresh even
     // if GitHub no longer reports it by branch (for example deleted heads).
     if ((await hideMergedImplicitPR(data, dataRepo)) && !shouldPreserveMergedFallback) {

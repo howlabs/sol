@@ -77,7 +77,7 @@ describe('getWorkItemDetails PR file viewed state', () => {
       number: 42,
       title: 'Review files',
       state: 'open',
-      url: 'https://github.com/stablyai/orca/pull/42',
+      url: 'https://github.com/howlabs/sol/pull/42',
       labels: [],
       updatedAt: '2026-04-01T00:00:00Z',
       author: null
@@ -176,7 +176,7 @@ describe('getWorkItemDetails PR file viewed state', () => {
       number: 42,
       title: 'Review files',
       state: 'open',
-      url: 'https://github.com/stablyai/orca/pull/42',
+      url: 'https://github.com/howlabs/sol/pull/42',
       labels: [],
       updatedAt: '2026-04-01T00:00:00Z',
       author: null

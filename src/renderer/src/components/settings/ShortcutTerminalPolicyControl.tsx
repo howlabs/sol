@@ -25,7 +25,7 @@ export function ShortcutTerminalPolicyControl({
           value: 'orca-first',
           label: translate(
             'auto.components.settings.ShortcutTerminalPolicyControl.63308571d8',
-            'Orca first'
+            'Sol first'
           )
         },
         {
@@ -48,7 +48,7 @@ export function ShortcutTerminalPolicyControl({
       )}
       description={translate(
         'auto.components.settings.ShortcutTerminalPolicyControl.0f55c6f15c',
-        'Choose whether Orca or the focused terminal wins when shortcuts overlap.'
+        'Choose whether Sol or the focused terminal wins when shortcuts overlap.'
       )}
       keywords={keywords}
       className="max-w-none"

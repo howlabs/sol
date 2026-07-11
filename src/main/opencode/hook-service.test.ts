@@ -46,10 +46,10 @@ describe('OpenCode hook plugin source', () => {
   })
 
   it('resolves hook coords from the endpoint file before falling back to process.env', () => {
-    // Why: a long-running OpenCode session was fork()ed with the prior Orca's
+    // Why: a long-running OpenCode session was fork()ed with the prior Sol's
     // PORT/TOKEN frozen into process.env. The plugin must prefer the on-disk
-    // endpoint file (rewritten on every Orca start()) over env, otherwise it
-    // keeps posting to a dead port after an Orca restart.
+    // endpoint file (rewritten on every Sol start()) over env, otherwise it
+    // keeps posting to a dead port after a Sol restart.
     const source = _internals.getOpenCodePluginSource()
 
     expect(source).toContain('function readEndpointFile()')
@@ -273,9 +273,9 @@ describe('OpenCodeHookService buildPtyEnv / clearPty round-trip', () => {
 describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () => {
   // Why: locks in docs/opencode-config-dir-collision.md — when the user has
   // their own OPENCODE_CONFIG_DIR (e.g. a company-wide opencode config repo),
-  // Orca must mirror it into a source-scoped overlay rather than `delete` its
+  // Sol must mirror it into a source-scoped overlay rather than `delete` its
   // own injection or overwrite the user's value. The user's auth/models/keymap
-  // and Orca's status plugin both load via a single OPENCODE_CONFIG_DIR.
+  // and Sol's status plugin both load via a single OPENCODE_CONFIG_DIR.
   const ptyId = 'overlay-pty-1'
   let userDataDir: string
   let userConfigDir: string
@@ -319,7 +319,7 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
     )
   }
 
-  it('builds an overlay under userData and exposes user config + Orca plugin together', () => {
+  it('builds an overlay under userData and exposes user config + Sol plugin together', () => {
     const service = new OpenCodeHookService()
     const env = service.buildPtyEnv(ptyId, userConfigDir)
 
@@ -339,7 +339,7 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
       'export default () => {}'
     )
 
-    // Orca's status plugin is a sibling, not a replacement.
+    // Sol's status plugin is a sibling, not a replacement.
     const orcaPluginPath = join(env.OPENCODE_CONFIG_DIR!, 'plugins', 'orca-opencode-status.js')
     expect(existsSync(orcaPluginPath)).toBe(true)
     expect(readFileSync(orcaPluginPath, 'utf8')).toContain('OrcaOpenCodeStatusPlugin')
@@ -350,7 +350,7 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
   it.skipIf(process.platform === 'win32')(
     'mirrors top-level entries via symlinks so plugins/ is a real directory',
     () => {
-      // Why: only the plugins/ subtree needs entry-by-entry mirroring so Orca
+      // Why: only the plugins/ subtree needs entry-by-entry mirroring so Sol
       // can drop a sibling file alongside the user's plugins. Other top-level
       // entries (auth.json, opencode.json) are mirrored as a single symlink so
       // user edits propagate live on POSIX.
@@ -360,7 +360,7 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
       const overlay = env.OPENCODE_CONFIG_DIR!
       expect(lstatSync(join(overlay, 'opencode.json')).isSymbolicLink()).toBe(true)
       expect(lstatSync(join(overlay, 'auth.json')).isSymbolicLink()).toBe(true)
-      // plugins/ must be a real directory in the overlay so Orca can write
+      // plugins/ must be a real directory in the overlay so Sol can write
       // its sibling status plugin into it.
       expect(lstatSync(join(overlay, 'plugins')).isDirectory()).toBe(true)
       expect(lstatSync(join(overlay, 'plugins')).isSymbolicLink()).toBe(false)
@@ -369,11 +369,11 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
     }
   )
 
-  it("does not overwrite a user plugin file with the same filename as Orca's plugin", () => {
+  it("does not overwrite a user plugin file with the same filename as Sol's plugin", () => {
     // Why: the failure mode this guards against — a user-owned plugin file
     // happens to be named orca-opencode-status.js. Without the per-entry
     // skip in mirrorUserConfig, the file would be linked into the overlay
-    // and Orca's writeFileSync would write through the symlink, destroying
+    // and Sol's writeFileSync would write through the symlink, destroying
     // the user's content on their real filesystem.
     const userOrcaSentinel = 'USER OWNED ORCA-NAMED PLUGIN — DO NOT CLOBBER'
     writeFileSync(join(userConfigDir, 'plugins', 'orca-opencode-status.js'), userOrcaSentinel)
@@ -386,7 +386,7 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
       userOrcaSentinel
     )
 
-    // Overlay copy is Orca's real plugin source, not the user's file.
+    // Overlay copy is Sol's real plugin source, not the user's file.
     const overlayPlugin = readFileSync(
       join(env.OPENCODE_CONFIG_DIR!, 'plugins', 'orca-opencode-status.js'),
       'utf8'
@@ -399,7 +399,7 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
   it.skipIf(process.platform === 'win32')(
     'does not write through a symlinked plugins/ directory into the user filesystem',
     () => {
-      // Why: if plugins/ is a symlink (common dotfiles pattern), writing Orca's
+      // Why: if plugins/ is a symlink (common dotfiles pattern), writing Sol's
       // status plugin through it would land in the user's real filesystem —
       // exactly the failure mode docs/opencode-config-dir-collision.md rejects.
       const realPluginsDir = mkdtempSync(join(tmpdir(), 'orca-real-plugins-'))
@@ -414,12 +414,12 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
         const service = new OpenCodeHookService()
         const env = service.buildPtyEnv(ptyId, userConfigDir)
 
-        // The user's real filesystem must NOT receive Orca's status plugin.
+        // The user's real filesystem must NOT receive Sol's status plugin.
         expect(existsSync(join(realPluginsDir, 'orca-opencode-status.js'))).toBe(false)
         // Overlay's plugins/ must be a real directory, not a symlink that
         // would write through to the user's filesystem.
         expect(lstatSync(join(env.OPENCODE_CONFIG_DIR!, 'plugins')).isSymbolicLink()).toBe(false)
-        // Orca's status plugin lands in the overlay only.
+        // Sol's status plugin lands in the overlay only.
         expect(
           existsSync(join(env.OPENCODE_CONFIG_DIR!, 'plugins', 'orca-opencode-status.js'))
         ).toBe(true)
@@ -435,8 +435,8 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
   )
 
   it("preserves the user's OPENCODE_CONFIG_DIR when the path does not exist", () => {
-    // Why: typoed user path — overriding it with an Orca-owned dir would let
-    // Orca's status plugin "succeed" while silently hiding the user's typo.
+    // Why: typoed user path — overriding it with a Sol-owned dir would let
+    // Sol's status plugin "succeed" while silently hiding the user's typo.
     // The design rejects that: leave the user's value alone and let OpenCode
     // surface the typo on its own.
     const service = new OpenCodeHookService()
@@ -459,7 +459,7 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
     // Why: mock the shared mirrorEntry helper to throw on the first symlink
     // (e.g. Windows without developer mode → EPERM). The hook service must
     // catch and fall back to { OPENCODE_CONFIG_DIR: existingConfigDir } —
-    // the user's plugins/auth/models keep loading; only Orca's status plugin
+    // the user's plugins/auth/models keep loading; only Sol's status plugin
     // is forfeited.
     const overlayMirror = await import('../pty/overlay-mirror')
     const mirrorSpy = vi.spyOn(overlayMirror, 'mirrorEntry').mockImplementation(() => {
@@ -512,7 +512,7 @@ describe('OpenCodeHookService overlay mode (user OPENCODE_CONFIG_DIR set)', () =
     // Mirrors the daemon cold-restore code path that calls buildPtyEnv with
     // the same sessionId across restarts. Each rebuild must refresh the prior
     // overlay safely (no symlink-walk into user data) and keep both user files
-    // and Orca's plugin reachable.
+    // and Sol's plugin reachable.
     const service = new OpenCodeHookService()
     service.buildPtyEnv(ptyId, userConfigDir)
     service.buildPtyEnv(ptyId, userConfigDir)

@@ -87,7 +87,7 @@ describe('orchestration skill agent coverage', () => {
     expect(
       agentHasOrchestrationSkill('claude', [
         skill({
-          name: 'Orca Orchestration',
+          name: 'Sol Orchestration',
           providers: ['claude'],
           sourceKind: 'home',
           rootPath: '/Users/test/.claude/skills',

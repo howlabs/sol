@@ -483,7 +483,7 @@ export class SshConnection {
         this.proxyProcess?.kill()
         this.proxyProcess = null
         try {
-          // Why: on macOS, per-app network policy can block Orca's direct
+          // Why: on macOS, per-app network policy can block Sol's direct
           // TCP socket while the system OpenSSH binary is still allowed.
           await this.doSystemSshProbeWithControlMasterRetry(connectGeneration, resolved)
           return

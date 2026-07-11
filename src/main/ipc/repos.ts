@@ -1701,7 +1701,7 @@ export function registerRepoHandlers(mainWindow: BrowserWindow, store: Store): v
   )
 
   // Creates a new repo or folder from scratch (orca#763). An empty initial
-  // commit is required for git repos so HEAD has a branch ref — Orca's
+  // commit is required for git repos so HEAD has a branch ref — Sol's
   // worktree features all need one.
   ipcMain.handle(
     'repos:create',

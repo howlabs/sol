@@ -168,7 +168,7 @@ describe('getUpstreamStatus', () => {
         return Promise.reject(new Error('missing branch base'))
       }
       if (args[0] === 'remote' && args[1] === 'get-url' && args[2] === 'origin') {
-        return Promise.resolve({ stdout: 'https://github.com/stablyai/orca.git\n' })
+        return Promise.resolve({ stdout: 'https://github.com/howlabs/sol.git\n' })
       }
       if (args[0] === 'remote' && args[1] === 'get-url' && args[2] === 'pr-pynickle-orca') {
         return Promise.resolve({ stdout: 'https://github.com/pynickle/orca.git\n' })
@@ -258,7 +258,7 @@ describe('getUpstreamStatus', () => {
         return Promise.reject(new Error('missing branch base'))
       }
       if (args[0] === 'remote' && args[1] === 'get-url') {
-        return Promise.resolve({ stdout: 'https://github.com/stablyai/orca.git\n' })
+        return Promise.resolve({ stdout: 'https://github.com/howlabs/sol.git\n' })
       }
       if (args[0] === 'remote') {
         return Promise.resolve({ stdout: 'origin\n' })

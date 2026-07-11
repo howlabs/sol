@@ -48,7 +48,7 @@ export async function importExternalPathsSsh(
       // and mkdirSftp is not recursive — so walk the parent chain here on the
       // same SFTP session to avoid doubling the handshake cost. Writing the
       // .orca/.gitignore marker only when absent prevents clobbering user-
-      // authored patterns. .orca/ is reserved as Orca-owned remote state;
+      // authored patterns. .orca/ is reserved as Sol-owned remote state;
       // see docs/terminal-drop-ssh.md.
       await ensureDropStagingDir(sftp, destDir)
     }

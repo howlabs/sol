@@ -338,7 +338,7 @@ export function registerNotificationHandlers(store: Store, runtime?: OrcaRuntime
       if (getEffectiveNotificationSoundId(settings) !== 'system') {
         notificationOptions.silent = true
       } else if (process.platform === 'darwin') {
-        // Why: macOS treats an unset notification sound as silent. When Orca is
+        // Why: macOS treats an unset notification sound as silent. When Sol is
         // using the OS sound, ask Electron for the default notification sound.
         notificationOptions.sound = 'default'
       }
@@ -387,7 +387,7 @@ export function registerNotificationHandlers(store: Store, runtime?: OrcaRuntime
       }
       notification.on('failed', failedHandler)
 
-      // Why: clicking a notification should bring Orca to the foreground and
+      // Why: clicking a notification should bring Sol to the foreground and
       // switch to the worktree/pane that triggered it. Worktree activation owns
       // repo/sidebar state; the optional focusTerminal follow-up uses the stable
       // pane leaf id so split-pane notifications land on the exact pane.
@@ -523,8 +523,8 @@ export function triggerStartupNotificationRegistration(store: Store): void {
   store.updateUI({ notificationPermissionRequested: true })
 
   const notification = new Notification({
-    title: 'Orca is ready to notify you',
-    body: 'Allow notifications so Orca can alert you when agents finish or terminals need attention.'
+    title: 'Sol is ready to notify you',
+    body: 'Allow notifications so Sol can alert you when agents finish or terminals need attention.'
   })
 
   // Why: prevent GC from collecting the notification (and its click handler)
@@ -560,7 +560,7 @@ export function triggerStartupNotificationRegistration(store: Store): void {
   }
 
   // Why: clicking the startup notification should take the user to macOS
-  // Notification Settings so they can verify/enable notifications for Orca.
+  // Notification Settings so they can verify/enable notifications for Sol.
   // Without this, the notification reads like an actionable prompt ("Allow
   // notifications…") but clicking it does nothing, which is confusing.
   function onClick(): void {

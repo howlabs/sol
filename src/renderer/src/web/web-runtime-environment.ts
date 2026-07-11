@@ -48,7 +48,7 @@ export function createStoredWebRuntimeEnvironment(args: {
   const now = Date.now()
   return {
     id,
-    name: args.name.trim() || 'Orca Server',
+    name: args.name.trim() || 'Sol Server',
     createdAt: now,
     updatedAt: now,
     lastUsedAt: null,

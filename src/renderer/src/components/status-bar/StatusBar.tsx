@@ -1801,7 +1801,7 @@ function StatusBarInner(): React.JSX.Element | null {
     setIsRefreshing(true)
     try {
       // Why: also re-run PATH detection so a freshly-installed CLI's bar
-      // appears (and a removed CLI's bar hides) without restarting Orca.
+      // appears (and a removed CLI's bar hides) without restarting Sol.
       await Promise.all([refreshRateLimits(), refreshDetectedAgents()])
     } finally {
       if (mountedRef.current) {

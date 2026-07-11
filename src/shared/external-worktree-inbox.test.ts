@@ -161,7 +161,7 @@ describe('external worktree inbox', () => {
     ).toEqual([hidden])
   })
 
-  it('offers metadata-free nested Orca workspace worktrees through the inbox', () => {
+  it('offers metadata-free nested Sol workspace worktrees through the inbox', () => {
     const settings = makeSettings()
     const manual = toDetectedWorktree({
       repo,

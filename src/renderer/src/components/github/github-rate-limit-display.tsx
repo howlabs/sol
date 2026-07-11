@@ -195,7 +195,7 @@ export function GitHubRateLimitPanel({ className }: { className?: string }): Rea
           <p className="text-[11px] leading-snug text-muted-foreground">
             {translate(
               'auto.components.github.github.rate.limit.display.d5e5de9070',
-              'Orca uses REST, Search, and GraphQL through the GitHub CLI.'
+              'Sol uses REST, Search, and GraphQL through the GitHub CLI.'
             )}
           </p>
           <ProviderHostScopeControl

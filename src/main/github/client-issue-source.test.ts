@@ -89,7 +89,7 @@ describe('GitHub issue source split', () => {
             number: 923,
             title: 'Use upstream issues',
             state: 'open',
-            html_url: 'https://github.com/stablyai/orca/issues/923',
+            html_url: 'https://github.com/howlabs/sol/issues/923',
             labels: [],
             updated_at: '2026-04-01T00:00:00Z',
             user: { login: 'octocat' }

@@ -152,7 +152,7 @@ function expectZdotdirSourceContext(content: string, fileName: '.zprofile' | '.z
 }
 
 function expectFinalZdotdirRestoreContext(content: string) {
-  expect(content).toContain("after Orca's last wrapper file has loaded")
+  expect(content).toContain("after Sol's last wrapper file has loaded")
   expect(content).toContain('export ZDOTDIR="$_orca_home"')
 }
 
@@ -218,7 +218,7 @@ describePosix('daemon shell-ready launch config', () => {
 
   it('falls back to HOME for ORCA_ORIG_ZDOTDIR when inherited ZDOTDIR points at a wrapper dir', async () => {
     // Why: guards against the zsh recursion loop that happens when the daemon
-    // was forked from a shell which was itself an Orca PTY. Such a shell has
+    // was forked from a shell which was itself a Sol PTY. Such a shell has
     // ZDOTDIR=<some>/shell-ready/zsh; propagating that unchanged would make
     // the wrapper `source "$ORCA_ORIG_ZDOTDIR/.zshenv"` source itself.
     const previousZdotdir = process.env.ZDOTDIR
@@ -244,7 +244,7 @@ describePosix('daemon shell-ready launch config', () => {
     }
   })
 
-  it('uses inherited ORCA_ORIG_ZDOTDIR when ZDOTDIR is an Orca wrapper dir', async () => {
+  it('uses inherited ORCA_ORIG_ZDOTDIR when ZDOTDIR is a Sol wrapper dir', async () => {
     const previousZdotdir = process.env.ZDOTDIR
     const previousOrigZdotdir = process.env.ORCA_ORIG_ZDOTDIR
     const previousHome = process.env.HOME
@@ -416,7 +416,7 @@ describePosix('daemon shell-ready launch config', () => {
   )
 
   // Why: the marker block is normally sourced once per shell, but a re-source
-  // (nested Orca, manual re-source) must stay idempotent — it must keep
+  // (nested Sol, manual re-source) must stay idempotent — it must keep
   // chaining the user's original zle-line-init instead of clobbering the
   // captured function to empty and silently dropping it on later prompts.
   itWithZsh(
@@ -562,7 +562,7 @@ describePosix('daemon shell-ready launch config', () => {
     async () => {
       const { getDaemonBashShellReadyRcfileContent } = await importFreshShellReady()
       // Minimal bash-preexec imitation (iTerm2/starship setups): re-arms its own
-      // DEBUG trap from PROMPT_COMMAND at the first prompt — silencing Orca's
+      // DEBUG trap from PROMPT_COMMAND at the first prompt — silencing Sol's
       // trap — and dispatches preexec_functions with the command as $1.
       writeFileSync(
         join(userDataPath, '.bash_profile'),
@@ -586,13 +586,13 @@ describePosix('daemon shell-ready launch config', () => {
   )
 
   itWithBash(
-    'dispatches a non-empty preexec_functions against the real command, not Orca hooks',
+    'dispatches a non-empty preexec_functions against the real command, not Sol hooks',
     async () => {
       const { getDaemonBashShellReadyRcfileContent } = await importFreshShellReady()
-      // Why: Orca's epilogue captures bash-preexec's re-armed DEBUG trap and
+      // Why: Sol's epilogue captures bash-preexec's re-armed DEBUG trap and
       // chains it. A real preexec callback must fire against the user's command —
       // not __orca_osc133_epilogue. Mirror upstream bash-preexec faithfully: it
-      // enables `functrace` (so Orca's `trap -p DEBUG` capture sees its trap),
+      // enables `functrace` (so Sol's `trap -p DEBUG` capture sees its trap),
       // defers that install to the first prompt via PROMPT_COMMAND, and reads the
       // command from `history` (so DEBUG fires on prompt hooks never dispatch a
       // phantom). The naive `$BASH_COMMAND` imitation does none of these.
@@ -648,7 +648,7 @@ describePosix('daemon shell-ready launch config', () => {
 
   it('preserves a real inherited ZDOTDIR as ORCA_ORIG_ZDOTDIR', async () => {
     // Why: users who run a custom zsh dotfiles directory legitimately set
-    // ZDOTDIR before launching Orca. We only want to reject the self-loop
+    // ZDOTDIR before launching Sol. We only want to reject the self-loop
     // case — any real user ZDOTDIR must round-trip so their configs load.
     const previousZdotdir = process.env.ZDOTDIR
     process.env.ZDOTDIR = '/Users/alice/.config/zsh'

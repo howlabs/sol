@@ -174,7 +174,7 @@ export function areWorktreePathsEqual(
     const right = win32.normalize(win32.resolve(rightPath))
     // Why: `git worktree list` can report the same Windows path with different
     // slash styles or drive-letter casing than the path we computed before
-    // creation. Orca must treat those as the same worktree or a successful
+    // creation. Sol must treat those as the same worktree or a successful
     // create spuriously fails until the next full reload repopulates state.
     return left.toLowerCase() === right.toLowerCase()
   }

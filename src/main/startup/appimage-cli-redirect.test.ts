@@ -11,7 +11,7 @@ describe('AppImage CLI redirect', () => {
     expect(
       getAppImageCliArgs(
         ['orca-linux.AppImage', 'status', '--json'],
-        { APPIMAGE: '/opt/orca' },
+        { APPIMAGE: '/opt/sol' },
         {
           platform: 'linux',
           isPackaged: true,
@@ -26,7 +26,7 @@ describe('AppImage CLI redirect', () => {
       getAppImageCliArgs(
         ['orca-linux.AppImage', '--pairing-code', 'abc123', '--json', 'terminal', 'list'],
         {
-          APPIMAGE: '/opt/orca'
+          APPIMAGE: '/opt/sol'
         },
         {
           platform: 'linux',
@@ -42,7 +42,7 @@ describe('AppImage CLI redirect', () => {
       getAppImageCliArgs(
         ['AppRun', '--no-sandbox', 'file:///tmp/example.txt'],
         {
-          APPIMAGE: '/opt/orca'
+          APPIMAGE: '/opt/sol'
         },
         {
           platform: 'linux',
@@ -63,22 +63,22 @@ describe('AppImage CLI redirect', () => {
     const result = maybeRedirectAppImageCliLaunch({
       argv: ['orca-linux.AppImage', 'status', '--json'],
       env: {
-        APPIMAGE: '/opt/orca/orca-linux.AppImage',
+        APPIMAGE: '/opt/sol/orca-linux.AppImage',
         NODE_OPTIONS: '--inspect',
         NODE_REPL_EXTERNAL_MODULE: '/tmp/repl.js'
       },
       platform: 'linux',
       isPackaged: true,
       resourcesPath: root,
-      execPath: '/opt/orca/orca-ide',
+      execPath: '/opt/sol/sol-ide',
       commandNames,
       spawn: spawn as never
     })
 
     expect(result).toEqual({ redirected: true, status: 0 })
-    expect(spawn).toHaveBeenCalledWith('/opt/orca/orca-ide', [cliEntryPath, 'status', '--json'], {
+    expect(spawn).toHaveBeenCalledWith('/opt/sol/sol-ide', [cliEntryPath, 'status', '--json'], {
       env: expect.objectContaining({
-        APPIMAGE: '/opt/orca/orca-linux.AppImage',
+        APPIMAGE: '/opt/sol/orca-linux.AppImage',
         ELECTRON_RUN_AS_NODE: '1',
         ORCA_NODE_OPTIONS: '--inspect',
         ORCA_NODE_REPL_EXTERNAL_MODULE: '/tmp/repl.js'

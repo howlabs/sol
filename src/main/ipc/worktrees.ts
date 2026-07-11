@@ -212,7 +212,7 @@ function getProjectHostSetupMetaUpdates(
   }
 }
 
-// Why: worktrees discovered on disk (not created via Orca's UI) have no
+// Why: worktrees discovered on disk (not created via Sol's UI) have no
 // persisted WorktreeMeta, so mergeWorktree falls back to `lastActivityAt: 0`.
 // That makes them sort to the bottom of "Recent" even though the user just
 // added the repo / folder. The same authoritative discovery pass is also the
@@ -1510,12 +1510,12 @@ export function registerWorktreeHandlers(
           if (await isAlreadyRemovedWorktreePath(repo, worktreePath, localWorktreeGitOptions)) {
             if (!args.force && !removedMeta) {
               // Why: without persisted metadata, require the renderer recovery
-              // path before deleting Orca-only state for an unregistered path.
+              // path before deleting Sol-only state for an unregistered path.
               throw new Error(UNREGISTERED_MISSING_WORKTREE_MESSAGE)
             }
             // Why: a manually deleted worktree is already gone from Git and disk.
             // The sidebar delete action has persisted metadata proving this was
-            // an Orca-known row, so no force confirmation is needed.
+            // a Sol-known row, so no force confirmation is needed.
             if (repo.connectionId) {
               await cleanupUnusedWorktreePushTargetRemoteSsh(
                 provider!,
@@ -1714,7 +1714,7 @@ export function registerWorktreeHandlers(
           )
         } catch (error) {
           // Why: Git for Windows can fail long-path directory deletion after
-          // Orca has already validated the target and explicit force delete.
+          // Sol has already validated the target and explicit force delete.
           const recoveredRemovalResult = await recoverLocalWindowsLongPathWorktreeRemoval({
             error,
             force: args.force ?? false,
@@ -1808,7 +1808,7 @@ export function registerWorktreeHandlers(
     }
   )
 
-  // Why: forget-locally drops a workspace from Orca without any remote Git or
+  // Why: forget-locally drops a workspace from Sol without any remote Git or
   // filesystem work. It exists so a workspace pinned to a removed/disconnected
   // SSH target — whose provider is gone and whose `worktrees:remove` therefore
   // throws at requireSshGitProvider before any cleanup runs — can still be
@@ -2027,7 +2027,7 @@ export function registerWorktreeHandlers(
 
     const has = hasHooksFile(repo.path)
     const hooks = has ? loadHooks(repo.path) : null
-    // Why: when a newer Orca version adds a top-level key to `orca.yaml`, older
+    // Why: when a newer Sol version adds a top-level key to `orca.yaml`, older
     // versions that don't recognise it return null and show "could not be parsed".
     // Detecting well-formed but unrecognised keys lets the UI suggest updating
     // instead of implying the file is broken.

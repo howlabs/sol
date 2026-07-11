@@ -1,6 +1,6 @@
 // Diagnostic bundle collection + upload (Mode 3 from
 // telemetry-error-tracking.md). The single user-initiated network path from
-// the error-tracking lane to Orca infrastructure. Every step here implements
+// the error-tracking lane to Sol infrastructure. Every step here implements
 // a hardening requirement from §Endpoint contract — the comments name the
 // requirement number when they apply.
 //

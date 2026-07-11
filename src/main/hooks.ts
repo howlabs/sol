@@ -60,7 +60,7 @@ export function hasHooksFile(repoPath: string): boolean {
   return existsSync(join(repoPath, 'orca.yaml'))
 }
 
-// Why: when a newer Orca release adds a top-level key to `orca.yaml` (like
+// Why: when a newer Sol release adds a top-level key to `orca.yaml` (like
 // `issueCommand` was added here), older versions that don't recognise it will
 // return `null` from `parseOrcaYaml` and show a confusing "could not be parsed"
 // error.  Detecting well-formed but unrecognised keys lets the UI suggest an
@@ -74,7 +74,7 @@ const RECOGNIZED_ORCA_YAML_KEYS = new Set([
 
 /**
  * Return true when `orca.yaml` contains at least one top-level key that this
- * version of Orca does not handle.
+ * version of Sol does not handle.
  */
 export function hasUnrecognizedOrcaYamlKeys(repoPath: string): boolean {
   try {
