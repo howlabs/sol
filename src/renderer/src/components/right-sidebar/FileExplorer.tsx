@@ -52,13 +52,12 @@ import { useFileExplorerSelection } from './useFileExplorerSelection'
 import { useFileExplorerVisibleRowProjection } from './useFileExplorerVisibleRowProjection'
 import { translate } from '@/i18n/i18n'
 import { CLOSE_ALL_CONTEXT_MENUS_EVENT } from '@/components/tab-bar/SortableTab'
-import type { RightSidebarExplorerView } from '../../../../shared/types'
 import { getRuntimeEnvironmentIdForWorktree } from '@/lib/worktree-runtime-owner'
 import { createNewTerminalTab } from '@/components/terminal/terminal-tab-actions'
 
 function FileExplorerFiles(): React.JSX.Element {
   const explorerView = useAppStore((s) => s.rightSidebarExplorerView)
-  const showRightSidebarFiles = useAppStore((s) => s.showRightSidebarFiles)
+  // Why: contents search stays off-chrome (shortcut / Find in Folder); no dual-mode strip.
   const showRightSidebarSearch = useAppStore((s) => s.showRightSidebarSearch)
   const [nameFilterQuery, setNameFilterQuery] = useState('')
   const [nameFilterCollapsedPaths, setNameFilterCollapsedPaths] = useState<Set<string>>(
@@ -66,17 +65,6 @@ function FileExplorerFiles(): React.JSX.Element {
   )
   const searchPanel = useFileSearchPanel(explorerView)
 
-  const handleSelectExplorerView = useCallback(
-    (view: RightSidebarExplorerView) => {
-      if (view === 'files') {
-        showRightSidebarFiles()
-        return
-      }
-      const trimmedQuery = nameFilterQuery.trim()
-      showRightSidebarSearch(trimmedQuery ? { query: trimmedQuery } : undefined)
-    },
-    [nameFilterQuery, showRightSidebarFiles, showRightSidebarSearch]
-  )
   const activeWorktreeId = useAppStore((s) => s.activeWorktreeId)
   const activeWorktree = useActiveWorktree()
   const activeRepo = useRepoById(activeWorktree?.repoId ?? null)
@@ -647,9 +635,9 @@ function FileExplorerFiles(): React.JSX.Element {
           showDotfiles={showDotfiles}
           onToggleDotfiles={handleToggleDotfiles}
         />
-        <FileExplorerQueryStrip view={explorerView} onSelectView={handleSelectExplorerView}>
-          {/* Why: keep both query rows mounted and cross-fade so the Names/Contents
-             switch does not remount or shift when changing modes. */}
+        <FileExplorerQueryStrip>
+          {/* Why: keep both query rows mounted so shortcut-driven contents search
+             can show without remounting the name-filter field when returning. */}
           <div className="relative min-h-7">
             <div
               className={cn(

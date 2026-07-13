@@ -6,7 +6,7 @@ import { DropdownMenuCheckboxItem } from '@/components/ui/dropdown-menu'
 import { WorktreeOpenInMenuItems } from '@/components/sidebar/WorktreeOpenInMenu'
 import { FileExplorerToolbar } from './FileExplorerToolbar'
 import { FileExplorerNameFilter } from './FileExplorerNameFilter'
-import { FileExplorerViewSwitch } from './FileExplorerViewSwitch'
+import { FileExplorerQueryStrip } from './FileExplorerQueryStrip'
 import {
   getNameFilterCollapsedPathsAfterExpand,
   getNextNameFilterCollapsedPaths
@@ -90,19 +90,6 @@ function findInputByAriaLabel(node: unknown, ariaLabel: string): ReactElementLik
   })
   if (!found) {
     throw new Error(`${ariaLabel} input not found`)
-  }
-  return found
-}
-
-function findElementByAriaLabel(node: unknown, ariaLabel: string): ReactElementLike {
-  let found: ReactElementLike | null = null
-  visit(node, (entry) => {
-    if (entry.props['aria-label'] === ariaLabel) {
-      found = entry
-    }
-  })
-  if (!found) {
-    throw new Error(`${ariaLabel} element not found`)
   }
   return found
 }
@@ -466,35 +453,24 @@ describe('FileExplorerToolbar', () => {
   })
 })
 
-describe('FileExplorerViewSwitch', () => {
-  it('switches between files and search views', () => {
-    const onSelectView = vi.fn()
-    const element = FileExplorerViewSwitch({
-      view: 'files',
-      onSelectView
+describe('FileExplorerQueryStrip', () => {
+  it('renders the name-filter chrome without a Names/Contents dual-mode switch', () => {
+    const element = FileExplorerQueryStrip({
+      children: FileExplorerNameFilter({
+        query: '',
+        onQueryChange: vi.fn(),
+        onClear: vi.fn()
+      })
     })
 
-    const switchRoot = findElementByAriaLabel(element, 'Explorer search mode')
-    ;(switchRoot.props.onValueChange as (value: string) => void)('search')
-
-    expect(onSelectView).toHaveBeenCalledWith('search')
-  })
-
-  it('renders names and contents labels', () => {
-    const element = FileExplorerViewSwitch({
-      view: 'search',
-      onSelectView: vi.fn()
-    })
-
-    const contentsTab = findElementByAriaLabel(element, 'Search file contents')
-    const namesTab = findElementByAriaLabel(element, 'Filter files by name')
-    const switchRoot = findElementByAriaLabel(element, 'Explorer search mode')
-
-    expect(switchRoot.props.value).toBe('search')
-    expect(contentsTab.props.value).toBe('search')
-    expect(namesTab.props.value).toBe('files')
-    expect(JSON.stringify(contentsTab.props.children)).toContain('Contents')
-    expect(JSON.stringify(namesTab.props.children)).toContain('Names')
+    const serialized = JSON.stringify(element)
+    expect(serialized).not.toContain('Explorer search mode')
+    expect(serialized).not.toContain('Search file contents')
+    expect(serialized).not.toContain('Filter files by name')
+    // Why: dual-mode labels must not reappear in the default query strip.
+    expect(serialized).not.toMatch(/"Contents"/)
+    expect(serialized).not.toMatch(/"Names"/)
+    expect(findInputByAriaLabel(element, 'Find files').props.placeholder).toBe('Find files')
   })
 })
 

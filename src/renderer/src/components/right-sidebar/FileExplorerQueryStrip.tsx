@@ -1,26 +1,17 @@
 import React from 'react'
-import { FileExplorerViewSwitch } from './FileExplorerViewSwitch'
-import type { RightSidebarExplorerView } from '../../../../shared/types'
 
 type FileExplorerQueryStripProps = {
-  view: RightSidebarExplorerView
-  onSelectView: (view: RightSidebarExplorerView) => void
   children: React.ReactNode
 }
 
+// Why: minimal explorer chrome is a single query field (name filter or
+// contents-search when opened off-chrome). No Names|Contents dual switch.
 export function FileExplorerQueryStrip({
-  view,
-  onSelectView,
   children
 }: FileExplorerQueryStripProps): React.JSX.Element {
   return (
     <div className="border-b border-border px-2 py-1.5">
-      {/* Why: show the active query field first; the Contents/Names switch sits
-         underneath so it reads as choosing the mode for the field above. */}
-      <div className="flex flex-col gap-1">
-        {children}
-        <FileExplorerViewSwitch view={view} onSelectView={onSelectView} />
-      </div>
+      <div className="flex flex-col gap-1">{children}</div>
     </div>
   )
 }
