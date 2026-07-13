@@ -62,24 +62,14 @@ import type {
 export const AGENT_KIND_VALUES = [
   'claude-code',
   'claude-agent-teams',
-  'openclaude',
   'codex',
   'opencode',
-  'mimo-code',
   'pi',
-  'gemini',
   'antigravity',
-  'aider',
   'amp',
-  'kiro',
-  'cline',
-  'command-code',
-  'cursor',
   'droid',
-  'kimi',
   'qwen-code',
   'hermes',
-  'openclaw',
   'copilot',
   'grok',
   'devin',
@@ -264,7 +254,6 @@ export const SETTINGS_CHANGED_WHITELIST = [
   'experimentalAgentHibernation',
   'experimentalEphemeralVms',
   'experimentalWorktreeSymlinks',
-  'geminiCliOAuthEnabled',
   'openAgentTabsInChatByDefault'
 ] as const satisfies readonly BooleanGlobalSettingsKey[]
 export const settingsChangedKeySchema = z.enum(SETTINGS_CHANGED_WHITELIST)

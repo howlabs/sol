@@ -65,26 +65,6 @@ describe('OSC title extraction', () => {
   })
 })
 
-describe('MiMo title detection', () => {
-  it.each([
-    ['MiMo Code', 'idle'],
-    ['mimo ready', 'idle'],
-    ['mimo working', 'working'],
-    ['\u280b MiMo Code', 'working']
-  ] as const)('classifies %s', (title, expectedStatus) => {
-    expect(getAgentLabel(title)).toBe('MiMo Code')
-    expect(detectAgentStatusFromTitle(title)).toBe(expectedStatus)
-  })
-
-  it.each(['~/mimo/working', 'mimo-code-fixtures ready'])(
-    'does not classify path or hyphen false positive %s',
-    (title) => {
-      expect(getAgentLabel(title)).toBeNull()
-      expect(detectAgentStatusFromTitle(title)).toBeNull()
-    }
-  )
-})
-
 describe('Pi-compatible title detection', () => {
   it.each([
     ['\u280b Pi', 'Pi', 'working'],

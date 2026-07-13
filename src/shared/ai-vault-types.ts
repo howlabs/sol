@@ -12,15 +12,11 @@ export const AI_VAULT_AGENTS = [
   'codex',
   'hermes',
   'pi',
-  'cursor',
-  'gemini',
   'copilot',
   'opencode',
   'grok',
-  'openclaw',
   'devin',
-  'droid',
-  'kimi'
+  'droid'
 ] as const satisfies readonly TuiAgent[]
 
 export type AiVaultAgent = (typeof AI_VAULT_AGENTS)[number]
@@ -33,15 +29,11 @@ export const AI_VAULT_AGENT_LABELS = {
   codex: 'Codex',
   hermes: 'Hermes',
   pi: 'Pi',
-  cursor: 'Cursor',
-  gemini: 'Gemini',
   copilot: 'GitHub Copilot',
   opencode: 'OpenCode',
   grok: 'Grok',
-  openclaw: 'OpenClaw',
   devin: 'Devin',
-  droid: 'Droid',
-  kimi: 'Kimi'
+  droid: 'Droid'
 } as const satisfies Record<AiVaultAgent, string>
 
 export type AiVaultSessionPreviewMessage = {
@@ -183,9 +175,6 @@ export function aiVaultAgentLabel(agent: AiVaultAgent): string {
 }
 
 function defaultAiVaultResumeCommandBase(agent: AiVaultAgent): string {
-  if (agent === 'cursor') {
-    return 'cursor-agent'
-  }
   if (agent === 'hermes') {
     return 'hermes'
   }
@@ -202,20 +191,13 @@ function buildAgentResumeInvocation(
       return `${baseCommand} resume ${sessionArg}`
     case 'opencode':
     case 'pi':
-    // Why: Kimi Code resumes with `kimi --session <id>` (alias `-S`). Sessions
-    // are work-dir-scoped, so the cwd prefix from buildAiVaultResumeCommand is
-    // required — resuming from another directory is rejected by the CLI.
-    case 'kimi':
       return `${baseCommand} --session ${sessionArg}`
     case 'copilot':
       return `${baseCommand} --resume=${sessionArg}`
     case 'claude':
-    case 'cursor':
-    case 'gemini':
     case 'grok':
     case 'hermes':
     case 'devin':
-    case 'openclaw':
     case 'droid':
       return `${baseCommand} --resume ${sessionArg}`
   }

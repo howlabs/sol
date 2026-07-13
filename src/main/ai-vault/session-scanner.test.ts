@@ -400,29 +400,6 @@ describe('scanAiVaultSessions', () => {
       ])
     )
 
-    await mkdir(roots.geminiSessionsDir, { recursive: true })
-    await writeFile(
-      join(roots.geminiSessionsDir, 'gemini-session.json'),
-      JSON.stringify({
-        sessionId: 'gemini-session',
-        startTime: '2026-05-01T10:02:00.000Z',
-        lastUpdated: '2026-05-01T10:02:01.000Z',
-        messages: [
-          {
-            type: 'user',
-            timestamp: '2026-05-01T10:02:00.000Z',
-            content: [{ text: 'Gemini title' }]
-          },
-          {
-            type: 'gemini',
-            timestamp: '2026-05-01T10:02:01.000Z',
-            model: 'gemini-2.5-pro',
-            tokens: { input: 10, output: 5 }
-          }
-        ]
-      })
-    )
-
     await mkdir(roots.copilotSessionsDir, { recursive: true })
     await writeFile(
       join(roots.copilotSessionsDir, 'copilot-session.jsonl'),
@@ -445,18 +422,6 @@ describe('scanAiVaultSessions', () => {
           data: { transformedContent: 'Copilot title' },
           timestamp: '2026-05-01T10:03:02.000Z'
         }
-      ])
-    )
-
-    await mkdir(join(roots.cursorProjectsDir, 'project', 'agent-transcripts'), { recursive: true })
-    await writeFile(
-      join(roots.cursorProjectsDir, 'project', 'agent-transcripts', 'cursor-session.jsonl'),
-      jsonLines([
-        {
-          role: 'user',
-          message: { content: [{ type: 'text', text: 'Cursor title' }] }
-        },
-        { role: 'assistant', message: { content: [{ type: 'text', text: 'Done' }] } }
       ])
     )
 
@@ -530,24 +495,6 @@ describe('scanAiVaultSessions', () => {
       })
     )
 
-    await mkdir(join(roots.openclawStateDir, 'agents', 'default', 'sessions'), { recursive: true })
-    await writeFile(
-      join(roots.openclawStateDir, 'agents', 'default', 'sessions', 'openclaw-session.jsonl'),
-      jsonLines([
-        {
-          type: 'session',
-          id: 'openclaw-session',
-          timestamp: '2026-05-01T10:07:00.000Z',
-          cwd: '/tmp/openclaw'
-        },
-        {
-          type: 'message',
-          timestamp: '2026-05-01T10:07:01.000Z',
-          message: { role: 'user', content: [{ type: 'text', text: 'OpenClaw title' }] }
-        }
-      ])
-    )
-
     await mkdir(roots.piSessionsDir, { recursive: true })
     await writeFile(
       join(roots.piSessionsDir, 'pi-session.jsonl'),
@@ -613,55 +560,6 @@ describe('scanAiVaultSessions', () => {
       ])
     )
 
-    // Kimi: <sessions>/wd_*/session_*/state.json + sibling agents/main/wire.jsonl,
-    // with the work dir resolved from the top-level session_index.jsonl.
-    const kimiSessionDir = join(roots.kimiSessionsDir, 'wd_app_abc', 'session_kimi-session')
-    await mkdir(join(kimiSessionDir, 'agents', 'main'), { recursive: true })
-    await writeFile(
-      join(kimiSessionDir, 'state.json'),
-      JSON.stringify({
-        createdAt: '2026-05-01T10:11:00.000Z',
-        updatedAt: '2026-05-01T10:11:05.000Z',
-        title: 'Kimi vault title',
-        lastPrompt: 'Kimi vault title',
-        agents: { main: { type: 'main', parentAgentId: null } }
-      })
-    )
-    await writeFile(
-      join(root, 'session_index.jsonl'),
-      jsonLines([
-        { sessionId: 'session_kimi-session', sessionDir: kimiSessionDir, workDir: '/tmp/kimi' }
-      ])
-    )
-    await writeFile(
-      join(kimiSessionDir, 'agents', 'main', 'wire.jsonl'),
-      jsonLines([
-        { type: 'config.update', modelAlias: 'kimi-k2.6', time: 1781853559132 },
-        {
-          type: 'context.append_message',
-          message: {
-            role: 'user',
-            content: [{ type: 'text', text: 'Kimi vault title' }],
-            origin: { kind: 'user' }
-          },
-          time: 1781853559164
-        },
-        {
-          type: 'context.append_loop_event',
-          event: { type: 'content.part', part: { type: 'text', text: 'Kimi reply' } },
-          time: 1781853559177
-        },
-        { type: 'context.append_loop_event', event: { type: 'step.end' }, time: 1781853559178 },
-        {
-          type: 'usage.record',
-          model: 'kimi-k2.6',
-          usage: { inputOther: 4, output: 6, inputCacheRead: 0, inputCacheCreation: 0 },
-          usageScope: 'turn',
-          time: 1781853559178
-        }
-      ])
-    )
-
     const result = await scanAiVaultSessions({
       ...roots,
       platform: 'darwin',
@@ -682,11 +580,9 @@ describe('scanAiVaultSessions', () => {
     expect(commandByAgent.get('codex')).toBe(
       `cd '/tmp/codex' && CODEX_HOME='${root}' codex resume 'codex-session'`
     )
-    expect(commandByAgent.get('gemini')).toBe("gemini --resume 'gemini-session'")
     expect(commandByAgent.get('copilot')).toBe(
       "cd '/tmp/copilot' && copilot --resume='copilot-session'"
     )
-    expect(commandByAgent.get('cursor')).toBe("cursor-agent --resume 'cursor-session'")
     expect(commandByAgent.get('opencode')).toBe(
       "cd '/tmp/opencode' && opencode --session 'opencode-session'"
     )
@@ -694,15 +590,9 @@ describe('scanAiVaultSessions', () => {
     expect(commandByAgent.get('hermes')).toBe(
       "cd '/tmp/hermes' && hermes --resume 'hermes-session'"
     )
-    expect(commandByAgent.get('openclaw')).toBe(
-      "cd '/tmp/openclaw' && openclaw --resume 'openclaw-session'"
-    )
     expect(commandByAgent.get('pi')).toBe("cd '/tmp/pi' && pi --session 'pi-session'")
     expect(commandByAgent.get('devin')).toBe("cd '/tmp/devin' && devin --resume 'devin-session'")
     expect(commandByAgent.get('droid')).toBe("cd '/tmp/droid' && droid --resume 'droid-session'")
-    expect(commandByAgent.get('kimi')).toBe(
-      "cd '/tmp/kimi' && kimi --session 'session_kimi-session'"
-    )
   })
 
   it('strips newline-heavy Grok user_query envelopes without regex matching', async () => {

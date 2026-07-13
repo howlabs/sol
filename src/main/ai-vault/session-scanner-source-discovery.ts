@@ -2,8 +2,8 @@ import { homedir } from 'node:os'
 import { basename, join } from 'node:path'
 import type { AiVaultScanIssue } from '../../shared/ai-vault-types'
 import { uniqueCodexSessionsDirs } from './session-scanner-codex-paths'
-import { discoverFiles, discoverOpenClawFiles } from './session-scanner-discovery'
-import { droidDiscoveries, kimiDiscoveries } from './session-scanner-droid-kimi-sources'
+import { discoverFiles } from './session-scanner-discovery'
+import { droidDiscoveries } from './session-scanner-droid-sources'
 import { opencodeDiscoveries } from './session-scanner-opencode-sources'
 import type { AiVaultScanOptions, SessionFileDiscovery } from './session-scanner-types'
 import { normalizeAgentSessionsDir } from './session-scanner-values'
@@ -12,18 +12,15 @@ const CLAUDE_PROJECTS_DIR = join(homedir(), '.claude', 'projects')
 export const DEFAULT_CODEX_HOME_DIR = join(homedir(), '.codex')
 const CODEX_HOME_DIR = process.env.CODEX_HOME?.trim() || DEFAULT_CODEX_HOME_DIR
 const CODEX_SESSIONS_DIR = join(CODEX_HOME_DIR, 'sessions')
-const GEMINI_SESSIONS_DIR = join(homedir(), '.gemini', 'tmp')
 const COPILOT_SESSIONS_DIR = join(
   process.env.COPILOT_HOME?.trim() || join(homedir(), '.copilot'),
   'session-state'
 )
-const CURSOR_PROJECTS_DIR = join(homedir(), '.cursor', 'projects')
 const GROK_SESSIONS_DIR = join(
   process.env.GROK_HOME?.trim() || join(homedir(), '.grok'),
   'sessions'
 )
 const HERMES_SESSIONS_DIR = join(homedir(), '.hermes', 'sessions')
-const OPENCLAW_STATE_DIR = process.env.OPENCLAW_STATE_DIR?.trim() || join(homedir(), '.openclaw')
 const PI_SESSIONS_DIR = normalizeAgentSessionsDir(
   process.env.PI_CODING_AGENT_DIR?.trim() || join(homedir(), '.pi', 'agent', 'sessions'),
   '.pi'
@@ -60,9 +57,7 @@ export async function discoverAiVaultSessionSources(args: {
     ...claudeDiscoveries(options, wslHomeDirs, limitPerAgent, issues),
     ...codexDiscoveries(codexSessionsDirs, limitPerAgent, issues),
     ...standardDiscoveries(options, wslHomeDirs, limitPerAgent, issues),
-    openClawDiscovery(options, wslHomeDirs, limitPerAgent, issues),
-    ...droidDiscoveries(options, wslHomeDirs, limitPerAgent, issues),
-    ...kimiDiscoveries(options, wslHomeDirs, limitPerAgent, issues)
+    ...droidDiscoveries(options, wslHomeDirs, limitPerAgent, issues)
   ])
 }
 
@@ -107,45 +102,17 @@ function standardDiscoveries(
   issues: AiVaultScanIssue[]
 ): Promise<SessionFileDiscovery>[] {
   return [
-    ...sessionRootDirs(options.geminiSessionsDir ?? GEMINI_SESSIONS_DIR, wslHomeDirs, [
-      '.gemini',
-      'tmp'
-    ]).map((rootDir) =>
-      discoverFiles({ rootDir, limit, agent: 'gemini', issues, extensions: ['.json', '.jsonl'] })
-    ),
     ...sessionRootDirs(options.copilotSessionsDir ?? COPILOT_SESSIONS_DIR, wslHomeDirs, [
       '.copilot',
       'session-state'
     ]).map((rootDir) =>
       discoverFiles({ rootDir, limit, agent: 'copilot', issues, extensions: ['.jsonl'] })
     ),
-    ...cursorDiscoveries(options, wslHomeDirs, limit, issues),
     ...grokDiscoveries(options, wslHomeDirs, limit, issues),
     ...devinDiscoveries(options, wslHomeDirs, limit, issues),
     ...hermesDiscoveries(options, wslHomeDirs, limit, issues),
     ...piDiscoveries(options, wslHomeDirs, limit, issues)
   ]
-}
-
-function cursorDiscoveries(
-  options: AiVaultScanOptions,
-  wslHomeDirs: readonly string[],
-  limit: number,
-  issues: AiVaultScanIssue[]
-): Promise<SessionFileDiscovery>[] {
-  return sessionRootDirs(options.cursorProjectsDir ?? CURSOR_PROJECTS_DIR, wslHomeDirs, [
-    '.cursor',
-    'projects'
-  ]).map((rootDir) =>
-    discoverFiles({
-      rootDir,
-      limit,
-      agent: 'cursor',
-      issues,
-      extensions: ['.jsonl'],
-      filePredicate: (path) => path.split(/[\\/]/).includes('agent-transcripts')
-    })
-  )
 }
 
 function grokDiscoveries(
@@ -220,24 +187,6 @@ function piDiscoveries(
   ]).map((rootDir) =>
     discoverFiles({ rootDir, limit, agent: 'pi', issues, extensions: ['.jsonl'] })
   )
-}
-
-function openClawDiscovery(
-  options: AiVaultScanOptions,
-  wslHomeDirs: readonly string[],
-  limit: number,
-  issues: AiVaultScanIssue[]
-): Promise<SessionFileDiscovery> {
-  return discoverOpenClawFiles({
-    rootDirs: [
-      options.openclawStateDir ?? OPENCLAW_STATE_DIR,
-      options.openclawLegacyStateDir ?? join(homedir(), '.clawdbot'),
-      ...wslHomeDirs.map((homeDir) => join(homeDir, '.openclaw')),
-      ...wslHomeDirs.map((homeDir) => join(homeDir, '.clawdbot'))
-    ],
-    limit,
-    issues
-  })
 }
 
 function normalizedWslHomeDirs(homeDirs: readonly string[] | undefined): string[] {

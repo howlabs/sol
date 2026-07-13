@@ -48,7 +48,6 @@ export function resolvePaneTitleDecision(input: ResolvePaneTitleDecisionInput): 
   const displayTitle = resolvePaneDisplayTitle(input.normalizedTitle, input.displayOwnerAgentType)
   const rendererPolicy = resolvePaneRendererPolicy({
     rawTitle: input.rawTitle,
-    ownerAgentType: input.rendererOwnerAgentType,
     userGpuMode: input.userGpuMode,
     webglUnavailable: input.webglUnavailable,
     inContextLossContainment: input.inContextLossContainment

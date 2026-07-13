@@ -8,10 +8,6 @@ import { getPiCompatibleSyntheticAgentStatus } from './pi-compatible-synthetic-t
 import {
   CLAUDE_IDLE,
   containsBrailleSpinner,
-  GEMINI_IDLE,
-  GEMINI_PERMISSION,
-  GEMINI_SILENT_WORKING,
-  GEMINI_WORKING,
   isClaudeManagementTitle,
   isPiTerminalTitle
 } from './terminal-title-agent-type'
@@ -19,14 +15,14 @@ import {
 export type AgentStatus = 'working' | 'permission' | 'idle'
 
 // Why: idle keywords used inside `detectAgentStatusFromTitle` to map titles
-// like "Codex done", "OpenCode ready", "Aider idle" to AgentStatus 'idle'.
+// like "Codex done", "OpenCode ready" to AgentStatus 'idle'.
 // `as const` so consumers receive literal-union types.
 const STRONG_IDLE_KEYWORDS = ['ready', 'idle', 'done'] as const
 
 // Why: working keywords used inside `detectAgentStatusFromTitle` to map
-// titles like "Codex working", "Aider thinking", "OpenCode running" to
-// AgentStatus 'working'. Shared with `clearWorkingIndicators` so both stay
-// in lock-step when stripping working indicators from stale titles.
+// titles like "Codex working", "OpenCode running" to AgentStatus 'working'.
+// Shared with `clearWorkingIndicators` so both stay in lock-step when stripping
+// working indicators from stale titles.
 const STRONG_WORKING_KEYWORDS = ['working', 'thinking', 'running'] as const
 
 // Why: match STRONG_IDLE_KEYWORDS only when not adjacent to characters that
@@ -42,9 +38,9 @@ const STRONG_WORKING_KEYWORDS = ['working', 'thinking', 'running'] as const
 //     keyword land right after a path separator. Orca is a cross-platform
 //     Electron app, so Windows path separators must be handled too.
 //   - RIGHT: reject only `[\w\-]` so legitimate sentence-style titles like
-//     "Codex done." / "Aider idle." / "OpenCode ready!" still match — path
-//     separators after the keyword are not a false-positive vector in
-//     practice and blocking them would regress trailing-punctuation titles.
+//     "Codex done." / "OpenCode ready!" still match — path separators after
+//     the keyword are not a false-positive vector in practice and blocking
+//     them would regress trailing-punctuation titles.
 //
 // Also rejects hyphenated compounds ("is-ready-cap", "re-done") and plain
 // substring false positives ("already"/"redone"/"idleness").
@@ -127,38 +123,12 @@ export function createAgentStatusTracker(
   }
 }
 
-// Why: cursor-agent's native OSC title is the literal string "Cursor Agent"
-// across the entire turn — it carries zero working/idle information. Orca
-// synthesizes its own titles ("⠋ Cursor Agent" for working, "Cursor -
-// action required" for permission) from cursor's hook events; the bare
-// native title must be a no-op so cursor's per-turn re-emissions cannot
-// stomp the synthesized state back to idle.
-const CURSOR_NATIVE_TITLE_LOWER = 'cursor agent'
-
 export function detectAgentStatusFromTitle(title: string): AgentStatus | null {
   if (!title) {
     return null
   }
   if (isClaudeManagementTitle(title)) {
     return null
-  }
-  // Why: "Cursor Agent" exactly (case-insensitive, no prefix/suffix) is cursor's
-  // native title. Anything with additional tokens ("⠋ Cursor Agent", "Cursor -
-  // action required") is either an Orca-synthesized working/permission title
-  // or a tighter match worth classifying.
-  if (title.trim().toLowerCase() === CURSOR_NATIVE_TITLE_LOWER) {
-    return null
-  }
-
-  // Gemini CLI symbols are the most specific and should take precedence.
-  if (title.includes(GEMINI_PERMISSION)) {
-    return 'permission'
-  }
-  if (title.includes(GEMINI_WORKING) || title.includes(GEMINI_SILENT_WORKING)) {
-    return 'working'
-  }
-  if (title.includes(GEMINI_IDLE)) {
-    return 'idle'
   }
 
   // Why: resolve synthetic Pi permission/idle labels before the broader

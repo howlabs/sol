@@ -353,7 +353,7 @@ describe('WorktreeCardAgents activation', () => {
       mockAgent({
         paneKey,
         tabId,
-        agentType: 'gemini',
+        agentType: 'claude',
         prompt: 'Stale worker',
         worktreeId: 'wt-1'
       })
@@ -378,7 +378,7 @@ describe('WorktreeCardAgents activation', () => {
       mockAgent({
         paneKey,
         tabId,
-        agentType: 'gemini',
+        agentType: 'claude',
         prompt: 'Compact worker',
         worktreeId: 'wt-1'
       })

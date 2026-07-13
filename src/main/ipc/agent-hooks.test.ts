@@ -58,13 +58,13 @@ vi.mock('../claude/hook-service', () => ({
   claudeHookService: { getStatus: vi.fn(() => ({ agent: 'claude', state: 'absent' })) }
 }))
 vi.mock('../openclaude/hook-service', () => ({
-  openClaudeHookService: { getStatus: vi.fn(() => ({ agent: 'openclaude', state: 'absent' })) }
+  openClaudeHookService: { getStatus: vi.fn(() => ({ agent: 'opencode', state: 'absent' })) }
 }))
 vi.mock('../codex/hook-service', () => ({
   codexHookService: { getStatus: vi.fn(() => ({ agent: 'codex', state: 'absent' })) }
 }))
 vi.mock('../gemini/hook-service', () => ({
-  geminiHookService: { getStatus: vi.fn(() => ({ agent: 'gemini', state: 'absent' })) }
+  geminiHookService: { getStatus: vi.fn(() => ({ agent: 'claude', state: 'absent' })) }
 }))
 vi.mock('../antigravity/hook-service', () => ({
   antigravityHookService: { getStatus: vi.fn(() => ({ agent: 'antigravity', state: 'absent' })) }
@@ -73,13 +73,13 @@ vi.mock('../amp/hook-service', () => ({
   ampHookService: { getStatus: vi.fn(() => ({ agent: 'amp', state: 'absent' })) }
 }))
 vi.mock('../cursor/hook-service', () => ({
-  cursorHookService: { getStatus: vi.fn(() => ({ agent: 'cursor', state: 'absent' })) }
+  cursorHookService: { getStatus: vi.fn(() => ({ agent: 'codex', state: 'absent' })) }
 }))
 vi.mock('../droid/hook-service', () => ({
   droidHookService: { getStatus: vi.fn(() => ({ agent: 'droid', state: 'absent' })) }
 }))
 vi.mock('../command-code/hook-service', () => ({
-  commandCodeHookService: { getStatus: vi.fn(() => ({ agent: 'command-code', state: 'absent' })) }
+  commandCodeHookService: { getStatus: vi.fn(() => ({ agent: 'codex', state: 'absent' })) }
 }))
 vi.mock('../grok/hook-service', () => ({
   grokHookService: { getStatus: vi.fn(() => ({ agent: 'grok', state: 'absent' })) }
@@ -94,7 +94,7 @@ vi.mock('../devin/hook-service', () => ({
   devinHookService: { getStatus: vi.fn(() => ({ agent: 'devin', state: 'absent' })) }
 }))
 vi.mock('../kimi/hook-service', () => ({
-  kimiHookService: { getStatus: vi.fn(() => ({ agent: 'kimi', state: 'absent' })) }
+  kimiHookService: { getStatus: vi.fn(() => ({ agent: 'claude', state: 'absent' })) }
 }))
 
 beforeEach(() => {
@@ -227,7 +227,7 @@ describe('agentHooks:openClaudeStatus IPC', () => {
 
     const handler = handleHandlers.get('agentHooks:openClaudeStatus')
     expect(handler).toBeDefined()
-    expect(handler!({})).toEqual({ agent: 'openclaude', state: 'absent' })
+    expect(handler!({})).toEqual({ agent: 'opencode', state: 'absent' })
   })
 })
 
@@ -238,7 +238,7 @@ describe('agentHooks:commandCodeStatus IPC', () => {
 
     const handler = handleHandlers.get('agentHooks:commandCodeStatus')
     expect(handler).toBeDefined()
-    expect(handler!({})).toEqual({ agent: 'command-code', state: 'absent' })
+    expect(handler!({})).toEqual({ agent: 'codex', state: 'absent' })
   })
 })
 
@@ -260,7 +260,7 @@ describe('agentHooks:kimiStatus IPC', () => {
 
     const handler = handleHandlers.get('agentHooks:kimiStatus')
     expect(handler).toBeDefined()
-    expect(handler!({})).toEqual({ agent: 'kimi', state: 'absent' })
+    expect(handler!({})).toEqual({ agent: 'claude', state: 'absent' })
   })
 })
 

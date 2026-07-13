@@ -129,7 +129,6 @@ function createSettings(overrides: Partial<GlobalSettings> = {}): GlobalSettings
     opencodeWorkspaceId: '',
     minimaxGroupId: '',
     minimaxUsageModels: 'general',
-    geminiCliOAuthEnabled: false,
     agentCmdOverrides: {},
     keepComputerAwakeWhileAgentsRun: false,
     confirmClosePinnedTab: true,

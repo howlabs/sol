@@ -314,8 +314,8 @@ describe('registerShellHandlers', () => {
       const workspacePath = resolve('workspace')
       const handler = getHandler('shell:openInExternalEditor')
 
-      await expect(handler({}, workspacePath, 'cursor')).resolves.toEqual({ ok: true })
-      expect(resolveCliCommandMock).toHaveBeenCalledWith('cursor', { platform: process.platform })
+      await expect(handler({}, workspacePath, 'codex')).resolves.toEqual({ ok: true })
+      expect(resolveCliCommandMock).toHaveBeenCalledWith('codex', { platform: process.platform })
       expect(getSpawnArgsForWindowsMock).toHaveBeenCalledWith('editor-cli', [
         normalize(workspacePath)
       ])
@@ -351,13 +351,13 @@ describe('registerShellHandlers', () => {
       const workspacePath = resolve('workspace')
       const handler = getHandler('shell:openInExternalEditor')
 
-      await expect(handler({}, workspacePath, 'cursor')).resolves.toEqual({ ok: true })
+      await expect(handler({}, workspacePath, 'codex')).resolves.toEqual({ ok: true })
       expect(getSpawnArgsForWindowsMock).toHaveBeenCalledWith('/usr/local/bin/cursor', [
         '--new-window',
         normalize(workspacePath)
       ])
       resolveCliCommandMock.mockReturnValueOnce('C:\\Cursor\\cursor.cmd')
-      await expect(handler({}, workspacePath, 'cursor')).resolves.toEqual({ ok: true })
+      await expect(handler({}, workspacePath, 'codex')).resolves.toEqual({ ok: true })
       expect(getSpawnArgsForWindowsMock).toHaveBeenLastCalledWith('C:\\Cursor\\cursor.cmd', [
         '--new-window',
         normalize(workspacePath)

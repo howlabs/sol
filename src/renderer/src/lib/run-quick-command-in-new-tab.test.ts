@@ -167,7 +167,7 @@ describe('runQuickCommandInNewTab', () => {
         id: 'agent-aider',
         label: 'Aider',
         action: 'agent-prompt',
-        agent: 'aider',
+        agent: 'codex',
         prompt: 'Review this diff'
       },
       worktreeId: 'repo::worktree',

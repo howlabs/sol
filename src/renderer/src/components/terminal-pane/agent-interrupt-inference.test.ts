@@ -71,8 +71,8 @@ describe('agent interrupt inference', () => {
   )
 
   it.each([
-    ['plain-escape', 'gemini'],
-    ['ctrl-c', 'gemini']
+    ['plain-escape', 'claude'],
+    ['ctrl-c', 'claude']
   ] as const)(
     'emits a strict baseline request for %s from Gemini immediately',
     (intent, agentType) => {

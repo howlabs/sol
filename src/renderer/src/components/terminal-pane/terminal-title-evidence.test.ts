@@ -45,8 +45,8 @@ describe('resolvePaneTitleDecision', () => {
     const decision = resolvePaneTitleDecision({
       normalizedTitle: '✦ Gemini CLI',
       rawTitle: '✦ Gemini CLI',
-      displayOwnerAgentType: 'gemini',
-      rendererOwnerAgentType: 'gemini',
+      displayOwnerAgentType: 'claude',
+      rendererOwnerAgentType: 'claude',
       userGpuMode: 'auto'
     })
     expect(decision.rawTitle).toBe('✦ Gemini CLI')

@@ -1,8 +1,4 @@
-import {
-  detectAgentStatusFromTitle,
-  isGeminiTerminalTitle,
-  isPiTerminalTitle
-} from '../../../../shared/agent-detection'
+import { detectAgentStatusFromTitle, isPiTerminalTitle } from '../../../../shared/agent-detection'
 import {
   AGY_AGENT_NAME_RE,
   DROID_AGENT_NAME_RE,
@@ -10,8 +6,7 @@ import {
   titleHasAnyLegacyAgentName
 } from '../../../../shared/agent-name-token-match'
 
-const EXTRA_TITLE_AGENT_TOKEN_RE =
-  /(?<![\w./\\-])(?:cursor-agent|pi)(?:\.(?:exe|cmd|bat|ps1))?(?![\w./\\-])/i
+const EXTRA_TITLE_AGENT_TOKEN_RE = /(?<![\w./\\-])pi(?:\.(?:exe|cmd|bat|ps1))?(?![\w./\\-])/i
 
 export function titleHasExplicitAgentIdentity(title: string): boolean {
   if (!title) {
@@ -21,7 +16,6 @@ export function titleHasExplicitAgentIdentity(title: string): boolean {
     title.startsWith('. ') ||
     title.startsWith('* ') ||
     title.startsWith('\u2733') ||
-    isGeminiTerminalTitle(title) ||
     isPiTerminalTitle(title)
   ) {
     return true

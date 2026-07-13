@@ -1217,14 +1217,13 @@ describe('createUISlice hydratePersistedUI', () => {
       'claude',
       'resource-usage',
       'ports',
-      'kimi',
+      'claude',
       'minimax',
       'grok'
     ])
     expect(setUI).toHaveBeenCalledWith({
-      statusBarItems: ['claude', 'resource-usage', 'ports', 'kimi', 'minimax', 'grok'],
+      statusBarItems: ['claude', 'resource-usage', 'ports', 'claude', 'minimax', 'grok'],
       _portsStatusBarDefaultAdded: true,
-      _kimiStatusBarDefaultAdded: true,
       _minimaxStatusBarDefaultAdded: true,
       _grokStatusBarDefaultAdded: true
     })
@@ -1239,7 +1238,6 @@ describe('createUISlice hydratePersistedUI', () => {
       makePersistedUI({
         statusBarItems: ['claude', 'resource-usage'],
         _portsStatusBarDefaultAdded: true,
-        _kimiStatusBarDefaultAdded: true,
         _minimaxStatusBarDefaultAdded: true,
         _grokStatusBarDefaultAdded: true
       })

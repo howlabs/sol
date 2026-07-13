@@ -106,12 +106,12 @@ describe('useDetectedAgents (ssh call site)', () => {
       firstRoot.unmount()
     })
     roots.splice(roots.indexOf(firstRoot), 1)
-    detectRemoteAgents.mockResolvedValueOnce(['kiro'])
+    detectRemoteAgents.mockResolvedValueOnce(['opencode'])
 
     await renderProbe({ kind: 'ssh', connectionId: 'ssh-1' })
 
     expect(detectRemoteAgents).toHaveBeenCalledTimes(2)
-    expect(useAppStore.getState().remoteDetectedAgentIds['ssh-1']).toEqual(['kiro'])
+    expect(useAppStore.getState().remoteDetectedAgentIds['ssh-1']).toEqual(['opencode'])
   })
 })
 
@@ -133,7 +133,7 @@ describe('useDetectedAgents (runtime call site)', () => {
         }
       } else {
         detectCalls += 1
-        result = detectCalls === 1 ? [] : ['kiro']
+        result = detectCalls === 1 ? [] : ['opencode']
       }
       return Promise.resolve({
         id: method,
@@ -156,6 +156,6 @@ describe('useDetectedAgents (runtime call site)', () => {
     await renderProbe({ kind: 'runtime', environmentId: 'env-1' })
 
     expect(detectCalls).toBe(2)
-    expect(useAppStore.getState().runtimeDetectedAgentIds['env-1']).toEqual(['kiro'])
+    expect(useAppStore.getState().runtimeDetectedAgentIds['env-1']).toEqual(['opencode'])
   })
 })

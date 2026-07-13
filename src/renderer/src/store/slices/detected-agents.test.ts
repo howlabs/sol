@@ -488,11 +488,13 @@ describe('createDetectedAgentsSlice remote detection', () => {
     expect(store.getState().remoteDetectedAgentIds['ssh-1']).toEqual([])
     expect(detectRemoteAgents).toHaveBeenCalledTimes(1)
 
-    detectRemoteAgents.mockResolvedValueOnce(['kiro'])
+    detectRemoteAgents.mockResolvedValueOnce(['opencode'])
 
-    await expect(store.getState().ensureRemoteDetectedAgents('ssh-1')).resolves.toEqual(['kiro'])
+    await expect(store.getState().ensureRemoteDetectedAgents('ssh-1')).resolves.toEqual([
+      'opencode'
+    ])
     expect(detectRemoteAgents).toHaveBeenCalledTimes(2)
-    expect(store.getState().remoteDetectedAgentIds['ssh-1']).toEqual(['kiro'])
+    expect(store.getState().remoteDetectedAgentIds['ssh-1']).toEqual(['opencode'])
   })
 
   it('detects runtime environment agents through the owning runtime', async () => {
@@ -544,7 +546,7 @@ describe('createDetectedAgentsSlice remote detection', () => {
         }
       } else {
         detectCalls += 1
-        result = detectCalls === 1 ? [] : ['kiro']
+        result = detectCalls === 1 ? [] : ['opencode']
       }
       return Promise.resolve({
         id: method,
@@ -557,8 +559,10 @@ describe('createDetectedAgentsSlice remote detection', () => {
     await expect(store.getState().ensureRuntimeDetectedAgents('env-1')).resolves.toEqual([])
     expect(store.getState().runtimeDetectedAgentIds['env-1']).toEqual([])
 
-    await expect(store.getState().ensureRuntimeDetectedAgents('env-1')).resolves.toEqual(['kiro'])
-    expect(store.getState().runtimeDetectedAgentIds['env-1']).toEqual(['kiro'])
+    await expect(store.getState().ensureRuntimeDetectedAgents('env-1')).resolves.toEqual([
+      'opencode'
+    ])
+    expect(store.getState().runtimeDetectedAgentIds['env-1']).toEqual(['opencode'])
     expect(detectCalls).toBe(2)
   })
 })

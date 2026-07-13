@@ -61,7 +61,7 @@ function deferred<T>(): Deferred<T> {
 }
 
 function okProvider(
-  provider: 'claude' | 'codex' | 'gemini' | 'opencode-go' | 'minimax' | 'grok',
+  provider: 'claude' | 'codex' | 'claude' | 'opencode-go' | 'minimax' | 'grok',
   usedPercent: number,
   updatedAt = Date.now()
 ): ProviderRateLimits {
@@ -81,7 +81,7 @@ function okProvider(
 }
 
 function errorProvider(
-  provider: 'claude' | 'codex' | 'gemini' | 'opencode-go' | 'minimax' | 'grok',
+  provider: 'claude' | 'codex' | 'claude' | 'opencode-go' | 'minimax' | 'grok',
   message: string
 ): ProviderRateLimits {
   return {
@@ -133,7 +133,7 @@ function asRateLimitWindow(window: FakeRateLimitWindow): RateLimitWindow {
 describe('RateLimitService', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(fetchGeminiRateLimits).mockResolvedValue(okProvider('gemini', 0, Date.now()))
+    vi.mocked(fetchGeminiRateLimits).mockResolvedValue(okProvider('claude', 0, Date.now()))
     vi.mocked(fetchOpenCodeGoRateLimits).mockResolvedValue(okProvider('opencode-go', 0, Date.now()))
     vi.mocked(fetchMiniMaxRateLimits).mockResolvedValue(okProvider('minimax', 0, Date.now()))
     vi.mocked(fetchGrokRateLimits).mockResolvedValue({
@@ -476,7 +476,7 @@ describe('RateLimitService', () => {
 
     vi.mocked(fetchClaudeRateLimits).mockResolvedValueOnce(okProvider('claude', 10, Date.now()))
     vi.mocked(fetchCodexRateLimits).mockResolvedValueOnce(okProvider('codex', 20, Date.now()))
-    vi.mocked(fetchGeminiRateLimits).mockResolvedValueOnce(okProvider('gemini', 30, Date.now()))
+    vi.mocked(fetchGeminiRateLimits).mockResolvedValueOnce(okProvider('claude', 30, Date.now()))
     vi.mocked(fetchOpenCodeGoRateLimits).mockResolvedValueOnce(
       okProvider('opencode-go', 40, Date.now())
     )
@@ -871,7 +871,7 @@ describe('RateLimitService', () => {
     const service = new RateLimitService()
 
     const geminiWithBuckets: ProviderRateLimits = {
-      provider: 'gemini',
+      provider: 'claude',
       session: { usedPercent: 80, windowMinutes: 300, resetsAt: null, resetDescription: null },
       weekly: null,
       buckets: [
@@ -948,7 +948,7 @@ describe('RateLimitService', () => {
     // 1. Success fetch
     vi.mocked(fetchClaudeRateLimits).mockResolvedValue(okProvider('claude', 10, Date.now()))
     vi.mocked(fetchCodexRateLimits).mockResolvedValue(okProvider('codex', 20, Date.now()))
-    vi.mocked(fetchGeminiRateLimits).mockResolvedValue(okProvider('gemini', 30, Date.now()))
+    vi.mocked(fetchGeminiRateLimits).mockResolvedValue(okProvider('claude', 30, Date.now()))
     vi.mocked(fetchOpenCodeGoRateLimits).mockResolvedValue(
       okProvider('opencode-go', 40, Date.now())
     )

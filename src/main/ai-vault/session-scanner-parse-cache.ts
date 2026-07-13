@@ -5,14 +5,8 @@ import { parseAgentSessionFile } from './session-scanner-agent-parser'
 import { createCodexSessionResumeState } from './session-scanner-codex-parser'
 import { createDroidSessionResumeState } from './session-scanner-droid-parser'
 import { createMessageGraphSessionResumeState } from './session-scanner-graph-parsers'
-import {
-  createClaudeSessionResumeState,
-  createGeminiJsonlSessionResumeState
-} from './session-scanner-primary-parsers'
-import {
-  createCopilotSessionResumeState,
-  createCursorSessionResumeState
-} from './session-scanner-secondary-parsers'
+import { createClaudeSessionResumeState } from './session-scanner-primary-parsers'
+import { createCopilotSessionResumeState } from './session-scanner-secondary-parsers'
 import type { ResumableSessionParseState, SessionFileCandidate } from './session-scanner-types'
 
 // Sized past the default recency cap (1000) plus the in-scope cap (2000) so a
@@ -38,8 +32,8 @@ type SessionParseCacheEntry = {
 }
 
 // Incremental append-parsing applies only to transcripts that are append-only
-// JSONL line-folds. Whole-JSON documents (grok/rovo/devin/hermes/gemini-json)
-// are rewritten in place, Kimi reads a state doc plus a sibling wire file, and
+// JSONL line-folds. Whole-JSON documents (grok/rovo/devin/hermes) are rewritten
+// in place, and
 // OpenCode reads SQLite rows or a doc plus a message dir — those formats keep
 // unchanged-file reuse only and re-parse whole when they change.
 // Returns a factory (not a state) so steady-state resumes, which clone the
@@ -52,25 +46,15 @@ function resumableStateFactoryFor(
       return () => createClaudeSessionResumeState(candidate.file)
     case 'codex':
       return () => createCodexSessionResumeState(candidate.file, candidate.codexHome)
-    case 'cursor':
-      return () => createCursorSessionResumeState(candidate.file)
     case 'copilot':
       return () => createCopilotSessionResumeState(candidate.file)
     case 'droid':
       return () => createDroidSessionResumeState(candidate.file)
-    case 'openclaw':
-    case 'pi': {
-      const agent = candidate.agent
-      return () => createMessageGraphSessionResumeState(agent, candidate.file)
-    }
-    case 'gemini':
-      return candidate.file.path.endsWith('.jsonl')
-        ? () => createGeminiJsonlSessionResumeState(candidate.file)
-        : null
+    case 'pi':
+      return () => createMessageGraphSessionResumeState('pi', candidate.file)
     case 'devin':
     case 'grok':
     case 'hermes':
-    case 'kimi':
     case 'opencode':
       return null
   }
@@ -107,7 +91,7 @@ function storeEntry(path: string, entry: SessionParseCacheEntry): void {
 /**
  * Parse a session file, reusing prior work where the file is provably
  * unchanged (mtime+size) and, for append-only JSONL transcripts (Claude,
- * Codex, Cursor, Copilot, Droid, OpenClaw/Pi, Gemini-JSONL), resuming the
+ * Codex, Copilot, Droid, Pi), resuming the
  * parse from the last consumed byte when the file only grew. This is what
  * keeps the renderer's ~5s forced rescans from re-reading gigabytes of
  * transcripts (STA-1278/STA-1417: main process pegging one core during

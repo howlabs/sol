@@ -33,14 +33,14 @@ describe('normalizeOpenInApplications', () => {
     let counter = 0
     const rows = normalizeOpenInApplications(
       [
-        { label: 'Cursor', command: 'cursor' },
+        { label: 'Cursor', command: 'codex' },
         { id: '   ', label: 'Zed', command: 'zed' }
       ],
       { createId: () => `gen-${++counter}` }
     )
 
     expect(rows).toEqual([
-      { id: 'gen-1', label: 'Cursor', command: 'cursor' },
+      { id: 'gen-1', label: 'Cursor', command: 'codex' },
       { id: 'gen-2', label: 'Zed', command: 'zed' }
     ])
   })

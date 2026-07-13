@@ -32,7 +32,6 @@ describe('getDefaultSettings', () => {
 
   it('uses a block terminal cursor by default for new settings', () => {
     expect(getDefaultSettings('/tmp').terminalCursorStyle).toBe('block')
-    expect(getDefaultSettings('/tmp').terminalCursorStyleDefaultedToBlock).toBe(true)
   })
 
   it('enables separate light terminal theme by default', () => {
@@ -98,8 +97,6 @@ describe('getDefaultSettings', () => {
     expect(settings.agentDefaultArgs).toMatchObject({
       claude: '--dangerously-skip-permissions',
       codex: '--dangerously-bypass-approvals-and-sandbox',
-      gemini: '--yolo',
-      cursor: '--yolo',
       copilot: '--yolo',
       grok: '--permission-mode bypassPermissions'
     })

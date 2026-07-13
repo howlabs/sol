@@ -14,10 +14,7 @@ export type AgentImageHandling = 'attachment' | 'unsupported'
 
 const IMAGE_ATTACHMENT_AGENTS: ReadonlySet<AgentType> = new Set<AgentType>([
   'claude',
-  'openclaude',
   'codex',
-  'gemini',
-  'cursor',
   'copilot',
   'droid',
   'grok'

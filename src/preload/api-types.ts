@@ -1880,14 +1880,10 @@ export type PreloadApi = {
   }
   agentHooks: {
     claudeStatus: () => Promise<AgentHookInstallStatus>
-    openClaudeStatus: () => Promise<AgentHookInstallStatus>
     codexStatus: () => Promise<AgentHookInstallStatus>
-    geminiStatus: () => Promise<AgentHookInstallStatus>
     antigravityStatus: () => Promise<AgentHookInstallStatus>
     ampStatus: () => Promise<AgentHookInstallStatus>
-    cursorStatus: () => Promise<AgentHookInstallStatus>
     droidStatus: () => Promise<AgentHookInstallStatus>
-    commandCodeStatus: () => Promise<AgentHookInstallStatus>
     grokStatus: () => Promise<AgentHookInstallStatus>
     copilotStatus: () => Promise<AgentHookInstallStatus>
     hermesStatus: () => Promise<AgentHookInstallStatus>
@@ -1895,7 +1891,7 @@ export type PreloadApi = {
   }
   agentTrust: {
     markTrusted: (args: {
-      preset: 'cursor' | 'copilot' | 'codex'
+      preset: 'copilot' | 'codex'
       workspacePath: string
       connectionId?: string
     }) => Promise<void>

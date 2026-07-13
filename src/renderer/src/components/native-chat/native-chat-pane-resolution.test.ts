@@ -139,7 +139,7 @@ describe('resolveNativeChatSession', () => {
     })
   })
 
-  it.each(['codex', 'claude', 'openclaude'] as TuiAgent[])(
+  it.each(['codex', 'claude', 'opencode'] as TuiAgent[])(
     'resolves supported title fallback %s when no hook or launch identity exists',
     (resolvedAgent) => {
       const paneKey = 'tab-1:11111111-1111-4111-8111-111111111111'
@@ -160,7 +160,7 @@ describe('resolveNativeChatSession', () => {
     }
   )
 
-  it.each(['gemini', 'grok'] as TuiAgent[])(
+  it.each(['claude', 'grok'] as TuiAgent[])(
     'does not resolve unsupported title fallback %s',
     (resolvedAgent) => {
       expect(
@@ -182,7 +182,7 @@ describe('resolveNativeChatSession', () => {
         launchAgent: null,
         agentStatusEntry: entry({
           paneKey,
-          agentType: 'gemini',
+          agentType: 'claude',
           providerSession: { key: 'session_id', id: 'g-1' }
         }),
         ptyId: 'pty-1'
@@ -198,7 +198,7 @@ describe('resolveNativeChatSession', () => {
         launchAgent: null,
         agentStatusEntry: entry({
           paneKey,
-          agentType: 'gemini',
+          agentType: 'claude',
           providerSession: { key: 'session_id', id: 'g-1' }
         }),
         resolvedAgent: 'codex',
@@ -215,7 +215,7 @@ describe('resolveNativeChatSession', () => {
         launchAgent: 'codex',
         agentStatusEntry: entry({
           paneKey,
-          agentType: 'gemini',
+          agentType: 'claude',
           providerSession: { key: 'session_id', id: 'g-1' }
         }),
         resolvedAgent: 'claude',

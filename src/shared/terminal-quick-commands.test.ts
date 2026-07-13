@@ -141,9 +141,9 @@ describe('terminal quick commands', () => {
         },
         {
           id: 'post-start-agent',
-          label: 'Aider',
+          label: 'Hermes',
           action: 'agent-prompt',
-          agent: 'aider',
+          agent: 'hermes',
           prompt: 'Do work'
         }
       ])
@@ -297,8 +297,8 @@ describe('terminal quick commands', () => {
 
   it('only allows agent prompt quick commands for launch-time prompt agents', () => {
     expect(supportsTerminalAgentQuickCommand('claude')).toBe(true)
-    expect(supportsTerminalAgentQuickCommand('gemini')).toBe(true)
-    expect(supportsTerminalAgentQuickCommand('aider')).toBe(false)
+    expect(supportsTerminalAgentQuickCommand('codex')).toBe(true)
+    expect(supportsTerminalAgentQuickCommand('hermes')).toBe(false)
     expect(supportsTerminalAgentQuickCommand('not-real')).toBe(false)
   })
 })

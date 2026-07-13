@@ -20,17 +20,17 @@ function requirePreset(id: string): OpenInAppPreset {
 
 describe('OpenInMenuSetting presets', () => {
   it('creates stable preset rows for known apps', () => {
-    const cursor = requirePreset('cursor')
+    const cursor = requirePreset('codex')
 
     expect(createPresetOpenInApplication(cursor)).toEqual({
-      id: 'cursor',
+      id: 'codex',
       label: 'Cursor',
-      command: 'cursor'
+      command: 'codex'
     })
   })
 
   it('recognizes legacy preset rows by command', () => {
-    const cursor = requirePreset('cursor')
+    const cursor = requirePreset('codex')
 
     expect(isOpenInAppPresetAdded([{ command: ' cursor ' }], cursor)).toBe(true)
   })
@@ -48,10 +48,10 @@ describe('OpenInMenuSetting application drafts', () => {
       shouldCommitOpenInApplicationsDraft([{ id: 'draft', label: 'Cursor', command: '' }])
     ).toBe(false)
     expect(
-      shouldCommitOpenInApplicationsDraft([{ id: 'draft', label: '', command: 'cursor' }])
+      shouldCommitOpenInApplicationsDraft([{ id: 'draft', label: '', command: 'codex' }])
     ).toBe(false)
     expect(
-      shouldCommitOpenInApplicationsDraft([{ id: 'draft', label: '   ', command: 'cursor' }])
+      shouldCommitOpenInApplicationsDraft([{ id: 'draft', label: '   ', command: 'codex' }])
     ).toBe(false)
     expect(
       shouldCommitOpenInApplicationsDraft([{ id: 'draft', label: 'Cursor', command: '   ' }])
@@ -61,11 +61,11 @@ describe('OpenInMenuSetting application drafts', () => {
   it('allows commit when every draft row has a label and command', () => {
     expect(shouldCommitOpenInApplicationsDraft([])).toBe(true)
     expect(
-      shouldCommitOpenInApplicationsDraft([{ id: 'cursor', label: 'Cursor', command: 'cursor' }])
+      shouldCommitOpenInApplicationsDraft([{ id: 'codex', label: 'Cursor', command: 'codex' }])
     ).toBe(true)
     expect(
       shouldCommitOpenInApplicationsDraft([
-        { id: 'cursor', label: 'Cursor', command: 'cursor' },
+        { id: 'codex', label: 'Cursor', command: 'codex' },
         { id: 'zed', label: 'Zed', command: 'zed' }
       ])
     ).toBe(true)

@@ -191,14 +191,4 @@ describe('ExternalAutomationManagers toggle', () => {
     expect(labels).not.toContain('Pause external automation')
     expect(labels).not.toContain('Resume external automation')
   })
-
-  it('keeps Run/Delete (no Edit) for openclaw and removes the pause/resume button', () => {
-    renderManagers([makeManager({ provider: 'openclaw' })])
-    const labels = actionButtonLabels()
-    expect(labels).toContain('Run external automation')
-    expect(labels).toContain('Delete external automation')
-    expect(labels).not.toContain('Edit external automation')
-    expect(labels).not.toContain('Pause external automation')
-    expect(labels).not.toContain('Resume external automation')
-  })
 })

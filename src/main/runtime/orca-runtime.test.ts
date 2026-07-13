@@ -4770,7 +4770,7 @@ describe('OrcaRuntimeService', () => {
     listGitHubLabelsMock.mockResolvedValueOnce([])
     listGitHubAssignableUsersMock.mockResolvedValueOnce([])
 
-    await runtime.listRepoWorkItems('id:repo-1', 7, 'is:open', 'cursor', true)
+    await runtime.listRepoWorkItems('id:repo-1', 7, 'is:open', 'codex', true)
     await runtime.countRepoWorkItems('id:repo-1', 'is:issue')
     await runtime.listRepoIssues('id:repo-1', 5)
     await runtime.getRepoIssue('id:repo-1', 12)
@@ -4784,7 +4784,7 @@ describe('OrcaRuntimeService', () => {
       TEST_REPO_PATH,
       7,
       'is:open',
-      'cursor',
+      'codex',
       undefined,
       null,
       true,
@@ -18253,8 +18253,8 @@ describe('OrcaRuntimeService', () => {
       getSettings: () => ({
         ...store.getSettings(),
         disabledTuiAgents: [],
-        agentCmdOverrides: { 'command-code': 'command-code --profile mobile' },
-        agentDefaultEnv: { 'command-code': { COMMAND_CODE_PROFILE: 'mobile-env' } }
+        agentCmdOverrides: { codex: 'command-code --profile mobile' },
+        agentDefaultEnv: { codex: { COMMAND_CODE_PROFILE: 'mobile-env' } }
       })
     } as never)
     runtime.setPtyController({
@@ -18266,7 +18266,7 @@ describe('OrcaRuntimeService', () => {
     runtime.syncWindowGraph(0, { tabs: [], leaves: [] })
 
     await runtime.createMobileSessionTerminal(`id:${TEST_WORKTREE_ID}`, {
-      agent: 'command-code'
+      agent: 'codex'
     })
 
     expect(spawn).toHaveBeenCalledWith(
@@ -18300,8 +18300,8 @@ describe('OrcaRuntimeService', () => {
         getSettings: () => ({
           ...store.getSettings(),
           disabledTuiAgents: [],
-          agentCmdOverrides: { 'command-code': 'command-code --profile mobile' },
-          agentDefaultArgs: { 'command-code': '--note "can\'t"' },
+          agentCmdOverrides: { codex: 'command-code --profile mobile' },
+          agentDefaultArgs: { codex: '--note "can\'t"' },
           localWindowsRuntimeDefault: { kind: 'windows-host' }
         })
       } as never)
@@ -18314,7 +18314,7 @@ describe('OrcaRuntimeService', () => {
       runtime.syncWindowGraph(0, { tabs: [], leaves: [] })
 
       await runtime.createMobileSessionTerminal(`id:${TEST_WORKTREE_ID}`, {
-        agent: 'command-code'
+        agent: 'codex'
       })
 
       expect(spawn).toHaveBeenCalledWith(
@@ -18346,8 +18346,8 @@ describe('OrcaRuntimeService', () => {
         getSettings: () => ({
           ...store.getSettings(),
           disabledTuiAgents: [],
-          agentCmdOverrides: { 'command-code': 'command-code --profile mobile' },
-          agentDefaultArgs: { 'command-code': '--note "can\'t"' },
+          agentCmdOverrides: { codex: 'command-code --profile mobile' },
+          agentDefaultArgs: { codex: '--note "can\'t"' },
           localWindowsRuntimeDefault: { kind: 'wsl', distro: 'Ubuntu' }
         })
       } as never)
@@ -18360,7 +18360,7 @@ describe('OrcaRuntimeService', () => {
       runtime.syncWindowGraph(0, { tabs: [], leaves: [] })
 
       await runtime.createMobileSessionTerminal(`id:${TEST_WORKTREE_ID}`, {
-        agent: 'command-code'
+        agent: 'codex'
       })
 
       expect(spawn).toHaveBeenCalledWith(
@@ -18392,8 +18392,8 @@ describe('OrcaRuntimeService', () => {
         getSettings: () => ({
           ...store.getSettings(),
           disabledTuiAgents: [],
-          agentCmdOverrides: { 'command-code': 'command-code --profile mobile' },
-          agentDefaultArgs: { 'command-code': '--note "can\'t"' },
+          agentCmdOverrides: { codex: 'command-code --profile mobile' },
+          agentDefaultArgs: { codex: '--note "can\'t"' },
           localWindowsRuntimeDefault: { kind: 'wsl', distro: 'Ubuntu' },
           terminalWindowsShell: 'cmd.exe'
         })
@@ -18407,7 +18407,7 @@ describe('OrcaRuntimeService', () => {
       runtime.syncWindowGraph(0, { tabs: [], leaves: [] })
 
       await runtime.createMobileSessionTerminal(`id:${TEST_WORKTREE_ID}`, {
-        agent: 'command-code'
+        agent: 'codex'
       })
 
       expect(spawn).toHaveBeenCalledWith(
@@ -23548,7 +23548,7 @@ describe('OrcaRuntimeService', () => {
       spawn,
       write,
       kill: () => true,
-      getForegroundProcess: async () => 'aider'
+      getForegroundProcess: async () => 'codex'
     })
     runtime.setNotifier({
       worktreesChanged: vi.fn(),
@@ -23581,7 +23581,7 @@ describe('OrcaRuntimeService', () => {
     const result = await runtime.createManagedWorktree({
       repoSelector: TEST_REPO_ID,
       name: 'runtime-cli-aider-startup',
-      startupAgent: 'aider',
+      startupAgent: 'codex',
       startupPrompt: 'fix it'
     })
 
@@ -23654,7 +23654,7 @@ describe('OrcaRuntimeService', () => {
       await runtime.createManagedWorktree({
         repoSelector: TEST_REPO_ID,
         name: 'runtime-cli-aider-shell',
-        startupAgent: 'aider',
+        startupAgent: 'codex',
         startupPrompt: 'fix it'
       })
 

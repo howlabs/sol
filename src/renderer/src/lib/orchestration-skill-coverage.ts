@@ -52,7 +52,6 @@ const ORCHESTRATION_SKILL_LOCATION_IDS_BY_AGENT: Partial<
   Record<TuiAgent, readonly OrchestrationSkillLocationId[]>
 > = {
   claude: ['claude-home', 'agents-home'],
-  openclaude: ['claude-home', 'agents-home'],
   codex: ['codex-home', 'codex-plugin-cache', 'agents-home']
 }
 

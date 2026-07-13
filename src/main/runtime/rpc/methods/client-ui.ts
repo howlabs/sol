@@ -197,7 +197,7 @@ const UiUpdate = z
     _workspaceStatusesDefaultVisualsMigrated: z.boolean().optional(),
     statusBarItems: z.array(StatusBarItem).optional(),
     _portsStatusBarDefaultAdded: z.boolean().optional(),
-    _kimiStatusBarDefaultAdded: z.boolean().optional(),
+
     _minimaxStatusBarDefaultAdded: z.boolean().optional(),
     statusBarVisible: z.boolean().optional(),
     dismissedUpdateVersion: NullableString.optional(),

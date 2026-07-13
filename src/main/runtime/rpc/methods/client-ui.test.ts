@@ -182,9 +182,8 @@ describe('client UI RPC methods', () => {
       ...getDefaultUIState(),
       worktreeCardProperties: ['status', 'branch', 'automation', 'inline-agents'],
       _worktreeCardModeDefaulted: true,
-      statusBarItems: ['codex', 'kimi', 'minimax', 'ports'],
+      statusBarItems: ['codex', 'claude', 'minimax', 'ports'],
       _portsStatusBarDefaultAdded: true,
-      _kimiStatusBarDefaultAdded: true,
       _minimaxStatusBarDefaultAdded: true,
       taskResumeState: {
         githubMode: 'items',
@@ -221,9 +220,8 @@ describe('client UI RPC methods', () => {
     const payload = {
       worktreeCardProperties: ['status', 'branch', 'automation', 'inline-agents'],
       _worktreeCardModeDefaulted: true,
-      statusBarItems: ['codex', 'kimi', 'minimax', 'ports'],
+      statusBarItems: ['codex', 'claude', 'minimax', 'ports'],
       _portsStatusBarDefaultAdded: true,
-      _kimiStatusBarDefaultAdded: true,
       _minimaxStatusBarDefaultAdded: true,
       taskResumeState: {
         githubMode: 'items',

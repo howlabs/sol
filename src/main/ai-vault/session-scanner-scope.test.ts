@@ -18,20 +18,15 @@ function scopedScanOptions(claudeProjectsDir: string, extra: Partial<AiVaultScan
   return {
     claudeProjectsDir,
     codexSessionsDir: '/nonexistent/codex',
-    geminiSessionsDir: '/nonexistent/gemini',
     copilotSessionsDir: '/nonexistent/copilot',
-    cursorProjectsDir: '/nonexistent/cursor',
     opencodeStorageDir: '/nonexistent/opencode',
     opencodeDbPaths: [],
     grokSessionsDir: '/nonexistent/grok',
     devinTranscriptsDir: '/nonexistent/devin',
     hermesSessionsDir: '/nonexistent/hermes',
-    openclawStateDir: '/nonexistent/openclaw',
-    openclawLegacyStateDir: '/nonexistent/openclaw-legacy',
     piSessionsDir: '/nonexistent/pi',
     droidSessionsDir: '/nonexistent/droid',
     droidProjectsDir: '/nonexistent/droid-projects',
-    kimiSessionsDir: '/nonexistent/kimi',
     ...extra
   } satisfies AiVaultScanOptions
 }

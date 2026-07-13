@@ -21,7 +21,6 @@ export {
   getAgentLabel,
   isClaudeAgent,
   isClaudeManagementTitle,
-  isGeminiTerminalTitle,
   isPiTerminalTitle
 } from './terminal-title-agent-type'
 export type { AgentStatus } from './terminal-title-status'

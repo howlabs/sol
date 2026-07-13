@@ -181,7 +181,7 @@ describe('createSettingsSlice runtime switching', () => {
     })
 
     expect(store.getState().settings?.openInApplications).toEqual([
-      { id: 'cursor', label: 'Cursor', command: 'cursor' }
+      { id: 'codex', label: 'Cursor', command: 'codex' }
     ])
   })
 

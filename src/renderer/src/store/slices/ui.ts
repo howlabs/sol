@@ -238,20 +238,22 @@ function presetToQuery(presetId: TaskViewPresetId | null): string {
 // into a single `resource-usage` entry. Rewrite legacy ids in place and
 // de-duplicate. We leave unknown ids alone so a downgrade→upgrade cycle
 // doesn't strip a newer build's ids out of the user's settings.
+const REMOVED_STATUS_BAR_ITEMS = new Set(['gemini', 'kimi', 'memory', 'sessions'])
+
 function migrateStatusBarItems(items: readonly string[] | undefined): StatusBarItem[] {
   const source = items ?? DEFAULT_STATUS_BAR_ITEMS
   const out: string[] = []
   for (const id of source) {
     const mapped = id === 'memory' || id === 'sessions' ? 'resource-usage' : id
-    if (!out.includes(mapped)) {
-      out.push(mapped)
+    if (REMOVED_STATUS_BAR_ITEMS.has(mapped) || out.includes(mapped)) {
+      continue
     }
+    out.push(mapped)
   }
   return out as StatusBarItem[]
 }
 
 const DEFAULT_ON_PORTS_STATUS_BAR_ITEM: StatusBarItem = 'ports'
-const DEFAULT_ON_KIMI_STATUS_BAR_ITEM: StatusBarItem = 'kimi'
 const DEFAULT_ON_MINIMAX_STATUS_BAR_ITEM: StatusBarItem = 'minimax'
 const DEFAULT_ON_GROK_STATUS_BAR_ITEM: StatusBarItem = 'grok'
 
@@ -2060,21 +2062,16 @@ export const createUISlice: StateCreator<AppState, [], [], UISlice> = (set, get)
         ui._portsStatusBarDefaultAdded || migratedStatusBarItems.includes('ports')
           ? migratedStatusBarItems
           : [...migratedStatusBarItems, DEFAULT_ON_PORTS_STATUS_BAR_ITEM]
-      const statusBarItems =
-        ui._kimiStatusBarDefaultAdded || statusBarItemsWithPorts.includes('kimi')
-          ? statusBarItemsWithPorts
-          : [...statusBarItemsWithPorts, DEFAULT_ON_KIMI_STATUS_BAR_ITEM]
       const statusBarItemsWithMiniMax =
-        ui._minimaxStatusBarDefaultAdded || statusBarItems.includes('minimax')
-          ? statusBarItems
-          : [...statusBarItems, DEFAULT_ON_MINIMAX_STATUS_BAR_ITEM]
+        ui._minimaxStatusBarDefaultAdded || statusBarItemsWithPorts.includes('minimax')
+          ? statusBarItemsWithPorts
+          : [...statusBarItemsWithPorts, DEFAULT_ON_MINIMAX_STATUS_BAR_ITEM]
       const statusBarItemsWithGrok =
         ui._grokStatusBarDefaultAdded || statusBarItemsWithMiniMax.includes('grok')
           ? statusBarItemsWithMiniMax
           : [...statusBarItemsWithMiniMax, DEFAULT_ON_GROK_STATUS_BAR_ITEM]
       if (
         (!ui._portsStatusBarDefaultAdded ||
-          !ui._kimiStatusBarDefaultAdded ||
           !ui._minimaxStatusBarDefaultAdded ||
           !ui._grokStatusBarDefaultAdded) &&
         typeof window !== 'undefined'
@@ -2083,7 +2080,6 @@ export const createUISlice: StateCreator<AppState, [], [], UISlice> = (set, get)
           .set({
             statusBarItems: statusBarItemsWithGrok,
             _portsStatusBarDefaultAdded: true,
-            _kimiStatusBarDefaultAdded: true,
             _minimaxStatusBarDefaultAdded: true,
             _grokStatusBarDefaultAdded: true
           })

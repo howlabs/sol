@@ -96,7 +96,7 @@ describe('prepareLocalCommitMessageAgentEnv', () => {
   it('does not synthesize env for agents without shell-scoped auth or config roots', async () => {
     makeHome()
 
-    await expect(prepareLocalCommitMessageAgentEnv('cursor', undefined)).resolves.toEqual({
+    await expect(prepareLocalCommitMessageAgentEnv('codex', undefined)).resolves.toEqual({
       ok: true
     })
   })

@@ -2276,7 +2276,7 @@ describe('connectPanePty', () => {
     const deps = createDeps({
       startup: {
         command: "command-code --trust 'Fix the status'",
-        initialAgentStatus: { agent: 'command-code', prompt: 'Fix the status' }
+        initialAgentStatus: { agent: 'codex', prompt: 'Fix the status' }
       }
     })
 
@@ -2293,7 +2293,7 @@ describe('connectPanePty', () => {
       {
         state: 'working',
         prompt: 'Fix the status',
-        agentType: 'command-code'
+        agentType: 'codex'
       },
       undefined
     )
@@ -2329,7 +2329,7 @@ describe('connectPanePty', () => {
       {
         state: 'working',
         prompt: 'Fix the spinner',
-        agentType: 'command-code'
+        agentType: 'codex'
       },
       undefined
     )
@@ -2364,7 +2364,7 @@ describe('connectPanePty', () => {
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'working',
       prompt: 'say hi',
-      agentType: 'command-code'
+      agentType: 'codex'
     })
 
     capturedDataCallback.current?.(
@@ -2374,14 +2374,14 @@ describe('connectPanePty', () => {
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'working',
       prompt: 'say hi',
-      agentType: 'command-code'
+      agentType: 'codex'
     })
 
     vi.advanceTimersByTime(1)
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'done',
       prompt: 'say hi',
-      agentType: 'command-code'
+      agentType: 'codex'
     })
   })
 
@@ -2419,7 +2419,7 @@ describe('connectPanePty', () => {
     expect(mockStoreState.agentStatusByPaneKey[paneKey]).toMatchObject({
       state: 'working',
       prompt: 'Run a slow command',
-      agentType: 'command-code'
+      agentType: 'codex'
     })
   })
 
@@ -2445,7 +2445,7 @@ describe('connectPanePty', () => {
       paneKey,
       state: 'done',
       prompt: 'Fix the spinner',
-      agentType: 'command-code',
+      agentType: 'codex',
       updatedAt: Date.now(),
       stateStartedAt: Date.now(),
       stateHistory: []
@@ -2486,7 +2486,7 @@ describe('connectPanePty', () => {
       paneKey,
       state: 'done',
       prompt: 'Fix the spinner',
-      agentType: 'command-code',
+      agentType: 'codex',
       updatedAt: Date.now(),
       stateStartedAt: Date.now(),
       stateHistory: []
@@ -2504,7 +2504,7 @@ describe('connectPanePty', () => {
       {
         state: 'working',
         prompt: 'Fix the green done state',
-        agentType: 'command-code'
+        agentType: 'codex'
       },
       undefined
     )

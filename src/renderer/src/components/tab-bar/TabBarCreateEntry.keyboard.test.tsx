@@ -133,7 +133,7 @@ describe('TabBarCreateEntry keyboard navigation', () => {
 
   it('launches a matched agent when its highlighted row is selected', () => {
     const agentOptions: TabAgentLaunchOption[] = [
-      { agent: 'gemini', aliases: ['gemini'], label: 'Gemini' }
+      { agent: 'claude', aliases: ['claude'], label: 'Gemini' }
     ]
     const onLaunchAgent = vi.fn()
     mount(
@@ -152,7 +152,7 @@ describe('TabBarCreateEntry keyboard navigation', () => {
     setQuery('gem')
     submitForm()
 
-    expect(onLaunchAgent).toHaveBeenCalledWith('gemini')
+    expect(onLaunchAgent).toHaveBeenCalledWith('claude')
   })
 
   it('exposes the highlighted row to assistive tech via aria-activedescendant', () => {

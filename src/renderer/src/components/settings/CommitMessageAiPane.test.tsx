@@ -152,17 +152,17 @@ describe('CommitMessageAiPane', () => {
     expect(getSourceControlAgentArgsPlaceholder('claude')).toBe('--model sonnet')
     expect(getSourceControlAgentArgsPlaceholder('codex')).toBe('--model gpt-5.4-mini')
     expect(getSourceControlAgentArgsPlaceholder('amp')).toBe('--mode smart')
-    expect(getSourceControlAgentArgsPlaceholder('aider')).toBe('--model <model>')
+    expect(getSourceControlAgentArgsPlaceholder('codex')).toBe('--model <model>')
   })
 
   it('only offers non-interactive generation agents for text generation actions', () => {
     expect(getAgentCatalogForAction('commitMessage', null).map((agent) => agent.id)).not.toContain(
-      'aider'
+      'codex'
     )
     expect(getAgentCatalogForAction('pullRequest', null).map((agent) => agent.id)).not.toContain(
-      'aider'
+      'codex'
     )
-    expect(getAgentCatalogForAction('fixChecks', null).map((agent) => agent.id)).toContain('aider')
+    expect(getAgentCatalogForAction('fixChecks', null).map((agent) => agent.id)).toContain('codex')
   })
 
   it('explains which agents are supported for text-generation recipes', () => {
@@ -205,7 +205,7 @@ describe('CommitMessageAiPane', () => {
           customAgentCommand: '',
           actions: {
             commitMessage: {
-              agentId: 'aider'
+              agentId: 'codex'
             }
           },
           prCreationDefaults: {},
@@ -331,7 +331,7 @@ describe('CommitMessageAiPane', () => {
   it('allows default-agent recipes even when the old default generator is unsupported', () => {
     const markup = renderPane(
       buildSettings({
-        defaultTuiAgent: 'aider',
+        defaultTuiAgent: 'codex',
         commitMessageAi: {
           enabled: true,
           agentId: null,
@@ -354,7 +354,7 @@ describe('CommitMessageAiPane', () => {
       buildSettings({
         commitMessageAi: {
           enabled: true,
-          agentId: 'gemini',
+          agentId: 'claude',
           selectedModelByAgent: {},
           selectedThinkingByModel: {},
           customPrompt: '',
@@ -381,8 +381,8 @@ describe('CommitMessageAiPane', () => {
   it('merges discovered models without clobbering newer settings fields', () => {
     const config: SourceControlAiSettings = {
       enabled: true,
-      agentId: 'cursor',
-      selectedModelByAgent: { cursor: 'stale-model', codex: 'gpt-5.5' },
+      agentId: 'codex',
+      selectedModelByAgent: { claude: 'stale-model', codex: 'gpt-5.5' },
       selectedThinkingByModel: { 'gpt-5.5': 'low' },
       instructionsByOperation: { commitMessage: 'Use Conventional Commits.' },
       customAgentCommand: '',
@@ -391,19 +391,19 @@ describe('CommitMessageAiPane', () => {
 
     const merged = mergeDiscoveredModelsIntoCommitMessageConfig(
       config,
-      'cursor',
+      'codex',
       [{ id: 'auto', label: 'Auto' }],
       'auto'
     )
 
     expect(merged.instructionsByOperation.commitMessage).toBe('Use Conventional Commits.')
-    expect(merged.agentId).toBe('cursor')
+    expect(merged.agentId).toBe('codex')
     expect(merged.selectedModelByAgent).toEqual({
-      cursor: 'auto',
+      claude: 'stale-model',
       codex: 'gpt-5.5'
     })
-    expect(merged.discoveredModelsByAgent?.cursor).toEqual([{ id: 'auto', label: 'Auto' }])
-    expect(merged.discoveredModelsByAgentByHost?.local?.cursor).toEqual([
+    expect(merged.discoveredModelsByAgent?.codex).toEqual([{ id: 'auto', label: 'Auto' }])
+    expect(merged.discoveredModelsByAgentByHost?.local?.codex).toEqual([
       { id: 'auto', label: 'Auto' }
     ])
   })
@@ -411,28 +411,28 @@ describe('CommitMessageAiPane', () => {
   it('keeps SSH discovered models out of the legacy local cache', () => {
     const config: SourceControlAiSettings = {
       enabled: true,
-      agentId: 'cursor',
-      selectedModelByAgent: { cursor: 'auto' },
+      agentId: 'codex',
+      selectedModelByAgent: { claude: 'auto' },
       selectedThinkingByModel: {},
       instructionsByOperation: {},
       customAgentCommand: '',
-      discoveredModelsByAgent: { cursor: [{ id: 'auto', label: 'Auto' }] },
+      discoveredModelsByAgent: { claude: [{ id: 'auto', label: 'Auto' }] },
       selectedModelByAgentByHost: {},
       discoveredModelsByAgentByHost: {}
     }
 
     const merged = mergeDiscoveredModelsIntoCommitMessageConfig(
       config,
-      'cursor',
+      'codex',
       [{ id: 'remote-only', label: 'Remote Only' }],
       'remote-only',
       'ssh:conn-1'
     )
 
-    expect(merged.selectedModelByAgent.cursor).toBe('auto')
-    expect(merged.discoveredModelsByAgent?.cursor).toEqual([{ id: 'auto', label: 'Auto' }])
-    expect(merged.selectedModelByAgentByHost?.['ssh:conn-1']?.cursor).toBe('remote-only')
-    expect(merged.discoveredModelsByAgentByHost?.['ssh:conn-1']?.cursor).toEqual([
+    expect(merged.selectedModelByAgent.claude).toBe('auto')
+    expect(merged.discoveredModelsByAgent?.claude).toEqual([{ id: 'auto', label: 'Auto' }])
+    expect(merged.selectedModelByAgentByHost?.['ssh:conn-1']?.codex).toBe('remote-only')
+    expect(merged.discoveredModelsByAgentByHost?.['ssh:conn-1']?.codex).toEqual([
       { id: 'remote-only', label: 'Remote Only' }
     ])
   })

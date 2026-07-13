@@ -226,22 +226,7 @@ export async function launchAgentBackgroundSession(
   }
   store.updateTabPtyId(tab.id, ptyId)
   store.setTabLayout(tab.id, singlePaneLayoutSnapshot(leafId, ptyId))
-  if (agent === 'command-code' && hasPrompt && !isFollowupPath) {
-    // Why: Command Code does not expose a prompt-start hook; seed working for
-    // hidden prompt launches so sidebar/activity surfaces do not stay idle.
-    store.setAgentStatus(
-      paneKey,
-      {
-        state: 'working',
-        prompt: trimmedPrompt,
-        agentType: agent
-      },
-      undefined,
-      undefined,
-      undefined,
-      { launchConfig: startupPlan.launchConfig, launchToken }
-    )
-  }
+
   let exitHandled = false
   let unsubscribeExit = (): void => {},
     unsubscribeData = (): void => {}

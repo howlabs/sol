@@ -34,20 +34,15 @@ import type { AgentProviderSessionMetadata } from './agent-session-resume'
 export type AgentHookSource =
   | 'claude'
   | 'codex'
-  | 'gemini'
   | 'antigravity'
   | 'amp'
   | 'opencode'
-  | 'mimo-code'
-  | 'cursor'
   | 'pi'
   | 'droid'
-  | 'command-code'
   | 'grok'
   | 'copilot'
   | 'hermes'
   | 'devin'
-  | 'kimi'
 
 /** Env marker used by the remote relay. It is a transport/location marker, not
  *  a dev-vs-prod build tag, so main-process env mismatch diagnostics ignore it. */

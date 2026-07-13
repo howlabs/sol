@@ -56,8 +56,8 @@ function actionKey(
   return `${manager.id}:${job.id}:${action}`
 }
 
-function getProviderLabel(manager: ExternalAutomationManager): string {
-  return manager.provider === 'hermes' ? 'Hermes' : 'OpenClaw'
+function getProviderLabel(_manager: ExternalAutomationManager): string {
+  return 'Hermes'
 }
 
 function getTargetKindLabel(manager: ExternalAutomationManager): string {
@@ -343,15 +343,10 @@ export function ExternalAutomationManagers({
                     'auto.components.automations.ExternalAutomationManagers.3d58d5b67d',
                     'No'
                   )}{' '}
-                  {manager.provider === 'hermes'
-                    ? translate(
-                        'auto.components.automations.ExternalAutomationManagers.766abf833c',
-                        'Hermes'
-                      )
-                    : translate(
-                        'auto.components.automations.ExternalAutomationManagers.5524365227',
-                        'OpenClaw'
-                      )}{' '}
+                  {translate(
+                    'auto.components.automations.ExternalAutomationManagers.766abf833c',
+                    'Hermes'
+                  )}{' '}
                   {translate(
                     'auto.components.automations.ExternalAutomationManagers.6da3bfba4b',
                     'automations found.'

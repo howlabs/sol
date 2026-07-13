@@ -23,7 +23,7 @@ describe('buildActionScopedRepoAiSave', () => {
         },
         // A half-finished edit on a different row that must NOT be flushed.
         fixCommitFailure: {
-          agentId: 'gemini',
+          agentId: 'claude',
           commandInputTemplate: '{basePrompt}\n\nunsaved',
           agentArgs: ''
         }

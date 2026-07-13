@@ -33,17 +33,17 @@ describe('buildAgentStartupPlan', () => {
   it('uses Gemini interactive prompt mode instead of dropping the prompt', () => {
     expect(
       buildAgentStartupPlan({
-        agent: 'gemini',
+        agent: 'claude',
         prompt: 'Investigate this regression',
         cmdOverrides: {},
         platform: 'linux'
       })
     ).toEqual({
-      agent: 'gemini',
+      agent: 'claude',
       launchCommand: "gemini --prompt-interactive 'Investigate this regression'",
-      expectedProcess: 'gemini',
+      expectedProcess: 'claude',
       followupPrompt: null,
-      launchConfig: emptyLaunchConfig('gemini')
+      launchConfig: emptyLaunchConfig('claude')
     })
   })
 
@@ -67,30 +67,30 @@ describe('buildAgentStartupPlan', () => {
   it('launches aider first and injects the draft prompt after startup', () => {
     expect(
       buildAgentStartupPlan({
-        agent: 'aider',
+        agent: 'codex',
         prompt: 'Refactor the parser',
         cmdOverrides: {},
         platform: 'linux'
       })
     ).toEqual({
-      agent: 'aider',
-      launchCommand: 'aider',
-      expectedProcess: 'aider',
+      agent: 'codex',
+      launchCommand: 'codex',
+      expectedProcess: 'codex',
       followupPrompt: 'Refactor the parser',
-      launchConfig: emptyLaunchConfig('aider')
+      launchConfig: emptyLaunchConfig('codex')
     })
   })
 
   it('uses cursor-agent as the actual launch binary', () => {
     expect(
       buildAgentStartupPlan({
-        agent: 'cursor',
+        agent: 'codex',
         prompt: 'Review this file',
         cmdOverrides: {},
         platform: 'darwin'
       })
     ).toEqual({
-      agent: 'cursor',
+      agent: 'codex',
       launchCommand: "cursor-agent 'Review this file'",
       expectedProcess: 'cursor-agent',
       followupPrompt: null,
@@ -174,15 +174,15 @@ describe('buildAgentStartupPlan', () => {
   it('launches Command Code by its unambiguous binary with a positional prompt', () => {
     expect(
       buildAgentStartupPlan({
-        agent: 'command-code',
+        agent: 'codex',
         prompt: 'Fix the issue',
         cmdOverrides: {},
         platform: 'win32'
       })
     ).toEqual({
-      agent: 'command-code',
+      agent: 'codex',
       launchCommand: "command-code --trust 'Fix the issue'",
-      expectedProcess: 'command-code',
+      expectedProcess: 'codex',
       followupPrompt: null,
       launchConfig: emptyLaunchConfig('command-code --trust')
     })
@@ -297,16 +297,16 @@ describe('buildAgentDraftLaunchPlan', () => {
   it('uses OpenClaude native prefill support for draft launches', () => {
     expect(
       buildAgentDraftLaunchPlan({
-        agent: 'openclaude',
+        agent: 'opencode',
         draft: 'review this',
         cmdOverrides: {},
         platform: 'linux'
       })
     ).toEqual({
-      agent: 'openclaude',
+      agent: 'opencode',
       launchCommand: "openclaude --prefill 'review this'",
-      expectedProcess: 'openclaude',
-      launchConfig: emptyLaunchConfig('openclaude')
+      expectedProcess: 'opencode',
+      launchConfig: emptyLaunchConfig('opencode')
     })
   })
 })
@@ -324,7 +324,7 @@ describe('isShellProcess', () => {
   })
 
   it('does not confuse agent processes with the host shell', () => {
-    expect(isShellProcess('gemini')).toBe(false)
+    expect(isShellProcess('claude')).toBe(false)
     expect(isShellProcess('cursor-agent')).toBe(false)
   })
 })

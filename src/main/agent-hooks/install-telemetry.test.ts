@@ -60,7 +60,7 @@ describe('runManagedHookInstallers', () => {
         }
       ],
       ['codex', codex],
-      ['gemini', gemini]
+      ['claude', gemini]
     ])
     expect(codex).toHaveBeenCalledTimes(1)
     expect(gemini).toHaveBeenCalledTimes(1)
@@ -75,7 +75,7 @@ describe('runManagedHookInstallers', () => {
     const longMessage = 'x'.repeat(500)
     runManagedHookInstallers([
       [
-        'gemini',
+        'claude',
         () => {
           throw new Error(longMessage)
         }
@@ -89,14 +89,14 @@ describe('runManagedHookInstallers', () => {
   it('handles non-Error throws', () => {
     runManagedHookInstallers([
       [
-        'cursor',
+        'codex',
         () => {
           throw 'cursor string failure'
         }
       ]
     ])
     expect(trackMock).toHaveBeenCalledWith('agent_hook_install_failed', {
-      agent: 'cursor',
+      agent: 'codex',
       error_message: 'cursor string failure'
     })
   })
@@ -104,7 +104,7 @@ describe('runManagedHookInstallers', () => {
   it('serializes thrown objects through JSON.stringify', () => {
     runManagedHookInstallers([
       [
-        'cursor',
+        'codex',
         () => {
           throw { code: 'EACCES', path: '/tmp' }
         }
@@ -112,7 +112,7 @@ describe('runManagedHookInstallers', () => {
     ])
     expect(trackMock).toHaveBeenCalledTimes(1)
     expect(trackMock).toHaveBeenCalledWith('agent_hook_install_failed', {
-      agent: 'cursor',
+      agent: 'codex',
       error_message: '{"code":"EACCES","path":"/tmp"}'
     })
   })
@@ -121,7 +121,7 @@ describe('runManagedHookInstallers', () => {
     expect(() =>
       runManagedHookInstallers([
         [
-          'cursor',
+          'codex',
           () => {
             throw undefined
           }

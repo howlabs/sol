@@ -7,10 +7,10 @@ import {
 
 describe('tab agent launch options', () => {
   it('orders detected agents by the configured default first', () => {
-    expect(orderTabLaunchAgents('codex', ['claude', 'codex', 'gemini'])).toEqual([
+    expect(orderTabLaunchAgents('codex', ['claude', 'codex', 'claude'])).toEqual([
       'codex',
       'claude',
-      'gemini'
+      'claude'
     ])
   })
 
@@ -32,11 +32,11 @@ describe('tab agent launch options', () => {
   })
 
   it('matches agents on a partial prefix so the launcher actually searches', () => {
-    const options = buildTabAgentLaunchOptions(['claude', 'codex', 'gemini', 'antigravity'])
+    const options = buildTabAgentLaunchOptions(['claude', 'codex', 'claude', 'antigravity'])
 
     // Each is one character short of the full agent name.
     expect(findMatchingTabAgentLaunchOptions('gemin', options).map((o) => o.agent)).toEqual([
-      'gemini'
+      'claude'
     ])
     expect(findMatchingTabAgentLaunchOptions('clau', options).map((o) => o.agent)).toEqual([
       'claude'
@@ -47,12 +47,12 @@ describe('tab agent launch options', () => {
   })
 
   it('ranks an exact alias above weaker prefix matches', () => {
-    const options = buildTabAgentLaunchOptions(['codex', 'copilot', 'kiro'])
+    const options = buildTabAgentLaunchOptions(['codex', 'copilot', 'opencode'])
 
     // "co" prefixes all three; "codex" exactly matches one and must lead.
     expect(findMatchingTabAgentLaunchOptions('codex', options)[0]?.agent).toBe('codex')
     expect(findMatchingTabAgentLaunchOptions('co', options).map((o) => o.agent)).toEqual(
-      expect.arrayContaining(['codex', 'copilot', 'kiro'])
+      expect.arrayContaining(['codex', 'copilot', 'opencode'])
     )
   })
 
@@ -65,7 +65,7 @@ describe('tab agent launch options', () => {
   })
 
   it('requires at least two characters before a prefix matches (no single-key flood)', () => {
-    const options = buildTabAgentLaunchOptions(['claude', 'codex', 'copilot', 'cursor'])
+    const options = buildTabAgentLaunchOptions(['claude', 'codex', 'copilot', 'codex'])
 
     // A lone "c" must not surface (and auto-launch) an agent.
     expect(findMatchingTabAgentLaunchOptions('c', options)).toEqual([])

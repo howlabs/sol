@@ -2335,24 +2335,14 @@ export type GrokDeviceCodeInfo = {
 export type TuiAgent =
   | 'claude' // Claude Code
   | 'claude-agent-teams' // Claude Code Agent Teams via Orca native panes
-  | 'openclaude' // OpenClaude
   | 'codex' // OpenAI Codex
   | 'opencode' // OpenCode
-  | 'mimo-code'
   | 'pi' // Pi (pi.dev)
-  | 'gemini' // Gemini CLI
   | 'antigravity' // Google Antigravity CLI
-  | 'aider' // Aider
   | 'amp' // Amp
-  | 'kiro' // Kiro
-  | 'cline' // Cline
-  | 'command-code' // Command Code
-  | 'cursor' // Cursor
   | 'droid' // Factory Droid
-  | 'kimi' // Kimi
   | 'qwen-code' // Qwen Code
   | 'hermes' // Hermes Agent
-  | 'openclaw' // OpenClaw
   | 'copilot' // GitHub Copilot CLI
   | 'grok' // xAI Grok CLI
   | 'devin' // Devin CLI
@@ -2701,9 +2691,6 @@ export type GlobalSettings = {
   minimaxGroupId: string
   /** Comma-separated MiniMax model names to show in the status bar usage window. */
   minimaxUsageModels: string
-  /** Whether to extract OAuth credentials from the local Gemini CLI installation
-   *  for rate-limit fetching. Disabled by default for explicit opt-in. */
-  geminiCliOAuthEnabled: boolean
   /** Per-agent CLI command overrides. A missing key means use the catalog default binary name. */
   agentCmdOverrides: Partial<Record<TuiAgent, string>>
   /** Why: Orca bridges Codex session history from the user's real Codex home into
@@ -3025,9 +3012,7 @@ export type AgentActivityDisplayMode = 'compact' | 'full'
 export type StatusBarItem =
   | 'claude'
   | 'codex'
-  | 'gemini'
   | 'opencode-go'
-  | 'kimi'
   | 'minimax'
   | 'grok'
   | 'ssh'
@@ -3138,7 +3123,7 @@ export type PersistedUIState = {
   /** One-shot migration flag for adding the default-on Ports status item. */
   _portsStatusBarDefaultAdded?: boolean
   /** One-shot migration flag for adding the default-on Kimi status item. */
-  _kimiStatusBarDefaultAdded?: boolean
+
   /** One-shot migration flag for adding the default-on MiniMax status item. */
   _minimaxStatusBarDefaultAdded?: boolean
   /** One-shot migration flag for adding the default-on Grok status item. */

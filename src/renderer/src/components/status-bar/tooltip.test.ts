@@ -87,32 +87,32 @@ describe('provider usage error copy', () => {
       error:
         'Your access token could not be refreshed because your refresh token was already used. Please log out and sign in again.'
     })
-    const gemini = provider({
-      provider: 'gemini',
-      error: 'Gemini CLI credentials not found'
+    const grok = provider({
+      provider: 'grok',
+      error: 'Grok credentials not found'
     })
 
     expect(getProviderUsageStatusLabel(codex)).toBe('Refresh failed')
     expect(getProviderUsageErrorMessage(codex)).toBe(
       'Codex usage could not be refreshed. Agent sessions may still be signed in.'
     )
-    expect(getProviderUsageErrorMessage(gemini)).toBe(
-      'Gemini usage could not be refreshed. Agent sessions may still be signed in.'
+    expect(getProviderUsageErrorMessage(grok)).toBe(
+      'Grok usage could not be refreshed. Agent sessions may still be signed in.'
     )
   })
 
   it('frames credential-file and login failures as auth-shaped usage failures', () => {
-    const kimi = provider({
-      provider: 'kimi',
-      error: 'Kimi credentials-file is invalid'
+    const minimax = provider({
+      provider: 'minimax',
+      error: 'MiniMax credentials-file is invalid'
     })
     const opencodeGo = provider({
       provider: 'opencode-go',
       error: 'Please log in before refreshing usage.'
     })
 
-    expect(getProviderUsageErrorMessage(kimi)).toBe(
-      'Kimi usage could not be refreshed. Agent sessions may still be signed in.'
+    expect(getProviderUsageErrorMessage(minimax)).toBe(
+      'MiniMax usage could not be refreshed. Agent sessions may still be signed in.'
     )
     expect(getProviderUsageErrorMessage(opencodeGo)).toBe(
       'OpenCode Go usage could not be refreshed. Agent sessions may still be signed in.'
@@ -232,7 +232,7 @@ describe('provider usage error copy', () => {
 describe('getWindowSections', () => {
   it('returns buckets as sections when present', () => {
     const p: ProviderRateLimits = {
-      provider: 'gemini',
+      provider: 'claude',
       session: { usedPercent: 80, windowMinutes: 300, resetsAt: null, resetDescription: null },
       weekly: null,
       buckets: [
@@ -304,7 +304,7 @@ describe('getWindowSections', () => {
 
   it('returns session and weekly for empty buckets array', () => {
     const p: ProviderRateLimits = {
-      provider: 'gemini',
+      provider: 'claude',
       session: { usedPercent: 50, windowMinutes: 300, resetsAt: null, resetDescription: null },
       weekly: null,
       buckets: [],
@@ -325,7 +325,7 @@ describe('getWindowSections', () => {
     // views, while the plain session value remains independently available for
     // compact rendering without bucket names bleeding through.
     const p: ProviderRateLimits = {
-      provider: 'gemini',
+      provider: 'claude',
       session: { usedPercent: 80, windowMinutes: 300, resetsAt: null, resetDescription: null },
       weekly: null,
       buckets: [
@@ -360,7 +360,7 @@ describe('getWindowSections', () => {
 
   it('preserves reset metadata inside bucket windows', () => {
     const p: ProviderRateLimits = {
-      provider: 'gemini',
+      provider: 'claude',
       session: null,
       weekly: null,
       buckets: [

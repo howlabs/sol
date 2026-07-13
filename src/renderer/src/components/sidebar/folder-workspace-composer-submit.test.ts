@@ -335,7 +335,7 @@ describe('submitFolderWorkspaceCreate', () => {
       lastAutoName: '',
       linkedWorkItem: null,
       note: 'Fix the failing folder prompt flow',
-      quickAgent: 'aider',
+      quickAgent: 'codex',
       autoRenameBranchFromWork: false,
       agentCmdOverrides: {},
       createFolderWorkspace,
@@ -343,13 +343,13 @@ describe('submitFolderWorkspaceCreate', () => {
     })
 
     const startup = mocks.activateAndRevealFolderWorkspace.mock.calls[0]?.[1]?.startup
-    expect(startup?.command).toBe('aider')
+    expect(startup?.command).toBe('codex')
     expect(mocks.ensureAgentStartupInTerminal).toHaveBeenCalledWith({
       worktreeId: folderWorkspaceKey('folder-workspace-1'),
       primaryTabId: 'tab-1',
       startup: expect.objectContaining({
-        agent: 'aider',
-        launchCommand: 'aider',
+        agent: 'codex',
+        launchCommand: 'codex',
         followupPrompt: 'Fix the failing folder prompt flow'
       })
     })

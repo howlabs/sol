@@ -16,7 +16,6 @@ const HERMES_CRON_DIR = join(HERMES_HOME, 'cron')
 const HERMES_JOBS_FILE = join(HERMES_CRON_DIR, 'jobs.json')
 const HERMES_OUTPUT_DIR = join(HERMES_CRON_DIR, 'output')
 const HERMES_STATE_DB = join(HERMES_HOME, 'state.db')
-const OPENCLAW_JOBS_FILE = join(homedir(), '.openclaw', 'cron', 'jobs.json')
 const EXTERNAL_JOB_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]*$/
 const HERMES_OUTPUT_FILE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})\.md$/
 const HERMES_RUN_KEY_PATTERN = /^(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})$/
@@ -45,7 +44,6 @@ type NodeSqliteDatabaseSync = new (
 ) => SqliteDatabase
 let databaseConstructor: DatabaseConstructor | null | undefined
 
-type ExternalProvider = 'hermes' | 'openclaw'
 type HermesAction = 'pause' | 'resume' | 'run' | 'delete'
 type HermesOutputRunRef = {
   kind: 'output'
@@ -101,12 +99,11 @@ export class ExternalAutomationsHandler {
     }
   }
 
-  private async readJobs(provider: ExternalProvider): Promise<unknown[]> {
-    const jobsFile = provider === 'hermes' ? HERMES_JOBS_FILE : OPENCLAW_JOBS_FILE
-    if (!existsSync(jobsFile)) {
+  private async readJobs(): Promise<unknown[]> {
+    if (!existsSync(HERMES_JOBS_FILE)) {
       return []
     }
-    const content = await readFile(jobsFile, 'utf-8')
+    const content = await readFile(HERMES_JOBS_FILE, 'utf-8')
     const parsed = JSON.parse(content) as unknown
     const jobs = Array.isArray(parsed)
       ? parsed
@@ -116,9 +113,6 @@ export class ExternalAutomationsHandler {
           Array.isArray((parsed as { jobs?: unknown }).jobs)
         ? (parsed as { jobs: unknown[] }).jobs
         : []
-    if (provider !== 'hermes') {
-      return jobs
-    }
     return Promise.all(
       jobs.map(async (job) => {
         if (!this.isRecord(job) || typeof job.id !== 'string') {
@@ -623,7 +617,6 @@ export class ExternalAutomationsHandler {
     total: number
     runs: unknown[]
   }> {
-    const provider = params.provider === 'openclaw' ? 'openclaw' : 'hermes'
     const jobId = params.jobId
     const page =
       typeof params.page === 'number' && Number.isFinite(params.page)
@@ -633,9 +626,6 @@ export class ExternalAutomationsHandler {
       typeof params.pageSize === 'number' && Number.isFinite(params.pageSize)
         ? Math.min(100, Math.max(0, Math.floor(params.pageSize)))
         : 25
-    if (provider !== 'hermes') {
-      return { total: 0, runs: [] }
-    }
     if (typeof jobId !== 'string' || !EXTERNAL_JOB_ID_PATTERN.test(jobId)) {
       throw new Error('Invalid external automation job ID.')
     }
@@ -816,23 +806,20 @@ export class ExternalAutomationsHandler {
     }
   }
 
-  private async listJobs(params?: Record<string, unknown>): Promise<{
+  private async listJobs(_params?: Record<string, unknown>): Promise<{
     jobs: unknown[]
     hermesAvailable: boolean
-    openclawAvailable: boolean
     error: string | null
   }> {
-    const provider = params?.provider === 'openclaw' ? 'openclaw' : 'hermes'
     const [commandAvailable, jobsResult] = await Promise.allSettled([
-      this.isCommandAvailable(provider),
-      this.readJobs(provider)
+      this.isCommandAvailable('hermes'),
+      this.readJobs()
     ])
     const jobs = jobsResult.status === 'fulfilled' ? jobsResult.value : []
     const available = commandAvailable.status === 'fulfilled' && commandAvailable.value
     return {
       jobs,
-      hermesAvailable: provider === 'hermes' && available,
-      openclawAvailable: provider === 'openclaw' && available,
+      hermesAvailable: available,
       error: jobsResult.status === 'rejected' ? String(jobsResult.reason) : null
     }
   }
@@ -850,29 +837,12 @@ export class ExternalAutomationsHandler {
     }
   }
 
-  private openClawCommand(action: HermesAction): string {
-    switch (action) {
-      case 'pause':
-        return 'disable'
-      case 'resume':
-        return 'enable'
-      case 'run':
-        return 'run'
-      case 'delete':
-        return 'rm'
-    }
-  }
-
   private normalizeHermesJobMutation(params: Record<string, unknown>): {
     name: string
     prompt: string
     schedule: string
     workdir: string
   } {
-    const provider = params.provider === 'openclaw' ? 'openclaw' : 'hermes'
-    if (provider !== 'hermes') {
-      throw new Error('Only Hermes cron creation and editing are supported.')
-    }
     const name = typeof params.name === 'string' ? params.name.trim() : ''
     const prompt = typeof params.prompt === 'string' ? params.prompt.trim() : ''
     const schedule = typeof params.schedule === 'string' ? params.schedule.trim() : ''
@@ -944,7 +914,6 @@ export class ExternalAutomationsHandler {
   }
 
   private async runAction(params: Record<string, unknown> = {}): Promise<{ ok: true }> {
-    const provider = params.provider === 'openclaw' ? 'openclaw' : 'hermes'
     const action = params.action
     const jobId = params.jobId
     if (action !== 'pause' && action !== 'resume' && action !== 'run' && action !== 'delete') {
@@ -953,9 +922,8 @@ export class ExternalAutomationsHandler {
     if (typeof jobId !== 'string' || !EXTERNAL_JOB_ID_PATTERN.test(jobId)) {
       throw new Error('Invalid external automation job ID.')
     }
-    const command =
-      provider === 'hermes' ? this.hermesCommand(action) : this.openClawCommand(action)
-    await execFileAsync(provider, ['cron', command, jobId], {
+    const command = this.hermesCommand(action)
+    await execFileAsync('hermes', ['cron', command, jobId], {
       encoding: 'utf-8',
       timeout: 30_000
     })

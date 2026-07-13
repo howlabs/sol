@@ -349,7 +349,7 @@ describe('launchAgentInNewTab', () => {
     const { launchAgentInNewTab } = await import('./launch-agent-in-new-tab')
 
     launchAgentInNewTab({
-      agent: 'command-code',
+      agent: 'codex',
       worktreeId: 'wt-1',
       prompt: 'fix the spinner'
     })
@@ -359,7 +359,7 @@ describe('launchAgentInNewTab', () => {
       expect.objectContaining({
         command: "command-code --trust '--yolo' 'fix the spinner'",
         initialAgentStatus: {
-          agent: 'command-code',
+          agent: 'codex',
           prompt: 'fix the spinner'
         }
       })
@@ -602,7 +602,7 @@ describe('launchAgentInNewTab', () => {
     const { launchAgentInNewTab } = await import('./launch-agent-in-new-tab')
 
     const result = launchAgentInNewTab({
-      agent: 'command-code',
+      agent: 'codex',
       worktreeId: 'wt-1',
       prompt: 'large generated prompt',
       promptDelivery: 'submit-after-ready'
@@ -625,7 +625,7 @@ describe('launchAgentInNewTab', () => {
       expect.objectContaining({
         tabId: 'tab-1',
         content: 'large generated prompt',
-        agent: 'command-code',
+        agent: 'codex',
         submit: true,
         forcePaste: true
       })
@@ -633,7 +633,7 @@ describe('launchAgentInNewTab', () => {
     expect(mockSetAgentStatus).toHaveBeenCalledWith(`tab-1:${LEAF_ID}`, {
       state: 'working',
       prompt: 'large generated prompt',
-      agentType: 'command-code'
+      agentType: 'codex'
     })
     expect(mockTrack).not.toHaveBeenCalledWith('agent_prompt_sent', expect.anything())
   })
@@ -643,7 +643,7 @@ describe('launchAgentInNewTab', () => {
     const { launchAgentInNewTab } = await import('./launch-agent-in-new-tab')
 
     const result = launchAgentInNewTab({
-      agent: 'command-code',
+      agent: 'codex',
       worktreeId: 'wt-1',
       prompt: 'large generated prompt',
       promptDelivery: 'submit-after-ready'
@@ -666,7 +666,7 @@ describe('launchAgentInNewTab', () => {
     const { launchAgentInNewTab } = await import('./launch-agent-in-new-tab')
 
     const result = launchAgentInNewTab({
-      agent: 'command-code',
+      agent: 'codex',
       worktreeId: 'wt-1',
       prompt: 'large generated prompt',
       promptDelivery: 'submit-after-ready'
@@ -691,7 +691,7 @@ describe('launchAgentInNewTab', () => {
     const { launchAgentInNewTab } = await import('./launch-agent-in-new-tab')
 
     const result = launchAgentInNewTab({
-      agent: 'command-code',
+      agent: 'codex',
       worktreeId: 'wt-1',
       prompt: 'large generated prompt',
       promptDelivery: 'submit-after-ready'
@@ -714,7 +714,7 @@ describe('launchAgentInNewTab', () => {
     const { launchAgentInNewTab } = await import('./launch-agent-in-new-tab')
 
     const result = launchAgentInNewTab({
-      agent: 'command-code',
+      agent: 'codex',
       worktreeId: 'wt-1',
       prompt: 'large generated prompt',
       promptDelivery: 'submit-after-ready'
@@ -737,7 +737,7 @@ describe('launchAgentInNewTab', () => {
     const { launchAgentInNewTab } = await import('./launch-agent-in-new-tab')
 
     const result = launchAgentInNewTab({
-      agent: 'command-code',
+      agent: 'codex',
       worktreeId: 'wt-1',
       prompt: 'large generated prompt',
       promptDelivery: 'submit-after-ready'

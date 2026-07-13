@@ -253,7 +253,7 @@ describe('ensureAgentStartupInTerminal prompt delivery', () => {
       }
     }
     mockInspectRuntimeTerminalProcess.mockResolvedValue({
-      foregroundProcess: 'aider',
+      foregroundProcess: 'codex',
       hasChildProcesses: true
     })
     mockSendRuntimePtyInputVerified.mockResolvedValue(true)
@@ -269,9 +269,9 @@ describe('ensureAgentStartupInTerminal prompt delivery', () => {
     await ensureAgentStartupInTerminal({
       worktreeId: 'wt-1',
       startup: {
-        agent: 'aider',
-        launchCommand: 'aider',
-        expectedProcess: 'aider',
+        agent: 'codex',
+        launchCommand: 'codex',
+        expectedProcess: 'codex',
         followupPrompt: 'fix the spinner',
         launchConfig: { agentArgs: '', agentEnv: {} }
       }
@@ -287,9 +287,9 @@ describe('ensureAgentStartupInTerminal prompt delivery', () => {
     await ensureAgentStartupInTerminal({
       worktreeId: 'wt-1',
       startup: {
-        agent: 'aider',
-        launchCommand: 'aider',
-        expectedProcess: 'aider',
+        agent: 'codex',
+        launchCommand: 'codex',
+        expectedProcess: 'codex',
         followupPrompt: 'fix the spinner',
         launchConfig: { agentArgs: '', agentEnv: {} }
       }
@@ -305,9 +305,9 @@ describe('ensureAgentStartupInTerminal prompt delivery', () => {
       ensureAgentStartupInTerminal({
         worktreeId: 'wt-1',
         startup: {
-          agent: 'aider',
-          launchCommand: 'aider',
-          expectedProcess: 'aider',
+          agent: 'codex',
+          launchCommand: 'codex',
+          expectedProcess: 'codex',
           followupPrompt: 'fix the spinner',
           launchConfig: { agentArgs: '', agentEnv: {} }
         }
@@ -712,9 +712,9 @@ describe('ensureAgentStartupInTerminal prompt delivery', () => {
     const delivery = ensureAgentStartupInTerminal({
       worktreeId: 'wt-1',
       startup: {
-        agent: 'aider',
-        launchCommand: 'aider',
-        expectedProcess: 'aider',
+        agent: 'codex',
+        launchCommand: 'codex',
+        expectedProcess: 'codex',
         followupPrompt: 'fix the spinner',
         launchConfig: { agentArgs: '', agentEnv: {} }
       }

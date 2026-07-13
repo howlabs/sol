@@ -172,7 +172,7 @@ describe('WorktreeOpenInMenu', () => {
       getWorktreeOpenInEntries(
         [
           { id: 'vscode', label: 'VS Code', command: 'code' },
-          { id: 'cursor', label: 'Cursor', command: 'cursor' },
+          { id: 'codex', label: 'Cursor', command: 'codex' },
           { id: 'zed', label: 'Zed', command: 'zed' }
         ],
         'File Manager'
@@ -196,9 +196,9 @@ describe('WorktreeOpenInMenu', () => {
       target: 'external-editor',
       worktreePath: '/tmp/workspace',
       connectionId: null,
-      command: 'cursor'
+      command: 'codex'
     })
-    expect(openInExternalEditorMock).toHaveBeenCalledWith('/tmp/workspace', 'cursor')
+    expect(openInExternalEditorMock).toHaveBeenCalledWith('/tmp/workspace', 'codex')
   })
 
   it('blocks configured launchers in remote context before calling main IPC', async () => {
@@ -208,7 +208,7 @@ describe('WorktreeOpenInMenu', () => {
       target: 'external-editor',
       worktreePath: '/tmp/workspace',
       connectionId: null,
-      command: 'cursor'
+      command: 'codex'
     })
 
     expect(openInExternalEditorMock).not.toHaveBeenCalled()

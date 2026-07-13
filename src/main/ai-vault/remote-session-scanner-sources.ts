@@ -5,13 +5,9 @@ import { parseCodexSessionContent } from './session-scanner-codex-parser'
 import { parseDevinSessionContent } from './session-scanner-devin-parser'
 import { parseDroidSessionContent } from './session-scanner-droid-parser'
 import { parseMessageGraphSessionContent } from './session-scanner-graph-parsers'
-import {
-  parseClaudeSessionContent,
-  parseGeminiSessionContent
-} from './session-scanner-primary-parsers'
+import { parseClaudeSessionContent } from './session-scanner-primary-parsers'
 import {
   parseCopilotSessionContent,
-  parseCursorSessionContent,
   parseHermesSessionContent
 } from './session-scanner-secondary-parsers'
 import type { FileWithMtime } from './session-scanner-types'
@@ -43,28 +39,12 @@ export function remoteSessionSources(
       ['.claude', 'projects'],
       parseClaudeSessionContent
     ),
-    source(
-      'gemini',
-      remoteHome,
-      hostPlatform,
-      ['.gemini', 'tmp'],
-      ['.json', '.jsonl'],
-      parseGeminiSessionContent
-    ),
     jsonlSource(
       'copilot',
       remoteHome,
       hostPlatform,
       ['.copilot', 'session-state'],
       parseCopilotSessionContent
-    ),
-    jsonlSource(
-      'cursor',
-      remoteHome,
-      hostPlatform,
-      ['.cursor', 'projects'],
-      parseCursorSessionContent,
-      (path) => remotePathSegments(path).includes('agent-transcripts')
     ),
     source(
       'hermes',
@@ -96,8 +76,7 @@ export function remoteSessionSources(
       hostPlatform,
       ['.factory', 'projects'],
       parseDroidSessionContent
-    ),
-    ...remoteOpenClawSources(remoteHome, hostPlatform)
+    )
   ]
 }
 
@@ -171,22 +150,6 @@ function remoteCodexSources(
   }))
 }
 
-function remoteOpenClawSources(
-  remoteHome: string,
-  hostPlatform: RemoteHostPlatform
-): RemoteSessionSource[] {
-  return ['.openclaw', '.clawdbot'].map((rootName) =>
-    jsonlSource(
-      'openclaw',
-      remoteHome,
-      hostPlatform,
-      [rootName, 'agents'],
-      openClawParser,
-      (path) => remotePathSegments(path).includes('sessions')
-    )
-  )
-}
-
 function parserOptions(context: RemoteScannerContext): RemoteParserOptions {
   return {
     executionHostId: context.executionHostId,
@@ -201,19 +164,6 @@ function piParser(
   options: RemoteParserOptions
 ): Promise<AiVaultSession | null> {
   return parseMessageGraphSessionContent('pi', file, content, platform, options)
-}
-
-function openClawParser(
-  file: FileWithMtime,
-  content: string,
-  platform: NodeJS.Platform,
-  options: RemoteParserOptions
-): Promise<AiVaultSession | null> {
-  return parseMessageGraphSessionContent('openclaw', file, content, platform, options)
-}
-
-function remotePathSegments(path: string): string[] {
-  return path.replace(/\\/g, '/').split('/').filter(Boolean)
 }
 
 function remotePiSessionsSegments(): string[] {

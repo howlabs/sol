@@ -14,7 +14,6 @@ export {
   clearWorkingIndicators,
   createAgentStatusTracker,
   normalizeTerminalTitle,
-  isGeminiTerminalTitle,
   isClaudeAgent,
   isClaudeManagementTitle,
   getAgentLabel
@@ -107,23 +106,16 @@ export function getWorkingAgentsPerWorktree({
 
 const WELL_KNOWN_LABELS: Record<string, string> = {
   claude: 'Claude',
-  openclaude: 'OpenClaude',
   codex: 'Codex',
-  gemini: 'Gemini',
   antigravity: 'Antigravity',
   amp: 'Amp',
   copilot: 'GitHub Copilot',
   opencode: 'OpenCode',
-  'mimo-code': 'MiMo Code',
-  cursor: 'Cursor',
-  aider: 'Aider',
   pi: 'Pi',
   droid: 'Droid',
-  'command-code': 'Command Code',
   grok: 'Grok',
   hermes: 'Hermes',
-  devin: 'Devin',
-  kimi: 'Kimi'
+  devin: 'Devin'
 }
 
 export function formatAgentTypeLabel(agentType: AgentType | null | undefined): string {
@@ -150,24 +142,14 @@ export function formatAgentTypeLabel(agentType: AgentType | null | undefined): s
 const ICONABLE_AGENT_TYPES: Record<TuiAgent, true> = {
   claude: true,
   'claude-agent-teams': true,
-  openclaude: true,
   codex: true,
   opencode: true,
-  'mimo-code': true,
   pi: true,
-  gemini: true,
   antigravity: true,
-  aider: true,
   amp: true,
-  kiro: true,
-  cline: true,
-  'command-code': true,
-  cursor: true,
   droid: true,
-  kimi: true,
   'qwen-code': true,
   hermes: true,
-  openclaw: true,
   copilot: true,
   grok: true,
   devin: true

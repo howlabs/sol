@@ -19,7 +19,7 @@ import type { SshTarget } from '../../shared/ssh-types'
 import type { Store } from '../persistence'
 import { getActiveMultiplexer } from '../ipc/ssh'
 import { isRuntimeOwnedSshTarget } from '../ssh/ssh-connection-store'
-import { mapHermesJobs, mapOpenClawJobs } from './external-job-mappers'
+import { mapHermesJobs } from './external-job-mappers'
 import {
   clearHermesCronOutputRunCountCache,
   readHermesCronOutputRunsPage
@@ -28,7 +28,6 @@ import {
 const HERMES_HOME = process.env.HERMES_HOME?.trim() || join(homedir(), '.hermes')
 const HERMES_CRON_DIR = join(HERMES_HOME, 'cron')
 const HERMES_JOBS_FILE = join(HERMES_CRON_DIR, 'jobs.json')
-const OPENCLAW_JOBS_FILE = join(homedir(), '.openclaw', 'cron', 'jobs.json')
 const EXTERNAL_JOB_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]*$/
 const LOCAL_COMMAND_LOOKUP_TIMEOUT_MS = 5_000
 const LOCAL_AUTOMATION_COMMAND_TIMEOUT_MS = 30_000
@@ -156,15 +155,6 @@ async function readLocalHermesJobs(): Promise<unknown[]> {
   )
 }
 
-async function readLocalOpenClawJobs(): Promise<unknown[]> {
-  if (!existsSync(OPENCLAW_JOBS_FILE)) {
-    return []
-  }
-  const content = await readFile(OPENCLAW_JOBS_FILE, 'utf-8')
-  const parsed = JSON.parse(content) as unknown
-  return isRecord(parsed) && Array.isArray(parsed.jobs) ? parsed.jobs : []
-}
-
 async function listLocalHermesManager(): Promise<ExternalAutomationManager | null> {
   const [hermesAvailableResult, jobsResult] = await Promise.allSettled([
     isCommandOnPath('hermes'),
@@ -193,34 +183,6 @@ async function listLocalHermesManager(): Promise<ExternalAutomationManager | nul
   }
 }
 
-async function listLocalOpenClawManager(): Promise<ExternalAutomationManager | null> {
-  const [openClawAvailableResult, jobsResult] = await Promise.allSettled([
-    isCommandOnPath('openclaw'),
-    readLocalOpenClawJobs()
-  ])
-  const openClawAvailable =
-    openClawAvailableResult.status === 'fulfilled' && openClawAvailableResult.value
-  const jobs = jobsResult.status === 'fulfilled' ? jobsResult.value : []
-  const readError = jobsResult.status === 'rejected' ? String(jobsResult.reason) : null
-  if (!openClawAvailable && jobs.length === 0 && !readError) {
-    return null
-  }
-  const managerId = 'openclaw:local'
-  return {
-    id: managerId,
-    provider: 'openclaw',
-    label: 'OpenClaw on this computer',
-    targetLabel: 'this computer',
-    target: { type: 'local' },
-    status: readError ? 'unavailable' : 'available',
-    error:
-      readError ??
-      (openClawAvailable ? null : 'OpenClaw jobs were found, but the openclaw CLI is not on PATH.'),
-    canManage: !readError && openClawAvailable,
-    jobs: mapOpenClawJobs(managerId, jobs)
-  }
-}
-
 function remoteRelayErrorMessage(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error)
   if (message.includes('-32601') || /method not found/i.test(message)) {
@@ -230,18 +192,12 @@ function remoteRelayErrorMessage(error: unknown): string {
 }
 
 async function listRemoteHermesManager(target: SshTarget): Promise<ExternalAutomationManager> {
-  return listRemoteManager(target, 'hermes')
+  return listRemoteManager(target)
 }
 
-async function listRemoteOpenClawManager(target: SshTarget): Promise<ExternalAutomationManager> {
-  return listRemoteManager(target, 'openclaw')
-}
-
-async function listRemoteManager(
-  target: SshTarget,
-  provider: ExternalAutomationProvider
-): Promise<ExternalAutomationManager> {
-  const providerLabel = provider === 'hermes' ? 'Hermes' : 'OpenClaw'
+async function listRemoteManager(target: SshTarget): Promise<ExternalAutomationManager> {
+  const provider: ExternalAutomationProvider = 'hermes'
+  const providerLabel = 'Hermes'
   const managerProviderId = `${provider}:ssh:${target.id}`
   const mux = getActiveMultiplexer(target.id)
   if (!mux || mux.isDisposed()) {
@@ -261,11 +217,9 @@ async function listRemoteManager(
     const result = (await mux.request('externalAutomations.list', { provider })) as {
       jobs?: unknown[]
       hermesAvailable?: boolean
-      openclawAvailable?: boolean
       error?: string | null
     }
-    const commandAvailable =
-      provider === 'hermes' ? result.hermesAvailable === true : result.openclawAvailable === true
+    const commandAvailable = result.hermesAvailable === true
     const readError = result.error ?? null
     return {
       id: managerProviderId,
@@ -277,10 +231,7 @@ async function listRemoteManager(
       error:
         readError ?? (commandAvailable ? null : `${providerLabel} CLI is not on the remote PATH.`),
       canManage: !readError && commandAvailable,
-      jobs:
-        provider === 'hermes'
-          ? mapHermesJobs(managerProviderId, result.jobs ?? [])
-          : mapOpenClawJobs(managerProviderId, result.jobs ?? [])
+      jobs: mapHermesJobs(managerProviderId, result.jobs ?? [])
     }
   } catch (error) {
     return {
@@ -300,23 +251,18 @@ async function listRemoteManager(
 export async function listExternalAutomationManagers(
   store: Store
 ): Promise<ExternalAutomationManager[]> {
-  const [localHermes, localOpenClaw, remote] = await Promise.all([
+  const [localHermes, remote] = await Promise.all([
     listLocalHermesManager(),
-    listLocalOpenClawManager(),
     Promise.all(
       store
         .getSshTargets()
         // Why: runtime-owned hidden targets are excluded from SSH/run-target
         // surfaces; don't probe them for external automations either.
         .filter((target) => !isRuntimeOwnedSshTarget(target))
-        .flatMap((target) => [listRemoteHermesManager(target), listRemoteOpenClawManager(target)])
+        .map((target) => listRemoteHermesManager(target))
     )
   ])
-  return [
-    ...(localHermes ? [localHermes] : []),
-    ...(localOpenClaw ? [localOpenClaw] : []),
-    ...remote
-  ]
+  return [...(localHermes ? [localHermes] : []), ...remote]
 }
 
 export async function listExternalAutomationRuns(
@@ -387,19 +333,6 @@ function hermesCommandForAction(action: ExternalAutomationAction): string {
       return 'run'
     case 'delete':
       return 'remove'
-  }
-}
-
-function openClawCommandForAction(action: ExternalAutomationAction): string {
-  switch (action) {
-    case 'pause':
-      return 'disable'
-    case 'resume':
-      return 'enable'
-    case 'run':
-      return 'run'
-    case 'delete':
-      return 'rm'
   }
 }
 
@@ -526,15 +459,10 @@ export async function runExternalAutomationAction(
   if (!EXTERNAL_JOB_ID_PATTERN.test(input.jobId)) {
     throw new Error('Invalid external automation job ID.')
   }
-  const command =
-    input.provider === 'hermes'
-      ? hermesCommandForAction(input.action)
-      : openClawCommandForAction(input.action)
+  const command = hermesCommandForAction(input.action)
   if (input.target.type === 'local') {
-    await runLocalAutomationCommand(input.provider, ['cron', command, input.jobId])
-    if (input.provider === 'hermes') {
-      clearHermesCronOutputRunCountCache(input.jobId)
-    }
+    await runLocalAutomationCommand('hermes', ['cron', command, input.jobId])
+    clearHermesCronOutputRunCountCache(input.jobId)
     return
   }
   const mux = getActiveMultiplexer(input.target.connectionId)

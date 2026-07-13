@@ -2361,14 +2361,10 @@ function createAgentHooksApi(): NonNullable<Partial<PreloadApi>['agentHooks']> {
   const status = (
     agent:
       | 'claude'
-      | 'openclaude'
       | 'codex'
-      | 'gemini'
       | 'antigravity'
       | 'amp'
-      | 'cursor'
       | 'droid'
-      | 'command-code'
       | 'grok'
       | 'copilot'
       | 'hermes'
@@ -2383,14 +2379,10 @@ function createAgentHooksApi(): NonNullable<Partial<PreloadApi>['agentHooks']> {
     } as const)
   return {
     claudeStatus: () => status('claude'),
-    openClaudeStatus: () => status('openclaude'),
     codexStatus: () => status('codex'),
-    geminiStatus: () => status('gemini'),
     antigravityStatus: () => status('antigravity'),
     ampStatus: () => status('amp'),
-    cursorStatus: () => status('cursor'),
     droidStatus: () => status('droid'),
-    commandCodeStatus: () => status('command-code'),
     grokStatus: () => status('grok'),
     copilotStatus: () => status('copilot'),
     hermesStatus: () => status('hermes'),
@@ -2435,9 +2427,7 @@ function createRateLimitsApi(): NonNullable<Partial<PreloadApi>['rateLimits']> {
   const empty: RateLimitState = {
     claude: null,
     codex: null,
-    gemini: null,
     opencodeGo: null,
-    kimi: null,
     minimax: null,
     grok: null,
     minimaxCookieConfigured: false,

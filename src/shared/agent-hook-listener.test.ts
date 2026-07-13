@@ -90,14 +90,14 @@ describe('shared agent-hook-listener', () => {
 
   it('routes pathnames to a known source or null', () => {
     expect(resolveHookSource('/hook/claude')).toBe('claude')
-    expect(resolveHookSource('/hook/cursor')).toBe('cursor')
+    expect(resolveHookSource('/hook/cursor')).toBeNull()
     expect(resolveHookSource('/hook/antigravity')).toBe('antigravity')
     expect(resolveHookSource('/hook/grok')).toBe('grok')
     expect(resolveHookSource('/hook/hermes')).toBe('hermes')
     expect(resolveHookSource('/hook/pi')).toBe('pi')
     expect(resolveHookSource('/hook/omp')).toBeNull()
-    expect(resolveHookSource('/hook/command-code')).toBe('command-code')
-    expect(resolveHookSource('/hook/mimo-code')).toBe('mimo-code')
+    expect(resolveHookSource('/hook/command-code')).toBeNull()
+
     expect(resolveHookSource('/hook/unknown')).toBeNull()
     expect(resolveHookSource('/')).toBeNull()
   })
@@ -131,27 +131,6 @@ describe('shared agent-hook-listener', () => {
     expect(event!.payload.state).toBe('working')
     expect(event!.payload.prompt).toBe('hello')
     expect(event!.payload.agentType).toBe('claude')
-  })
-
-  it('normalizes Gemini BeforeTool to working with tool fields', () => {
-    const event = normalizeHookPayload(
-      state,
-      'gemini',
-      {
-        paneKey: PANE_KEY,
-        payload: {
-          hook_event_name: 'BeforeTool',
-          tool_name: 'read_file',
-          args: { file_path: 'src/index.ts' }
-        }
-      },
-      'production'
-    )
-
-    expect(event?.payload.state).toBe('working')
-    expect(event?.payload.agentType).toBe('gemini')
-    expect(event?.payload.toolName).toBe('read_file')
-    expect(event?.payload.toolInput).toBe('src/index.ts')
   })
 
   it('captures the full AskUserQuestion tool input as interactivePrompt (untruncated)', () => {
@@ -367,209 +346,6 @@ describe('shared agent-hook-listener', () => {
     expect(event?.payload.interactivePrompt).toBe(JSON.stringify(properties))
   })
 
-  it('normalizes Command Code hooks and reads turn text from the transcript', () => {
-    const tmpDir = mkdtempSync(join(tmpdir(), 'orca-command-code-transcript-'))
-    const transcriptPath = join(tmpDir, 'transcript.jsonl')
-    try {
-      writeFileSync(
-        transcriptPath,
-        `${[
-          JSON.stringify({
-            role: 'user',
-            content: [{ type: 'text', text: 'Run pwd and report it' }]
-          }),
-          JSON.stringify({
-            role: 'assistant',
-            content: [
-              { type: 'reasoning', text: 'Need to run pwd.' },
-              { type: 'text', text: 'The output is /tmp/project.' }
-            ]
-          })
-        ].join('\n')}\n`
-      )
-
-      const tool = normalizeHookPayload(
-        state,
-        'command-code',
-        {
-          paneKey: PANE_KEY,
-          tabId: 'tab-1',
-          worktreeId: 'wt',
-          env: 'production',
-          version: '1',
-          payload: {
-            hook_event_name: 'PreToolUse',
-            transcript_path: transcriptPath,
-            tool_name: 'shell_command',
-            tool_input: { command: 'pwd' }
-          }
-        },
-        'production'
-      )
-      expect(tool?.payload).toMatchObject({
-        state: 'working',
-        prompt: 'Run pwd and report it',
-        agentType: 'command-code',
-        toolName: 'shell_command',
-        toolInput: 'pwd'
-      })
-      expect(tool?.hasExplicitPrompt).toBe(true)
-      expect(tool?.promptInteractionKey).toMatch(/^command-code-transcript-[a-f0-9]{12}-/)
-
-      const directPrompt = normalizeHookPayload(
-        createHookListenerState(),
-        'command-code',
-        {
-          paneKey: PANE_KEY,
-          payload: {
-            hook_event_name: 'PreToolUse',
-            prompt: 'Direct command prompt'
-          }
-        },
-        'production'
-      )
-      expect(directPrompt?.hasExplicitPrompt).toBe(true)
-
-      const directPromptWithTranscript = normalizeHookPayload(
-        createHookListenerState(),
-        'command-code',
-        {
-          paneKey: PANE_KEY,
-          payload: {
-            hook_event_name: 'PreToolUse',
-            prompt: 'Run pwd and report it',
-            transcript_path: transcriptPath
-          }
-        },
-        'production'
-      )
-      expect(directPromptWithTranscript?.hasExplicitPrompt).toBe(true)
-      expect(directPromptWithTranscript?.promptInteractionKey).toBe(tool?.promptInteractionKey)
-
-      const statusMessage = normalizeHookPayload(
-        createHookListenerState(),
-        'command-code',
-        {
-          paneKey: PANE_KEY,
-          payload: {
-            hook_event_name: 'PreToolUse',
-            message: 'Preparing tool call'
-          }
-        },
-        'production'
-      )
-      expect(statusMessage?.hasExplicitPrompt).toBe(false)
-
-      const done = normalizeHookPayload(
-        state,
-        'command-code',
-        {
-          paneKey: PANE_KEY,
-          tabId: 'tab-1',
-          worktreeId: 'wt',
-          env: 'production',
-          version: '1',
-          payload: {
-            hook_event_name: 'Stop',
-            transcript_path: transcriptPath
-          }
-        },
-        'production'
-      )
-      expect(done?.payload).toMatchObject({
-        state: 'done',
-        prompt: 'Run pwd and report it',
-        agentType: 'command-code',
-        lastAssistantMessage: 'The output is /tmp/project.'
-      })
-      expect(done?.promptInteractionKey).toBe(tool?.promptInteractionKey)
-
-      const cachedOnly = normalizeHookPayload(
-        state,
-        'command-code',
-        {
-          paneKey: PANE_KEY,
-          tabId: 'tab-1',
-          worktreeId: 'wt',
-          env: 'production',
-          version: '1',
-          payload: {
-            hook_event_name: 'Stop'
-          }
-        },
-        'production'
-      )
-      expect(cachedOnly?.payload.prompt).toBe('Run pwd and report it')
-      expect(cachedOnly?.hasExplicitPrompt).toBe(false)
-    } finally {
-      rmSync(tmpDir, { recursive: true, force: true })
-    }
-  })
-
-  it('reads newline-heavy Command Code transcripts without line-array splitting', () => {
-    const tmpDir = mkdtempSync(join(tmpdir(), 'orca-command-code-large-transcript-'))
-    const transcriptPath = join(tmpDir, 'transcript.jsonl')
-    try {
-      const filler = Array.from({ length: 6_000 }, (_value, index) =>
-        JSON.stringify({
-          role: index % 2 === 0 ? 'assistant' : 'user',
-          content: [{ type: 'text', text: `filler ${index}` }]
-        })
-      )
-      writeFileSync(
-        transcriptPath,
-        `${[
-          ...filler,
-          JSON.stringify({
-            role: 'user',
-            content: [{ type: 'text', text: 'large transcript prompt' }]
-          }),
-          JSON.stringify({
-            role: 'assistant',
-            content: [{ type: 'text', text: 'large transcript answer' }]
-          })
-        ].join('\n')}\n`
-      )
-      const splitSpy = vi.spyOn(String.prototype, 'split')
-
-      const tool = normalizeHookPayload(
-        state,
-        'command-code',
-        {
-          paneKey: PANE_KEY,
-          payload: {
-            hook_event_name: 'PreToolUse',
-            transcript_path: transcriptPath,
-            tool_name: 'shell_command',
-            tool_input: { command: 'pwd' }
-          }
-        },
-        'production'
-      )
-      const done = normalizeHookPayload(
-        state,
-        'command-code',
-        {
-          paneKey: PANE_KEY,
-          payload: {
-            hook_event_name: 'Stop',
-            transcript_path: transcriptPath
-          }
-        },
-        'production'
-      )
-
-      expect(tool?.payload.prompt).toBe('large transcript prompt')
-      expect(done?.payload.lastAssistantMessage).toBe('large transcript answer')
-      const usedLineArraySplit = splitSpy.mock.calls.some(
-        ([separator]) => typeof separator === 'string' && separator === '\n'
-      )
-      expect(usedLineArraySplit).toBe(false)
-    } finally {
-      rmSync(tmpDir, { recursive: true, force: true })
-    }
-  })
-
   it('trims surrounding whitespace from extracted prompt text', () => {
     const event = normalizeHookPayload(
       state,
@@ -657,7 +433,7 @@ describe('shared agent-hook-listener', () => {
   it('normalizes Kimi Code Claude-compatible lifecycle events as kimi status', () => {
     const submitted = normalizeHookPayload(
       state,
-      'kimi',
+      'claude',
       {
         paneKey: PANE_KEY,
         payload: {
@@ -672,7 +448,7 @@ describe('shared agent-hook-listener', () => {
     )
     const tool = normalizeHookPayload(
       state,
-      'kimi',
+      'claude',
       {
         paneKey: PANE_KEY,
         payload: {
@@ -686,7 +462,7 @@ describe('shared agent-hook-listener', () => {
     )
     const waiting = normalizeHookPayload(
       state,
-      'kimi',
+      'claude',
       {
         paneKey: PANE_KEY,
         payload: { hook_event_name: 'PermissionRequest', session_id: 'session_abc' }
@@ -695,7 +471,7 @@ describe('shared agent-hook-listener', () => {
     )
     const stopped = normalizeHookPayload(
       state,
-      'kimi',
+      'claude',
       {
         paneKey: PANE_KEY,
         payload: { hook_event_name: 'Stop', session_id: 'session_abc' }
@@ -704,70 +480,21 @@ describe('shared agent-hook-listener', () => {
     )
 
     expect(submitted?.payload).toMatchObject({
-      agentType: 'kimi',
+      agentType: 'claude',
       state: 'working',
       prompt: 'list the files here'
     })
-    expect(tool?.payload).toMatchObject({ agentType: 'kimi', state: 'working', toolName: 'Bash' })
-    expect(waiting?.payload).toMatchObject({ agentType: 'kimi', state: 'waiting' })
-    expect(stopped?.payload).toMatchObject({ agentType: 'kimi', state: 'done' })
+    expect(tool?.payload).toMatchObject({ agentType: 'claude', state: 'working', toolName: 'Bash' })
+    expect(waiting?.payload).toMatchObject({ agentType: 'claude', state: 'waiting' })
+    expect(stopped?.payload).toMatchObject({ agentType: 'claude', state: 'done' })
     // The Claude-shaped session_id is captured for provider-session resume.
     expect(stopped?.providerSession).toMatchObject({ key: 'session_id', id: 'session_abc' })
-  })
-
-  it('normalizes MiMo Code OpenCode-compatible lifecycle events as mimo-code status', () => {
-    const message = normalizeHookPayload(
-      state,
-      'mimo-code',
-      {
-        paneKey: PANE_KEY,
-        payload: {
-          hook_event_name: 'MessagePart',
-          sessionID: 'mimo-session',
-          messageID: 'message-1',
-          role: 'user',
-          text: 'ship the fix'
-        }
-      },
-      'production'
-    )
-    const tool = normalizeHookPayload(
-      state,
-      'mimo-code',
-      {
-        paneKey: PANE_KEY,
-        payload: {
-          hook_event_name: 'SessionBusy',
-          sessionID: 'mimo-session'
-        }
-      },
-      'production'
-    )
-    const idle = normalizeHookPayload(
-      state,
-      'mimo-code',
-      {
-        paneKey: PANE_KEY,
-        payload: { hook_event_name: 'SessionIdle', sessionID: 'mimo-session' }
-      },
-      'production'
-    )
-
-    expect(message?.payload).toMatchObject({
-      agentType: 'mimo-code',
-      state: 'working',
-      prompt: 'ship the fix'
-    })
-    expect(message?.promptInteractionKey).toBe('mimo-code-message-message-1')
-    expect(message?.providerSession).toMatchObject({ key: 'session_id', id: 'mimo-session' })
-    expect(tool?.payload).toMatchObject({ agentType: 'mimo-code', state: 'working' })
-    expect(idle?.payload).toMatchObject({ agentType: 'mimo-code', state: 'done' })
   })
 
   it('maps Kimi AskUserQuestion PreToolUse to waiting, then back to working on answer', () => {
     const question = normalizeHookPayload(
       state,
-      'kimi',
+      'claude',
       {
         paneKey: PANE_KEY,
         payload: {
@@ -788,7 +515,7 @@ describe('shared agent-hook-listener', () => {
     )
     const answered = normalizeHookPayload(
       state,
-      'kimi',
+      'claude',
       {
         paneKey: PANE_KEY,
         payload: {
@@ -802,12 +529,12 @@ describe('shared agent-hook-listener', () => {
     )
 
     expect(question?.payload).toMatchObject({
-      agentType: 'kimi',
+      agentType: 'claude',
       state: 'waiting',
       toolName: 'AskUserQuestion'
     })
     expect(answered?.payload).toMatchObject({
-      agentType: 'kimi',
+      agentType: 'claude',
       state: 'working',
       toolName: 'AskUserQuestion'
     })

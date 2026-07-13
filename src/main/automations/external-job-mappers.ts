@@ -19,35 +19,6 @@ function asNumber(value: unknown): number | null {
   return typeof value === 'number' && Number.isFinite(value) ? value : null
 }
 
-function formatDurationMs(value: unknown): string {
-  const ms = asNumber(value)
-  if (!ms) {
-    return '?'
-  }
-  if (ms % 86_400_000 === 0) {
-    return `${ms / 86_400_000}d`
-  }
-  if (ms % 3_600_000 === 0) {
-    return `${ms / 3_600_000}h`
-  }
-  if (ms % 60_000 === 0) {
-    return `${ms / 60_000}m`
-  }
-  if (ms % 1000 === 0) {
-    return `${ms / 1000}s`
-  }
-  return `${ms}ms`
-}
-
-function isoFromMs(value: unknown): string | null {
-  const ms = asNumber(value)
-  if (!ms) {
-    return null
-  }
-  const date = new Date(ms)
-  return Number.isNaN(date.getTime()) ? null : date.toISOString()
-}
-
 function asExternalRunStatus(value: unknown): ExternalAutomationRunStatus {
   return value === 'completed' || value === 'failed' || value === 'unknown' ? value : 'unknown'
 }
@@ -138,43 +109,6 @@ function hermesPromptPreview(job: ExternalJobRecord): string {
   return skills.length > 0 ? `Skills: ${skills.join(', ')}` : ''
 }
 
-function openClawScheduleDisplay(job: ExternalJobRecord): string {
-  const schedule = job.schedule
-  if (!isRecord(schedule)) {
-    return asString(schedule) ?? '?'
-  }
-  const kind = asString(schedule.kind)
-  if (kind === 'at') {
-    return `at ${asString(schedule.at) ?? '?'}`
-  }
-  if (kind === 'every') {
-    return `every ${formatDurationMs(schedule.everyMs)}`
-  }
-  if (kind === 'cron') {
-    const expr = asString(schedule.expr) ?? asString(schedule.cron) ?? '?'
-    const tz = asString(schedule.tz)
-    return tz ? `cron ${expr} @ ${tz}` : `cron ${expr}`
-  }
-  return kind ?? '?'
-}
-
-function openClawRawSchedule(job: ExternalJobRecord): string | null {
-  const schedule = job.schedule
-  if (!isRecord(schedule)) {
-    return asString(schedule)
-  }
-  return asString(schedule.expr) ?? asString(schedule.cron) ?? null
-}
-
-function openClawPromptPreview(job: ExternalJobRecord): string {
-  const payload = job.payload
-  if (!isRecord(payload)) {
-    return ''
-  }
-  const text = asString(payload.message) ?? asString(payload.text) ?? ''
-  return text.length > 120 ? `${text.slice(0, 117)}...` : text
-}
-
 export function mapHermesJobs(managerId: string, rawJobs: unknown): ExternalAutomationJob[] {
   if (!Array.isArray(rawJobs)) {
     return []
@@ -203,49 +137,6 @@ export function mapHermesJobs(managerId: string, rawJobs: unknown): ExternalAuto
       runs: mapExternalRuns({
         managerId,
         provider: 'hermes',
-        jobId: id,
-        rawRuns: job.runs
-      })
-    }
-  })
-}
-
-export function mapOpenClawJobs(managerId: string, rawJobs: unknown): ExternalAutomationJob[] {
-  const jobs = Array.isArray(rawJobs)
-    ? rawJobs
-    : isRecord(rawJobs) && Array.isArray(rawJobs.jobs)
-      ? rawJobs.jobs
-      : []
-  return jobs.filter(isRecord).map((job) => {
-    const id = asString(job.id) ?? 'unknown'
-    const enabled = job.enabled !== false
-    const state = isRecord(job.state) ? job.state : {}
-    const preview = openClawPromptPreview(job)
-    const lastStatus = asString(state.lastRunStatus) ?? asString(state.lastStatus)
-    return {
-      id,
-      managerId,
-      provider: 'openclaw',
-      name: (asString(job.name) ?? preview) || id,
-      schedule: openClawScheduleDisplay(job),
-      rawSchedule: openClawRawSchedule(job),
-      enabled,
-      state: !enabled
-        ? 'disabled'
-        : asNumber(state.runningAtMs)
-          ? 'running'
-          : (lastStatus ?? 'idle'),
-      prompt: openClawPromptPreview(job) || null,
-      promptPreview: preview,
-      nextRunAt: isoFromMs(state.nextRunAtMs),
-      lastRunAt: isoFromMs(state.lastRunAtMs),
-      lastStatus,
-      lastError: asString(state.lastError) ?? asString(state.lastDeliveryError),
-      workdir: null,
-      runCount: asNumber(job.run_count) ?? (Array.isArray(job.runs) ? job.runs.length : 0),
-      runs: mapExternalRuns({
-        managerId,
-        provider: 'openclaw',
         jobId: id,
         rawRuns: job.runs
       })

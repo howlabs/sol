@@ -29,7 +29,7 @@ type ParserSessionOptions = {
 
 // Agents whose transcripts are append-only message-graph JSONL (session +
 // model_change + message records).
-export type MessageGraphAgent = 'openclaw' | 'pi'
+export type MessageGraphAgent = 'pi'
 
 export async function parseMessageGraphSessionFile(
   agent: MessageGraphAgent,
