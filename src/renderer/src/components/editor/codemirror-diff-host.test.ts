@@ -46,6 +46,15 @@ describe('codemirror-diff-host', () => {
     parent.remove()
   })
 
+  it('keeps intraline changes free of underline-like backgrounds', () => {
+    const { parent, host } = mount(false)
+    const changedText = parent.querySelector<HTMLElement>('.cm-changedText')
+    expect(changedText).not.toBeNull()
+    expect(window.getComputedStyle(changedText!).backgroundImage).toBe('none')
+    destroyCodeMirrorDiffHost(host)
+    parent.remove()
+  })
+
   it('syncs modified document content without remounting', () => {
     const { parent, host } = mount(true)
     syncCodeMirrorDiffHostDocs(host, 'line one\nline two\n', 'line one\nline two synced\n')

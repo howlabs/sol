@@ -62,6 +62,11 @@ export function codemirrorDiffTheme(
       '.cm-insertedChunk': {
         backgroundColor: 'color-mix(in srgb, var(--chart-2) 12%, transparent)'
       },
+      // Why: line tint already communicates the change; merge's 2px text
+      // gradients read as hyperlink underlines on syntax-highlighted code.
+      '.cm-changedText, .cm-deletedText': {
+        background: 'none !important'
+      },
       // Why: find panel on diff surfaces uses the same Sol chrome as CodeEditor.
       '.cm-panels': {
         backgroundColor: 'var(--editor-surface)',
