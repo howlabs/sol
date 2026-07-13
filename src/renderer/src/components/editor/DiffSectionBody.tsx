@@ -4,7 +4,6 @@ import { AlertCircle, RefreshCw } from '@/lib/icons'
 import { DiffEditor, type DiffOnMount } from '@monaco-editor/react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { DiffCommentPopover } from '../diff-comments/DiffCommentPopover'
 import { combinedDiffSectionScrollbarOptions } from './diff-editor-scrollbar-options'
 import type { DiffSection } from './diff-section-types'
 import { translate } from '@/i18n/i18n'
@@ -19,15 +18,6 @@ type DiffSectionBodyProps = {
   sectionBodyRef: RefObject<HTMLDivElement | null>
   sectionBodyHeight: number | undefined
   useIntrinsicImageHeight: boolean
-  popover: {
-    lineNumber: number
-    startLine?: number
-    top: number
-    left?: number
-    lineHeight: number
-  } | null
-  addLineCommentPlaceholder?: string
-  addLineCommentLabel?: string
   isBranchMode: boolean
   sideBySide: boolean
   isDark: boolean
@@ -37,8 +27,6 @@ type DiffSectionBodyProps = {
   diffEditorFontSize: number
   diffWordWrap?: boolean
   terminalFontFamily?: string
-  onCancelComment: () => void
-  onSubmitComment: (body: string) => Promise<void>
   onRetrySection: (index: number) => void
   onSaveLimitedDiff: () => void
   onMount: DiffOnMount
@@ -50,9 +38,6 @@ export function DiffSectionBody({
   sectionBodyRef,
   sectionBodyHeight,
   useIntrinsicImageHeight,
-  popover,
-  addLineCommentPlaceholder,
-  addLineCommentLabel,
   isBranchMode,
   sideBySide,
   isDark,
@@ -62,8 +47,6 @@ export function DiffSectionBody({
   diffEditorFontSize,
   diffWordWrap,
   terminalFontFamily,
-  onCancelComment,
-  onSubmitComment,
   onRetrySection,
   onSaveLimitedDiff,
   onMount
@@ -76,23 +59,6 @@ export function DiffSectionBody({
       className={cn('relative', useIntrinsicImageHeight && 'overflow-visible')}
       style={sectionBodyHeight === undefined ? undefined : { height: sectionBodyHeight }}
     >
-      {popover && !renderLimit?.limited ? (
-        // Why: key by lineNumber so the popover remounts when the anchor
-        // line changes instead of leaking draft state across lines.
-        <DiffCommentPopover
-          key={popover.lineNumber}
-          lineNumber={popover.lineNumber}
-          startLine={popover.startLine}
-          top={popover.top}
-          left={popover.left}
-          lineHeight={popover.lineHeight}
-          placeholder={addLineCommentPlaceholder}
-          submitLabel={addLineCommentLabel}
-          submittingLabel="Posting…"
-          onCancel={onCancelComment}
-          onSubmit={onSubmitComment}
-        />
-      ) : null}
       {section.loading ? (
         <div className="flex h-full items-center gap-2 bg-muted/10 px-3 text-[11px] text-muted-foreground">
           <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />

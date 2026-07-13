@@ -26,7 +26,6 @@ import { createSshSlice } from './slices/ssh'
 import { createRuntimeEnvironmentSshSlice } from './slices/runtime-environment-ssh'
 import { createAgentStatusSlice } from './slices/agent-status'
 import { createPaneForegroundAgentSlice } from './slices/pane-foreground-agent'
-import { createDiffCommentsSlice } from './slices/diffComments'
 import { createDetectedAgentsSlice } from './slices/detected-agents'
 import { createWorktreeNavHistorySlice } from './slices/worktree-nav-history'
 import { createWorkspaceCleanupSlice } from './slices/workspace-cleanup'
@@ -65,7 +64,6 @@ export const useAppStore = create<AppState>()((...a) => ({
   ...createRuntimeEnvironmentSshSlice(...a),
   ...createAgentStatusSlice(...a),
   ...createPaneForegroundAgentSlice(...a),
-  ...createDiffCommentsSlice(...a),
   ...createDetectedAgentsSlice(...a),
   ...createWorktreeNavHistorySlice(...a),
   ...createWorkspaceCleanupSlice(...a),

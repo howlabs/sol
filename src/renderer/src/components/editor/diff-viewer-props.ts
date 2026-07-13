@@ -11,17 +11,7 @@ export type DiffViewerProps = {
   relativePath: string
   sideBySide: boolean
   editable?: boolean
-  // Why: optional because DiffViewer is also used by GitHubItemDialog for PR
-  // review, where there is no local worktree to attach comments to.
   worktreeId?: string
-  onAddLineComment?: (args: {
-    lineNumber: number
-    startLine?: number
-    body: string
-  }) => Promise<boolean>
-  commentableLineNumbers?: readonly number[]
-  addLineCommentLabel?: string
-  addLineCommentPlaceholder?: string
   onContentChange?: (content: string) => void
   onSave?: (content: string) => void
   largeDiffRenderLimit?: LargeDiffRenderLimit

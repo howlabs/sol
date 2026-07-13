@@ -123,7 +123,7 @@ export type AgentSendPopoverTargetMode = {
   id: string
   instanceId: string
   worktreeId: string
-  source: 'diff-notes' | 'browser-annotations'
+  source: 'browser-annotations'
   prompt: string
   label: string
   launchSource: LaunchSource
@@ -814,12 +814,6 @@ export type UISlice = {
   ) => void
   clearPendingRevealWorktreeId: () => void
   clearPendingRevealSidebarRow: () => void
-  // Why: lets the SourceControl sidebar request that the diff editor scroll
-  // to a specific note. Cleared by the diff decorator after it reveals the
-  // line, so the same id can be requested again later without the surface
-  // seeing a stale value.
-  scrollToDiffCommentId: string | null
-  setScrollToDiffCommentId: (id: string | null) => void
   persistedUIReady: boolean
   uiZoomLevel: number
   setUIZoomLevel: (level: number) => void
@@ -2040,8 +2034,6 @@ export const createUISlice: StateCreator<AppState, [], [], UISlice> = (set, get)
     }),
   clearPendingRevealWorktreeId: () => set({ pendingRevealWorktree: null }),
   clearPendingRevealSidebarRow: () => set({ pendingRevealSidebarRow: null }),
-  scrollToDiffCommentId: null,
-  setScrollToDiffCommentId: (id) => set({ scrollToDiffCommentId: id }),
   persistedUIReady: false,
   uiZoomLevel: 0,
   setUIZoomLevel: (level) => set({ uiZoomLevel: level }),

@@ -21,7 +21,7 @@ function makeMode(worktreeId: string): AgentSendPopoverTargetMode {
     id: 'mode-1',
     instanceId: 'inst-1',
     worktreeId,
-    source: 'diff-notes',
+    source: 'browser-annotations',
     prompt: 'do it',
     label: 'Send',
     launchSource: 'sidebar',

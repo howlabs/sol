@@ -507,7 +507,6 @@ export type Worktree = {
   /** Path-derived worktree ids this worktree had before folder renames. */
   priorWorktreeIds?: string[]
   workspaceStatus?: WorkspaceStatus
-  diffComments?: DiffComment[]
   mobileDiffReview?: MobileDiffReviewState
   automationProvenance?: AutomationWorkspaceProvenance
 } & GitWorktreeInfo
@@ -612,7 +611,6 @@ export type WorktreeMeta = {
   orcaCreationWorkspaceLayout?: OrcaWorkspaceLayout
   /** User-assigned workspace status for manual sidebar organization. */
   workspaceStatus?: WorkspaceStatus
-  diffComments?: DiffComment[]
   /** Path-derived worktree ids this worktree had before its folder was renamed
    *  on disk (the id embeds the path). Lets the daemon's session GC and registry
    *  hydration recognize sessions minted under an old id instead of reaping
@@ -695,12 +693,9 @@ export type WorktreeLineageWarning = {
   details?: Record<string, unknown>
 }
 
-// ─── Diff line comments ──────────────────────────────────────────────
-// Why: users leave review notes on specific lines of the modified side of
-// a diff so they can be handed back to an AI agent (pasted into a terminal
-// or used to bootstrap a new agent session). Stored on WorktreeMeta so the
-// existing persistence layer writes them to orca-data.json automatically.
-export type DiffCommentSource = 'diff' | 'markdown'
+// Why: used by mobile diff review state to track which scope a file was
+// reviewed in. Stored on WorktreeMeta so the existing persistence layer
+// writes it to orca-data.json automatically.
 export type DiffReviewScope = 'unstaged' | 'staged' | 'branch'
 
 export type MobileDiffReviewFileState = {
@@ -719,29 +714,6 @@ export type MobileDiffReviewState = {
   updatedAt?: number
   completedAt?: number
   files: Record<string, MobileDiffReviewFileState>
-}
-
-export type DiffComment = {
-  id: string
-  worktreeId: string
-  filePath: string
-  /** Undefined means a legacy diff note. */
-  source?: DiffCommentSource
-  /** Exact text selected when creating a markdown note, when available. */
-  selectedText?: string
-  /** Inclusive range start. Must be <= lineNumber when present. */
-  startLine?: number
-  lineNumber: number
-  body: string
-  createdAt: number
-  updatedAt?: number
-  /** Set after the note has been handed to an agent. Edits clear it. */
-  sentAt?: number
-  scope?: DiffReviewScope
-  oldPath?: string
-  diffIdentity?: string
-  // Reserved for future "comments on the original side" — always 'modified' in v1.
-  side: 'modified'
 }
 
 // ─── Tab Group Layout ───────────────────────────────────────────────
@@ -2513,8 +2485,6 @@ export type GlobalSettings = {
   editorMinimapEnabled: boolean
   /** Persisted opt-out for browser spellcheck noise in rich Markdown editing surfaces. */
   richMarkdownSpellcheckEnabled?: boolean
-  /** Whether local markdown review note controls and the review panel are shown. */
-  markdownReviewToolsEnabled: boolean
   /** Why: mirrors terminal selection-paste muscle memory without mutating the
    *  normal system clipboard; Linux and macOS enable it by default, Windows
    *  leaves middle-click semantics unchanged unless the user opts in. */

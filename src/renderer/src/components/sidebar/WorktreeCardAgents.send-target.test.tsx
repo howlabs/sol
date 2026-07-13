@@ -43,10 +43,10 @@ function activeTargetMode(extra: Record<string, unknown> = {}): Record<string, u
   return {
     id: 'send-1',
     worktreeId: 'wt-1',
-    source: 'diff-notes',
+    source: 'browser-annotations',
     prompt: 'Review this',
     label: 'Send',
-    launchSource: 'diff-notes',
+    launchSource: 'browser-annotations',
     eligiblePaneKeys: [],
     disabledPaneKeys: {},
     status: 'open',

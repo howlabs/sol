@@ -21,12 +21,10 @@ import { extractFrontMatter } from './markdown-frontmatter'
 
 function EditorPanelInner({
   activeFileId: activeFileIdProp,
-  activeViewStateId: activeViewStateIdProp,
-  markdownAnnotationsEnabled = true
+  activeViewStateId: activeViewStateIdProp
 }: {
   activeFileId?: string | null
   activeViewStateId?: string | null
-  markdownAnnotationsEnabled?: boolean
 } = {}): React.JSX.Element | null {
   const openFiles = useAppStore((s) => s.openFiles)
   const globalActiveFileId = useAppStore((s) => s.activeFileId)
@@ -383,7 +381,6 @@ function EditorPanelInner({
       }
       onCloseRenameDialog={closeRenameDialog}
       onRenameConfirm={handleRenameConfirm}
-      markdownAnnotationsEnabled={markdownAnnotationsEnabled}
     />
   )
 }

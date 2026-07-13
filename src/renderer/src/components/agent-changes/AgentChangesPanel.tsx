@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { ExternalLink, RefreshCw, RotateCcw, MessageSquare } from '@/lib/icons'
+import { ArrowLeft, ExternalLink, RefreshCw, RotateCcw, MessageSquare } from '@/lib/icons'
 import { useConfirmationDialog } from '@/components/confirmation-dialog'
 import { isLocalPathOpenBlocked, showLocalPathOpenBlockedToast } from '@/lib/local-path-open-guard'
 import {
@@ -24,6 +24,7 @@ export default function AgentChangesPanel(): React.JSX.Element {
 
   const panel = useAgentChangesPanel(active)
   const confirm = useConfirmationDialog()
+  const [isFileDetailOpen, setIsFileDetailOpen] = useState(false)
 
   const selectedFile = useMemo(
     () => panel.snapshot?.files.find((f) => f.relativePath === panel.selectedPath) ?? null,
@@ -119,6 +120,7 @@ export default function AgentChangesPanel(): React.JSX.Element {
   }, [panel.selectedLines, panel.worktreeId, selectedFile])
 
   const summary = panel.snapshot?.summary
+  const showFileDetail = isFileDetailOpen && selectedFile !== null
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-sidebar text-sidebar-foreground">
@@ -176,47 +178,67 @@ export default function AgentChangesPanel(): React.JSX.Element {
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="max-h-[40%] min-h-[5rem] border-b border-sidebar-border">
+          {/* Why: a selected diff needs the full pane; rendering it beneath the
+              file navigator creates a cramped review surface and competing scroll regions. */}
+          {showFileDetail ? (
+            <>
+              <div className="flex min-w-0 items-center gap-1 border-b border-sidebar-border bg-background/40 px-2 py-1">
+                <PanelIconButton
+                  label={translate('auto.components.agent.changes.backToFiles', 'Back to files')}
+                  onClick={() => setIsFileDetailOpen(false)}
+                >
+                  <ArrowLeft className="size-3.5" />
+                </PanelIconButton>
+                <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">
+                  {selectedFile.relativePath}
+                </span>
+                <span className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground">
+                  <span className="text-emerald-600 dark:text-emerald-400">
+                    +{selectedFile.additions}
+                  </span>{' '}
+                  <span className="text-rose-600 dark:text-rose-400">
+                    −{selectedFile.deletions}
+                  </span>
+                </span>
+                <PanelIconButton
+                  label={translate('auto.components.agent.changes.openIde', 'Open in IDE')}
+                  onClick={() => void handleOpenInIde()}
+                  disabled={!selectedFile}
+                >
+                  <ExternalLink className="size-3.5" />
+                </PanelIconButton>
+                <PanelIconButton
+                  label={translate('auto.components.agent.changes.discard', 'Discard')}
+                  onClick={() => void handleDiscard()}
+                  disabled={!selectedFile}
+                >
+                  <RotateCcw className="size-3.5" />
+                </PanelIconButton>
+                <PanelIconButton
+                  label={translate('auto.components.agent.changes.askAgent', 'Ask agent')}
+                  onClick={() => void handleAskAgent()}
+                  disabled={!selectedFile}
+                >
+                  <MessageSquare className="size-3.5" />
+                </PanelIconButton>
+              </div>
+              <AgentChangesHunkList
+                key={selectedFile.relativePath}
+                file={selectedFile}
+                loadingFile={panel.loadingFile}
+                onSelectionChange={panel.setSelectedLines}
+              />
+            </>
+          ) : (
             <AgentChangesFileList
               files={panel.snapshot?.files ?? []}
               selectedPath={panel.selectedPath}
-              onSelect={panel.selectFile}
+              onSelect={(relativePath) => {
+                panel.selectFile(relativePath)
+                setIsFileDetailOpen(true)
+              }}
             />
-          </div>
-          <div className="flex min-h-0 flex-1 flex-col">
-            <div className="flex items-center gap-1 border-b border-sidebar-border px-2 py-1">
-              <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-muted-foreground">
-                {selectedFile?.relativePath ?? ''}
-              </span>
-              <PanelIconButton
-                label={translate('auto.components.agent.changes.openIde', 'Open in IDE')}
-                onClick={() => void handleOpenInIde()}
-                disabled={!selectedFile}
-              >
-                <ExternalLink className="size-3.5" />
-              </PanelIconButton>
-              <PanelIconButton
-                label={translate('auto.components.agent.changes.discard', 'Discard')}
-                onClick={() => void handleDiscard()}
-                disabled={!selectedFile}
-              >
-                <RotateCcw className="size-3.5" />
-              </PanelIconButton>
-              <PanelIconButton
-                label={translate('auto.components.agent.changes.askAgent', 'Ask agent')}
-                onClick={() => void handleAskAgent()}
-                disabled={!selectedFile}
-              >
-                <MessageSquare className="size-3.5" />
-              </PanelIconButton>
-            </div>
-            <AgentChangesHunkList
-              key={selectedFile?.relativePath ?? 'none'}
-              file={selectedFile}
-              loadingFile={panel.loadingFile}
-              onSelectionChange={panel.setSelectedLines}
-            />
-          </div>
+          )}
         </div>
       )}
     </div>

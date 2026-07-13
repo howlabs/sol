@@ -8,7 +8,6 @@ import {
 } from '../../shared/workspace-cleanup'
 import { splitWorktreeId } from '../../shared/worktree-id'
 import {
-  getNewestWorkspaceCleanupDiffCommentAt,
   getWorkspaceCleanupInactivityReasonsForWorkspace,
   isWorkspaceInactiveForCleanup
 } from './workspace-cleanup-candidate'
@@ -72,8 +71,8 @@ function createDisconnectedSshCandidate(
       terminalTabCount: 0,
       cleanEditorTabCount: 0,
       browserTabCount: 0,
-      diffCommentCount: meta.diffComments?.length ?? 0,
-      newestDiffCommentAt: getNewestWorkspaceCleanupDiffCommentAt(meta.diffComments),
+      diffCommentCount: 0,
+      newestDiffCommentAt: null,
       retainedDoneAgentCount: 0
     },
     git: {

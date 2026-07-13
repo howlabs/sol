@@ -168,11 +168,6 @@ describe('PullRequestPage host boundaries', () => {
       'function addIssueCommentForRepo',
       'function setPRFileViewedForRepo'
     )
-    const fileCommentSection = sourceBetween(
-      source,
-      'const handleAddLineComment = useCallback',
-      'const renderViewedCheckbox = useCallback'
-    )
     const conversationSection = sourceBetween(
       source,
       'const handleReply = useCallback',
@@ -186,13 +181,11 @@ describe('PullRequestPage host boundaries', () => {
 
     expect(helperSection).toContain('getGitHubSourceRuntimeHost(args.sourceContext)')
     expect(helperSection).toContain("'github.addIssueComment'")
-    expect(helperSection).toContain("'github.addPRReviewComment'")
     expect(helperSection).toContain("'github.addPRReviewCommentReply'")
     expect(helperSection).toContain('repo: getGitHubRuntimeRepoId(args.sourceContext, args.repoId)')
     expect(helperSection).toContain('sourceContext: args.sourceContext')
     expect(helperSection).toContain('notifyWorkItemDetailsMutation(')
     expect(helperSection).toContain('{ local: false }')
-    expect(fileCommentSection).toContain('sourceContext,')
     expect(conversationSection).toContain('sourceContext,')
     expect(composerSection).toContain('sourceContext,')
   })

@@ -128,34 +128,16 @@ export function buildWorkspaceCleanupCandidateFromError(
 }
 
 export function buildWorkspaceCleanupLocalContext(
-  worktree: Pick<Worktree, 'diffComments'>
+  _worktree: Pick<Worktree, 'lastActivityAt'>
 ): WorkspaceCleanupCandidate['localContext'] {
   return {
     terminalTabCount: 0,
     cleanEditorTabCount: 0,
     browserTabCount: 0,
-    diffCommentCount: worktree.diffComments?.length ?? 0,
-    newestDiffCommentAt: getNewestWorkspaceCleanupDiffCommentAt(worktree.diffComments),
+    diffCommentCount: 0,
+    newestDiffCommentAt: null,
     retainedDoneAgentCount: 0
   }
-}
-
-export function getNewestWorkspaceCleanupDiffCommentAt(
-  diffComments: Worktree['diffComments'] | undefined
-): number | null {
-  if (!diffComments || diffComments.length === 0) {
-    return null
-  }
-  // Why: persisted diff notes can grow large enough for spread-based Math.max
-  // to exceed the JavaScript argument limit during cleanup scans.
-  let newest = diffComments[0]?.createdAt ?? null
-  for (let index = 1; index < diffComments.length; index += 1) {
-    const createdAt = diffComments[index]?.createdAt
-    if (createdAt !== undefined && (newest === null || createdAt > newest)) {
-      newest = createdAt
-    }
-  }
-  return newest
 }
 
 export function isWorkspaceInactiveForCleanup(

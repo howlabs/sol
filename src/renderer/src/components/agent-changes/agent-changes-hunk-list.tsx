@@ -125,7 +125,9 @@ export function AgentChangesHunkList({
           return (
             <div
               key={row.key}
-              className="sticky top-0 z-[1] bg-muted/80 px-2 py-0.5 text-[10px] text-muted-foreground"
+              // Why: every hunk shares this scroll container. Making each
+              // header sticky pins them to the same edge and causes overlap.
+              className="bg-muted/80 px-2 py-0.5 text-[10px] text-muted-foreground"
             >
               {row.header}
             </div>

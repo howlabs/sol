@@ -35,7 +35,6 @@ export type FeatureInteractionId =
   | 'ports'
   | 'quick-commands'
   | 'resource-manager'
-  | 'review-notes'
   | 'ssh'
   | 'terminal-pane-split'
   | 'terminal-panes'
@@ -107,7 +106,6 @@ export const FEATURE_INTERACTIONS = [
   { id: 'ports', interaction: 'Ports popover opened, configured, or port action used' },
   { id: 'quick-commands', interaction: 'terminal quick command created or edited' },
   { id: 'resource-manager', interaction: 'Resource Manager opened or configured' },
-  { id: 'review-notes', interaction: 'review note added or sent to an agent' },
   {
     id: 'ssh',
     interaction: 'SSH target added, imported, tested, connected, disconnected, or configured'
