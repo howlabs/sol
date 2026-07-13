@@ -1092,9 +1092,9 @@ describe('agent completion coordinator', () => {
   it.each([
     'claude',
     'codex',
-    'gemini',
+    'claude',
     'opencode',
-    'cursor',
+    'codex',
     'droid',
     'grok',
     'devin',
@@ -1259,7 +1259,7 @@ describe('agent completion coordinator', () => {
 
     const turn = {
       prompt: 'fix the bug',
-      agentType: 'cursor' as const
+      agentType: 'codex' as const
     }
 
     coordinator.observeHookStatus({ state: 'working', ...turn })
@@ -1305,7 +1305,7 @@ describe('agent completion coordinator', () => {
 
     const turn = {
       prompt: 'fix the bug',
-      agentType: 'cursor' as const
+      agentType: 'codex' as const
     }
 
     // 'waiting' (e.g. a PermissionRequest) is mid-turn, not a completion.
@@ -1333,12 +1333,12 @@ describe('agent completion coordinator', () => {
     expect(dispatchCompletion).not.toHaveBeenCalled()
     expect(dispatchAttention).toHaveBeenCalledTimes(2)
     expect(dispatchAttention).toHaveBeenLastCalledWith(
-      'cursor',
+      'codex',
       expect.objectContaining({
         source: 'hook',
         agentStatus: expect.objectContaining({
           state: 'waiting',
-          agentType: 'cursor',
+          agentType: 'codex',
           toolInput: 'git status'
         })
       })
@@ -1443,7 +1443,7 @@ describe('agent completion coordinator', () => {
 
     const turn = {
       prompt: 'fix the bug',
-      agentType: 'cursor' as const
+      agentType: 'codex' as const
     }
 
     coordinator.observeHookStatus({ state: 'working', ...turn })
@@ -1463,12 +1463,12 @@ describe('agent completion coordinator', () => {
 
     expect(dispatchCompletion).not.toHaveBeenCalled()
     expect(dispatchAttention).toHaveBeenCalledWith(
-      'cursor',
+      'codex',
       expect.objectContaining({
         source: 'hook',
         agentStatus: expect.objectContaining({
           state: 'waiting',
-          agentType: 'cursor',
+          agentType: 'codex',
           toolInput: 'pnpm test'
         })
       })
@@ -1529,7 +1529,7 @@ describe('agent completion coordinator', () => {
 
     const turn = {
       prompt: 'fix the bug',
-      agentType: 'cursor' as const
+      agentType: 'codex' as const
     }
 
     // Realistic flow: the agent pauses for a permission prompt mid-turn, resumes,

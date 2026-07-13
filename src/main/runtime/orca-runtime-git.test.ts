@@ -377,7 +377,7 @@ describe('RuntimeGitCommands', () => {
           sourceControlAi: {
             commitMessage: {
               enabled: true,
-              agentId: 'cursor',
+              agentId: 'codex',
               customPrompt: 'Saved default that should not win.'
             }
           }
@@ -438,7 +438,7 @@ describe('RuntimeGitCommands', () => {
           sourceControlAi: {
             pullRequest: {
               enabled: true,
-              agentId: 'cursor',
+              agentId: 'codex',
               customPrompt: 'Saved default that should not win.'
             }
           }
@@ -542,7 +542,7 @@ describe('RuntimeGitCommands', () => {
       stagedSummary: 'M\tREADME.md',
       stagedPatch: '+hello'
     }
-    const params = { agentId: 'cursor', model: 'remote-model' }
+    const params = { agentId: 'codex', model: 'remote-model' }
     mocks.resolveCommitMessageSettings.mockReturnValue({ ok: true, params })
     mocks.generateCommitMessageFromContext.mockResolvedValue({
       success: true,
@@ -562,7 +562,7 @@ describe('RuntimeGitCommands', () => {
         ({
           commitMessageAi: {
             enabled: true,
-            agentId: 'cursor',
+            agentId: 'codex',
             selectedModelByAgentByHost: { 'ssh:conn-1': { cursor: 'remote-model' } }
           }
         }) as unknown as GlobalSettings

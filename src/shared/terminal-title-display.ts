@@ -5,11 +5,6 @@ import {
   titleHasAnyLegacyAgentName
 } from './agent-name-token-match'
 import {
-  GEMINI_IDLE,
-  GEMINI_PERMISSION,
-  GEMINI_SILENT_WORKING,
-  GEMINI_WORKING,
-  isGeminiTerminalTitle,
   isGrokRotatingWorkingTitle,
   isPiAgentTitle
 } from './terminal-title-agent-type'
@@ -35,10 +30,6 @@ function containsAgentName(title: string): boolean {
 export function clearWorkingIndicators(title: string): string {
   let cleaned = title
 
-  // Gemini working symbols
-  cleaned = cleaned.replace(GEMINI_WORKING, '')
-  cleaned = cleaned.replace(GEMINI_SILENT_WORKING, '')
-
   // Braille spinner characters (U+2800–U+28FF)
   // eslint-disable-next-line no-control-regex -- intentional unicode range
   cleaned = cleaned.replace(/[\u2800-\u28FF]/g, '')
@@ -62,25 +53,11 @@ export function clearWorkingIndicators(title: string): string {
 
 /**
  * Normalize high-churn agent titles into stable display labels before storing
- * them in app state. Gemini CLI can emit per-keystroke title updates, which
- * otherwise causes broad rerenders and visible flashing.
+ * them in app state.
  */
 export function normalizeTerminalTitle(title: string): string {
   if (!title) {
     return title
-  }
-
-  if (isGeminiTerminalTitle(title)) {
-    const status = detectAgentStatusFromTitle(title)
-    if (status === 'permission') {
-      return `${GEMINI_PERMISSION} Gemini CLI`
-    }
-    if (status === 'working') {
-      return `${GEMINI_WORKING} Gemini CLI`
-    }
-    if (status === 'idle') {
-      return `${GEMINI_IDLE} Gemini CLI`
-    }
   }
 
   // Why: Pi's titlebar extension animates every 80ms with different braille

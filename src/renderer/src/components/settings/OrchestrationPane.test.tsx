@@ -76,7 +76,7 @@ vi.mock('@/hooks/useInstalledAgentSkills', () => ({
 
 vi.mock('@/hooks/useDetectedAgents', () => ({
   useDetectedAgents: () => ({
-    detectedIds: ['claude', 'codex', 'gemini'],
+    detectedIds: ['claude', 'codex', 'claude'],
     isLoading: false,
     isRefreshing: false,
     refresh: vi.fn()

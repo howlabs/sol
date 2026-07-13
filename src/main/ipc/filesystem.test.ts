@@ -1830,7 +1830,7 @@ describe('registerFilesystemHandlers', () => {
     discoverCommitMessageModelsRemoteMock.mockResolvedValue({
       success: true,
       capability: {
-        id: 'cursor',
+        id: 'codex',
         label: 'Cursor',
         modelSource: 'dynamic',
         defaultModelId: 'auto',
@@ -1852,13 +1852,13 @@ describe('registerFilesystemHandlers', () => {
     registerFilesystemHandlers(storeWithOverride as never)
 
     await handlers.get('git:discoverCommitMessageModels')!(null, {
-      agentId: 'cursor',
+      agentId: 'codex',
       worktreePath: '/remote/repo',
       connectionId: 'conn-1'
     })
 
     expect(discoverCommitMessageModelsRemoteMock).toHaveBeenCalledWith(
-      'cursor',
+      'codex',
       '/remote/repo',
       expect.any(Function),
       'npx cursor-agent'

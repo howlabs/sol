@@ -6,27 +6,18 @@ import { isTuiAgent } from './tui-agent-config'
 export const TUI_AGENT_AUTO_PICK_ORDER = [
   'claude',
   'claude-agent-teams',
-  'openclaude',
   'codex',
   'grok',
   'copilot',
   'opencode',
-  'mimo-code',
   'pi',
-  'gemini',
   'antigravity',
-  'aider',
   'amp',
-  'kiro',
   'cline',
-  'command-code',
-  'cursor',
   'droid',
-  'kimi',
   'qwen-code',
   'hermes',
-  'devin',
-  'openclaw'
+  'devin'
 ] as const satisfies readonly TuiAgent[]
 
 // Why: fresh installs should expose Claude Agent Teams in agent pickers; the

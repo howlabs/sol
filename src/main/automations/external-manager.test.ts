@@ -6,7 +6,7 @@ import {
   runExternalAutomationAction,
   updateExternalAutomation
 } from './external-manager'
-import { mapHermesJobs, mapOpenClawJobs } from './external-job-mappers'
+import { mapHermesJobs } from './external-job-mappers'
 import { getActiveMultiplexer } from '../ipc/ssh'
 import type { Store } from '../persistence'
 import type * as Fs from 'node:fs'
@@ -321,23 +321,6 @@ describe('runExternalAutomationAction', () => {
 
     expect(execFileMock).not.toHaveBeenCalled()
   })
-
-  it('maps OpenClaw lifecycle actions through its cron CLI names', async () => {
-    await runExternalAutomationAction({
-      managerId: 'openclaw:local',
-      provider: 'openclaw',
-      target: { type: 'local' },
-      jobId: 'job-1',
-      action: 'pause'
-    })
-
-    expect(execFileMock).toHaveBeenCalledWith(
-      'openclaw',
-      ['cron', 'disable', 'job-1'],
-      { encoding: 'utf-8', timeout: 30_000 },
-      expect.any(Function)
-    )
-  })
 })
 
 describe('listExternalAutomationRuns', () => {
@@ -393,44 +376,6 @@ describe('listExternalAutomationRuns', () => {
       jobId: 'job-1',
       page: 2,
       pageSize: 10
-    })
-  })
-})
-
-describe('mapOpenClawJobs', () => {
-  it('normalizes OpenClaw cron jobs into external automation rows', () => {
-    const jobs = mapOpenClawJobs('openclaw:local', {
-      version: 1,
-      jobs: [
-        {
-          id: 'claw-1',
-          name: 'Morning report',
-          enabled: true,
-          schedule: { kind: 'cron', expr: '0 9 * * *', tz: 'America/Phoenix' },
-          payload: { kind: 'agentTurn', message: 'Summarize overnight alerts' },
-          state: {
-            nextRunAtMs: Date.parse('2026-05-16T16:00:00Z'),
-            lastRunAtMs: Date.parse('2026-05-15T16:00:00Z'),
-            lastRunStatus: 'ok'
-          }
-        }
-      ]
-    })
-
-    expect(jobs[0]).toMatchObject({
-      id: 'claw-1',
-      managerId: 'openclaw:local',
-      provider: 'openclaw',
-      name: 'Morning report',
-      schedule: 'cron 0 9 * * * @ America/Phoenix',
-      rawSchedule: '0 9 * * *',
-      enabled: true,
-      state: 'ok',
-      prompt: 'Summarize overnight alerts',
-      promptPreview: 'Summarize overnight alerts',
-      nextRunAt: '2026-05-16T16:00:00.000Z',
-      lastRunAt: '2026-05-15T16:00:00.000Z',
-      lastStatus: 'ok'
     })
   })
 })

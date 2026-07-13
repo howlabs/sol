@@ -82,7 +82,7 @@ describe('markRemoteAgentWorkspaceTrusted', () => {
     mocks.getSshFilesystemProvider.mockReturnValue(fsProvider)
 
     await markRemoteAgentWorkspaceTrusted({
-      preset: 'cursor',
+      preset: 'codex',
       connectionId: 'ssh-1',
       workspacePath: '/repo/worktree'
     })
@@ -104,7 +104,7 @@ describe('markRemoteAgentWorkspaceTrusted', () => {
     mocks.getSshFilesystemProvider.mockReturnValue(fsProvider)
 
     await markRemoteAgentWorkspaceTrusted({
-      preset: 'cursor',
+      preset: 'codex',
       connectionId: 'ssh-windows',
       workspacePath: 'C:\\Users\\alice\\platform'
     })

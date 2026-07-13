@@ -255,22 +255,6 @@ function isPiModelTableWhitespace(code: number): boolean {
   )
 }
 
-export function parseCursorModels(stdout: string): CommitMessageModel[] {
-  const models: CommitMessageModel[] = []
-  for (const rawLine of iterateModelOutputLines(stdout)) {
-    const match = /^([^\s]+)\s+-\s+(.+)$/.exec(rawLine.trim())
-    if (!match) {
-      continue
-    }
-    models.push({
-      id: match[1],
-      label: match[2].replace(/\s+\((?:default|current)\)$/i, ''),
-      ...withOpenAiThinking(match[1])
-    })
-  }
-  return uniqueModels(models)
-}
-
 export function parseAntigravityModels(stdout: string): CommitMessageModel[] {
   const models: CommitMessageModel[] = []
   for (const rawLine of iterateModelOutputLines(stdout)) {
@@ -498,59 +482,6 @@ export const COMMIT_MESSAGE_AGENT_SPECS: Partial<Record<TuiAgent, CommitMessageA
       }
     ],
     defaultModelId: 'smart'
-  },
-  cursor: {
-    id: 'cursor',
-    label: 'Cursor',
-    binary: 'cursor-agent',
-    promptDelivery: 'argv',
-    buildArgs: ({ prompt, model }) => [
-      '--print',
-      '--mode',
-      'ask',
-      '--trust',
-      '--output-format',
-      'text',
-      '--model',
-      model,
-      prompt
-    ],
-    modelSource: 'dynamic',
-    modelDiscovery: { binary: 'cursor-agent', args: ['--list-models'], parse: parseCursorModels },
-    models: [{ id: 'auto', label: 'Auto' }],
-    defaultModelId: 'auto'
-  },
-  kimi: {
-    id: 'kimi',
-    label: 'Kimi',
-    binary: 'kimi',
-    promptDelivery: 'stdin',
-    buildArgs: ({ model, thinkingLevel }) => [
-      '--print',
-      '--quiet',
-      ...(model && model !== 'default' ? ['--model', model] : []),
-      ...(thinkingLevel === 'on'
-        ? ['--thinking']
-        : thinkingLevel === 'off'
-          ? ['--no-thinking']
-          : [])
-    ],
-    modelSource: 'static',
-    models: [
-      { id: 'default', label: 'Config default' },
-      {
-        // Why: Kimi resolves its managed model by provider/model; bare model
-        // names are rejected by the CLI with "LLM not set".
-        id: 'kimi-code/kimi-for-coding',
-        label: 'Kimi K2.6',
-        thinkingLevels: [
-          { id: 'on', label: 'On' },
-          { id: 'off', label: 'Off' }
-        ],
-        defaultThinkingLevel: 'on'
-      }
-    ],
-    defaultModelId: 'default'
   },
   copilot: {
     id: 'copilot',

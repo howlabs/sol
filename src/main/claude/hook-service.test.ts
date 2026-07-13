@@ -326,7 +326,7 @@ describe('ClaudeHookService.installRemote', () => {
 describe('OpenClaudeHookService-compatible install', () => {
   const makeOpenClaudeService = (): ClaudeHookService =>
     new ClaudeHookService({
-      agent: 'openclaude',
+      agent: 'opencode',
       displayName: 'OpenClaude',
       settings: OPENCLAUDE_HOOK_SETTINGS
     })
@@ -343,7 +343,7 @@ describe('OpenClaudeHookService-compatible install', () => {
       const status = makeOpenClaudeService().install()
 
       expect(status).toMatchObject({
-        agent: 'openclaude',
+        agent: 'opencode',
         state: 'installed',
         configPath: openClaudeSettings
       })
@@ -374,7 +374,7 @@ describe('OpenClaudeHookService-compatible install', () => {
     const status = await makeOpenClaudeService().installRemote(sftp, '/home/dev')
 
     expect(status).toMatchObject({
-      agent: 'openclaude',
+      agent: 'opencode',
       state: 'installed',
       configPath: '/home/dev/.openclaude/settings.json'
     })

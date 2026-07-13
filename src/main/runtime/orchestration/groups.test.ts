@@ -107,7 +107,7 @@ describe('resolveGroupAddress', () => {
 
     it('matches @mimo by terminal title', () => {
       const terminals = [
-        makeSummary('term_a', { title: 'mimo' }),
+        makeSummary('term_a', { title: 'codex' }),
         makeSummary('term_b', { title: 'MiMo Code session' }),
         makeSummary('term_c', { title: 'OpenCode' })
       ]

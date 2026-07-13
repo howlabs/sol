@@ -228,12 +228,6 @@ export function createAgentCompletionCoordinator(
     if (/\bclaude\b/.test(normalized)) {
       return 'claude'
     }
-    if (/\bgemini\b/.test(normalized)) {
-      return 'gemini'
-    }
-    if (/\bcursor(?: agent)?\b/.test(normalized)) {
-      return 'cursor'
-    }
     if (/\bopencode\b/.test(normalized)) {
       return 'opencode'
     }
@@ -242,9 +236,6 @@ export function createAgentCompletionCoordinator(
     }
     if (/\bhermes\b/.test(normalized)) {
       return 'hermes'
-    }
-    if (/\baider\b/.test(normalized)) {
-      return 'aider'
     }
     if (/\bpi\b/.test(normalized) || normalized.includes('\u03c0')) {
       return 'pi'

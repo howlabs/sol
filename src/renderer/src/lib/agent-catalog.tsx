@@ -1,9 +1,8 @@
 import type React from 'react'
 import { ClaudeIcon, DroidIcon, OpenAIIcon } from '@/components/status-bar/icons'
-import openClaudeLogoUrl from '../../../../resources/openclaude-logo.png?url'
 import type { TuiAgent } from '../../../shared/types'
 import { getTuiAgentLaunchCommand, TUI_AGENT_CONFIG } from '../../../shared/tui-agent-config'
-import { AgentLetterIcon, AiderIcon, CopilotIcon, OpenCodeIcon, PiIcon } from './agent-icon-glyphs'
+import { AgentLetterIcon, CopilotIcon, OpenCodeIcon, PiIcon } from './agent-icon-glyphs'
 import { translate } from '@/i18n/i18n'
 import { createLocalizedCatalog } from '@/i18n/localized-catalog'
 
@@ -48,15 +47,6 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     homepageUrl: 'https://code.claude.com/docs/agent-teams'
   },
   {
-    id: 'openclaude',
-    label: translate('auto.lib.agent.catalog.a5fc0cb622', 'OpenClaude'),
-    cmd: 'openclaude',
-    // Why: OpenClaude's published favicon has a padded 500px canvas; Orca
-    // uses a cropped derivative of that official asset so 12px tab icons stay legible.
-    iconUrl: openClaudeLogoUrl,
-    homepageUrl: 'https://openclaude.gitlawb.com/'
-  },
-  {
     id: 'codex',
     label: translate('auto.lib.agent.catalog.760bc6883d', 'Codex'),
     cmd: 'codex',
@@ -82,24 +72,10 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     homepageUrl: 'https://opencode.ai/docs/cli/'
   },
   {
-    id: 'mimo-code',
-    label: translate('auto.lib.agent.catalog.mimo_code_label', 'MiMo Code'),
-    cmd: 'mimo',
-    faviconDomain: 'mimo.xiaomi.com',
-    homepageUrl: 'https://mimo.xiaomi.com/coder'
-  },
-  {
     id: 'pi',
     label: translate('auto.lib.agent.catalog.302934c5d9', 'Pi'),
     cmd: 'pi',
     homepageUrl: 'https://pi.dev'
-  },
-  {
-    id: 'gemini',
-    label: translate('auto.lib.agent.catalog.12e6baa4f7', 'Gemini'),
-    cmd: 'gemini',
-    faviconDomain: 'gemini.google.com',
-    homepageUrl: 'https://github.com/google-gemini/gemini-cli'
   },
   {
     id: 'antigravity',
@@ -109,28 +85,11 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     homepageUrl: 'https://antigravity.google/docs/cli-overview'
   },
   {
-    id: 'aider',
-    label: translate('auto.lib.agent.catalog.b32627f09b', 'Aider'),
-    cmd: 'aider',
-    homepageUrl: 'https://aider.chat/docs/'
-  },
-  {
     id: 'amp',
     label: translate('auto.lib.agent.catalog.c73c573939', 'Amp'),
     cmd: 'amp',
     faviconDomain: 'ampcode.com',
     homepageUrl: 'https://ampcode.com/manual#install'
-  },
-  {
-    id: 'kiro',
-    label: translate('auto.lib.agent.catalog.e0247254f2', 'Kiro'),
-    // Why: the Kiro installer (https://cli.kiro.dev/install) ships a binary
-    // named `kiro-cli`, not `kiro`. Match TUI_AGENT_CONFIG.kiro.detectCmd so
-    // the settings pane's "default command" hint aligns with what Orca
-    // actually looks for on PATH.
-    cmd: 'kiro-cli',
-    faviconDomain: 'kiro.dev',
-    homepageUrl: 'https://kiro.dev/docs/cli/'
   },
   {
     id: 'cline',
@@ -140,35 +99,10 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     homepageUrl: 'https://docs.cline.bot/cline-cli/overview'
   },
   {
-    id: 'command-code',
-    label: translate('auto.lib.agent.catalog.6f8056a565', 'Command Code'),
-    // Why: `npm i -g command-code` installs both `command-code` and the
-    // shorter alias `cmd`. Show the full name in the settings hint so it
-    // matches TUI_AGENT_CONFIG['command-code'].detectCmd and avoids any
-    // suggestion that Orca is looking for Windows' built-in `cmd.exe`.
-    cmd: 'command-code',
-    faviconDomain: 'commandcode.ai',
-    homepageUrl: 'https://commandcode.ai/docs/quickstart'
-  },
-  {
-    id: 'cursor',
-    label: translate('auto.lib.agent.catalog.667c104cff', 'Cursor'),
-    cmd: 'cursor-agent',
-    faviconDomain: 'cursor.com',
-    homepageUrl: 'https://cursor.com/cli'
-  },
-  {
     id: 'droid',
     label: translate('auto.lib.agent.catalog.739a930554', 'Droid'),
     cmd: 'droid',
     homepageUrl: 'https://docs.factory.ai/cli/getting-started/quickstart'
-  },
-  {
-    id: 'kimi',
-    label: translate('auto.lib.agent.catalog.28810273af', 'Kimi'),
-    cmd: 'kimi',
-    faviconDomain: 'moonshot.cn',
-    homepageUrl: 'https://www.kimi.com/code/docs/en/kimi-code-cli/getting-started.html'
   },
   {
     id: 'qwen-code',
@@ -192,13 +126,6 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     cmd: 'devin',
     faviconDomain: 'devin.ai',
     homepageUrl: 'https://devin.ai/cli'
-  },
-  {
-    id: 'openclaw',
-    label: translate('auto.lib.agent.catalog.5dff448636', 'OpenClaw'),
-    cmd: 'openclaw',
-    faviconDomain: 'openclaw.ai',
-    homepageUrl: 'https://github.com/openclaw/openclaw'
   }
 ])
 
@@ -234,9 +161,6 @@ export function AgentIcon({
   }
   if (agent === 'pi') {
     return <PiIcon size={size} />
-  }
-  if (agent === 'aider') {
-    return <AiderIcon size={size} />
   }
   if (agent === 'copilot') {
     return <CopilotIcon size={size} />

@@ -580,7 +580,7 @@ describe('runtime git client', () => {
   })
 
   it('discovers commit-message models through the active runtime', async () => {
-    const agentCmdOverrides = { cursor: 'cursor-agent' }
+    const agentCmdOverrides = { codex: 'codex-agent' }
     runtimeEnvironmentCall.mockResolvedValue({
       id: 'rpc-1',
       ok: true,
@@ -594,13 +594,13 @@ describe('runtime git client', () => {
         worktreeId: 'wt-1',
         worktreePath: '/repo'
       },
-      'cursor'
+      'codex'
     )
 
     expect(runtimeEnvironmentCall).toHaveBeenCalledWith({
       selector: 'env-1',
       method: 'git.discoverCommitMessageModels',
-      params: { worktree: 'id:wt-1', agentId: 'cursor', agentCmdOverrides },
+      params: { worktree: 'id:wt-1', agentId: 'codex', agentCmdOverrides },
       timeoutMs: 75_000
     })
     expect(gitDiscoverCommitMessageModels).not.toHaveBeenCalled()

@@ -23,7 +23,6 @@ import {
   asRecord,
   copilotModelMetricsTotal,
   extractContentText,
-  extractMessageText,
   extractPreviewContentText,
   extractString,
   extractTrustedFolder,
@@ -130,72 +129,6 @@ async function parseCopilotSessionLines(args: {
   options?: ParserSessionOptions
 }): Promise<AiVaultSession | null> {
   const state = createCopilotSessionResumeState(args.file)
-  for await (const line of args.lines) {
-    state.consumeLine(line)
-  }
-  return state.finalize(args.platform, args.options)
-}
-
-export async function parseCursorSessionFile(
-  file: FileWithMtime,
-  platform: NodeJS.Platform = process.platform
-): Promise<AiVaultSession | null> {
-  const lines = createInterface({
-    input: createReadStream(file.path, { encoding: 'utf-8' }),
-    crlfDelay: Infinity
-  })
-  return parseCursorSessionLines({ file, lines, platform })
-}
-
-export async function parseCursorSessionContent(
-  file: FileWithMtime,
-  content: string,
-  platform: NodeJS.Platform = process.platform,
-  options: ParserSessionOptions = {}
-): Promise<AiVaultSession | null> {
-  return parseCursorSessionLines({
-    file,
-    lines: content.split(/\r?\n/),
-    platform,
-    options
-  })
-}
-
-function consumeCursorRecordLine(accumulator: SessionAccumulator, line: string): void {
-  const record = parseJsonObject(line)
-  if (!record) {
-    return
-  }
-  updateTimeline(accumulator, extractString(record.timestamp))
-  const role = extractString(record.role)
-  if (role === 'user' || role === 'assistant') {
-    accumulator.messageCount++
-    if (role === 'user') {
-      accumulator.title ??= extractMessageText(record.message) ?? extractContentText(record.content)
-    }
-    addPreviewContent(
-      accumulator,
-      role,
-      asRecord(record.message)?.content ?? record.content,
-      record.timestamp
-    )
-  }
-}
-
-export function createCursorSessionResumeState(file: FileWithMtime): ResumableSessionParseState {
-  return accumulatorFoldResumeState(
-    createAccumulator({ agent: 'cursor', file, sessionId: sessionIdFromFileName(file.path) }),
-    consumeCursorRecordLine
-  )
-}
-
-async function parseCursorSessionLines(args: {
-  file: FileWithMtime
-  lines: AsyncIterable<string> | Iterable<string>
-  platform: NodeJS.Platform
-  options?: ParserSessionOptions
-}): Promise<AiVaultSession | null> {
-  const state = createCursorSessionResumeState(args.file)
   for await (const line of args.lines) {
     state.consumeLine(line)
   }

@@ -155,7 +155,7 @@ describe('resolveCommitMessageSettings', () => {
     const settings = getDefaultSettings('/tmp')
     settings.commitMessageAi = {
       enabled: true,
-      agentId: 'cursor',
+      agentId: 'codex',
       selectedModelByAgent: { cursor: 'gpt-5.2' },
       discoveredModelsByAgent: {
         cursor: [
@@ -178,7 +178,7 @@ describe('resolveCommitMessageSettings', () => {
     expect(result).toMatchObject({
       ok: true,
       params: {
-        agentId: 'cursor',
+        agentId: 'codex',
         model: 'gpt-5.2',
         thinkingLevel: 'xhigh'
       }
@@ -189,7 +189,7 @@ describe('resolveCommitMessageSettings', () => {
     const settings = getDefaultSettings('/tmp')
     settings.commitMessageAi = {
       enabled: true,
-      agentId: 'cursor',
+      agentId: 'codex',
       selectedModelByAgent: { cursor: 'auto' },
       selectedModelByAgentByHost: { 'ssh:conn-1': { cursor: 'remote-only' } },
       discoveredModelsByAgent: { cursor: [{ id: 'auto', label: 'Auto' }] },
@@ -207,7 +207,7 @@ describe('resolveCommitMessageSettings', () => {
     expect(result).toMatchObject({
       ok: true,
       params: {
-        agentId: 'cursor',
+        agentId: 'codex',
         model: 'remote-only'
       }
     })
@@ -265,7 +265,7 @@ describe('resolveCommitMessageSettings', () => {
     const settings = getDefaultSettings('/tmp')
     settings.commitMessageAi = {
       enabled: true,
-      agentId: 'cursor',
+      agentId: 'codex',
       selectedModelByAgent: { cursor: 'gpt-5.2' },
       selectedThinkingByModel: { 'gpt-5.2': 'xhigh' },
       customPrompt: '',
@@ -278,7 +278,7 @@ describe('resolveCommitMessageSettings', () => {
     expect(result).toMatchObject({
       ok: true,
       params: {
-        agentId: 'cursor',
+        agentId: 'codex',
         model: 'auto'
       }
     })
@@ -326,7 +326,7 @@ describe('discoverCommitMessageModelsLocal', () => {
     }
     spawnMock.mockReturnValue(child as never)
 
-    const pending = discoverCommitMessageModelsLocal('cursor', undefined)
+    const pending = discoverCommitMessageModelsLocal('codex', undefined)
 
     listeners.get('stdout:data')?.(Buffer.from('auto - Auto\ngpt-5.2 - GPT-5.2\n'))
     listeners.get('close')?.(0)
@@ -395,7 +395,7 @@ describe('discoverCommitMessageModelsLocal', () => {
       }
       spawnMock.mockReturnValue(child as never)
 
-      const pending = discoverCommitMessageModelsLocal('cursor', undefined, undefined, {
+      const pending = discoverCommitMessageModelsLocal('codex', undefined, undefined, {
         cwd: 'C:\\repo',
         wslDistro: 'Ubuntu'
       })
@@ -485,7 +485,7 @@ describe('discoverCommitMessageModelsLocal', () => {
     spawnMock.mockReturnValue(child as never)
 
     try {
-      const pending = discoverCommitMessageModelsLocal('cursor', undefined)
+      const pending = discoverCommitMessageModelsLocal('codex', undefined)
       const assertion = expect(pending).resolves.toMatchObject({
         success: false,
         error: 'Cursor model discovery timed out after 60s.'
@@ -508,7 +508,7 @@ describe('discoverCommitMessageModelsLocal', () => {
     const child = createMockDiscoveryChild()
     spawnMock.mockReturnValue(child as never)
 
-    const pending = discoverCommitMessageModelsLocal('cursor', undefined)
+    const pending = discoverCommitMessageModelsLocal('codex', undefined)
 
     child.stdout.emit('data', Buffer.alloc(4 * 1024 * 1024 + 1))
 
@@ -544,7 +544,7 @@ describe('generateCommitMessageFromContext', () => {
     })
 
     const result = await discoverCommitMessageModelsRemote(
-      'cursor',
+      'codex',
       '/remote/repo',
       execute,
       'npx cursor-agent'
@@ -561,7 +561,7 @@ describe('generateCommitMessageFromContext', () => {
   })
 
   it('reports remote model discovery spawn failures with remote install guidance', async () => {
-    const result = await discoverCommitMessageModelsRemote('cursor', '/remote/repo', async () => ({
+    const result = await discoverCommitMessageModelsRemote('codex', '/remote/repo', async () => ({
       stdout: '',
       stderr: '',
       exitCode: null,

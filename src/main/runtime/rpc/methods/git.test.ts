@@ -267,7 +267,7 @@ describe('git RPC methods', () => {
     await dispatcher.dispatch(
       makeRequest('git.discoverCommitMessageModels', {
         worktree: 'id:wt-1',
-        agentId: 'cursor',
+        agentId: 'codex',
         agentCmdOverrides: { cursor: 'cursor-agent' }
       })
     )
@@ -299,7 +299,7 @@ describe('git RPC methods', () => {
 
     expect(runtime.commitRuntimeGit).toHaveBeenCalledWith('id:wt-1', 'feat: test')
     expect(runtime.generateRuntimeCommitMessage).toHaveBeenCalledWith('id:wt-1')
-    expect(runtime.discoverRuntimeCommitMessageModels).toHaveBeenCalledWith('id:wt-1', 'cursor', {
+    expect(runtime.discoverRuntimeCommitMessageModels).toHaveBeenCalledWith('id:wt-1', 'codex', {
       agentCmdOverrides: { cursor: 'cursor-agent' }
     })
     expect(runtime.cancelRuntimeGenerateCommitMessage).toHaveBeenCalledWith('id:wt-1')

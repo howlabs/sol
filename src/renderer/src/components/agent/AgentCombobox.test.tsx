@@ -20,7 +20,7 @@ describe('AgentCombobox', () => {
   })
 
   it('uses the bundled OpenClaude favicon crop instead of Claude or GitHub artwork', () => {
-    const markup = renderToStaticMarkup(<AgentIcon agent="openclaude" />)
+    const markup = renderToStaticMarkup(<AgentIcon agent="opencode" />)
 
     expect(markup).toContain('/resources/openclaude-logo.png')
     expect(markup).toContain('<img')

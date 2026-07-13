@@ -8,7 +8,7 @@ const { shortcutLabelMock, storeState, openSettingsPageMock, openSettingsTargetM
     shortcutLabelMock: vi.fn<() => string | null>(),
     storeState: {
       settings: {
-        defaultTuiAgent: 'codex' as 'claude' | 'codex' | 'gemini' | 'blank' | null,
+        defaultTuiAgent: 'codex' as 'claude' | 'codex' | 'claude' | 'blank' | null,
         disabledTuiAgents: [] as string[]
       },
       worktreesByRepo: {},
@@ -22,7 +22,7 @@ const { shortcutLabelMock, storeState, openSettingsPageMock, openSettingsTargetM
 )
 
 vi.mock('@/hooks/useDetectedAgents', () => ({
-  useDetectedAgents: () => ({ detectedIds: ['claude', 'codex', 'gemini'] })
+  useDetectedAgents: () => ({ detectedIds: ['claude', 'codex', 'claude'] })
 }))
 
 vi.mock('@/hooks/useShortcutLabel', () => ({
@@ -51,7 +51,7 @@ vi.mock('@/lib/agent-catalog', async () => {
     getAgentCatalog: () => [
       { id: 'claude', label: 'Claude' },
       { id: 'codex', label: 'Codex' },
-      { id: 'gemini', label: 'Gemini' }
+      { id: 'claude', label: 'Gemini' }
     ],
     AgentIcon: ({ agent }: { agent: string }) => ReactActual.createElement('span', null, agent)
   }

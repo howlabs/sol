@@ -12,7 +12,6 @@ import {
   listCommitMessageAgentIds,
   parseAntigravityModels,
   parseCodexModels,
-  parseCursorModels,
   parseLineModels,
   parsePiModels,
   resolveCommitMessageAgentChoice
@@ -31,8 +30,6 @@ describe('COMMIT_MESSAGE_AGENT_SPECS', () => {
       'claude',
       'codex',
       'copilot',
-      'cursor',
-      'kimi',
       'opencode',
       'pi'
     ])
@@ -42,13 +39,6 @@ describe('COMMIT_MESSAGE_AGENT_SPECS', () => {
     expect(COMMIT_MESSAGE_AGENT_SPECS.claude?.defaultModelId).toBe('sonnet')
     expect(COMMIT_MESSAGE_AGENT_SPECS.codex?.defaultModelId).toBe('gpt-5.5')
     expect(COMMIT_MESSAGE_AGENT_SPECS.pi?.defaultModelId).toBe('github-copilot/gpt-5.4-mini')
-  })
-
-  it('uses the provider-qualified Kimi model id accepted by the CLI', () => {
-    expect(COMMIT_MESSAGE_AGENT_SPECS.kimi?.models.map((m) => m.id)).toEqual([
-      'default',
-      'kimi-code/kimi-for-coding'
-    ])
   })
 
   it('lists Copilot hosted CLI models even when account policy filters the picker', () => {
@@ -254,22 +244,7 @@ describe('model discovery parsers', () => {
     ])
   })
 
-  it('parses Cursor model output', () => {
-    expect(parseCursorModels('auto - Auto\ngpt-5.2 - GPT-5.2\n')).toEqual([
-      { id: 'auto', label: 'Auto' },
-      {
-        id: 'gpt-5.2',
-        label: 'GPT-5.2',
-        thinkingLevels: [
-          { id: 'low', label: 'Low' },
-          { id: 'medium', label: 'Medium' },
-          { id: 'high', label: 'High' },
-          { id: 'xhigh', label: 'Extra High' }
-        ],
-        defaultThinkingLevel: 'low'
-      }
-    ])
-  })
+
 
   it('parses Antigravity model output', () => {
     const output = [
@@ -329,7 +304,6 @@ describe('model discovery parsers', () => {
         `${noise}provider model context max-out thinking images\r\ngithub-copilot gpt-5.4-mini 400K 128K yes yes\r\n`
       )[0]?.id
     ).toBe('github-copilot/gpt-5.4-mini')
-    expect(parseCursorModels(`${noise}auto - Auto\r\ngpt-5.2 - GPT-5.2\r\n`)).toHaveLength(2)
     expect(parseAntigravityModels(`${blankNoise}Gemini 3.5 Flash (Medium)\r\n`)).toEqual([
       { id: 'Gemini 3.5 Flash (Medium)', label: 'Gemini 3.5 Flash (Medium)' }
     ])

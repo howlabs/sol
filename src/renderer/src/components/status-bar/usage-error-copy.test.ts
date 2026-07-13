@@ -14,9 +14,8 @@ describe('getProviderDisplayName', () => {
   it('returns the existing provider brand names', () => {
     expect(getProviderDisplayName('claude')).toBe('Claude')
     expect(getProviderDisplayName('codex')).toBe('Codex')
-    expect(getProviderDisplayName('gemini')).toBe('Gemini')
     expect(getProviderDisplayName('opencode-go')).toBe('OpenCode Go')
-    expect(getProviderDisplayName('kimi')).toBe('Kimi')
+    expect(getProviderDisplayName('grok')).toBe('Grok')
   })
 
   it('falls back to the raw provider id when no mapping exists', () => {

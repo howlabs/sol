@@ -413,7 +413,7 @@ describe('resolveAgentForegroundProcess', () => {
       resolveAgentForegroundProcess(100, 'powershell.exe', {
         contextPaths: ['C:\\repo\\orca']
       })
-    ).resolves.toBe('gemini')
+    ).resolves.toBe('claude')
   })
 
   it('fails closed for sibling Windows agents that both match the same worktree path', async () => {

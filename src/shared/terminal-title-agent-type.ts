@@ -14,11 +14,6 @@ export const CLAUDE_IDLE = '\u2733' // ✳ (eight-spoked asterisk — Claude Cod
 const CLAUDE_MANAGEMENT_TITLE_RE =
   /^\s*(?:"(?:.*[\\/])?claude(?:\.(?:exe|cmd|bat|ps1))?"|'(?:.*[\\/])?claude(?:\.(?:exe|cmd|bat|ps1))?'|(?:.*[\\/])?claude(?:\.(?:exe|cmd|bat|ps1))?)\s+agents\s*$/i
 
-export const GEMINI_WORKING = '\u2726' // ✦
-export const GEMINI_SILENT_WORKING = '\u23F2' // ⏲
-export const GEMINI_IDLE = '\u25C7' // ◇
-export const GEMINI_PERMISSION = '\u270B' // ✋
-
 export function containsBrailleSpinner(title: string): boolean {
   for (const char of title) {
     const codePoint = char.codePointAt(0)
@@ -27,24 +22,6 @@ export function containsBrailleSpinner(title: string): boolean {
     }
   }
   return false
-}
-
-export function isGeminiTerminalTitle(title: string): boolean {
-  // Why: Gemini OSC glyphs are stronger evidence than any cwd/session text.
-  if (
-    title.includes(GEMINI_PERMISSION) ||
-    title.includes(GEMINI_WORKING) ||
-    title.includes(GEMINI_SILENT_WORKING) ||
-    title.includes(GEMINI_IDLE)
-  ) {
-    return true
-  }
-  // Why: Pi titles include cwd/session text; substring matching made paths
-  // like "gemini-project" masquerade as Gemini CLI.
-  if (isPiAgentTitle(title)) {
-    return false
-  }
-  return titleHasAgentName(title, 'gemini')
 }
 
 export function isPiTerminalTitle(title: string): boolean {
@@ -82,7 +59,6 @@ export function isClaudeAgent(title: string): boolean {
   if (!title || isClaudeManagementTitle(title)) {
     return false
   }
-  const lower = title.toLowerCase()
 
   // Why: Claude Code titles are prefixed with status indicators (✳, ". ", "* ",
   // braille spinners) followed by the task description. The task text can
@@ -97,9 +73,7 @@ export function isClaudeAgent(title: string): boolean {
     return true
   }
   if (containsBrailleSpinner(title)) {
-    // Why: named non-Claude agents can carry braille spinners too; Claude-only
-    // prompt-cache paths must not fire for those explicit agent titles.
-    return !lower.includes('cursor') && !lower.includes('openclaude')
+    return true
   }
   // Why: permission/action-required Claude titles can omit the usual prefixes.
   // Token-match so cwd/worktree titles like "claude-scratch" do not become
@@ -133,9 +107,6 @@ export function getAgentLabel(title: string): string | null {
   ) {
     return 'Claude Code'
   }
-  if (isGeminiTerminalTitle(title)) {
-    return 'Gemini CLI'
-  }
   // Why: Pi-compatible synthetic titles can carry braille spinners, which the
   // generic agent-title heuristics would otherwise claim first.
   const piCompatibleSyntheticAgentLabel = getPiCompatibleSyntheticAgentLabel(title)
@@ -147,16 +118,12 @@ export function getAgentLabel(title: string): string | null {
   if (isPiAgentTitle(title)) {
     return 'Pi'
   }
-  // Why: Codex/OpenCode/Aider can also use braille spinner prefixes while
-  // working. Prefer explicit name matches before Claude's generic spinner
-  // heuristic so mixed-agent hovercards stay truthful. Token-match (not
-  // substring) so cwd/worktree titles like "opencode-blinker" don't mint a
-  // false agent identity.
+  // Why: Codex/OpenCode can also use braille spinner prefixes while working.
+  // Prefer explicit name matches before Claude's generic spinner heuristic so
+  // mixed-agent hovercards stay truthful. Token-match (not substring) so
+  // cwd/worktree titles like "opencode-blinker" don't mint a false agent identity.
   if (titleHasAgentName(title, 'codex')) {
     return 'Codex'
-  }
-  if (titleHasAgentName(title, 'openclaude')) {
-    return 'OpenClaude'
   }
   if (titleHasAgentName(title, 'copilot')) {
     return 'GitHub Copilot'
@@ -172,22 +139,6 @@ export function getAgentLabel(title: string): string | null {
   }
   if (titleHasAgentName(title, 'opencode')) {
     return 'OpenCode'
-  }
-  if (titleHasAgentName(title, 'mimo')) {
-    return 'MiMo Code'
-  }
-  if (titleHasAgentName(title, 'aider')) {
-    return 'Aider'
-  }
-  // Why: the cursor-agent native title is the literal string "Cursor Agent"
-  // (verified against the 2026.04.17 release) — Orca synthesizes the same
-  // label from hook events so the braille-spinner + agent-name path lights
-  // up working/permission/idle transitions in the renderer. Match before
-  // `isClaudeAgent` because Claude's generic braille heuristic would
-  // otherwise claim every "⠋ Cursor Agent" frame as Claude. Token-match so a
-  // cwd like "~/cursor-rules" can't masquerade as a Cursor agent.
-  if (titleHasAgentName(title, 'cursor')) {
-    return 'Cursor'
   }
   // Why: synthesized "⠋ Droid" working title needs to be matched before Claude's braille heuristic.
   // Token matching avoids labeling ordinary Android terminal titles as Droid.
@@ -212,17 +163,12 @@ export function getAgentLabel(title: string): string | null {
 // name already matches (codex, etc.) never reach this path.
 const TITLE_LABEL_TO_AGENT: Partial<Record<string, TuiAgent>> = {
   'Claude Code': 'claude',
-  OpenClaude: 'openclaude',
   Codex: 'codex',
-  'Gemini CLI': 'gemini',
   'GitHub Copilot': 'copilot',
   Grok: 'grok',
   Devin: 'devin',
   Antigravity: 'antigravity',
   OpenCode: 'opencode',
-  'MiMo Code': 'mimo-code',
-  Aider: 'aider',
-  Cursor: 'cursor',
   Droid: 'droid',
   Hermes: 'hermes',
   Pi: 'pi'

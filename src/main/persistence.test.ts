@@ -1855,7 +1855,7 @@ describe('Store', () => {
       settings: {
         commitMessageAi: {
           enabled: true,
-          agentId: 'cursor',
+          agentId: 'codex',
           selectedModelByAgent: { cursor: 'gpt-5.2' },
           selectedModelByAgentByHost: { 'ssh:conn-1': { cursor: 'remote-model' } },
           discoveredModelsByAgent: {
@@ -1881,7 +1881,7 @@ describe('Store', () => {
 
     expect(sourceControlAi).toMatchObject({
       enabled: true,
-      agentId: 'cursor',
+      agentId: 'codex',
       selectedModelByAgent: { cursor: 'gpt-5.2' },
       selectedThinkingByModel: { 'gpt-5.2': 'high' },
       customAgentCommand: 'cursor-agent',
@@ -2264,8 +2264,8 @@ describe('Store', () => {
       worktreeMeta: {},
       settings: {
         openInApplications: [
-          { id: 'cursor', label: ' Cursor ', command: ' cursor ' },
-          { id: 'cursor', label: 'Dup', command: 'dup' },
+          { id: 'codex', label: ' Cursor ', command: ' cursor ' },
+          { id: 'codex', label: 'Dup', command: 'dup' },
           { id: '', label: 'Zed', command: 'zed' },
           { id: 'bad', label: ' ', command: 'bad' }
         ]
@@ -2277,7 +2277,7 @@ describe('Store', () => {
 
     const store = await createStore()
     expect(store.getSettings().openInApplications).toEqual([
-      { id: 'cursor', label: 'Cursor', command: 'cursor' },
+      { id: 'codex', label: 'Cursor', command: 'codex' },
       { id: 'open-in-3', label: 'Zed', command: 'zed' }
     ])
   })
@@ -4132,9 +4132,9 @@ describe('Store', () => {
     expect(store.getSettings().disabledTuiAgents).toEqual(['codex', 'claude', 'claude-agent-teams'])
 
     const updated = store.updateSettings({
-      disabledTuiAgents: ['gemini', 'not-real', 'gemini', 'opencode'] as never
+      disabledTuiAgents: ['claude', 'not-real', 'claude', 'opencode'] as never
     })
-    expect(updated.disabledTuiAgents).toEqual(['gemini', 'opencode'])
+    expect(updated.disabledTuiAgents).toEqual(['claude', 'opencode'])
   })
 
   it('enables Claude Agent Teams by default for fresh installs', async () => {
@@ -4292,14 +4292,12 @@ describe('Store', () => {
     const store = await createStore()
     const updated = store.updateSettings({
       openInApplications: [
-        { id: 'cursor', label: ' Cursor ', command: ' cursor ' },
-        { id: 'cursor', label: 'Dup', command: 'dup' },
+        { id: 'codex', label: ' Cursor ', command: ' cursor ' },
+        { id: 'codex', label: 'Dup', command: 'dup' },
         { id: 'bad', label: '', command: 'bad' }
       ]
     })
-    expect(updated.openInApplications).toEqual([
-      { id: 'cursor', label: 'Cursor', command: 'cursor' }
-    ])
+    expect(updated.openInApplications).toEqual([{ id: 'codex', label: 'Cursor', command: 'codex' }])
   })
 
   it('updateSettings deep-merges and clamps notification custom sound volume', async () => {

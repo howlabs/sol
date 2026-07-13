@@ -16,18 +16,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { ExternalLink, HelpCircle, Loader2, Plus, RefreshCw, Trash2 } from '@/lib/icons'
 import { useAppStore } from '../../store'
-import {
-  ClaudeIcon,
-  GeminiIcon,
-  MiniMaxIcon,
-  OpenAIIcon,
-  OpenCodeGoIcon
-} from '../status-bar/icons'
+import { ClaudeIcon, MiniMaxIcon, OpenAIIcon, OpenCodeGoIcon } from '../status-bar/icons'
 import { toast } from 'sonner'
 import {
   getAccountsClaudeSearchEntries,
   getAccountsCodexSearchEntries,
-  getAccountsGeminiSearchEntries,
   getAccountsLocationSearchEntries,
   getAccountsMiniMaxSearchEntries,
   getAccountsGrokSearchEntries,
@@ -36,7 +29,7 @@ import {
 } from './accounts-search'
 import { GrokAccountsSection } from './GrokAccountsSection'
 import { SearchableSetting } from './SearchableSetting'
-import { SettingsRow, SettingsSegmentedControl, SettingsSwitch } from './SettingsFormControls'
+import { SettingsRow, SettingsSegmentedControl } from './SettingsFormControls'
 import { matchesSettingsSearch } from './settings-search'
 import { markLiveCodexSessionsForRestart } from '@/lib/codex-session-restart'
 import {
@@ -314,12 +307,6 @@ export function AccountsPane({
     wslDistros,
     wslCapabilitiesLoading
   )
-  // Why: host runtime labels are standalone UI labels; interpolated prose needs sentence casing.
-  const accountRuntimeSentenceLabel =
-    accountRuntime.runtime === 'host' && !navigator.userAgent.includes('Windows')
-      ? `${accountRuntime.label.charAt(0).toLocaleLowerCase()}${accountRuntime.label.slice(1)}`
-      : accountRuntime.label
-
   const [codexAccounts, setCodexAccounts] = useState<CodexRateLimitAccountsState>({
     accounts: [],
     activeAccountId: null,
@@ -1061,58 +1048,6 @@ export function AccountsPane({
               )
             })}
           </ProviderAccountList>
-        </SearchableSetting>
-      </section>
-    ) : null,
-    matchesSettingsSearch(searchQuery, getAccountsGeminiSearchEntries()) ? (
-      <section key="gemini" id="accounts-gemini" className="scroll-mt-6">
-        <SearchableSetting
-          title={translate(
-            'auto.components.settings.AccountsPane.0c7f915b01',
-            'Use Gemini CLI credentials'
-          )}
-          description={translate(
-            'auto.components.settings.AccountsPane.d676c41fc6',
-            'Extracts OAuth credentials from your local Gemini CLI installation to authenticate with Google. This uses credentials issued to the Gemini CLI app, not Orca. May break if Google updates the CLI. Use at your own risk.'
-          )}
-          keywords={[
-            'gemini',
-            'cli',
-            'oauth',
-            'credentials',
-            'experimental',
-            'rate limit',
-            'status bar'
-          ]}
-          className="space-y-1.5"
-        >
-          <ProviderSectionHeader
-            icon={<GeminiIcon size={14} />}
-            title={translate('auto.components.settings.AccountsPane.0c64dc2a64', 'Gemini')}
-            action={
-              <SettingsSwitch
-                checked={settings.geminiCliOAuthEnabled}
-                ariaLabel={translate(
-                  'auto.components.settings.AccountsPane.96f3649526',
-                  'Use Gemini CLI credentials (experimental)'
-                )}
-                onChange={() => {
-                  recordFeatureInteraction('usage-tracking')
-                  updateSettings({
-                    geminiCliOAuthEnabled: !settings.geminiCliOAuthEnabled
-                  })
-                }}
-              />
-            }
-          />
-          {/* Keep runtime label in DOM for i18n interpolation tests / a11y context. */}
-          <p className="sr-only">
-            {translate(
-              'auto.components.settings.AccountsPane.c2aee76420',
-              'Extracts OAuth credentials from your local Gemini CLI installation to authenticate with Google for {{value0}}. This uses credentials issued to the Gemini CLI app, not Orca. May break if Google updates the CLI. Use at your own risk.',
-              { value0: accountRuntimeSentenceLabel }
-            )}
-          </p>
         </SearchableSetting>
       </section>
     ) : null,

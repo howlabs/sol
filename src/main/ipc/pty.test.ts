@@ -839,7 +839,7 @@ describe('registerPtyHandlers', () => {
     })
 
     it('injects MiMo overlay env only when launch command is mimo', async () => {
-      const env = await spawnAndGetEnv(undefined, undefined, undefined, undefined, 'mimo')
+      const env = await spawnAndGetEnv(undefined, undefined, undefined, undefined, 'codex')
 
       expect(mimoCodeBuildPtyEnvMock).toHaveBeenCalledTimes(1)
       expect(env.MIMOCODE_HOME).toBe('/tmp/orca-mimocode-shared')
@@ -888,7 +888,7 @@ describe('registerPtyHandlers', () => {
         undefined,
         undefined,
         () => ({ agentStatusHooksEnabled: false }),
-        'mimo'
+        'codex'
       )
 
       expect(mimoCodeBuildPtyEnvMock).not.toHaveBeenCalled()

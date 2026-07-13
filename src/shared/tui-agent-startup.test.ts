@@ -208,23 +208,6 @@ describe('tui agent startup plans', () => {
     expect(plan?.launchCommand).toBe('orca-ide claude-teams')
   })
 
-  it('launches OpenClaude as a distinct argv agent', () => {
-    const plan = buildAgentStartupPlan({
-      agent: 'openclaude',
-      prompt: 'fix it',
-      cmdOverrides: {},
-      platform: 'linux'
-    })
-
-    expect(plan).toEqual({
-      agent: 'openclaude',
-      launchCommand: "openclaude 'fix it'",
-      expectedProcess: 'openclaude',
-      followupPrompt: null,
-      launchConfig: { agentCommand: 'openclaude', agentArgs: '', agentEnv: {} }
-    })
-  })
-
   it('launches Qwen Code through the installed qwen executable', () => {
     const plan = buildAgentStartupPlan({
       agent: 'qwen-code',
@@ -377,18 +360,13 @@ describe('tui agent startup plans', () => {
     expect(plan?.launchCommand).toBe("opencode --prompt 'fix it'")
   })
 
-  it('keeps opencode and mimo-code on the cursor-gated paste draft route', () => {
+  it('keeps opencode on the cursor-gated paste draft route', () => {
     expect(TUI_AGENT_CONFIG.opencode.draftPasteReadySignal).toBe(
       'render-cursor-after-bracketed-paste'
     )
     expect(TUI_AGENT_CONFIG.opencode.draftPromptFlag).toBeUndefined()
     expect(TUI_AGENT_CONFIG.opencode.draftPromptEnvVar).toBeUndefined()
-    expect(TUI_AGENT_CONFIG['mimo-code'].draftPasteReadySignal).toBe(
-      'render-cursor-after-bracketed-paste'
-    )
-    expect(TUI_AGENT_CONFIG['mimo-code'].draftPromptFlag).toBeUndefined()
-    expect(TUI_AGENT_CONFIG['mimo-code'].draftPromptEnvVar).toBeUndefined()
-    // Why: no native draft launch plan means both agents fall through to the
+    // Why: no native draft launch plan means the agent falls through to the
     // cursor-gated paste-after-ready route, where the new signal applies.
     expect(
       buildAgentDraftLaunchPlan({
@@ -398,26 +376,6 @@ describe('tui agent startup plans', () => {
         platform: 'darwin'
       })
     ).toBeNull()
-    expect(
-      buildAgentDraftLaunchPlan({
-        agent: 'mimo-code',
-        draft: 'x',
-        cmdOverrides: {},
-        platform: 'darwin'
-      })
-    ).toBeNull()
-  })
-
-  it('appends Kiro trust defaults to the chat subcommand that accepts them', () => {
-    const plan = buildAgentStartupPlan({
-      agent: 'kiro',
-      prompt: 'fix it',
-      cmdOverrides: {},
-      agentArgs: '--trust-all-tools',
-      platform: 'linux'
-    })
-
-    expect(plan?.launchCommand).toBe("kiro-cli chat --tui '--trust-all-tools'")
   })
 
   it('clears draft environment variables with the target shell syntax', () => {

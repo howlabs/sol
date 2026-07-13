@@ -96,11 +96,11 @@ describe('parseAgentStatusPayload', () => {
   })
 
   it('accepts custom non-empty agentType values', () => {
-    const result = parseAgentStatusPayload('{"state":"working","agentType":"cursor"}')
+    const result = parseAgentStatusPayload('{"state":"working","agentType":"codex"}')
     expect(result).toEqual({
       state: 'working',
       prompt: '',
-      agentType: 'cursor'
+      agentType: 'codex'
     })
   })
 

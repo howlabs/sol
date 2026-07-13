@@ -19,9 +19,7 @@ const mockStoreState = {
   rateLimits: {
     claude: null,
     codex: null,
-    gemini: null,
     opencodeGo: null,
-    kimi: null,
     minimax: null,
     grok: {
       provider: 'grok',

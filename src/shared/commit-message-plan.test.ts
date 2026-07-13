@@ -127,7 +127,7 @@ describe('planCommitMessageGeneration', () => {
   it('allows discovered dynamic models that are not in the seed catalog', () => {
     const result = planCommitMessageGeneration(
       {
-        agentId: 'cursor',
+        agentId: 'codex',
         model: 'gpt-5.2',
         thinkingLevel: 'xhigh'
       },
@@ -137,20 +137,10 @@ describe('planCommitMessageGeneration', () => {
     expect(result).toEqual({
       ok: true,
       plan: {
-        binary: 'cursor-agent',
-        args: [
-          '--print',
-          '--mode',
-          'ask',
-          '--trust',
-          '--output-format',
-          'text',
-          '--model',
-          'gpt-5.2',
-          'PROMPT'
-        ],
+        binary: 'codex',
+        args: ['--print', 'exec', '--output-format', 'text', '--model', 'gpt-5.2', 'PROMPT'],
         stdinPayload: null,
-        label: 'Cursor'
+        label: 'Codex'
       }
     })
   })

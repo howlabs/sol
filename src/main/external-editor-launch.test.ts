@@ -4,7 +4,7 @@ import { resolveExternalEditorLaunchSpec } from './external-editor-launch'
 
 describe('resolveExternalEditorLaunchSpec', () => {
   it('keeps simple CLI commands on the executable launch path', () => {
-    const spec = resolveExternalEditorLaunchSpec('cursor', '/tmp/workspace', {
+    const spec = resolveExternalEditorLaunchSpec('codex', '/tmp/workspace', {
       platform: 'darwin'
     })
     expect(spec).toEqual({

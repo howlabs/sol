@@ -486,7 +486,7 @@ describe('preflight', () => {
       throw new Error('not found')
     })
 
-    await expect(detectInstalledAgents()).resolves.toEqual(['claude', 'cursor'])
+    await expect(detectInstalledAgents()).resolves.toEqual(['claude', 'codex'])
   })
 
   it('does not report Claude Agent Teams when only the Orca shim is present', async () => {
@@ -612,7 +612,7 @@ describe('preflight', () => {
       if (command !== 'which') {
         throw new Error(`unexpected command ${String(command)}`)
       }
-      if (String(args[0]) === 'openclaude') {
+      if (String(args[0]) === 'opencode') {
         return { stdout: '/Users/test/.local/bin/openclaude\n' }
       }
       if (String(args[0]) === 'cursor-agent') {
@@ -623,7 +623,7 @@ describe('preflight', () => {
 
     registerPreflightHandlers()
 
-    await expect(handlers['preflight:detectAgents']()).resolves.toEqual(['openclaude', 'cursor'])
+    await expect(handlers['preflight:detectAgents']()).resolves.toEqual(['opencode', 'codex'])
   })
 
   it('hydrates shell PATH before user-facing agent detection', async () => {
@@ -706,7 +706,7 @@ describe('preflight', () => {
   })
 
   it('sends detection commands through the SSH remote preflight path', async () => {
-    const request = vi.fn().mockResolvedValue({ agents: ['openclaude'] })
+    const request = vi.fn().mockResolvedValue({ agents: ['opencode'] })
     getActiveMultiplexerMock.mockReturnValue({
       isDisposed: () => false,
       request
@@ -716,10 +716,10 @@ describe('preflight', () => {
 
     await expect(
       handlers['preflight:detectRemoteAgents'](undefined, { connectionId: 'ssh-1' })
-    ).resolves.toEqual(['openclaude'])
+    ).resolves.toEqual(['opencode'])
     expect(request).toHaveBeenCalledWith('preflight.detectAgents', {
       commands: expect.arrayContaining([
-        { id: 'openclaude', cmd: 'openclaude' },
+        { id: 'opencode', cmd: 'opencode' },
         { id: 'qwen-code', cmd: 'qwen' }
       ])
     })

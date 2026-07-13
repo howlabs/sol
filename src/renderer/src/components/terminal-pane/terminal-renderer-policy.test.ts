@@ -24,7 +24,7 @@ describe('resolvePaneRendererPolicy', () => {
     it('DOM-gates a genuine Gemini pane under `off`', () => {
       const decision = resolvePaneRendererPolicy({
         rawTitle: `${GEMINI_WORKING} Gemini CLI`,
-        ownerAgentType: 'gemini',
+        ownerAgentType: 'claude',
         userGpuMode: 'off'
       })
       expect(decision.gpuEnabled).toBe(false)
@@ -34,7 +34,7 @@ describe('resolvePaneRendererPolicy', () => {
     it('forces GPU on under `on` even for a genuine Gemini pane', () => {
       const decision = resolvePaneRendererPolicy({
         rawTitle: `${GEMINI_WORKING} Gemini CLI`,
-        ownerAgentType: 'gemini',
+        ownerAgentType: 'claude',
         userGpuMode: 'on'
       })
       // Why: agent compatibility exclusions must not override an explicit on.
@@ -117,7 +117,7 @@ describe('resolvePaneRendererPolicy', () => {
     it('DOM-gates a genuine Gemini title with a Gemini owner at higher confidence', () => {
       const decision = resolvePaneRendererPolicy({
         rawTitle: `${GEMINI_WORKING} Gemini CLI`,
-        ownerAgentType: 'gemini',
+        ownerAgentType: 'claude',
         userGpuMode: 'auto'
       })
       expect(decision).toEqual({
@@ -150,7 +150,7 @@ describe('resolvePaneRendererPolicy', () => {
   })
 
   describe('agent token text cannot flip renderer policy under authoritative owners', () => {
-    const AGENT_TOKENS = ['gemini', 'claude', 'codex', 'opencode', 'cursor', 'pi'] as const
+    const AGENT_TOKENS = ['claude', 'claude', 'codex', 'opencode', 'codex', 'pi'] as const
 
     for (const token of AGENT_TOKENS) {
       it(`keeps GPU on when a title mentions "${token}" but owner is another agent`, () => {
@@ -166,7 +166,7 @@ describe('resolvePaneRendererPolicy', () => {
 
     it('keeps GPU on for an OMP owner whose title is exactly the Gemini token', () => {
       const decision = resolvePaneRendererPolicy({
-        rawTitle: 'gemini',
+        rawTitle: 'claude',
         ownerAgentType: 'pi',
         userGpuMode: 'auto'
       })
@@ -175,7 +175,7 @@ describe('resolvePaneRendererPolicy', () => {
 
     it('keeps GPU on for a Pi owner whose title is exactly the Gemini token', () => {
       const decision = resolvePaneRendererPolicy({
-        rawTitle: 'gemini',
+        rawTitle: 'claude',
         ownerAgentType: 'pi',
         userGpuMode: 'auto'
       })

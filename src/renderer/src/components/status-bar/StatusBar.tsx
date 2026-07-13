@@ -53,7 +53,7 @@ import {
   formatResetCreditExpiry,
   getProviderUsageStatusLabel
 } from './tooltip'
-import { ClaudeIcon, GeminiIcon, MiniMaxIcon, OpenAIIcon, OpenCodeGoIcon } from './icons'
+import { ClaudeIcon, MiniMaxIcon, OpenAIIcon, OpenCodeGoIcon } from './icons'
 import { AgentIcon } from '@/lib/agent-catalog'
 import { formatWindowLabel } from '@/lib/window-label-formatter'
 import { markLiveCodexSessionsForRestart } from '@/lib/codex-session-restart'
@@ -1679,17 +1679,13 @@ export function ProviderDetailsMenu({
               <span className="text-muted-foreground">
                 {provider.provider === 'claude'
                   ? 'C'
-                  : provider.provider === 'gemini'
-                    ? 'G'
-                    : provider.provider === 'opencode-go'
-                      ? 'O'
-                      : provider.provider === 'kimi'
-                        ? 'K'
-                        : provider.provider === 'minimax'
-                          ? 'M'
-                          : provider.provider === 'grok'
-                            ? 'G'
-                            : 'X'}
+                  : provider.provider === 'opencode-go'
+                    ? 'O'
+                    : provider.provider === 'minimax'
+                      ? 'M'
+                      : provider.provider === 'grok'
+                        ? 'G'
+                        : 'X'}
               </span>
             </span>
           ) : (
@@ -1823,7 +1819,7 @@ function StatusBarInner(): React.JSX.Element | null {
     return null
   }
 
-  const { claude, codex, gemini, opencodeGo, kimi, minimax, grok } = rateLimits
+  const { claude, codex, opencodeGo, minimax, grok } = rateLimits
 
   // Why: a provider earns a bar from either a usable live snapshot or durable
   // setup in Settings. The durable path keeps account switchers visible while
@@ -1839,8 +1835,6 @@ function StatusBarInner(): React.JSX.Element | null {
   }
   const visibleClaude = getVisibleUsageProvider('claude', claude, usageSettings)
   const visibleCodex = getVisibleUsageProvider('codex', codex, usageSettings)
-  const visibleGemini = getVisibleUsageProvider('gemini', gemini, usageSettings)
-  const visibleKimi = getVisibleUsageProvider('kimi', kimi, usageSettings)
   const visibleMiniMax = getVisibleUsageProvider('minimax', minimax, usageSettings)
   const visibleGrok = getVisibleUsageProvider('grok', grok, usageSettings)
   const showClaude =
@@ -1851,14 +1845,6 @@ function StatusBarInner(): React.JSX.Element | null {
     visibleCodex !== null &&
     statusBarItems.includes('codex') &&
     isStatusBarItemAvailable('codex', detectedAgentIds)
-  const showGemini =
-    visibleGemini !== null &&
-    statusBarItems.includes('gemini') &&
-    isStatusBarItemAvailable('gemini', detectedAgentIds)
-  const showKimi =
-    visibleKimi !== null &&
-    statusBarItems.includes('kimi') &&
-    isStatusBarItemAvailable('kimi', detectedAgentIds)
   // Why: MiniMax is a cookie-auth provider, not a CLI on PATH, so detection-gating
   // doesn't apply (same rationale as OpenCode Go below).
   const showMiniMax = visibleMiniMax !== null && statusBarItems.includes('minimax')
@@ -1874,20 +1860,13 @@ function StatusBarInner(): React.JSX.Element | null {
   const showResourceUsage = statusBarItems.includes('resource-usage')
   const showPorts = statusBarItems.includes('ports')
   const anyVisible =
-    showClaude ||
-    showCodex ||
-    showGemini ||
-    showOpencodeGo ||
-    showKimi ||
-    showMiniMax ||
-    showGrok ||
-    showResourceUsage
+    showClaude || showCodex || showOpencodeGo || showMiniMax || showGrok || showResourceUsage
   // Why: a brand-new user with no provider configured would otherwise see an
   // empty left side of the status bar and wonder what's missing. Settings are
   // included because managed accounts are durable even when live usage
   // snapshots are still hydrating or unavailable after an update.
   const isEmptyUsageState = isUsageEmptyState(
-    { claude, codex, gemini, opencodeGo, kimi, minimax, grok },
+    { claude, codex, opencodeGo, minimax, grok },
     usageSettings
   )
   // Why: the teaching CTA is a one-time nudge — once the user hides it, keep it
@@ -1896,9 +1875,7 @@ function StatusBarInner(): React.JSX.Element | null {
   const anyFetching =
     claude?.status === 'fetching' ||
     codex?.status === 'fetching' ||
-    gemini?.status === 'fetching' ||
     opencodeGo?.status === 'fetching' ||
-    kimi?.status === 'fetching' ||
     minimax?.status === 'fetching' ||
     grok?.status === 'fetching'
 
@@ -1938,17 +1915,6 @@ function StatusBarInner(): React.JSX.Element | null {
             {showCodex && (
               <CodexSwitcherMenu codex={visibleCodex} compact={compact} iconOnly={iconOnly} />
             )}
-            {showGemini && (
-              <ProviderDetailsMenu
-                provider={visibleGemini}
-                compact={compact}
-                iconOnly={iconOnly}
-                ariaLabel={translate(
-                  'auto.components.status.bar.StatusBar.d2375976eb',
-                  'Open Gemini usage details'
-                )}
-              />
-            )}
             {showOpencodeGo && (
               <ProviderDetailsMenu
                 provider={visibleOpencodeGo}
@@ -1957,17 +1923,6 @@ function StatusBarInner(): React.JSX.Element | null {
                 ariaLabel={translate(
                   'auto.components.status.bar.StatusBar.629251f4b6',
                   'Open OpenCode Go usage details'
-                )}
-              />
-            )}
-            {showKimi && (
-              <ProviderDetailsMenu
-                provider={visibleKimi}
-                compact={compact}
-                iconOnly={iconOnly}
-                ariaLabel={translate(
-                  'auto.components.status.bar.StatusBar.fda8146810',
-                  'Open Kimi usage details'
                 )}
               />
             )}
@@ -2067,18 +2022,6 @@ function StatusBarInner(): React.JSX.Element | null {
               {translate('auto.components.status.bar.StatusBar.c0909c686e', 'Codex Usage')}
             </DropdownMenuCheckboxItem>
           )}
-          {isStatusBarItemAvailable('gemini', detectedAgentIds) && (
-            <DropdownMenuCheckboxItem
-              checked={statusBarItems.includes('gemini')}
-              onCheckedChange={() => {
-                recordFeatureInteraction('usage-tracking')
-                toggleStatusBarItem('gemini')
-              }}
-            >
-              <GeminiIcon size={14} />
-              {translate('auto.components.status.bar.StatusBar.c1df0d67ec', 'Gemini Usage')}
-            </DropdownMenuCheckboxItem>
-          )}
           <DropdownMenuCheckboxItem
             checked={statusBarItems.includes('opencode-go')}
             onCheckedChange={() => {
@@ -2089,18 +2032,6 @@ function StatusBarInner(): React.JSX.Element | null {
             <OpenCodeGoIcon size={14} />
             {translate('auto.components.status.bar.StatusBar.8c86cd77b0', 'OpenCode Go Usage')}
           </DropdownMenuCheckboxItem>
-          {isStatusBarItemAvailable('kimi', detectedAgentIds) && (
-            <DropdownMenuCheckboxItem
-              checked={statusBarItems.includes('kimi')}
-              onCheckedChange={() => {
-                recordFeatureInteraction('usage-tracking')
-                toggleStatusBarItem('kimi')
-              }}
-            >
-              <AgentIcon agent="kimi" size={14} />
-              {translate('auto.components.status.bar.StatusBar.5e59007df4', 'Kimi Usage')}
-            </DropdownMenuCheckboxItem>
-          )}
           <DropdownMenuCheckboxItem
             checked={statusBarItems.includes('minimax')}
             onCheckedChange={() => {

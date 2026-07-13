@@ -484,12 +484,12 @@ describe('launchWorkItemDirect', () => {
         connectionId: 'ssh-1'
       }
     ] as AppState['repos']
-    mocks.store.settings = { defaultTuiAgent: 'cursor' } as AppState['settings']
-    mocks.store.ensureRemoteDetectedAgents.mockResolvedValue(['cursor'])
-    vi.mocked(pickTuiAgent).mockReturnValueOnce('cursor')
+    mocks.store.settings = { defaultTuiAgent: 'codex' } as AppState['settings']
+    mocks.store.ensureRemoteDetectedAgents.mockResolvedValue(['codex'])
+    vi.mocked(pickTuiAgent).mockReturnValueOnce('codex')
     vi.mocked(buildAgentDraftLaunchPlan).mockReturnValueOnce(null)
     vi.mocked(buildAgentStartupPlan).mockReturnValueOnce({
-      agent: 'cursor',
+      agent: 'codex',
       launchCommand: 'cursor-agent',
       expectedProcess: 'cursor-agent',
       followupPrompt: null,
@@ -515,12 +515,12 @@ describe('launchWorkItemDirect', () => {
     expect(mocks.store.ensureDetectedAgents).not.toHaveBeenCalled()
     expect(mocks.store.ensureRemoteDetectedAgents).toHaveBeenCalledWith('ssh-1')
     expect(mockApi.agentTrust.markTrusted).toHaveBeenCalledWith({
-      preset: 'cursor',
+      preset: 'codex',
       workspacePath: '/home/orca/repo-worktrees/issue-77',
       connectionId: 'ssh-1'
     })
     expect(buildAgentDraftLaunchPlan).toHaveBeenCalledWith({
-      agent: 'cursor',
+      agent: 'codex',
       draft: 'https://github.com/acme/repo/issues/77',
       cmdOverrides: {},
       agentArgs: '--yolo',
@@ -529,7 +529,7 @@ describe('launchWorkItemDirect', () => {
       isRemote: true
     })
     expect(buildAgentStartupPlan).toHaveBeenCalledWith({
-      agent: 'cursor',
+      agent: 'codex',
       prompt: '',
       cmdOverrides: {},
       agentArgs: '--yolo',

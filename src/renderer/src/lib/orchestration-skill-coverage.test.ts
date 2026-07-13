@@ -34,9 +34,9 @@ describe('orchestration skill agent coverage', () => {
       })
     ]
 
-    expect(getOrchestrationSkillAgentStatuses(skills, ['codex', 'gemini', 'droid'])).toEqual([
+    expect(getOrchestrationSkillAgentStatuses(skills, ['codex', 'claude', 'droid'])).toEqual([
       { agent: 'codex', label: 'Codex', installed: true },
-      { agent: 'gemini', label: 'Gemini', installed: true },
+      { agent: 'claude', label: 'Gemini', installed: true },
       { agent: 'droid', label: 'Droid', installed: true }
     ])
   })
@@ -53,7 +53,7 @@ describe('orchestration skill agent coverage', () => {
 
     expect(agentHasOrchestrationSkill('claude', skills)).toBe(true)
     expect(agentHasOrchestrationSkill('codex', skills)).toBe(false)
-    expect(agentHasOrchestrationSkill('gemini', skills)).toBe(false)
+    expect(agentHasOrchestrationSkill('claude', skills)).toBe(false)
   })
 
   it('marks Codex from plugin cache installs', () => {
@@ -72,7 +72,7 @@ describe('orchestration skill agent coverage', () => {
 
   it('ignores repo-scoped orchestration installs', () => {
     expect(
-      agentHasOrchestrationSkill('gemini', [
+      agentHasOrchestrationSkill('claude', [
         skill({
           providers: ['agent-skills'],
           sourceKind: 'repo',

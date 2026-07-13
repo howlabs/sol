@@ -12,9 +12,9 @@ describe('agent combobox command state', () => {
       'claude'
     )
 
-    expect(resolveAgentComboboxCommandState(state, true, 'gemini')).toEqual({
-      commandValue: 'gemini',
-      activeCommandValue: 'gemini'
+    expect(resolveAgentComboboxCommandState(state, true, 'claude')).toEqual({
+      commandValue: 'claude',
+      activeCommandValue: 'claude'
     })
   })
 
@@ -33,7 +33,7 @@ describe('agent combobox command state', () => {
       'claude'
     )
 
-    expect(resolveAgentComboboxCommandState(state, false, 'gemini')).toBe(state)
+    expect(resolveAgentComboboxCommandState(state, false, 'claude')).toBe(state)
   })
 
   it('reuses the same object when command value is unchanged', () => {

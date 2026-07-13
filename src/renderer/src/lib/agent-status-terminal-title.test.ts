@@ -23,7 +23,7 @@ describe('resolveAgentStatusTerminalTitle', () => {
   it('uses permission titles for synthetic agents waiting on user input', () => {
     expect(
       resolveAgentStatusTerminalTitle(
-        { agentType: 'cursor', state: 'waiting' },
+        { agentType: 'codex', state: 'waiting' },
         '\u280b Cursor Agent'
       )
     ).toBe('Cursor - action required')
@@ -32,7 +32,7 @@ describe('resolveAgentStatusTerminalTitle', () => {
   it('clears stale permission titles when hook state finishes', () => {
     expect(
       resolveAgentStatusTerminalTitle(
-        { agentType: 'cursor', state: 'done' },
+        { agentType: 'codex', state: 'done' },
         'Cursor - action required'
       )
     ).toBe('Cursor ready')

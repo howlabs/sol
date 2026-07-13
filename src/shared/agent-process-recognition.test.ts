@@ -16,15 +16,6 @@ describe('agent process recognition', () => {
     expect(isRecognizedAgentType('codex-aarch64-ap')).toBe(true)
   })
 
-  it('recognizes the OpenClaude foreground process', () => {
-    expect(recognizeAgentProcess('/usr/local/bin/openclaude')).toEqual({
-      agent: 'openclaude',
-      processName: 'openclaude'
-    })
-    expect(isRecognizedAgentType('openclaude')).toBe(true)
-    expect(isExpectedAgentProcess('/usr/local/bin/openclaude', 'claude')).toBe(false)
-  })
-
   it('matches expected agents from platform-specific foreground process paths', () => {
     expect(recognizeAgentProcess('claude')).toEqual({
       agent: 'claude',
@@ -59,23 +50,13 @@ describe('agent process recognition', () => {
     })
   })
 
-  it('recognizes Command Code without classifying Windows cmd.exe as an agent', () => {
-    expect(recognizeAgentProcess('command-code')).toEqual({
-      agent: 'command-code',
-      processName: 'command-code'
-    })
-    expect(
-      recognizeAgentProcess(String.raw`C:\Users\dev\AppData\Roaming\npm\command-code.cmd`)
-    ).toEqual({
-      agent: 'command-code',
-      processName: 'command-code'
-    })
-    expect(isRecognizedAgentType('command-code')).toBe(true)
+  it('does not recognize retired agent CLIs as interactive agents', () => {
+    expect(recognizeAgentProcess('openclaude')).toBeNull()
+    expect(recognizeAgentProcess('command-code')).toBeNull()
+    expect(recognizeAgentProcess('gemini')).toBeNull()
+    expect(recognizeAgentProcess('aider')).toBeNull()
     expect(isRecognizedAgentType('cmd.exe')).toBe(false)
     expect(recognizeAgentProcess('cmd.exe')).toBeNull()
-  })
-
-  it('does not recognize retired agent CLIs as interactive agents', () => {
     expect(recognizeAgentProcess('ante')).toBeNull()
     expect(recognizeAgentProcess('mistral-vibe')).toBeNull()
     expect(recognizeAgentProcess('vibe')).toBeNull()
@@ -102,9 +83,6 @@ describe('agent process recognition', () => {
     expect(
       recognizeAgentProcessFromCommandLine('node /Users/dev/.nvm/versions/node/bin/codex')
     ).toEqual({ agent: 'codex', processName: 'codex' })
-    expect(
-      recognizeAgentProcessFromCommandLine('node /Users/dev/.nvm/versions/node/bin/gemini')
-    ).toEqual({ agent: 'gemini', processName: 'gemini' })
     expect(recognizeAgentProcessFromCommandLine('python3 /opt/homebrew/bin/hermes --tui')).toEqual({
       agent: 'hermes',
       processName: 'hermes'
@@ -115,15 +93,6 @@ describe('agent process recognition', () => {
       agent: 'hermes',
       processName: 'hermes'
     })
-    expect(recognizeAgentProcessFromCommandLine('python -m aider')).toEqual({
-      agent: 'aider',
-      processName: 'aider'
-    })
-    expect(
-      recognizeAgentProcessFromCommandLine(
-        String.raw`python C:\Users\dev\AppData\Roaming\Python\Python312\Scripts\aider.py`
-      )
-    ).toEqual({ agent: 'aider', processName: 'aider' })
     expect(
       recognizeAgentProcessFromCommandLine(
         String.raw`node C:\Users\dev\AppData\Roaming\npm\codex.cmd`
@@ -134,11 +103,6 @@ describe('agent process recognition', () => {
         String.raw`node C:\Users\dev\AppData\Roaming\npm\node_modules\@openai\codex\bin\codex.js`
       )
     ).toEqual({ agent: 'codex', processName: 'codex' })
-    expect(
-      recognizeAgentProcessFromCommandLine(
-        String.raw`node C:\Users\dev\AppData\Roaming\npm\node_modules\@google\gemini-cli\bundle\gemini.mjs`
-      )
-    ).toEqual({ agent: 'gemini', processName: 'gemini' })
   })
 
   it('does not classify prompt text as a wrapped agent command', () => {

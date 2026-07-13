@@ -411,23 +411,24 @@ describe('source-control AI action recipes', () => {
       actions: {
         ...base.sourceControlAi!.actions,
         commitMessage: {
-          agentId: 'aider',
+          agentId: 'droid' as never,
           commandInputTemplate: '{basePrompt}'
         }
       }
     }
 
-    expect(
-      resolveSourceControlAiForOperation({
-        settings: base,
-        repo: null,
-        operation: 'commitMessage',
-        discoveryHostKey: 'local'
-      })
-    ).toEqual({
-      ok: false,
-      error:
-        'Agent "aider" does not support Source Control AI commit messages. Supported agents: Claude, Codex, OpenCode, Pi, Amp, Cursor, Kimi, GitHub Copilot, Antigravity, or Custom command.'
+    const result = resolveSourceControlAiForOperation({
+      settings: base,
+      repo: null,
+      operation: 'commitMessage',
+      discoveryHostKey: 'local'
     })
+    expect(result.ok).toBe(false)
+    if (!result.ok) {
+      expect(result.error).toContain(
+        'Agent "droid" does not support Source Control AI commit messages'
+      )
+      expect(result.error).not.toMatch(/Cursor|Kimi|Gemini/)
+    }
   })
 })

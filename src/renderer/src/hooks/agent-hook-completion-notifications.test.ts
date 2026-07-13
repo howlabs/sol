@@ -445,7 +445,7 @@ describe('agent hook completion notifications', () => {
       payload: {
         state: 'working',
         prompt: 'fix the bug',
-        agentType: 'cursor'
+        agentType: 'codex'
       }
     })
     observeAgentHookCompletionForNotification({
@@ -454,7 +454,7 @@ describe('agent hook completion notifications', () => {
       payload: {
         state: 'working',
         prompt: 'fix the bug',
-        agentType: 'cursor',
+        agentType: 'codex',
         toolName: 'Shell',
         toolInput: 'pnpm test'
       }
@@ -465,7 +465,7 @@ describe('agent hook completion notifications', () => {
       payload: {
         state: 'working',
         prompt: 'fix the bug',
-        agentType: 'cursor',
+        agentType: 'codex',
         toolName: 'Read',
         toolInput: '/repo/src/app.ts'
       }

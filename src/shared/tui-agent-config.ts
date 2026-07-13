@@ -56,7 +56,7 @@ export type TuiAgentConfig = {
    * file/path written lives in src/main/agent-trust-presets.ts; this flag
    * just routes the workspace path through the matching preset before the
    * agent spawns. */
-  preflightTrust?: 'cursor' | 'copilot' | 'codex'
+  preflightTrust?: 'copilot' | 'codex'
   /** Why: most TUIs need both bracketed-paste enablement and a quiet render
    * window before pasted bytes reliably land in the composer. Codex can use
    * a stronger signal from its own renderer: chat_composer.rs writes the
@@ -96,13 +96,6 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     expectedProcess: 'claude',
     promptInjectionMode: 'stdin-after-start'
   },
-  openclaude: {
-    detectCmd: 'openclaude',
-    launchCmd: 'openclaude',
-    expectedProcess: 'openclaude',
-    promptInjectionMode: 'argv',
-    draftPromptFlag: '--prefill'
-  },
   codex: {
     detectCmd: 'codex',
     launchCmd: 'codex',
@@ -120,16 +113,6 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     // for post-\x1b[?2004h show-cursor (\x1b[?25h) so paste hits mounted input.
     draftPasteReadySignal: 'render-cursor-after-bracketed-paste'
   },
-  'mimo-code': {
-    detectCmd: 'mimo',
-    launchCmd: 'mimo',
-    expectedProcess: 'mimo',
-    promptInjectionMode: 'flag-prompt',
-    // Why: mimo-code shares opencode's flag-prompt paste route, so it gets the
-    // same cursor-gated signal by parity (its startup stream is not separately
-    // validated); the quiet-window fallback bounds the risk if it differs.
-    draftPasteReadySignal: 'render-cursor-after-bracketed-paste'
-  },
   pi: {
     detectCmd: 'pi',
     launchCmd: 'pi',
@@ -144,41 +127,16 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     // user-visible behavior as `claude --prefill <text>`.
     draftPromptEnvVar: 'ORCA_PI_PREFILL'
   },
-  gemini: {
-    detectCmd: 'gemini',
-    launchCmd: 'gemini',
-    expectedProcess: 'gemini',
-    promptInjectionMode: 'flag-prompt-interactive'
-  },
   antigravity: {
     detectCmd: 'agy',
     launchCmd: 'agy',
     expectedProcess: 'agy',
     promptInjectionMode: 'flag-prompt-interactive'
   },
-  aider: {
-    detectCmd: 'aider',
-    launchCmd: 'aider',
-    expectedProcess: 'aider',
-    promptInjectionMode: 'stdin-after-start'
-  },
   amp: {
     detectCmd: 'amp',
     launchCmd: 'amp',
     expectedProcess: 'amp',
-    promptInjectionMode: 'stdin-after-start'
-  },
-  kiro: {
-    // Why: the official Kiro installer (https://cli.kiro.dev/install) places a
-    // binary named `kiro-cli` on PATH — there is no `kiro` binary. Keep the
-    // TuiAgent id as 'kiro' for stored preferences, but detect/launch/identify
-    // the real binary name so the agent is recognized as active.
-    detectCmd: 'kiro-cli',
-    // Why: trust flags are accepted by Kiro's chat subcommand, not the
-    // top-level kiro-cli command. Keep TUI startup explicit so default args
-    // like --trust-all-tools are appended where the installed CLI accepts them.
-    launchCmd: 'kiro-cli chat --tui',
-    expectedProcess: 'kiro-cli',
     promptInjectionMode: 'stdin-after-start'
   },
   cline: {
@@ -187,43 +145,11 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     expectedProcess: 'cline',
     promptInjectionMode: 'stdin-after-start'
   },
-  'command-code': {
-    // Why: `npm i -g command-code` installs two binaries — `command-code` and
-    // the shorter alias `cmd`. Use the full `command-code` name so detection
-    // does not collide with Windows' built-in `cmd.exe` shell, which
-    // agent-process-recognition normalizes to `cmd` after stripping the .exe.
-    detectCmd: 'command-code',
-    // Why: Command Code's documented positional prompt starts the turn, while
-    // paste-after-start can leave the prompt sitting in the composer. `--trust`
-    // mirrors the preflight trust behavior Orca applies to other first-run
-    // TUIs so launch prompts do not consume the task text.
-    launchCmd: 'command-code --trust',
-    expectedProcess: 'command-code',
-    promptInjectionMode: 'argv'
-  },
-  cursor: {
-    detectCmd: 'cursor-agent',
-    launchCmd: 'cursor-agent',
-    expectedProcess: 'cursor-agent',
-    promptInjectionMode: 'argv',
-    // Why: cursor-agent's first-launch trust menu ([a]/[w]/[q]) used to
-    // swallow our bracketed paste. Pre-writing the same `.workspace-trusted`
-    // marker the CLI itself writes after the user accepts (see
-    // agent-trust-presets.ts) makes the menu skip entirely, so the draft
-    // URL paste lands in the input as intended.
-    preflightTrust: 'cursor'
-  },
   droid: {
     detectCmd: 'droid',
     launchCmd: 'droid',
     expectedProcess: 'droid',
     promptInjectionMode: 'argv'
-  },
-  kimi: {
-    detectCmd: 'kimi',
-    launchCmd: 'kimi',
-    expectedProcess: 'kimi',
-    promptInjectionMode: 'stdin-after-start'
   },
   'qwen-code': {
     // Why: the upstream package is QwenLM/qwen-code, but its installed CLI
@@ -239,12 +165,6 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     // `--tui` starts the full-screen agent UI Orca is designed to host.
     launchCmd: 'hermes --tui',
     expectedProcess: 'hermes',
-    promptInjectionMode: 'stdin-after-start'
-  },
-  openclaw: {
-    detectCmd: 'openclaw',
-    launchCmd: 'openclaw',
-    expectedProcess: 'openclaw',
     promptInjectionMode: 'stdin-after-start'
   },
   copilot: {

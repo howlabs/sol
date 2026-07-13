@@ -227,7 +227,7 @@ describe('getForegroundProcessName', () => {
         return new Error('unexpected command')
       })
 
-      await expect(getForegroundProcessName(100, 'node')).resolves.toBe('gemini')
+      await expect(getForegroundProcessName(100, 'node')).resolves.toBe('claude')
     })
   })
 

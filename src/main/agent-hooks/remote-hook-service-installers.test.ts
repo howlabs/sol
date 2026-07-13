@@ -9,9 +9,6 @@ vi.mock('electron', () => ({
 
 import { CodexHookService } from '../codex/hook-service'
 import { DroidHookService } from '../droid/hook-service'
-import { CursorHookService } from '../cursor/hook-service'
-import { CommandCodeHookService } from '../command-code/hook-service'
-import { GeminiHookService } from '../gemini/hook-service'
 import { AntigravityHookService } from '../antigravity/hook-service'
 import { AmpHookService } from '../amp/hook-service'
 import { ClaudeHookService } from '../claude/hook-service'
@@ -19,21 +16,15 @@ import { GrokHookService } from '../grok/hook-service'
 import { CopilotHookService } from '../copilot/hook-service'
 import { HermesHookService } from '../hermes/hook-service'
 import { DevinHookService } from '../devin/hook-service'
-import { KimiHookService } from '../kimi/hook-service'
-import { openClaudeHookService } from '../openclaude/hook-service'
 import { ampHookService } from '../amp/hook-service'
 import { antigravityHookService } from '../antigravity/hook-service'
 import { claudeHookService } from '../claude/hook-service'
 import { codexHookService } from '../codex/hook-service'
 import { copilotHookService } from '../copilot/hook-service'
-import { cursorHookService } from '../cursor/hook-service'
 import { droidHookService } from '../droid/hook-service'
-import { commandCodeHookService } from '../command-code/hook-service'
-import { geminiHookService } from '../gemini/hook-service'
 import { devinHookService } from '../devin/hook-service'
 import { grokHookService } from '../grok/hook-service'
 import { hermesHookService } from '../hermes/hook-service'
-import { kimiHookService } from '../kimi/hook-service'
 import { MANAGED_AGENT_HOOK_INSTALLERS } from './managed-agent-hook-controls'
 import {
   installRemoteManagedAgentHooks,
@@ -145,16 +136,8 @@ describe('remote hook service installers', () => {
           install: (sftp: SFTPWrapper) => new ClaudeHookService().installRemote(sftp, '/home/dev')
         },
         {
-          path: '/home/dev/.orca/agent-hooks/openclaude-hook.sh',
-          install: (sftp: SFTPWrapper) => openClaudeHookService.installRemote(sftp, '/home/dev')
-        },
-        {
           path: '/home/dev/.orca/agent-hooks/codex-hook.sh',
           install: (sftp: SFTPWrapper) => new CodexHookService().installRemote(sftp, '/home/dev')
-        },
-        {
-          path: '/home/dev/.orca/agent-hooks/gemini-hook.sh',
-          install: (sftp: SFTPWrapper) => new GeminiHookService().installRemote(sftp, '/home/dev')
         },
         {
           path: '/home/dev/.orca/agent-hooks/antigravity-hook.sh',
@@ -164,15 +147,6 @@ describe('remote hook service installers', () => {
         {
           path: '/home/dev/.config/amp/plugins/orca-agent-status.ts',
           install: (sftp: SFTPWrapper) => new AmpHookService().installRemote(sftp, '/home/dev')
-        },
-        {
-          path: '/home/dev/.orca/agent-hooks/cursor-hook.sh',
-          install: (sftp: SFTPWrapper) => new CursorHookService().installRemote(sftp, '/home/dev')
-        },
-        {
-          path: '/home/dev/.orca/agent-hooks/command-code-hook.sh',
-          install: (sftp: SFTPWrapper) =>
-            new CommandCodeHookService().installRemote(sftp, '/home/dev')
         },
         {
           path: '/home/dev/.orca/agent-hooks/grok-hook.sh',
@@ -266,177 +240,6 @@ describe('remote hook service installers', () => {
     expect(fs.files.get('/home/dev/.orca/agent-hooks/codex-hook.sh')).toContain('#!/bin/sh')
   })
 
-  it('installs remote Gemini, Antigravity, Cursor, Command Code, Grok, and Devin configs using their CLI-specific schemas', async () => {
-    const gemini = createFakeSftp()
-    const antigravity = createFakeSftp()
-    const amp = createFakeSftp()
-    const cursor = createFakeSftp()
-    const commandCode = createFakeSftp()
-    const grok = createFakeSftp()
-    const devin = createFakeSftp({
-      '/home/dev/.config/devin/config.json': `{
-  // Existing Devin config comment
-  "hooks": {},
-  "permissions": { "mode": "normal" }
-}
-`
-    })
-
-    await new GeminiHookService().installRemote(gemini.sftp, '/home/dev')
-    await new AntigravityHookService().installRemote(antigravity.sftp, '/home/dev')
-    await new AmpHookService().installRemote(amp.sftp, '/home/dev')
-    await new CursorHookService().installRemote(cursor.sftp, '/home/dev')
-    await new CommandCodeHookService().installRemote(commandCode.sftp, '/home/dev')
-    await new GrokHookService().installRemote(grok.sftp, '/home/dev')
-    await new DevinHookService().installRemote(devin.sftp, '/home/dev')
-
-    const geminiConfig = JSON.parse(gemini.fs.files.get('/home/dev/.gemini/settings.json')!) as {
-      hooks: Record<string, { hooks: { command: string }[] }[]>
-    }
-    for (const eventName of ['BeforeAgent', 'AfterAgent', 'AfterTool', 'BeforeTool']) {
-      const command = geminiConfig.hooks[eventName]?.[0]?.hooks?.[0]?.command
-      expect(command).toContain('/home/dev/.orca/agent-hooks/gemini-hook.sh')
-      expect(command).toMatch(/^if \[ -x /)
-    }
-    expect(geminiConfig.hooks.PreToolUse).toBeUndefined()
-
-    const antigravityConfig = JSON.parse(
-      antigravity.fs.files.get('/home/dev/.gemini/config/hooks.json')!
-    ) as {
-      'orca-status': Record<
-        string,
-        { matcher?: string; command?: string; hooks?: { command: string }[] }[]
-      >
-    }
-    for (const eventName of ['PreInvocation', 'PostInvocation', 'Stop']) {
-      const command = antigravityConfig['orca-status'][eventName]?.[0]?.command
-      expect(command).toContain('/home/dev/.orca/agent-hooks/antigravity-hook.sh')
-      expect(command).toContain(`ORCA_ANTIGRAVITY_EVENT='${eventName}'`)
-    }
-    expect(antigravityConfig['orca-status'].PreToolUse).toBeUndefined()
-    for (const eventName of ['PostToolUse']) {
-      const definition = antigravityConfig['orca-status'][eventName]?.[0]
-      const command = definition?.hooks?.[0]?.command
-      expect(definition?.matcher).toBe('*')
-      expect(command).toContain('/home/dev/.orca/agent-hooks/antigravity-hook.sh')
-      expect(command).toContain(`ORCA_ANTIGRAVITY_EVENT='${eventName}'`)
-    }
-
-    const ampPlugin = amp.fs.files.get('/home/dev/.config/amp/plugins/orca-agent-status.ts')
-    expect(ampPlugin).toContain('/hook/amp')
-    expect(ampPlugin).toContain("amp.on('tool.call'")
-    expect(ampPlugin).toContain('return { action: "allow" }')
-
-    const cursorConfig = JSON.parse(cursor.fs.files.get('/home/dev/.cursor/hooks.json')!) as {
-      version: number
-      hooks: Record<string, { command?: string; hooks?: unknown[] }[]>
-    }
-    expect(cursorConfig.version).toBe(1)
-    for (const eventName of [
-      'beforeSubmitPrompt',
-      'stop',
-      'preToolUse',
-      'postToolUse',
-      'postToolUseFailure',
-      'beforeShellExecution',
-      'beforeMCPExecution',
-      'afterAgentResponse'
-    ]) {
-      const definition = cursorConfig.hooks[eventName]?.[0]
-      expect(definition?.command).toContain('/home/dev/.orca/agent-hooks/cursor-hook.sh')
-      expect(definition?.hooks).toBeUndefined()
-    }
-
-    const commandCodeConfig = JSON.parse(
-      commandCode.fs.files.get('/home/dev/.commandcode/settings.json')!
-    ) as {
-      hooks: Record<string, { matcher?: string; hooks?: { command: string }[] }[]>
-    }
-    for (const eventName of ['PreToolUse', 'PostToolUse', 'Stop']) {
-      const definition = commandCodeConfig.hooks[eventName]?.[0]
-      const command = definition?.hooks?.[0]?.command
-      expect(command).toContain('/home/dev/.orca/agent-hooks/command-code-hook.sh')
-      expect(command).toMatch(/^if \[ -x /)
-    }
-    expect(commandCodeConfig.hooks.PreToolUse?.[0]?.matcher).toBe('.*')
-    expect(commandCodeConfig.hooks.PostToolUse?.[0]?.matcher).toBe('.*')
-    expect(commandCodeConfig.hooks.Stop?.[0]?.matcher).toBeUndefined()
-
-    const grokConfig = JSON.parse(grok.fs.files.get('/home/dev/.grok/hooks/orca-status.json')!) as {
-      hooks: Record<string, { matcher?: string; hooks?: { command: string }[] }[]>
-    }
-    for (const eventName of [
-      'SessionStart',
-      'UserPromptSubmit',
-      'Stop',
-      'SessionEnd',
-      'PreToolUse',
-      'PostToolUse',
-      'PostToolUseFailure',
-      'Notification'
-    ]) {
-      const definition = grokConfig.hooks[eventName]?.[0]
-      const command = definition?.hooks?.[0]?.command
-      expect(command).toContain('/home/dev/.orca/agent-hooks/grok-hook.sh')
-      expect(command).toMatch(/^if \[ -x /)
-    }
-    expect(grokConfig.hooks.PreToolUse?.[0]?.matcher).toBe('*')
-
-    const devinConfig = JSON.parse(devin.fs.files.get('/home/dev/.config/devin/config.json')!) as {
-      permissions: { mode: string }
-      hooks: Record<string, { matcher?: string; hooks?: { command: string }[] }[]>
-    }
-    expect(devinConfig.permissions.mode).toBe('normal')
-    for (const eventName of [
-      'SessionStart',
-      'UserPromptSubmit',
-      'Stop',
-      'PostCompaction',
-      'SessionEnd'
-    ]) {
-      const definition = devinConfig.hooks[eventName]?.[0]
-      const command = definition?.hooks?.[0]?.command
-      expect(command).toContain('/home/dev/.orca/agent-hooks/devin-hook.sh')
-      expect(command).toMatch(/^if \[ -x /)
-    }
-    for (const eventName of ['PreToolUse', 'PostToolUse', 'PermissionRequest']) {
-      const definition = devinConfig.hooks[eventName]?.[0]
-      const command = definition?.hooks?.[0]?.command
-      expect(definition?.matcher).toBeUndefined()
-      expect(command).toContain('/home/dev/.orca/agent-hooks/devin-hook.sh')
-      expect(command).toMatch(/^if \[ -x /)
-    }
-    expect(devin.fs.files.get('/home/dev/.orca/agent-hooks/devin-hook.sh')).toContain('/hook/devin')
-  })
-
-  it('installs remote Kimi hooks as a managed config.toml block preserving user config', async () => {
-    const userConfig = 'default_model = "kimi-k2.6"\n\n[providers."mine"]\napi_key = "sk-secret"\n'
-    const { sftp, fs } = createFakeSftp({ '/home/dev/.kimi-code/config.toml': userConfig })
-
-    const status = await new KimiHookService().installRemote(sftp, '/home/dev')
-    expect(status.state).toBe('installed')
-
-    const config = fs.files.get('/home/dev/.kimi-code/config.toml')!
-    // User config above the managed block is preserved.
-    expect(config).toContain('default_model = "kimi-k2.6"')
-    expect(config).toContain('api_key = "sk-secret"')
-    for (const eventName of [
-      'UserPromptSubmit',
-      'PreToolUse',
-      'PostToolUse',
-      'PostToolUseFailure',
-      'PermissionRequest',
-      'Stop',
-      'StopFailure'
-    ]) {
-      expect(config).toContain(`event = "${eventName}"`)
-    }
-    // The command points at the POSIX managed script via the `[ -x ]` guard.
-    expect(config).toContain('/home/dev/.orca/agent-hooks/kimi-hook.sh')
-    expect(config).toMatch(/command = "if \[ -x /)
-    expect(fs.files.get('/home/dev/.orca/agent-hooks/kimi-hook.sh')).toContain('/hook/kimi')
-  })
-
   it('does not overwrite malformed remote Devin JSONC', async () => {
     const original = '{"hooks": }'
     const { sftp, fs } = createFakeSftp({
@@ -509,54 +312,6 @@ describe('remote hook service installers', () => {
     expect(postToolCommands.some((command) => command.includes('antigravity-hook.sh'))).toBe(true)
   })
 
-  it('removes stale remote Gemini PreToolUse hooks while preserving user-authored hooks', async () => {
-    const { sftp, fs } = createFakeSftp()
-    fs.files.set(
-      '/home/dev/.gemini/settings.json',
-      `${JSON.stringify(
-        {
-          hooks: {
-            PreToolUse: [
-              {
-                hooks: [
-                  {
-                    type: 'command',
-                    command:
-                      "if [ -x '/tmp/old/agent-hooks/gemini-hook.sh' ]; then /bin/sh '/tmp/old/agent-hooks/gemini-hook.sh'; fi"
-                  }
-                ]
-              },
-              {
-                hooks: [
-                  {
-                    type: 'command',
-                    command: 'echo user-authored'
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        null,
-        2
-      )}\n`
-    )
-
-    await new GeminiHookService().installRemote(sftp, '/home/dev')
-
-    const config = JSON.parse(fs.files.get('/home/dev/.gemini/settings.json')!) as {
-      hooks: Record<string, { hooks?: { command: string }[] }[]>
-    }
-    const preToolCommands = config.hooks.PreToolUse.flatMap((definition) =>
-      (definition.hooks ?? []).map((hook) => hook.command)
-    )
-    expect(preToolCommands).toEqual(['echo user-authored'])
-    const beforeToolCommands = config.hooks.BeforeTool.flatMap((definition) =>
-      (definition.hooks ?? []).map((hook) => hook.command)
-    )
-    expect(beforeToolCommands.some((command) => command.includes('gemini-hook.sh'))).toBe(true)
-  })
-
   it('installs remote Copilot hooks under the user-level hooks directory', async () => {
     const { sftp, fs } = createFakeSftp()
     fs.dirs.add('/home/dev/.copilot')
@@ -613,19 +368,14 @@ describe('remote hook service installers', () => {
   it('registers every managed agent that implements installRemote in the remote installer (issue #7253)', () => {
     const servicesByAgent = new Map<string, { installRemote?: unknown }>([
       ['claude', claudeHookService],
-      ['openclaude', openClaudeHookService],
       ['codex', codexHookService],
-      ['gemini', geminiHookService],
       ['antigravity', antigravityHookService],
       ['amp', ampHookService],
-      ['cursor', cursorHookService],
       ['droid', droidHookService],
-      ['command-code', commandCodeHookService],
       ['grok', grokHookService],
       ['copilot', copilotHookService],
       ['hermes', hermesHookService],
-      ['devin', devinHookService],
-      ['kimi', kimiHookService]
+      ['devin', devinHookService]
     ])
 
     // Guard against a service silently missing from the map above as new agents land.

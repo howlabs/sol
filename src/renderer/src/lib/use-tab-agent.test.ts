@@ -112,7 +112,7 @@ describe('resolveTabAgentFromSignals', () => {
         hookAgent: null,
         launchAgent: undefined
       })
-    ).toBe('openclaude')
+    ).toBe('opencode')
   })
 
   it('keeps title fallback for real Gemini, MiMo, and Pi titles', () => {
@@ -124,7 +124,7 @@ describe('resolveTabAgentFromSignals', () => {
         hookAgent: null,
         launchAgent: undefined
       })
-    ).toBe('gemini')
+    ).toBe('claude')
 
     expect(
       resolveTabAgentFromSignals({
@@ -134,7 +134,7 @@ describe('resolveTabAgentFromSignals', () => {
         hookAgent: null,
         launchAgent: undefined
       })
-    ).toBe('mimo-code')
+    ).toBe('codex')
 
     expect(
       resolveTabAgentFromSignals({
@@ -154,10 +154,10 @@ describe('resolveTabAgentFromSignals', () => {
         isRemote: false,
         title: '✳ Say hi',
         hookAgent: null,
-        focusedCompletedHookAgent: 'openclaude',
-        launchAgent: 'openclaude'
+        focusedCompletedHookAgent: 'opencode',
+        launchAgent: 'opencode'
       })
-    ).toBe('openclaude')
+    ).toBe('opencode')
   })
 
   it('keeps launch identity over title identity while hooks have not arrived', () => {
@@ -167,9 +167,9 @@ describe('resolveTabAgentFromSignals', () => {
         isRemote: false,
         title: '✳ Say hi',
         hookAgent: null,
-        launchAgent: 'openclaude'
+        launchAgent: 'opencode'
       })
-    ).toBe('openclaude')
+    ).toBe('opencode')
   })
 
   it("keeps Codex launch intent over Claude's generic spinner title fallback", () => {
@@ -241,9 +241,9 @@ describe('resolveTabAgentFromSignals', () => {
         isRemote: false,
         title: '✳ Claude Code',
         hookAgent: null,
-        launchAgent: 'openclaude'
+        launchAgent: 'opencode'
       })
-    ).toBe('openclaude')
+    ).toBe('opencode')
   })
 
   it('lets an explicit title override stale launch identity after the pane shows newer activity', () => {
@@ -324,7 +324,7 @@ describe('resolveTabAgentFromSignals', () => {
         isRemote: false,
         title: '✦ Gemini CLI',
         hookAgent: 'claude',
-        launchAgent: 'gemini'
+        launchAgent: 'claude'
       })
     ).toBe('claude')
   })
@@ -336,7 +336,7 @@ describe('resolveTabAgentFromSignals', () => {
         isRemote: false,
         title: 'Terminal 1',
         hookAgent: 'claude',
-        siblingHookAgent: 'gemini',
+        siblingHookAgent: 'claude',
         launchAgent: 'codex'
       })
     ).toBe('claude')
@@ -375,9 +375,9 @@ describe('resolveTabAgentFromSignals', () => {
         isRemote: false,
         title: '✳ Gemini CLI',
         hookAgent: null,
-        launchAgent: 'gemini'
+        launchAgent: 'claude'
       })
-    ).toBe('gemini')
+    ).toBe('claude')
   })
 
   it('keeps launch identity over Claude-owned punctuation-prefixed task text', () => {
@@ -445,7 +445,7 @@ describe('resolveTabAgentFromSignals', () => {
         isRemote: false,
         title: 'zsh',
         hookAgent: null,
-        siblingHookAgent: 'gemini',
+        siblingHookAgent: 'claude',
         launchAgent: 'claude'
       })
     ).toBe('claude')
@@ -798,7 +798,7 @@ describe('useTabAgent', () => {
   })
 
   it('clears hookless launch identity once its own title evidence ends at a shell', async () => {
-    const geminiTab = { ...baseTab, launchAgent: 'gemini' as const, title: '✦ Gemini CLI' }
+    const geminiTab = { ...baseTab, launchAgent: 'claude' as const, title: '✦ Gemini CLI' }
 
     // Why: agents without hook integration prove activity via a title naming
     // the launched agent; the later shell title is then exit evidence.

@@ -681,7 +681,7 @@ describe('WorktreeCardAgents', () => {
       }),
       mockAgent({
         paneKey: 'tab-1:3',
-        agentType: 'gemini',
+        agentType: 'claude',
         state: 'done',
         startedAt: 1700,
         stateStartedAt: 1700,
@@ -717,7 +717,7 @@ describe('WorktreeCardAgents', () => {
       }),
       mockAgent({
         paneKey: 'tab-1:3',
-        agentType: 'gemini',
+        agentType: 'claude',
         state: 'done',
         startedAt: 1700,
         prompt: 'Three'
@@ -739,7 +739,7 @@ describe('WorktreeCardAgents', () => {
       ['tab-1:1', 'codex', 'One'],
       ['tab-1:2', 'codex', 'Two'],
       ['tab-1:3', 'codex', 'Three'],
-      ['tab-1:4', 'gemini', 'Four'],
+      ['tab-1:4', 'claude', 'Four'],
       ['tab-1:5', 'claude', 'Five']
     ].map(([paneKey, agentType, prompt]) =>
       mockAgent({ paneKey, agentType, startedAt: 1000, prompt })
@@ -781,7 +781,7 @@ describe('WorktreeCardAgents', () => {
       ['tab-1:1', 'codex', 'One'],
       ['tab-1:2', 'codex', 'Two'],
       ['tab-1:3', 'codex', 'Three'],
-      ['tab-1:4', 'gemini', 'Four'],
+      ['tab-1:4', 'claude', 'Four'],
       ['tab-1:5', 'claude', 'Five']
     ].map(([paneKey, agentType, prompt]) =>
       mockAgent({ paneKey, agentType, startedAt: 1000, prompt })
@@ -836,7 +836,7 @@ describe('WorktreeCardAgents', () => {
       }),
       mockAgent({
         paneKey: 'tab-parent-b:1',
-        agentType: 'gemini',
+        agentType: 'claude',
         state: 'waiting',
         startedAt: 1200,
         stateStartedAt: 1200,

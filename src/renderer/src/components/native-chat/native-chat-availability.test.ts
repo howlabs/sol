@@ -39,7 +39,7 @@ describe('canToggleNativeChat', () => {
       canToggleNativeChat({
         experimentalNativeChatEnabled: true,
         contentType: 'terminal',
-        launchAgent: 'openclaude'
+        launchAgent: 'opencode'
       })
     ).toBe(true)
   })
@@ -71,7 +71,7 @@ describe('canToggleNativeChat', () => {
         experimentalNativeChatEnabled: true,
         contentType: 'terminal',
         launchAgent: null,
-        detectedAgent: 'gemini'
+        detectedAgent: 'claude'
       })
     ).toBe(false)
   })
@@ -93,7 +93,7 @@ describe('canToggleNativeChat', () => {
         experimentalNativeChatEnabled: true,
         contentType: 'terminal',
         launchAgent: null,
-        detectedAgent: 'gemini',
+        detectedAgent: 'claude',
         resolvedAgent: 'codex'
       })
     ).toBe(false)
@@ -105,7 +105,7 @@ describe('canToggleNativeChat', () => {
         experimentalNativeChatEnabled: true,
         contentType: 'terminal',
         launchAgent: 'codex',
-        detectedAgent: 'gemini'
+        detectedAgent: 'claude'
       })
     ).toBe(false)
   })

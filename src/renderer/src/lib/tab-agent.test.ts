@@ -100,11 +100,11 @@ describe('resolveTabAgent', () => {
   it('exposes the completed hook agent for title disambiguation', () => {
     const map = {
       [`tab-1:${LEAF_A}`]: {
-        ...entry(`tab-1:${LEAF_A}`, 'openclaude'),
+        ...entry(`tab-1:${LEAF_A}`, 'opencode'),
         state: 'done' as const
       }
     }
-    expect(resolveFocusedCompletedTabAgent(map, undefined, 'tab-1')).toBe('openclaude')
+    expect(resolveFocusedCompletedTabAgent(map, undefined, 'tab-1')).toBe('opencode')
     expect(resolveSiblingCompletedTabAgent(map, undefined, 'tab-1')).toBeNull()
   })
 

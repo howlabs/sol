@@ -493,9 +493,7 @@ describe('useIpcEvents rate-limit hydration', () => {
     const staleState = {
       claude: null,
       codex: null,
-      gemini: null,
       opencodeGo: null,
-      kimi: null,
       claudeTarget: { runtime: 'host', wslDistro: null },
       codexTarget: { runtime: 'host', wslDistro: null },
       inactiveClaudeAccounts: [],
@@ -5440,7 +5438,7 @@ describe('useIpcEvents agent status snapshot integration', () => {
       paneKey: FUTURE_PANE_KEY,
       state: 'done',
       prompt: 'cursor prompt',
-      agentType: 'cursor',
+      agentType: 'codex',
       lastAssistantMessage: 'cursor completion',
       receivedAt: 1_700_000_000_200,
       stateStartedAt: 1_699_999_999_100
@@ -5452,7 +5450,7 @@ describe('useIpcEvents agent status snapshot integration', () => {
       expect.objectContaining({
         state: 'done',
         prompt: 'cursor prompt',
-        agentType: 'cursor',
+        agentType: 'codex',
         lastAssistantMessage: 'cursor completion'
       }),
       'Cursor ready',
@@ -5703,7 +5701,7 @@ describe('useIpcEvents agent status snapshot integration', () => {
       expect.objectContaining({
         state: 'working',
         prompt: 'OpenClaude prompt',
-        agentType: 'openclaude'
+        agentType: 'opencode'
       }),
       'Terminal 2',
       { updatedAt: 1_700_000_000_200, stateStartedAt: 1_699_999_999_100 },

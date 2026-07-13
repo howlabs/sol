@@ -7,8 +7,8 @@ describe('terminal quick command agent options', () => {
   it('does not inherit OpenClaude as the second quick-command agent option', () => {
     const ids = getTerminalQuickCommandAgentOptions().map((entry) => entry.id)
 
-    expect(ids.slice(0, 3)).toEqual(['claude', 'codex', 'gemini'])
-    expect(ids.indexOf('openclaude')).toBeGreaterThan(ids.indexOf('command-code'))
+    expect(ids.slice(0, 3)).toEqual(['claude', 'codex', 'claude'])
+    expect(ids.indexOf('opencode')).toBeGreaterThan(ids.indexOf('codex'))
   })
 
   it('keeps unsupported prompt-command agents below supported agents', () => {

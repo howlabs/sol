@@ -6,7 +6,6 @@ export type UsageProviderSettings = Pick<
   | 'codexManagedAccounts'
   | 'claudeManagedAccounts'
   | 'opencodeSessionCookie'
-  | 'geminiCliOAuthEnabled'
 > & {
   // Why: MiniMax/Grok sign-in live on disk, not in settings; main sets these each poll.
   minimaxCookieConfigured: boolean
@@ -16,9 +15,7 @@ export type UsageProviderSettings = Pick<
 type UsageProviderSnapshots = {
   claude: ProviderRateLimits | null
   codex: ProviderRateLimits | null
-  gemini: ProviderRateLimits | null
   opencodeGo: ProviderRateLimits | null
-  kimi: ProviderRateLimits | null
   minimax: ProviderRateLimits | null
   grok: ProviderRateLimits | null
 }
@@ -40,11 +37,11 @@ function isProviderSnapshotPending(provider: ProviderRateLimits | null): boolean
 }
 
 // Why: a provider that returns `unavailable` is explicitly not configured
-// (Gemini OAuth off, OpenCode Go cookie unset, Claude on API-key billing). Its
-// fetch object is non-null, so a bare `!== null` check still renders a "--"
-// bar for a provider the user never set up. `error` is kept visible on purpose
-// — that's a *configured* provider failing transiently, and hiding it would
-// make the bar flap on every refresh hiccup.
+// (OpenCode Go cookie unset, Claude on API-key billing). Its fetch object is
+// non-null, so a bare `!== null` check still renders a "--" bar for a provider
+// the user never set up. `error` is kept visible on purpose — that's a
+// *configured* provider failing transiently, and hiding it would make the bar
+// flap on every refresh hiccup.
 export function isProviderConfigured(
   provider: ProviderRateLimits | null
 ): provider is ProviderRateLimits {
@@ -63,7 +60,6 @@ export function hasUsageProviderSettings(
   return Boolean(
     (settings?.codexManagedAccounts?.length ?? 0) > 0 ||
     (settings?.claudeManagedAccounts?.length ?? 0) > 0 ||
-    settings?.geminiCliOAuthEnabled === true ||
     Boolean(settings?.opencodeSessionCookie?.trim()) ||
     settings?.minimaxCookieConfigured === true ||
     settings?.grokAuthConfigured === true
@@ -83,9 +79,6 @@ export function hasUsageProviderSettingsForProvider(
   if (providerId === 'codex') {
     return (settings.codexManagedAccounts?.length ?? 0) > 0
   }
-  if (providerId === 'gemini') {
-    return settings.geminiCliOAuthEnabled === true
-  }
   if (providerId === 'opencode-go') {
     return Boolean(settings.opencodeSessionCookie?.trim())
   }
@@ -104,7 +97,6 @@ function createPendingProviderSnapshot(providerId: UsageProviderId): ProviderRat
     session: null,
     weekly: null,
     ...(providerId === 'opencode-go' ? { monthly: null } : {}),
-    ...(providerId === 'gemini' ? { buckets: [] } : {}),
     updatedAt: 0,
     error: null,
     status: 'fetching'
@@ -140,9 +132,7 @@ export function isUsageEmptyState(
   if (
     isProviderSnapshotPending(providers.claude) ||
     isProviderSnapshotPending(providers.codex) ||
-    isProviderSnapshotPending(providers.gemini) ||
     isProviderSnapshotPending(providers.opencodeGo) ||
-    isProviderSnapshotPending(providers.kimi) ||
     isProviderSnapshotPending(providers.minimax) ||
     isProviderSnapshotPending(providers.grok)
   ) {
@@ -152,9 +142,7 @@ export function isUsageEmptyState(
     !hasUsageProviderSettings(settings) &&
     !isProviderConfigured(providers.claude) &&
     !isProviderConfigured(providers.codex) &&
-    !isProviderConfigured(providers.gemini) &&
     !isProviderConfigured(providers.opencodeGo) &&
-    !isProviderConfigured(providers.kimi) &&
     !isProviderConfigured(providers.minimax) &&
     !isProviderConfigured(providers.grok)
   )

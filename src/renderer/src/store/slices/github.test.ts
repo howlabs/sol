@@ -6072,7 +6072,7 @@ describe('createGitHubSlice.fetchWorkItems source/error envelope', () => {
           24,
           24,
           oversizedQuery,
-          'cursor'
+          'codex'
         )
     ).resolves.toEqual({ items: [], failedCount: 0 })
     await expect(

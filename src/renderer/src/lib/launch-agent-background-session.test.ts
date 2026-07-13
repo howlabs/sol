@@ -337,7 +337,7 @@ describe('launchAgentBackgroundSession', () => {
     const { launchAgentBackgroundSession } = await import('./launch-agent-background-session')
 
     await launchAgentBackgroundSession({
-      agent: 'command-code',
+      agent: 'codex',
       worktreeId: 'wt-1',
       prompt: 'check the status spinner'
     })
@@ -348,7 +348,7 @@ describe('launchAgentBackgroundSession', () => {
       {
         state: 'working',
         prompt: 'check the status spinner',
-        agentType: 'command-code'
+        agentType: 'codex'
       },
       undefined,
       undefined,
@@ -406,7 +406,7 @@ describe('launchAgentBackgroundSession', () => {
     const { launchAgentBackgroundSession } = await import('./launch-agent-background-session')
 
     await launchAgentBackgroundSession({
-      agent: 'aider',
+      agent: 'codex',
       worktreeId: 'wt-1',
       prompt: 'run the automation'
     })
@@ -418,7 +418,7 @@ describe('launchAgentBackgroundSession', () => {
       expect.objectContaining({
         tabId: 'tab-1',
         content: 'run the automation',
-        agent: 'aider',
+        agent: 'codex',
         submit: true
       })
     )

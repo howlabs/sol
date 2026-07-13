@@ -15,16 +15,10 @@
 // the explicit launch/session facts Orca owns, not this inference path.
 export const AGENT_NAMES = [
   'claude',
-  'openclaude',
   'codex',
   'copilot',
-  'cursor',
-  'gemini',
   'antigravity',
   'opencode',
-  'mimo',
-  'openclaw',
-  'aider',
   'grok',
   'devin'
 ]

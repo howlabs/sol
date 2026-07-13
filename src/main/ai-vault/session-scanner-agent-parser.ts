@@ -3,14 +3,12 @@ import { parseDevinSessionFile } from './session-scanner-devin-parser'
 import { parseDroidSessionFile } from './session-scanner-droid-parser'
 import { parseGrokSessionFile } from './session-scanner-grok-parser'
 import { parseMessageGraphSessionFile } from './session-scanner-graph-parsers'
-import { parseKimiSessionFile } from './session-scanner-kimi-parser'
 import { splitOpenCodeSqliteCandidate } from './session-scanner-opencode-sqlite-paths'
 import { parseOpenCodeSqliteSession } from './session-scanner-opencode-sqlite'
-import { parseClaudeSessionFile, parseGeminiSessionFile } from './session-scanner-primary-parsers'
+import { parseClaudeSessionFile } from './session-scanner-primary-parsers'
 import { parseCodexSessionFile } from './session-scanner-codex-parser'
 import {
   parseCopilotSessionFile,
-  parseCursorSessionFile,
   parseHermesSessionFile,
   parseOpenCodeSessionFile
 } from './session-scanner-secondary-parsers'
@@ -34,12 +32,8 @@ export async function parseAgentSessionFile(
       return parseClaudeSessionFile(candidate.file, platform)
     case 'codex':
       return parseCodexSessionFile(candidate.file, platform, candidate.codexHome)
-    case 'gemini':
-      return parseGeminiSessionFile(candidate.file, platform)
     case 'copilot':
       return parseCopilotSessionFile(candidate.file, platform)
-    case 'cursor':
-      return parseCursorSessionFile(candidate.file, platform)
     case 'opencode': {
       // Why: OpenCode 1.17.x sessions are read from SQLite via a synthetic
       // <dbPath>#<sessionId> candidate path. Legacy file-based sessions use
@@ -58,15 +52,11 @@ export async function parseAgentSessionFile(
       return parseGrokSessionFile(candidate.file, platform)
     case 'hermes':
       return parseHermesSessionFile(candidate.file, platform)
-    case 'openclaw':
-      return parseMessageGraphSessionFile('openclaw', candidate.file, platform)
     case 'pi':
       return parseMessageGraphSessionFile('pi', candidate.file, platform)
     case 'droid':
       return parseDroidSessionFile(candidate.file, platform)
     case 'devin':
       return parseDevinSessionFile(candidate.file, platform)
-    case 'kimi':
-      return parseKimiSessionFile(candidate.file, platform)
   }
 }
