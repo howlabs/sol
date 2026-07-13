@@ -884,11 +884,10 @@ export default function CombinedDiffViewer({
   })
 
   useLayoutEffect(() => {
-    // Why: inline vs side-by-side can change the editor content heights across
-    // every loaded row. Re-measure on this explicit mode change, not on every
-    // section load.
+    // Why: side-by-side and word-wrap both change content heights across loaded
+    // rows. Re-measure on those explicit layout toggles, not on every section load.
     virtualizer.measure()
-  }, [sideBySide, virtualizer])
+  }, [sideBySide, settings?.diffWordWrap, virtualizer])
 
   const toggleSection = useCallback((index: number) => {
     const shouldLoadAfterExpand = sectionsRef.current[index]?.collapsed ?? false

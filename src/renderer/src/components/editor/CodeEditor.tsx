@@ -398,7 +398,7 @@ export default function CodeEditor({
     <div className="relative h-full min-h-0 w-full" data-testid="code-editor">
       <div
         ref={containerRef}
-        className="h-full min-h-0 w-full overflow-hidden bg-editor-surface"
+        className="h-full min-h-0 min-w-0 w-full overflow-hidden bg-editor-surface"
         style={heightStyle}
         role="textbox"
         aria-label={relativePath || filePath}

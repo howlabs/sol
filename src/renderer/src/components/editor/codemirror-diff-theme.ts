@@ -11,6 +11,11 @@ export function codemirrorDiffTheme(
     EditorView.theme({
       '&': {
         height: '100%',
+        // Why: without a bounded width, flex parents grow to the longest line
+        // and EditorView.lineWrapping never has a wrap edge.
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: '0',
         fontSize: `${fontSize}px`,
         fontFamily,
         backgroundColor: 'var(--editor-surface)',
@@ -44,17 +49,28 @@ export function codemirrorDiffTheme(
       '.cm-scroller': {
         fontFamily,
         lineHeight: '1.45',
-        overflow: 'auto'
+        // Why: wrap mode should not keep a phantom horizontal scrollbar.
+        overflowX: wordWrap ? 'hidden' : 'auto',
+        overflowY: 'auto'
       },
       // Merge package chrome
       '.cm-mergeView, .cm-mergeViewEditors': {
-        height: '100%'
+        height: '100%',
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: '0'
       },
       '.cm-mergeViewEditors': {
         alignItems: 'stretch'
       },
+      '.cm-mergeViewEditor': {
+        minWidth: '0'
+      },
       '.cm-mergeView .cm-editor': {
-        height: '100%'
+        height: '100%',
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: '0'
       },
       '.cm-deletedChunk': {
         backgroundColor: 'color-mix(in srgb, var(--destructive) 12%, transparent)'

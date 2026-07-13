@@ -55,6 +55,35 @@ describe('codemirror-diff-host', () => {
     parent.remove()
   })
 
+  it('applies line wrapping class when wordWrap is enabled', () => {
+    const parent = document.createElement('div')
+    parent.style.width = '200px'
+    document.body.appendChild(parent)
+    const host = mountCodeMirrorDiffHost({
+      parent,
+      originalContent: `${'x'.repeat(200)}\n`,
+      modifiedContent: `${'x'.repeat(200)}y\n`,
+      language: 'typescript',
+      fontSize: 13,
+      fontFamily: 'monospace',
+      wordWrap: true,
+      sideBySide: false,
+      editable: false
+    })
+    const content = parent.querySelector('.cm-content')
+    expect(content?.classList.contains('cm-lineWrapping')).toBe(true)
+    destroyCodeMirrorDiffHost(host)
+    parent.remove()
+  })
+
+  it('omits line wrapping class when wordWrap is disabled', () => {
+    const { parent, host } = mount(false)
+    const content = parent.querySelector('.cm-content')
+    expect(content?.classList.contains('cm-lineWrapping')).toBe(false)
+    destroyCodeMirrorDiffHost(host)
+    parent.remove()
+  })
+
   it('syncs modified document content without remounting', () => {
     const { parent, host } = mount(true)
     syncCodeMirrorDiffHostDocs(host, 'line one\nline two\n', 'line one\nline two synced\n')

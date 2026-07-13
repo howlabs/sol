@@ -10,6 +10,10 @@ export function codemirrorEditorTheme(
     EditorView.theme({
       '&': {
         height: '100%',
+        // Why: flex parents otherwise expand to the longest line and wrap never engages.
+        width: '100%',
+        maxWidth: '100%',
+        minWidth: '0',
         fontSize: `${fontSize}px`,
         fontFamily,
         backgroundColor: 'var(--editor-surface)',
@@ -44,7 +48,8 @@ export function codemirrorEditorTheme(
       '.cm-scroller': {
         fontFamily,
         lineHeight: '1.45',
-        overflow: 'auto'
+        overflowX: wordWrap ? 'hidden' : 'auto',
+        overflowY: 'auto'
       },
       '.cm-search-result-highlight': {
         backgroundColor: 'color-mix(in srgb, var(--warning, #f59e0b) 34%, transparent)',

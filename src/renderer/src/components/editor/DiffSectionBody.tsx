@@ -131,7 +131,7 @@ export function DiffSectionBody({
       {showTextDiffHost ? (
         <div
           ref={editorHostRef}
-          className="h-full min-h-0 overflow-hidden bg-editor-surface [&_.cm-mergeView]:h-full [&_.cm-editor]:h-full"
+          className="h-full min-h-0 min-w-0 w-full overflow-hidden bg-editor-surface [&_.cm-mergeView]:h-full [&_.cm-mergeView]:min-w-0 [&_.cm-mergeView]:w-full [&_.cm-editor]:h-full [&_.cm-editor]:min-w-0 [&_.cm-editor]:w-full"
           data-testid="codemirror-diff-section"
           data-side-by-side={sideBySide ? 'true' : 'false'}
           data-editable={isEditable ? 'true' : 'false'}
