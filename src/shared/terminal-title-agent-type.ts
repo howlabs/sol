@@ -55,8 +55,14 @@ export function isPiAgentTitle(title: string): boolean {
  * Used to scope prompt-cache-timer behavior to Claude sessions only — other
  * agents have different (or no) caching semantics.
  */
+// Why: OpenClaude was removed as a first-class agent. Its titles still embed
+// "Claude" after a word character and often carry braille spinners, so without
+// an explicit reject they fall through Claude's spinner heuristic and mint a
+// false Claude identity.
+const OPENCLAUDE_TITLE_RE = /(?<![\w./\\-])openclaude(?![\w./\\-])/i
+
 export function isClaudeAgent(title: string): boolean {
-  if (!title || isClaudeManagementTitle(title)) {
+  if (!title || isClaudeManagementTitle(title) || OPENCLAUDE_TITLE_RE.test(title)) {
     return false
   }
 
@@ -94,7 +100,7 @@ export function isClaudeManagementTitle(title: string): boolean {
 }
 
 export function getAgentLabel(title: string): string | null {
-  if (isClaudeManagementTitle(title)) {
+  if (isClaudeManagementTitle(title) || OPENCLAUDE_TITLE_RE.test(title)) {
     return null
   }
   // Why: Claude Code title text is often the task title. If that task mentions

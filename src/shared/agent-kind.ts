@@ -21,7 +21,6 @@ const TUI_AGENT_KIND_BY_AGENT = {
   pi: 'pi',
   antigravity: 'antigravity',
   amp: 'amp',
-  cline: 'cline',
   droid: 'droid',
   'qwen-code': 'qwen-code',
   hermes: 'hermes',

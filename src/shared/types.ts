@@ -2340,7 +2340,6 @@ export type TuiAgent =
   | 'pi' // Pi (pi.dev)
   | 'antigravity' // Google Antigravity CLI
   | 'amp' // Amp
-  | 'cline' // Cline
   | 'droid' // Factory Droid
   | 'qwen-code' // Qwen Code
   | 'hermes' // Hermes Agent

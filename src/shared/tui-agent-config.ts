@@ -139,12 +139,6 @@ export const TUI_AGENT_CONFIG: Record<TuiAgent, TuiAgentConfig> = {
     expectedProcess: 'amp',
     promptInjectionMode: 'stdin-after-start'
   },
-  cline: {
-    detectCmd: 'cline',
-    launchCmd: 'cline',
-    expectedProcess: 'cline',
-    promptInjectionMode: 'stdin-after-start'
-  },
   droid: {
     detectCmd: 'droid',
     launchCmd: 'droid',

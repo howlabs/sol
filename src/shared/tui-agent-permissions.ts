@@ -9,7 +9,6 @@ export const YOLO_TUI_AGENT_ARGS: Partial<Record<TuiAgent, string>> = {
   codex: '--dangerously-bypass-approvals-and-sandbox',
   antigravity: '--dangerously-skip-permissions',
   amp: '--dangerously-allow-all',
-  cline: '--auto-approve true',
   'qwen-code': '--approval-mode yolo',
   hermes: '--yolo',
   copilot: '--yolo',

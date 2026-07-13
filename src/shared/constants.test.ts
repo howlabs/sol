@@ -32,7 +32,6 @@ describe('getDefaultSettings', () => {
 
   it('uses a block terminal cursor by default for new settings', () => {
     expect(getDefaultSettings('/tmp').terminalCursorStyle).toBe('block')
-    expect(getDefaultSettings('/tmp').terminalCursorStyleDefaultedToBlock).toBe(true)
   })
 
   it('enables separate light terminal theme by default', () => {

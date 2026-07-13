@@ -92,13 +92,6 @@ export const getAgentCatalog = createLocalizedCatalog((): AgentCatalogEntry[] =>
     homepageUrl: 'https://ampcode.com/manual#install'
   },
   {
-    id: 'cline',
-    label: translate('auto.lib.agent.catalog.cbaf0c2e0b', 'Cline'),
-    cmd: 'cline',
-    faviconDomain: 'cline.bot',
-    homepageUrl: 'https://docs.cline.bot/cline-cli/overview'
-  },
-  {
     id: 'droid',
     label: translate('auto.lib.agent.catalog.739a930554', 'Droid'),
     cmd: 'droid',

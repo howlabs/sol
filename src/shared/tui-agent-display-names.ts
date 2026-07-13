@@ -14,7 +14,6 @@ export const TUI_AGENT_DISPLAY_NAMES: Record<TuiAgent, string> = {
   pi: 'Pi',
   antigravity: 'Antigravity',
   amp: 'Amp',
-  cline: 'Cline',
   droid: 'Droid',
   'qwen-code': 'Qwen Code',
   hermes: 'Hermes',

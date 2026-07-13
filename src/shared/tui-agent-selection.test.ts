@@ -8,7 +8,8 @@ describe('pickTuiAgent', () => {
 
   it('falls back in desktop catalog order when the preference is absent or stale', () => {
     expect(pickTuiAgent(null, ['droid', 'codex'])).toBe('codex')
-    expect(pickTuiAgent('cline', ['droid', 'codex'])).toBe('codex')
+    // Why: stale preference not in the detected set falls back to catalog order.
+    expect(pickTuiAgent('amp', ['droid', 'codex'])).toBe('codex')
     expect(pickTuiAgent(null, ['hermes', 'devin'])).toBe('hermes')
   })
 

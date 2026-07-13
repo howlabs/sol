@@ -67,7 +67,6 @@ export const AGENT_KIND_VALUES = [
   'pi',
   'antigravity',
   'amp',
-  'cline',
   'droid',
   'qwen-code',
   'hermes',

@@ -147,7 +147,6 @@ const ICONABLE_AGENT_TYPES: Record<TuiAgent, true> = {
   pi: true,
   antigravity: true,
   amp: true,
-  cline: true,
   droid: true,
   'qwen-code': true,
   hermes: true,
