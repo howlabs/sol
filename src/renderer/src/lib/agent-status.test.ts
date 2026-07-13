@@ -4,7 +4,6 @@ import {
   clearWorkingIndicators,
   createAgentStatusTracker,
   getAgentLabel,
-  isGeminiTerminalTitle,
   isClaudeAgent,
   isClaudeManagementTitle,
   normalizeTerminalTitle,
@@ -442,30 +441,6 @@ describe('normalizeTerminalTitle', () => {
     expect(normalizeTerminalTitle('π gemini')).toBe('Pi')
     expect(normalizeTerminalTitle('⠋ π - gemini-project')).toBe('⠋ Pi')
     expect(normalizeTerminalTitle('π - gemini-project')).toBe('Pi')
-  })
-})
-
-describe('isGeminiTerminalTitle', () => {
-  it('detects Gemini titles by symbol or name', () => {
-    expect(isGeminiTerminalTitle('✦  Typing prompt... (workspace)')).toBe(true)
-    expect(isGeminiTerminalTitle('◇  Ready (workspace)')).toBe(true)
-    expect(isGeminiTerminalTitle('gemini waiting for input')).toBe(true)
-  })
-
-  it('does not match other terminal titles', () => {
-    expect(isGeminiTerminalTitle('⠂ Claude Code')).toBe(false)
-    expect(isGeminiTerminalTitle('⠋ π - gemini')).toBe(false)
-    expect(isGeminiTerminalTitle('π - gemini')).toBe(false)
-    expect(isGeminiTerminalTitle('⠋ π: gemini')).toBe(false)
-    expect(isGeminiTerminalTitle('π: gemini')).toBe(false)
-    expect(isGeminiTerminalTitle('⠋ π gemini')).toBe(false)
-    expect(isGeminiTerminalTitle('π gemini')).toBe(false)
-    expect(isGeminiTerminalTitle('π -')).toBe(false)
-    expect(isGeminiTerminalTitle('π:')).toBe(false)
-    expect(isGeminiTerminalTitle('π ')).toBe(false)
-    expect(isGeminiTerminalTitle('⠋ π - gemini-project')).toBe(false)
-    expect(isGeminiTerminalTitle('/tmp/gemini/working')).toBe(false)
-    expect(isGeminiTerminalTitle('bash')).toBe(false)
   })
 })
 

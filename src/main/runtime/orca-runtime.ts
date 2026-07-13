@@ -206,11 +206,7 @@ import {
 } from '../../shared/tui-agent-config'
 import { createDraftPasteReadyScanner } from '../../shared/draft-paste-ready-scanner'
 import { detectInstalledAgentsWithShellPathHydration, detectRemoteAgents } from '../ipc/preflight'
-import {
-  markCodexProjectTrusted,
-  markCopilotFolderTrusted,
-  markCursorWorkspaceTrusted
-} from '../agent-trust-presets'
+import { markCodexProjectTrusted, markCopilotFolderTrusted } from '../agent-trust-presets'
 import { markRemoteAgentWorkspaceTrusted } from '../remote-agent-trust-presets'
 import { applyAgentStatusHooksEnabled } from '../agent-hooks/managed-agent-hook-controls'
 import {
@@ -12462,9 +12458,7 @@ export class OrcaRuntimeService {
       return
     }
     try {
-      if (preset === 'cursor') {
-        markCursorWorkspaceTrusted(workspacePath)
-      } else if (preset === 'copilot') {
+      if (preset === 'copilot') {
         markCopilotFolderTrusted(workspacePath)
       } else if (preset === 'codex') {
         markCodexProjectTrusted(workspacePath)
