@@ -391,6 +391,7 @@ describe('registerCoreHandlers', () => {
     const openCodeUsage = { marker: 'openCodeUsage' }
     const codexAccounts = { marker: 'codexAccounts' }
     const claudeAccounts = { marker: 'claudeAccounts' }
+    const grokAccounts = { marker: 'grokAccounts' }
     const rateLimits = { marker: 'rateLimits' }
     const agentAwakeService = { marker: 'agentAwakeService' }
     const onBeforeRelaunch = vi.fn()
@@ -405,6 +406,7 @@ describe('registerCoreHandlers', () => {
       openCodeUsage as never,
       codexAccounts as never,
       claudeAccounts as never,
+      grokAccounts as never,
       rateLimits as never,
       null,
       undefined,
@@ -522,6 +524,7 @@ describe('registerCoreHandlers', () => {
     const openCodeUsage2 = { marker: 'openCodeUsage2' }
     const codexAccounts2 = { marker: 'codexAccounts2' }
     const claudeAccounts2 = { marker: 'claudeAccounts2' }
+    const grokAccounts2 = { marker: 'grokAccounts2' }
     const rateLimits2 = { marker: 'rateLimits2' }
 
     registerCoreHandlers(
@@ -533,6 +536,7 @@ describe('registerCoreHandlers', () => {
       openCodeUsage2 as never,
       codexAccounts2 as never,
       claudeAccounts2 as never,
+      grokAccounts2 as never,
       rateLimits2 as never,
       42
     )

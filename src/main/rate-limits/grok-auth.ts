@@ -1,14 +1,14 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { resolveGrokHomeDir } from '../../shared/grok-session-paths'
+import { resolveGrokHomeDir, type GrokSessionPathEnv } from '../../shared/grok-session-paths'
 
 // Why: when GROK_HOME is set, auth.json must be the same path Grok CLI uses.
-export function getGrokHome(): string {
-  return resolveGrokHomeDir()
+export function getGrokHome(env?: GrokSessionPathEnv): string {
+  return resolveGrokHomeDir(env)
 }
 
-export function getGrokAuthPath(): string {
-  return join(getGrokHome(), 'auth.json')
+export function getGrokAuthPath(env?: GrokSessionPathEnv): string {
+  return join(getGrokHome(env), 'auth.json')
 }
 
 export type GrokAuthSession = {
@@ -62,8 +62,8 @@ function parseExpiresAtMs(iso: string | undefined): number | null {
   return Number.isFinite(ms) ? ms : null
 }
 
-export function readGrokAuthSession(): GrokAuthReadResult {
-  const path = getGrokAuthPath()
+export function readGrokAuthSession(env?: GrokSessionPathEnv): GrokAuthReadResult {
+  const path = getGrokAuthPath(env)
   if (!existsSync(path)) {
     return { status: 'missing' }
   }

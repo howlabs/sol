@@ -2329,6 +2329,35 @@ export type ClaudeManagedAccountRuntimeSelection = {
   wsl: Record<string, string | null>
 }
 
+export type GrokManagedAccount = {
+  id: string
+  email: string
+  managedGrokHomePath: string
+  teamId: string | null
+  createdAt: number
+  updatedAt: number
+  lastAuthenticatedAt: number
+}
+
+export type GrokManagedAccountSummary = {
+  id: string
+  email: string
+  teamId: string | null
+  createdAt: number
+  updatedAt: number
+  lastAuthenticatedAt: number
+}
+
+export type GrokRateLimitAccountsState = {
+  accounts: GrokManagedAccountSummary[]
+  activeAccountId: string | null
+}
+
+export type GrokDeviceCodeInfo = {
+  url: string
+  userCode: string
+}
+
 /** All AI coding agents Sol knows how to launch. Used for the agent picker in the new-workspace
  *  flow and for the default-agent setting. Extend this union as new agents are added. */
 export type TuiAgent =
@@ -2679,6 +2708,10 @@ export type GlobalSettings = {
   claudeManagedAccounts: ClaudeManagedAccount[]
   activeClaudeManagedAccountId: string | null
   activeClaudeManagedAccountIdsByRuntime?: ClaudeManagedAccountRuntimeSelection
+  /** Why: Grok CLI uses GROK_HOME to isolate auth.json per managed account,
+   *  mirroring the Claude/Codex managed-account pattern. */
+  grokManagedAccounts: GrokManagedAccount[]
+  activeGrokManagedAccountId: string | null
   /** When true, each worktree gets its own shell history file so ArrowUp
    *  does not surface commands from other worktrees. Defaults to true.
    *  Disable to revert to shared global shell history. */

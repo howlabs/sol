@@ -160,6 +160,8 @@ export class RateLimitService {
   private inactiveClaudeAccountsGeneration = 0
   private lastInactiveCodexFetchAt = 0
   private inactiveCodexAccountsGeneration = 0
+  private grokHomePathResolver: (() => string | null) | null = null
+  private grokFetchGeneration = 0
   private stateListeners = new Set<(state: RateLimitState) => void>()
 
   constructor() {}
@@ -185,6 +187,19 @@ export class RateLimitService {
 
   setClaudeFetchTarget(target?: ClaudeAccountSelectionTarget): void {
     this.claudeFetchTarget = normalizeClaudeAccountSelectionTarget(target)
+  }
+
+  setGrokHomePathResolver(resolver: () => string | null): void {
+    this.grokHomePathResolver = resolver
+  }
+
+  evictGrokCache(): void {
+    this.grokFetchGeneration++
+    this.updateState({
+      ...this.state,
+      grok: this.withFetchingStatus(null, 'grok')
+    })
+    void this.refreshGrok()
   }
 
   setOpenCodeGoConfigResolver(resolver: () => OpenCodeGoRateLimitConfig): void {
@@ -1167,7 +1182,9 @@ export class RateLimitService {
     const geminiCliOAuthEnabled = this.geminiCliOAuthEnabledResolver?.() ?? false
     // Why: probe auth once per cycle and reuse for fetch + durable bar visibility.
     // Grok's sync auth-file probe on fetch cycles instead of every state read.
-    const grokAuthReadResult = readGrokAuthSession()
+    const grokEnv = this.grokHomePathResolver?.() ?? undefined
+    const grokFetchGeneration = this.grokFetchGeneration
+    const grokAuthReadResult = readGrokAuthSession(grokEnv ? { GROK_HOME: grokEnv } : undefined)
     this.grokAuthConfigured = grokAuthReadResult.status === 'ok'
 
     // Detect if configuration changed — if it did, we must discard any stale
@@ -1211,7 +1228,8 @@ export class RateLimitService {
       : this.getMissingWslCodexHomeResult(codexTarget)
     const grokResultPromise = fetchGrokRateLimits({
       signal,
-      authReadResult: grokAuthReadResult
+      authReadResult: grokAuthReadResult,
+      env: grokEnv ? { GROK_HOME: grokEnv } : undefined
     }).then(
       (value) => ({ status: 'fulfilled', value }) as const,
       (reason) => ({ status: 'rejected', reason }) as const
@@ -1378,6 +1396,11 @@ export class RateLimitService {
     if (signal.aborted) {
       return
     }
+    // Why: if the active Grok account changed mid-fetch, discard the stale
+    // result — it belongs to a different GROK_HOME than the current one.
+    if (grokFetchGeneration !== this.grokFetchGeneration) {
+      return
+    }
     const grok =
       grokResult.status === 'fulfilled'
         ? grokResult.value
@@ -1515,7 +1538,9 @@ export class RateLimitService {
       return
     }
     const previousState = this.state
-    const grokAuthReadResult = readGrokAuthSession()
+    const grokEnv = this.grokHomePathResolver?.() ?? undefined
+    const grokFetchGeneration = this.grokFetchGeneration
+    const grokAuthReadResult = readGrokAuthSession(grokEnv ? { GROK_HOME: grokEnv } : undefined)
     this.grokAuthConfigured = grokAuthReadResult.status === 'ok'
 
     this.updateState({
@@ -1525,7 +1550,8 @@ export class RateLimitService {
 
     const grok = await fetchGrokRateLimits({
       signal,
-      authReadResult: grokAuthReadResult
+      authReadResult: grokAuthReadResult,
+      env: grokEnv ? { GROK_HOME: grokEnv } : undefined
     }).catch(
       (err): ProviderRateLimits => ({
         provider: 'grok',
@@ -1538,6 +1564,11 @@ export class RateLimitService {
     )
 
     if (signal.aborted) {
+      return
+    }
+    // Why: if the active Grok account changed mid-fetch, discard the stale
+    // result — it belongs to a different GROK_HOME than the current one.
+    if (grokFetchGeneration !== this.grokFetchGeneration) {
       return
     }
 
