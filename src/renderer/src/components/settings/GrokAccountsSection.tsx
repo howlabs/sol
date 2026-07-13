@@ -8,6 +8,11 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import type { GrokAccountStatus } from '../../../../shared/rate-limit-types'
 import type { GrokRateLimitAccountsState, GrokDeviceCodeInfo } from '../../../../shared/types'
+import {
+  ProviderAccountEmptyState,
+  ProviderAccountList,
+  ProviderSectionHeader
+} from './provider-account-list'
 import { SearchableSetting } from './SearchableSetting'
 import { GrokAccountRow } from './grok-account-row'
 const GROK_CLI_DOCS_URL = 'https://docs.x.ai/build/overview'
@@ -154,66 +159,72 @@ export function GrokAccountsSection(): React.JSX.Element {
   const hasManagedAccounts = accounts.length > 0
 
   return (
-    <section id="accounts-grok" className="space-y-4 scroll-mt-6">
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1">
-          <h3 className="flex items-center gap-2 text-sm font-semibold">
-            <AgentIcon agent="grok" size={16} />
-            {translate('auto.components.settings.GrokAccountsSection.a1b2c3d4e5', 'Grok (xAI)')}
-          </h3>
-          <p className="text-xs text-muted-foreground">
-            {translate(
-              'auto.components.settings.GrokAccountsSection.f6e5d4c3b2',
-              'Manage Grok CLI sign-in accounts. Each account uses an isolated GROK_HOME for credentials.'
-            )}
-          </p>
-        </div>
-        <a
-          href={GROK_CLI_DOCS_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-        >
-          {translate('auto.components.settings.GrokAccountsSection.0d8e77bc40', 'Grok CLI docs')}
-          <ExternalLink className="size-3" />
-        </a>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => void handleAddAccount()}
-          disabled={action !== 'idle'}
-          className="gap-1.5"
-        >
-          {action === 'adding' ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <Plus className="size-3.5" />
-          )}
-          {translate('auto.components.settings.GrokAccountsSection.addBtn', 'Add account')}
-        </Button>
-        {action === 'adding' ? (
-          <Button variant="ghost" size="sm" onClick={() => void handleCancelLogin()}>
-            {translate('auto.components.settings.GrokAccountsSection.cancelBtn', 'Cancel')}
-          </Button>
-        ) : null}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => void handleRefreshUsage()}
-          disabled={refreshing || action !== 'idle'}
-          className="gap-1.5"
-        >
-          {refreshing ? (
-            <Loader2 className="size-3.5 animate-spin" />
-          ) : (
-            <RefreshCw className="size-3.5" />
-          )}
-          {translate('auto.components.settings.GrokAccountsSection.3325d996cb', 'Refresh usage')}
-        </Button>
-      </div>
+    <SearchableSetting
+      id="accounts-grok"
+      title={translate('auto.components.settings.GrokAccountsSection.a1b2c3d4e5', 'Grok (xAI)')}
+      description={translate(
+        'auto.components.settings.GrokAccountsSection.f6e5d4c3b2',
+        'Manage Grok CLI sign-in accounts. Each account uses an isolated GROK_HOME for credentials.'
+      )}
+      keywords={['grok', 'xai', 'usage', 'credits', 'oauth', 'account', 'signin', 'login']}
+      className="space-y-1.5"
+    >
+      <ProviderSectionHeader
+        icon={<AgentIcon agent="grok" size={14} />}
+        title={translate('auto.components.settings.GrokAccountsSection.a1b2c3d4e5', 'Grok')}
+        description={translate(
+          'auto.components.settings.GrokAccountsSection.f6e5d4c3b2',
+          'Manage Grok CLI sign-in accounts. Each account uses an isolated GROK_HOME for credentials.'
+        )}
+        action={
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="xs"
+              asChild
+              className="h-6 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
+            >
+              <a href={GROK_CLI_DOCS_URL} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="size-3" />
+                {translate('auto.components.settings.GrokAccountsSection.0d8e77bc40', 'Docs')}
+              </a>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void handleAddAccount()}
+              disabled={action !== 'idle'}
+              className="gap-1.5"
+            >
+              {action === 'adding' ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Plus className="size-3.5" />
+              )}
+              {translate('auto.components.settings.GrokAccountsSection.addBtn', 'Add')}
+            </Button>
+            {action === 'adding' ? (
+              <Button variant="ghost" size="sm" onClick={() => void handleCancelLogin()}>
+                {translate('auto.components.settings.GrokAccountsSection.cancelBtn', 'Cancel')}
+              </Button>
+            ) : null}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void handleRefreshUsage()}
+              disabled={refreshing || action !== 'idle'}
+              className="gap-1.5"
+            >
+              {refreshing ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <RefreshCw className="size-3.5" />
+              )}
+              {translate('auto.components.settings.GrokAccountsSection.3325d996cb', 'Refresh')}
+            </Button>
+          </div>
+        }
+      />
 
       {deviceCode ? (
         <div className="rounded-lg border border-border/60 bg-muted/20 p-3 space-y-2">
@@ -246,9 +257,9 @@ export function GrokAccountsSection(): React.JSX.Element {
 
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
 
-      {hasManagedAccounts ? (
-        <div className="space-y-1.5">
-          {accounts.map((account) => (
+      <ProviderAccountList>
+        {hasManagedAccounts ? (
+          accounts.map((account) => (
             <GrokAccountRow
               key={account.id}
               account={account}
@@ -258,67 +269,67 @@ export function GrokAccountsSection(): React.JSX.Element {
               onRemove={() => void handleRemoveAccount(account.id)}
               onReauthenticate={() => void handleReauthenticate(account.id)}
             />
-          ))}
-        </div>
-      ) : (
-        <div
-          className={cn(
-            'flex items-start gap-3 rounded-lg border bg-muted/20 p-3',
-            signedIn && tokenFresh ? 'border-border/60' : 'border-border/40'
-          )}
-        >
-          <ShieldCheck
-            className={cn(
-              'mt-0.5 size-4 shrink-0',
-              signedIn && tokenFresh ? 'text-foreground' : 'text-muted-foreground'
-            )}
-          />
-          <div className="min-w-0 flex-1 space-y-1">
-            {loading ? (
-              <p className="text-xs text-muted-foreground">
-                {translate('auto.components.settings.GrokAccountsSection.ad47a33f72', 'Loading…')}
-              </p>
-            ) : signedIn ? (
-              <>
-                <p className="truncate text-xs font-medium">
-                  {status?.email ??
-                    translate(
-                      'auto.components.settings.GrokAccountsSection.b2c3d4e5f6',
-                      'Signed in'
+          ))
+        ) : (
+          <ProviderAccountEmptyState>
+            <div className="flex items-start gap-3">
+              <ShieldCheck
+                className={cn(
+                  'mt-0.5 size-4 shrink-0',
+                  signedIn && tokenFresh ? 'text-foreground' : 'text-muted-foreground'
+                )}
+              />
+              <div className="min-w-0 flex-1 space-y-1">
+                {loading ? (
+                  <p className="text-xs text-muted-foreground">
+                    {translate(
+                      'auto.components.settings.GrokAccountsSection.ad47a33f72',
+                      'Loading…'
                     )}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {tokenFresh
-                    ? translate(
-                        'auto.components.settings.GrokAccountsSection.c3d4e5f6a7',
-                        'Signed in via default ~/.grok. Add an account above to manage multiple sign-ins.'
-                      )
-                    : translate(
-                        'auto.components.settings.GrokAccountsSection.d4e5f6a7b8',
-                        'Session expired — run grok login in a terminal to refresh.'
+                  </p>
+                ) : signedIn ? (
+                  <>
+                    <p className="truncate text-xs font-medium">
+                      {status?.email ??
+                        translate(
+                          'auto.components.settings.GrokAccountsSection.b2c3d4e5f6',
+                          'Signed in'
+                        )}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {tokenFresh
+                        ? translate(
+                            'auto.components.settings.GrokAccountsSection.c3d4e5f6a7',
+                            'Signed in via default ~/.grok. Add an account above to manage multiple sign-ins.'
+                          )
+                        : translate(
+                            'auto.components.settings.GrokAccountsSection.d4e5f6a7b8',
+                            'Session expired — run grok login in a terminal to refresh.'
+                          )}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs font-medium">
+                      {translate(
+                        'auto.components.settings.GrokAccountsSection.e5f6a7b8c9',
+                        'Not signed in to Grok CLI'
                       )}
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="text-xs font-medium">
-                  {translate(
-                    'auto.components.settings.GrokAccountsSection.e5f6a7b8c9',
-                    'Not signed in to Grok CLI'
-                  )}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {translate(
-                    'auto.components.settings.GrokAccountsSection.f6a7b8c9d0',
-                    'Click "Add account" to sign in via device code, or run grok login in a terminal.'
-                  )}
-                </p>
-              </>
-            )}
-            {status?.error ? <p className="text-xs text-destructive">{status.error}</p> : null}
-          </div>
-        </div>
-      )}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {translate(
+                        'auto.components.settings.GrokAccountsSection.f6a7b8c9d0',
+                        'Click "Add" to sign in via device code, or run grok login in a terminal.'
+                      )}
+                    </p>
+                  </>
+                )}
+                {status?.error ? <p className="text-xs text-destructive">{status.error}</p> : null}
+              </div>
+            </div>
+          </ProviderAccountEmptyState>
+        )}
+      </ProviderAccountList>
 
       {grokUsage?.weekly ? (
         <SearchableSetting
@@ -353,6 +364,6 @@ export function GrokAccountsSection(): React.JSX.Element {
           </div>
         </SearchableSetting>
       ) : null}
-    </section>
+    </SearchableSetting>
   )
 }
