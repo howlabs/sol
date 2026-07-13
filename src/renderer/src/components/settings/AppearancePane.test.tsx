@@ -102,36 +102,6 @@ import { TooltipProvider } from '../ui/tooltip'
 
 const mountedRoots: Root[] = []
 
-function createGhosttyStub() {
-  return {
-    loading: false,
-    preview: null,
-    error: null,
-    open: vi.fn(),
-    close: vi.fn(),
-    refresh: vi.fn(),
-    apply: vi.fn()
-  }
-}
-
-function createWarpThemesStub() {
-  return {
-    open: false,
-    preview: null,
-    loading: false,
-    desktopOnly: false,
-    applyError: null,
-    importSignal: 0,
-    selectedThemeIds: new Set<string>(),
-    handleClick: vi.fn(),
-    handlePreviewSource: vi.fn(),
-    handleToggleTheme: vi.fn(),
-    handleToggleAll: vi.fn(),
-    handleApply: vi.fn(),
-    handleOpenChange: vi.fn()
-  }
-}
-
 async function renderAppearancePane(
   settings: GlobalSettings,
   updateSettings: (updates: Partial<GlobalSettings>) => void = vi.fn(),
@@ -156,8 +126,6 @@ async function renderAppearancePane(
             terminalFontSuggestions={[]}
             onRequestFontSuggestions={options.onRequestFontSuggestions}
             systemPrefersDark={false}
-            ghostty={createGhosttyStub() as never}
-            warpThemes={createWarpThemesStub() as never}
           />
         </TooltipProvider>
       </I18nextProvider>

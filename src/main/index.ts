@@ -1971,7 +1971,6 @@ app.whenReady().then(async () => {
       return {
         showTasksButton: settings?.showTasksButton !== false,
         showAutomationsButton: settings?.showAutomationsButton !== false,
-        showTitlebarAppName: settings?.showTitlebarAppName !== false,
         statusBarVisible: ui?.statusBarVisible !== false
       }
     },

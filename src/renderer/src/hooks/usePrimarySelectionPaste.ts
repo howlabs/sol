@@ -152,6 +152,10 @@ export function usePrimarySelectionPaste(enabled: boolean): void {
     }
 
     const onMouseUp = (event: MouseEvent): void => {
+      // Why: selection may have changed via mouse drag; capture before paste
+      // logic so the buffer is current. Merged with the paste handler to avoid
+      // a second capture-phase mouseup listener on every mouse release.
+      scheduleCapture()
       if (event.button !== 1 || !pendingMiddleTarget || Date.now() > pendingMiddleUntil) {
         pendingMiddleTarget = null
         return
@@ -186,8 +190,6 @@ export function usePrimarySelectionPaste(enabled: boolean): void {
     }
 
     document.addEventListener('selectionchange', scheduleCapture)
-    document.addEventListener('mouseup', scheduleCapture, true)
-    document.addEventListener('keyup', scheduleCapture, true)
     document.addEventListener('mousedown', onMouseDown, true)
     document.addEventListener('beforeinput', suppressPendingPasteInput, true)
     document.addEventListener('paste', suppressPendingPasteInput, true)
@@ -200,8 +202,6 @@ export function usePrimarySelectionPaste(enabled: boolean): void {
         window.clearTimeout(captureTimer)
       }
       document.removeEventListener('selectionchange', scheduleCapture)
-      document.removeEventListener('mouseup', scheduleCapture, true)
-      document.removeEventListener('keyup', scheduleCapture, true)
       document.removeEventListener('mousedown', onMouseDown, true)
       document.removeEventListener('beforeinput', suppressPendingPasteInput, true)
       document.removeEventListener('paste', suppressPendingPasteInput, true)

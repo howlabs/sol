@@ -1,7 +1,6 @@
 import { useState, type Dispatch, type ReactNode, type SetStateAction } from 'react'
 import type { GlobalSettings } from '../../../../shared/types'
 import {
-  ColorField,
   SettingsRow,
   SettingsSegmentedControl,
   SettingsSwitchRow,
@@ -9,13 +8,7 @@ import {
   ThemePicker
 } from './SettingsFormControls'
 import { SearchableSetting } from './SearchableSetting'
-import { TerminalSettingsPreview } from './TerminalSettingsPreview'
-import { WarpThemeImportButton } from './WarpThemeImportButton'
-import { YamlThemeImportButton } from './YamlThemeImportButton'
-import type { UseWarpThemeImportReturn } from './useWarpThemeImport'
 import {
-  DEFAULT_TERMINAL_THEME_DARK,
-  DEFAULT_TERMINAL_THEME_LIGHT,
   getAvailableTerminalThemeOptions,
   resolveEffectiveTerminalAppearance
 } from '@/lib/terminal-theme'
@@ -24,21 +17,6 @@ import { cn } from '@/lib/utils'
 
 type TerminalThemeTarget = 'dark' | 'light'
 
-let lastEditedTerminalThemeTarget: TerminalThemeTarget | null = null
-
-function rememberTerminalThemeTarget(target: TerminalThemeTarget): void {
-  lastEditedTerminalThemeTarget = target
-}
-
-export function resetTerminalThemeTargetMemoryForTests(): void {
-  lastEditedTerminalThemeTarget = null
-}
-
-function isCustomizedTheme(themeName: string, defaultThemeName: string): boolean {
-  const trimmed = themeName.trim()
-  return trimmed.length > 0 && trimmed !== defaultThemeName
-}
-
 function getInitialTerminalThemeTarget(
   settings: GlobalSettings,
   systemPrefersDark: boolean,
@@ -46,17 +24,6 @@ function getInitialTerminalThemeTarget(
 ): TerminalThemeTarget {
   if (preferredTarget) {
     return preferredTarget
-  }
-  if (lastEditedTerminalThemeTarget) {
-    return lastEditedTerminalThemeTarget
-  }
-  const customizedDark = isCustomizedTheme(settings.terminalThemeDark, DEFAULT_TERMINAL_THEME_DARK)
-  const customizedLight = isCustomizedTheme(
-    settings.terminalThemeLight,
-    DEFAULT_TERMINAL_THEME_LIGHT
-  )
-  if (customizedDark !== customizedLight) {
-    return customizedDark ? 'dark' : 'light'
   }
   // Why: the picker edits mode-specific slots. Defaulting to the active
   // terminal mode makes the selected theme apply immediately in system-light.
@@ -70,9 +37,6 @@ type TerminalThemeCatalogSectionProps = {
   setThemeSearch: Dispatch<SetStateAction<string>>
   updateSettings: (updates: Partial<GlobalSettings>) => void
   previewFontFamily: string | null
-  importedHighlightSignal: number
-  warpThemes: UseWarpThemeImportReturn
-  showThemeImport: boolean
   preferredTarget?: TerminalThemeTarget
   advancedContent?: ReactNode
 }
@@ -83,10 +47,7 @@ export function TerminalThemeCatalogSection({
   themeSearch,
   setThemeSearch,
   updateSettings,
-  previewFontFamily,
-  importedHighlightSignal,
-  warpThemes,
-  showThemeImport,
+  previewFontFamily: _previewFontFamily,
   preferredTarget,
   advancedContent
 }: TerminalThemeCatalogSectionProps): React.JSX.Element {
@@ -94,7 +55,6 @@ export function TerminalThemeCatalogSection({
     getInitialTerminalThemeTarget(settings, systemPrefersDark, preferredTarget)
   )
   const setTarget = (nextTarget: TerminalThemeTarget): void => {
-    rememberTerminalThemeTarget(nextTarget)
     setTargetState(nextTarget)
   }
   const themeOptions = getAvailableTerminalThemeOptions(settings)
@@ -115,18 +75,6 @@ export function TerminalThemeCatalogSection({
         'auto.components.settings.TerminalThemeSections.7add204bd5',
         'Choose the terminal theme used in dark mode.'
       )
-  const dividerTitle = isLightTarget
-    ? translate('auto.components.settings.TerminalThemeSections.ec2e33ad80', 'Light Divider Color')
-    : translate('auto.components.settings.TerminalThemeSections.b739d2abfe', 'Dark Divider Color')
-  const dividerDescription = isLightTarget
-    ? translate(
-        'auto.components.settings.TerminalThemeSections.5e0c24b5c8',
-        'Controls the split divider line between panes in light mode.'
-      )
-    : translate(
-        'auto.components.settings.TerminalThemeSections.cbe56a0f79',
-        'Controls the split divider line between panes in dark mode.'
-      )
 
   return (
     <section className="space-y-1.5">
@@ -136,14 +84,6 @@ export function TerminalThemeCatalogSection({
           'auto.components.settings.TerminalThemeSections.catalog_title',
           'Terminal Themes'
         )}
-        action={
-          showThemeImport ? (
-            <div className="flex flex-wrap items-center justify-end gap-2">
-              <WarpThemeImportButton warpThemes={warpThemes} />
-              <YamlThemeImportButton warpThemes={warpThemes} />
-            </div>
-          ) : null
-        }
       />
 
       <div className="ml-3 grid gap-2">
@@ -252,37 +192,10 @@ export function TerminalThemeCatalogSection({
                   query={themeSearch}
                   onQueryChange={setThemeSearch}
                   onSelectTheme={(theme) => {
-                    rememberTerminalThemeTarget(target)
                     updateSettings(
                       isLightTarget ? { terminalThemeLight: theme } : { terminalThemeDark: theme }
                     )
                   }}
-                  importedHighlightSignal={importedHighlightSignal}
-                />
-              </SearchableSetting>
-
-              <SearchableSetting
-                title={dividerTitle}
-                description={dividerDescription}
-                keywords={['terminal', 'divider', 'dark', 'light', 'color']}
-                forceVisible
-              >
-                <ColorField
-                  label={dividerTitle}
-                  description={dividerDescription}
-                  value={
-                    isLightTarget
-                      ? settings.terminalDividerColorLight
-                      : settings.terminalDividerColorDark
-                  }
-                  fallback={isLightTarget ? '#d4d4d8' : '#3f3f46'}
-                  onChange={(value) =>
-                    updateSettings(
-                      isLightTarget
-                        ? { terminalDividerColorLight: value }
-                        : { terminalDividerColorDark: value }
-                    )
-                  }
                 />
               </SearchableSetting>
             </div>
@@ -290,35 +203,6 @@ export function TerminalThemeCatalogSection({
         </div>
 
         {advancedContent ? <div className="-mt-4">{advancedContent}</div> : null}
-
-        <TerminalSettingsPreview
-          title={
-            isLightTarget
-              ? translate(
-                  'auto.components.settings.TerminalThemeSections.db210115c5',
-                  'Light Mode Preview'
-                )
-              : translate(
-                  'auto.components.settings.TerminalThemeSections.bc8e8a251a',
-                  'Dark Mode Preview'
-                )
-          }
-          description={
-            isLightTarget
-              ? translate(
-                  'auto.components.settings.TerminalThemeSections.light_preview_description',
-                  'Shows the effective light terminal appearance.'
-                )
-              : translate(
-                  'auto.components.settings.TerminalThemeSections.dark_preview_description',
-                  'Shows the effective dark terminal appearance.'
-                )
-          }
-          settings={settings}
-          systemPrefersDark={systemPrefersDark}
-          previewFontFamily={previewFontFamily}
-          modeOverride={target}
-        />
       </div>
     </section>
   )

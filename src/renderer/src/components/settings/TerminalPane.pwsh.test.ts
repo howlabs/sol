@@ -130,12 +130,6 @@ vi.mock('./TerminalWindowSection', () => ({
   }
 }))
 
-vi.mock('./GhosttyImportModal', () => ({
-  GhosttyImportModal: function GhosttyImportModal() {
-    return null
-  }
-}))
-
 vi.mock('./ManageSessionsSection', () => ({
   ManageSessionsSection: function ManageSessionsSection() {
     return null

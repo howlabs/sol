@@ -17,20 +17,14 @@ import {
   getLayoutEntries,
   getSidebarEntries,
   getStatusBarEntries,
-  getSystemTrayEntries,
   getThemeEntries,
-  getTitlebarEntries,
   getTypographyEntries,
   getZoomEntries
 } from './appearance-search'
 import { getTerminalAppearanceSearchEntries } from './terminal-search'
 import { TerminalAppearanceSection } from './TerminalAppearanceSection'
-import type { UseGhosttyImportReturn } from './useGhosttyImport'
-import type { UseWarpThemeImportReturn } from './useWarpThemeImport'
 import { AppIconSelector } from './AppIconSelector'
 import { normalizeAppIconId } from '../../../../shared/app-icon'
-import { getRendererAppPlatform } from '@/lib/renderer-app-platform'
-import { isWebClientLocation } from '@/lib/web-client-location'
 import { SHOW_UI_LANGUAGE_SETTING } from '@/i18n/supported-languages'
 import { translate } from '@/i18n/i18n'
 import {
@@ -47,8 +41,6 @@ type AppearancePaneProps = {
   terminalFontSuggestions: string[]
   onRequestFontSuggestions?: () => void
   systemPrefersDark: boolean
-  ghostty: UseGhosttyImportReturn
-  warpThemes: UseWarpThemeImportReturn
 }
 
 type AppearanceSectionKey = 'interface' | 'terminal' | 'window'
@@ -70,16 +62,10 @@ export function AppearancePane({
   fontSuggestions,
   terminalFontSuggestions,
   onRequestFontSuggestions,
-  systemPrefersDark,
-  ghostty,
-  warpThemes
+  systemPrefersDark
 }: AppearancePaneProps): React.JSX.Element {
   const searchQuery = useAppStore((state) => state.settingsSearchQuery)
   const isSearching = normalizeSettingsSearchQuery(searchQuery).length > 0
-  const isWebClient = isWebClientLocation()
-  // Why: the system tray behavior is desktop-Electron Windows-only; a Windows
-  // browser web client has no local tray to control.
-  const isDesktopWindows = getRendererAppPlatform() === 'win32' && !isWebClient
 
   const [manuallyOpenSection, setManuallyOpenSection] = useState<AppearanceSectionKey | null>(
     'interface'
@@ -107,14 +93,9 @@ export function AppearancePane({
     ...getThemeEntries(),
     ...getZoomEntries(),
     ...getTypographyEntries(),
-    ...(SHOW_UI_LANGUAGE_SETTING ? getLanguageEntries() : []),
-    ...getTitlebarEntries(),
-    ...getSystemTrayEntries({ showSystemTray: isDesktopWindows })
+    ...(SHOW_UI_LANGUAGE_SETTING ? getLanguageEntries() : [])
   ]
-  const terminalSearchEntries = [
-    { title: terminalTitle },
-    ...getTerminalAppearanceSearchEntries({ showWarpImport: !isWebClient })
-  ]
+  const terminalSearchEntries = [{ title: terminalTitle }, ...getTerminalAppearanceSearchEntries()]
   const windowSearchEntries = [
     {
       title: windowSidebarTitle,
@@ -182,7 +163,6 @@ export function AppearancePane({
             applyTheme={applyTheme}
             fontSuggestions={fontSuggestions}
             onRequestFontSuggestions={onRequestFontSuggestions}
-            isDesktopWindows={isDesktopWindows}
             forceVisiblePrimary={interfaceLabelMatches}
           />
         </AppearanceSection>
@@ -209,8 +189,6 @@ export function AppearancePane({
             systemPrefersDark={systemPrefersDark}
             terminalFontSuggestions={terminalFontSuggestions}
             onRequestFontSuggestions={onRequestFontSuggestions}
-            ghostty={ghostty}
-            warpThemes={warpThemes}
             forceVisiblePrimary={terminalLabelMatches}
           />
         </AppearanceSection>

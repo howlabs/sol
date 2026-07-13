@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { GlobalSettings } from '../../../../shared/types'
-import type { UseWarpThemeImportReturn } from './useWarpThemeImport'
 
 let themeTarget: 'dark' | 'light' | undefined = 'dark'
 
@@ -20,38 +19,11 @@ vi.mock('react', async () => {
   }
 })
 
-vi.mock('./TerminalSettingsPreview', () => ({
-  TerminalSettingsPreview: function TerminalSettingsPreview() {
-    return null
-  }
-}))
-
-import {
-  resetTerminalThemeTargetMemoryForTests,
-  TerminalThemeCatalogSection
-} from './TerminalThemeSections'
+import { TerminalThemeCatalogSection } from './TerminalThemeSections'
 
 type ReactElementLike = {
   type: unknown
   props?: Record<string, unknown>
-}
-
-const warpThemesMock: UseWarpThemeImportReturn = {
-  open: false,
-  mode: 'warp',
-  preview: null,
-  loading: false,
-  desktopOnly: false,
-  applyError: null,
-  importSignal: 0,
-  selectedThemeIds: new Set<string>(),
-  handleClick: vi.fn(),
-  handleImportYamlClick: vi.fn(),
-  handlePreviewSource: vi.fn(),
-  handleToggleTheme: vi.fn(),
-  handleToggleAll: vi.fn(),
-  handleApply: vi.fn(),
-  handleOpenChange: vi.fn()
 }
 
 function makeSettings(overrides: Partial<GlobalSettings> = {}): GlobalSettings {
@@ -82,9 +54,6 @@ function renderCatalog(
     setThemeSearch: () => {},
     updateSettings,
     previewFontFamily: null,
-    importedHighlightSignal: 7,
-    warpThemes: warpThemesMock,
-    showThemeImport: true,
     preferredTarget
   })
 }
@@ -154,39 +123,16 @@ function findElementByClassSubstring(
   return findElementByClassSubstring(element.props?.children, classNameSubstring)
 }
 
-function findButtonTexts(node: unknown): string[] {
-  if (node == null || typeof node === 'string' || typeof node === 'number') {
-    return []
-  }
-  if (Array.isArray(node)) {
-    return node.flatMap(findButtonTexts)
-  }
-  const element = node as ReactElementLike
-  const typeName = getTypeName(element)
-  if (typeName === 'WarpThemeImportButton') {
-    return ['Import from Warp']
-  }
-  if (typeName === 'YamlThemeImportButton') {
-    return ['Import from YAML']
-  }
-  return [...findButtonTexts(element.props?.children), ...findButtonTexts(element.props?.action)]
-}
-
 describe('TerminalThemeCatalogSection', () => {
   beforeEach(() => {
     themeTarget = 'dark'
-    resetTerminalThemeTargetMemoryForTests()
     vi.clearAllMocks()
   })
 
-  it('renders one theme picker and one preview for the active target', () => {
+  it('renders one theme picker for the active target', () => {
     const element = renderCatalog(makeSettings({ terminalUseSeparateLightTheme: false }), vi.fn())
 
     expect(countElementsByTypeName(element, 'ThemePicker')).toBe(1)
-    expect(countElementsByTypeName(element, 'TerminalSettingsPreview')).toBe(1)
-    expect(findElementByTypeName(element, 'TerminalSettingsPreview')?.props?.modeOverride).toBe(
-      'dark'
-    )
   })
 
   it('opens on the active light theme when the system appearance is light', () => {
@@ -199,71 +145,13 @@ describe('TerminalThemeCatalogSection', () => {
       false
     )
     const picker = findElementByTypeName(element, 'ThemePicker')
-    const preview = findElementByTypeName(element, 'TerminalSettingsPreview')
     const selectTheme = picker?.props?.onSelectTheme as (theme: string) => void
 
     expect(picker?.props?.selectedTheme).toBe('Builtin Tango Light')
-    expect(preview?.props?.modeOverride).toBe('light')
 
     selectTheme('GitHub Light')
 
     expect(updateSettings).toHaveBeenCalledWith({ terminalThemeLight: 'GitHub Light' })
-  })
-
-  it('reopens the manually edited light target while the active appearance is dark', () => {
-    const firstOpen = renderCatalog(
-      makeSettings({ terminalUseSeparateLightTheme: true }),
-      vi.fn(),
-      undefined,
-      undefined,
-      true
-    )
-    const targetControl = findElementByTypeName(firstOpen, 'SettingsSegmentedControl')
-    const selectTarget = targetControl?.props?.onChange as (target: 'dark' | 'light') => void
-
-    selectTarget('light')
-
-    const reopened = renderCatalog(
-      makeSettings({ terminalUseSeparateLightTheme: true }),
-      vi.fn(),
-      undefined,
-      undefined,
-      true
-    )
-    const picker = findElementByTypeName(reopened, 'ThemePicker')
-    const preview = findElementByTypeName(reopened, 'TerminalSettingsPreview')
-
-    expect(picker?.props?.selectedTheme).toBe('Builtin Tango Light')
-    expect(preview?.props?.modeOverride).toBe('light')
-  })
-
-  it('opens a customized light-only theme after reload even when the active appearance is dark', () => {
-    const element = renderCatalog(
-      makeSettings({
-        terminalUseSeparateLightTheme: true,
-        terminalThemeLight: 'GitHub Light'
-      }),
-      vi.fn(),
-      undefined,
-      undefined,
-      true
-    )
-    const picker = findElementByTypeName(element, 'ThemePicker')
-    const preview = findElementByTypeName(element, 'TerminalSettingsPreview')
-
-    expect(picker?.props?.selectedTheme).toBe('GitHub Light')
-    expect(preview?.props?.modeOverride).toBe('light')
-  })
-
-  it('keeps the light target enabled while separate light theme is disabled', () => {
-    const element = renderCatalog(makeSettings({ terminalUseSeparateLightTheme: false }), vi.fn())
-    const targetControl = findElementByTypeName(element, 'SettingsSegmentedControl')
-    const options = targetControl?.props?.options as readonly {
-      value: string
-      disabled?: boolean
-    }[]
-
-    expect(options.find((option) => option.value === 'light')?.disabled).toBeUndefined()
   })
 
   it('uses the preferred target when opened from a light-specific search', () => {
@@ -274,10 +162,8 @@ describe('TerminalThemeCatalogSection', () => {
       'light'
     )
     const picker = findElementByTypeName(element, 'ThemePicker')
-    const preview = findElementByTypeName(element, 'TerminalSettingsPreview')
 
     expect(picker?.props?.selectedTheme).toBe('Builtin Tango Light')
-    expect(preview?.props?.modeOverride).toBe('light')
   })
 
   it('updates the dark theme from the catalog when the dark target is active', () => {
@@ -350,7 +236,6 @@ describe('TerminalThemeCatalogSection', () => {
       vi.fn(),
       'light'
     )
-    const preview = findElementByTypeName(element, 'TerminalSettingsPreview')
     const matchDarkModeSwitch = findElementByTypeName(element, 'SettingsSwitchRow')
     const transitionRegion = findElementByClassSubstring(
       element,
@@ -363,7 +248,6 @@ describe('TerminalThemeCatalogSection', () => {
     expect(transitionRegion?.props?.inert).toBe(true)
     expect(countElementsByTypeName(element, 'ThemePicker')).toBe(1)
     expect(countElementsByTypeName(element, 'ColorField')).toBe(1)
-    expect(preview?.props?.modeOverride).toBe('light')
   })
 
   it('uses the active target for divider color updates', () => {
@@ -394,14 +278,6 @@ describe('TerminalThemeCatalogSection', () => {
     const element = renderCatalog()
     const picker = findElementByTypeName(element, 'ThemePicker')
 
-    expect(picker?.props?.importedHighlightSignal).toBe(7)
-  })
-})
-
-describe('Terminal theme imports', () => {
-  it('renders the Warp and YAML import buttons inside the combined theme catalog', () => {
-    const buttonTexts = findButtonTexts(renderCatalog())
-
-    expect(buttonTexts).toEqual(['Import from Warp', 'Import from YAML'])
+    expect(picker?.props?.importedHighlightSignal).toBeUndefined()
   })
 })

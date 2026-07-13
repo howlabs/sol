@@ -1,13 +1,11 @@
 import type { GlobalSettings } from '../../../../shared/types'
 import {
-  NumberField,
   SettingsRow,
   SettingsSegmentedControl,
   SettingsSubsectionHeader,
   SettingsSwitchRow
 } from './SettingsFormControls'
 import { SearchableSetting } from './SearchableSetting'
-import { clampNumber } from '@/lib/terminal-theme'
 import { translate } from '@/i18n/i18n'
 
 type TerminalCursorAppearanceSectionProps = {
@@ -100,37 +98,6 @@ export function TerminalCursorAppearanceSection({
             )}
             checked={settings.terminalCursorBlink}
             onChange={() => updateSettings({ terminalCursorBlink: !settings.terminalCursorBlink })}
-          />
-        </SearchableSetting>
-
-        <SearchableSetting
-          title={translate(
-            'auto.components.settings.TerminalAppearanceSection.b9f1804422',
-            'Cursor Opacity'
-          )}
-          description={translate(
-            'auto.components.settings.TerminalAppearanceSection.04cdf85dec',
-            'Opacity of the terminal cursor.'
-          )}
-          keywords={['terminal', 'cursor', 'opacity', 'transparency']}
-        >
-          <NumberField
-            label={translate(
-              'auto.components.settings.TerminalAppearanceSection.b9f1804422',
-              'Cursor Opacity'
-            )}
-            description=""
-            value={settings.terminalCursorOpacity ?? 1}
-            defaultValue={1}
-            min={0}
-            max={1}
-            step={0.05}
-            suffix="0-1"
-            onChange={(value) =>
-              updateSettings({
-                terminalCursorOpacity: clampNumber(value, 0, 1)
-              })
-            }
           />
         </SearchableSetting>
       </div>

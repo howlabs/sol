@@ -5,8 +5,6 @@ const {
   applyElectronProxySettingsMock,
   browserWindowGetAllWindowsMock,
   handleMock,
-  previewGhosttyImportMock,
-  previewWarpThemeImportMock,
   prepareLocalWorktreeRootsForReposMock,
   rebuildAppMenuMock
 } = vi.hoisted(() => ({
@@ -14,8 +12,6 @@ const {
   applyElectronProxySettingsMock: vi.fn(),
   browserWindowGetAllWindowsMock: vi.fn(),
   handleMock: vi.fn(),
-  previewGhosttyImportMock: vi.fn(),
-  previewWarpThemeImportMock: vi.fn(),
   prepareLocalWorktreeRootsForReposMock: vi.fn(),
   rebuildAppMenuMock: vi.fn()
 }))
@@ -24,14 +20,6 @@ vi.mock('electron', () => ({
   BrowserWindow: { getAllWindows: browserWindowGetAllWindowsMock },
   ipcMain: { handle: handleMock },
   nativeTheme: { themeSource: 'system' }
-}))
-
-vi.mock('../ghostty/index', () => ({
-  previewGhosttyImport: previewGhosttyImportMock
-}))
-
-vi.mock('../warp-themes', () => ({
-  previewWarpThemeImport: previewWarpThemeImportMock
 }))
 
 vi.mock('../network/proxy-settings', () => ({
@@ -73,79 +61,12 @@ describe('registerSettingsHandlers', () => {
     applyAppIconMock.mockClear()
     applyElectronProxySettingsMock.mockClear()
     applyElectronProxySettingsMock.mockResolvedValue({ source: 'settings' })
-    previewGhosttyImportMock.mockClear()
-    previewWarpThemeImportMock.mockClear()
     prepareLocalWorktreeRootsForReposMock.mockReset().mockResolvedValue(undefined)
     rebuildAppMenuMock.mockClear()
     browserWindowGetAllWindowsMock.mockReset()
     store.getSettings.mockReset()
     store.updateSettings.mockReset()
     store.onSettingsChanged.mockClear()
-  })
-
-  it('registers settings:previewGhosttyImport handler', () => {
-    registerSettingsHandlers(store as never)
-    const channels = handleMock.mock.calls.map((call) => call[0])
-    expect(channels).toContain('settings:previewGhosttyImport')
-  })
-
-  it('registers settings:previewWarpThemeImport handler', () => {
-    registerSettingsHandlers(store as never)
-    const channels = handleMock.mock.calls.map((call) => call[0])
-    expect(channels).toContain('settings:previewWarpThemeImport')
-  })
-
-  it('settings:previewGhosttyImport returns preview result', async () => {
-    const expected = { found: false, diff: {}, unsupportedKeys: [] }
-    previewGhosttyImportMock.mockResolvedValue(expected)
-    registerSettingsHandlers(store as never)
-
-    const handler = handleMock.mock.calls.find(
-      (call) => call[0] === 'settings:previewGhosttyImport'
-    )?.[1] as (_event: unknown, args: unknown) => Promise<unknown>
-
-    const result = await handler!(null, {})
-    expect(result).toEqual(expected)
-    expect(previewGhosttyImportMock).toHaveBeenCalledWith(store)
-  })
-
-  it('settings:previewWarpThemeImport returns preview result', async () => {
-    const expected = { found: false, themes: [], skippedFiles: [] }
-    previewWarpThemeImportMock.mockResolvedValue(expected)
-    registerSettingsHandlers(store as never)
-
-    const handler = handleMock.mock.calls.find(
-      (call) => call[0] === 'settings:previewWarpThemeImport'
-    )?.[1] as (event: { sender: unknown }, args: { kind: 'auto' }) => Promise<unknown>
-
-    const sender = { id: 3 }
-    const result = await handler!({ sender }, { kind: 'auto' })
-    expect(result).toEqual(expected)
-    expect(previewWarpThemeImportMock).toHaveBeenCalledWith(store, { kind: 'auto' }, sender)
-  })
-
-  it('settings:previewWarpThemeImport forwards malformed sources for main validation', async () => {
-    const expected = {
-      found: false,
-      themes: [],
-      skippedFiles: [],
-      error: 'Invalid Warp theme import source.'
-    }
-    previewWarpThemeImportMock.mockResolvedValue(expected)
-    registerSettingsHandlers(store as never)
-
-    const handler = handleMock.mock.calls.find(
-      (call) => call[0] === 'settings:previewWarpThemeImport'
-    )?.[1] as (event: { sender: unknown }, args: unknown) => Promise<unknown>
-
-    const invalidSource = { kind: 'unknown' }
-    const sender = { id: 3 }
-    const result = await handler!({ sender }, invalidSource)
-    expect(result).toEqual(expected)
-    expect(previewWarpThemeImportMock).toHaveBeenCalledWith(store, invalidSource, sender)
-
-    await handler!({ sender }, null)
-    expect(previewWarpThemeImportMock).toHaveBeenCalledWith(store, null, sender)
   })
 
   it('broadcasts store-level settings changes to open windows', () => {
@@ -288,24 +209,6 @@ describe('registerSettingsHandlers', () => {
     )
   })
 
-  it('normalizes terminal line height updates before persistence', async () => {
-    store.getSettings.mockReturnValue({ terminalLineHeight: 1 })
-    store.updateSettings.mockReturnValue({ terminalLineHeight: 1 })
-    registerSettingsHandlers(store as never)
-
-    const handler = handleMock.mock.calls.find((call) => call[0] === 'settings:set')?.[1] as (
-      _event: unknown,
-      args: unknown
-    ) => Promise<unknown>
-
-    await handler(settingsInvokeEvent, { terminalLineHeight: 0.85 })
-
-    expect(store.updateSettings).toHaveBeenCalledWith(
-      { terminalLineHeight: 1 },
-      { notifyListeners: true, originWebContentsId: 1 }
-    )
-  })
-
   it('normalizes custom terminal themes from renderer settings IPC', async () => {
     store.getSettings.mockReturnValue({ terminalCustomThemes: [] })
     store.updateSettings.mockReturnValue({ terminalCustomThemes: [] })
@@ -319,9 +222,9 @@ describe('registerSettingsHandlers', () => {
     await handler(settingsInvokeEvent, {
       terminalCustomThemes: [
         {
-          id: 'warp:Test Theme',
+          id: 'manual:Test Theme',
           name: 'Test Theme',
-          source: 'warp',
+          source: 'manual',
           mode: 'dark',
           terminal: {
             background: '000',
@@ -329,7 +232,7 @@ describe('registerSettingsHandlers', () => {
             black: '123',
             red: 'nope'
           },
-          sourcePath: '/Users/alice/.warp/themes/test.yaml'
+          sourcePath: '/Users/alice/themes/test.json'
         }
       ]
     })
@@ -338,7 +241,7 @@ describe('registerSettingsHandlers', () => {
       {
         terminalCustomThemes: [
           expect.objectContaining({
-            id: 'warp:test-theme',
+            id: 'manual:test-theme',
             terminal: {
               background: '#000000',
               foreground: '#ffffff',

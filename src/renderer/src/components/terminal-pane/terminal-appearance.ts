@@ -2,9 +2,6 @@ import type { IDisposable, IParser, ITheme } from '@xterm/xterm'
 import type { PaneManager } from '@/lib/pane-manager/pane-manager'
 import type { GlobalSettings } from '../../../../shared/types'
 import { mode2031SequenceFor } from '../../../../shared/terminal-color-scheme-protocol'
-import { resolveTerminalFontWeights } from '../../../../shared/terminal-fonts'
-import { resolveTerminalLigaturesEnabled } from '../../../../shared/terminal-ligatures'
-import { normalizeTerminalLineHeight } from '../../../../shared/terminal-line-height-settings'
 import {
   getBuiltinTheme,
   resolvePaneStyleOptions,
@@ -12,11 +9,7 @@ import {
 } from '@/lib/terminal-theme'
 import { buildFontFamily } from './layout-serialization'
 import { captureScrollState, restoreScrollState, safeFit } from '@/lib/pane-manager/pane-tree-ops'
-import {
-  normalizeTerminalFastScrollSensitivity,
-  normalizeTerminalScrollSensitivity,
-  resolveTerminalCursorInactiveStyle
-} from '@/lib/pane-manager/pane-terminal-options'
+import { resolveTerminalCursorInactiveStyle } from '@/lib/pane-manager/pane-terminal-options'
 import { getFitOverrideForPty } from '@/lib/pane-manager/mobile-fit-overrides'
 import type { PtyTransport } from './pty-transport'
 import type { EffectiveMacOptionAsAlt } from '@/lib/keyboard-layout/detect-option-as-alt'
@@ -174,11 +167,6 @@ export function composeActiveTerminalTheme(
     scrollbarSliderActiveBackground: 'rgba(180, 180, 185, 0.8)',
     ...baseTheme
   }
-  // Why: merge user-imported Ghostty color overrides on top of the resolved
-  // base theme so individual colors can be tweaked without losing the rest.
-  if (settings.terminalColorOverrides) {
-    theme = { ...theme, ...settings.terminalColorOverrides }
-  }
   // Why: Ghostty's background-opacity controls the terminal's base alpha.
   // Convert the hex background to rgba so xterm honors it when allowTransparency
   // is also set on the Terminal instance.
@@ -186,15 +174,6 @@ export function composeActiveTerminalTheme(
     theme = {
       ...theme,
       background: hexToRgba(theme.background, settings.terminalBackgroundOpacity)
-    }
-  }
-  // Why: Ghostty's cursor-opacity applies alpha to the cursor color. Only
-  // converted when the resolved cursor is a hex value; named CSS colors are
-  // left untouched because hexToRgba expects a hex input.
-  if (settings.terminalCursorOpacity !== undefined && theme.cursor && isHexColor(theme.cursor)) {
-    theme = {
-      ...theme,
-      cursor: hexToRgba(theme.cursor, settings.terminalCursorOpacity)
     }
   }
   return theme
@@ -211,16 +190,10 @@ export function applyTerminalAppearance(
   paneLastThemeMode: Map<number, 'dark' | 'light'>
 ): void {
   const appearance = resolveEffectiveTerminalAppearance(settings, systemPrefersDark)
-  const paneStyles = resolvePaneStyleOptions(settings)
+  const paneStyles = resolvePaneStyleOptions()
   const baseTheme: ITheme | null = appearance.theme ?? getBuiltinTheme(appearance.themeName)
   const theme = composeActiveTerminalTheme(baseTheme, settings)
   const paneBackground = theme?.background ?? '#000000'
-
-  const terminalFontWeights = resolveTerminalFontWeights(settings.terminalFontWeight)
-  const ligaturesEnabled = resolveTerminalLigaturesEnabled(
-    settings.terminalLigatures,
-    settings.terminalFontFamily
-  )
 
   for (const pane of manager.getPanes()) {
     if (theme) {
@@ -238,14 +211,6 @@ export function applyTerminalAppearance(
     const paneSize = paneFontSizes.get(pane.id)
     pane.terminal.options.fontSize = paneSize ?? settings.terminalFontSize
     pane.terminal.options.fontFamily = buildFontFamily(settings.terminalFontFamily)
-    pane.terminal.options.fontWeight = terminalFontWeights.fontWeight
-    pane.terminal.options.fontWeightBold = terminalFontWeights.fontWeightBold
-    pane.terminal.options.scrollSensitivity = normalizeTerminalScrollSensitivity(
-      settings.terminalScrollSensitivity
-    )
-    pane.terminal.options.fastScrollSensitivity = normalizeTerminalFastScrollSensitivity(
-      settings.terminalFastScrollSensitivity
-    )
     // Why: xterm's macOptionIsMeta only flips on the 'true' mode. 'left' and
     // 'right' are handled in the keydown policy (terminal-shortcut-policy),
     // which needs Option to stay composable at the xterm level for the
@@ -253,13 +218,6 @@ export function applyTerminalAppearance(
     // detection behavior; the detection layer simply decides *what* value
     // `effectiveMacOptionAsAlt` carries.
     pane.terminal.options.macOptionIsMeta = effectiveMacOptionAsAlt === 'true'
-    pane.terminal.options.lineHeight = normalizeTerminalLineHeight(settings.terminalLineHeight)
-    // Why call unconditionally: the per-pane helper is a no-op when the
-    // current addon state already matches, so passing the resolved value on
-    // every appearance apply keeps newly-created panes in sync without a
-    // separate hook and lets live toggles (settings change, font swap)
-    // land immediately.
-    manager.setPaneLigaturesEnabled(pane.id, ligaturesEnabled)
     try {
       const state = captureScrollState(pane.terminal)
       safeFit(pane)
@@ -285,8 +243,6 @@ export function applyTerminalAppearance(
     activePaneOpacity: paneStyles.activePaneOpacity,
     opacityTransitionMs: paneStyles.opacityTransitionMs,
     dividerThicknessPx: paneStyles.dividerThicknessPx,
-    focusFollowsMouse: paneStyles.focusFollowsMouse,
-    paddingX: settings.terminalPaddingX,
-    paddingY: settings.terminalPaddingY
+    focusFollowsMouse: paneStyles.focusFollowsMouse
   })
 }

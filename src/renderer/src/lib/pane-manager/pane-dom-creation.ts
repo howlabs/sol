@@ -125,7 +125,6 @@ export function createPaneDOM(
     container,
     xtermContainer,
     linkTooltip,
-    terminalTuiScrollSensitivity: options.terminalTuiScrollSensitivity,
     terminalGpuAcceleration: options.terminalGpuAcceleration ?? 'auto',
     gpuRenderingEnabled: ENABLE_WEBGL_RENDERER,
     webglAttachmentDeferred: false,

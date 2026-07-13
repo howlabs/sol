@@ -502,20 +502,6 @@ describe('Store', () => {
     expect(settings.notifications.suppressWhenFocused).toBe(true)
   })
 
-  it('repairs a persisted terminal line height outside xterm bounds', async () => {
-    const persisted = getDefaultPersistedState(testState.dir)
-    writeDataFile({
-      ...persisted,
-      settings: { ...persisted.settings, terminalLineHeight: 0.85 }
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().terminalLineHeight).toBe(1)
-    store.flush()
-    expect((readDataFile() as PersistedState).settings.terminalLineHeight).toBe(1)
-  })
-
   it('returns default UI state when no data file exists', async () => {
     const store = await createStore()
     const ui = store.getUI()
@@ -529,56 +515,6 @@ describe('Store', () => {
     expect(ui.setupGuideSidebarDismissed).toBe(false)
     expect(ui.setupGuideBrowserMilestoneMigrated).toBe(true)
     expect(ui.setupGuideBrowserMilestoneLegacyComplete).toBe(false)
-  })
-
-  it('defaults minimizeToTrayOnClose to false when unset', async () => {
-    const store = await createStore()
-    expect(store.getSettings().minimizeToTrayOnClose).toBe(false)
-  })
-
-  it('coerces loaded minimizeToTrayOnClose to false unless stored as true', async () => {
-    writeDataFile({
-      ...getDefaultPersistedState(testState.dir),
-      settings: {
-        minimizeToTrayOnClose: 'true' as unknown as boolean
-      }
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().minimizeToTrayOnClose).toBe(false)
-  })
-
-  it('persists minimizeToTrayOnClose true/false round-trip', async () => {
-    const store = await createStore()
-    store.updateSettings({ minimizeToTrayOnClose: true })
-    expect(store.getSettings().minimizeToTrayOnClose).toBe(true)
-    store.flush()
-    expect((readDataFile() as PersistedState).settings.minimizeToTrayOnClose).toBe(true)
-    store.updateSettings({ minimizeToTrayOnClose: false })
-    expect(store.getSettings().minimizeToTrayOnClose).toBe(false)
-  })
-
-  it('coerces non-boolean minimizeToTrayOnClose payloads to a strict boolean', async () => {
-    const store = await createStore()
-    // Why: a renderer-supplied non-bool must never persist as a truthy non-bool
-    // that would later read as "tray-minimize on".
-    store.updateSettings({ minimizeToTrayOnClose: 'true' as unknown as boolean })
-    expect(store.getSettings().minimizeToTrayOnClose).toBe(false)
-    store.updateSettings({ minimizeToTrayOnClose: 1 as unknown as boolean })
-    expect(store.getSettings().minimizeToTrayOnClose).toBe(false)
-    store.updateSettings({ minimizeToTrayOnClose: null as unknown as boolean })
-    expect(store.getSettings().minimizeToTrayOnClose).toBe(false)
-  })
-
-  it('defaults trayMinimizeNoticeShown to false and persists it strictly', async () => {
-    const store = await createStore()
-    expect(store.getUI().trayMinimizeNoticeShown).toBe(false)
-    store.updateUI({ trayMinimizeNoticeShown: true })
-    expect(store.getUI().trayMinimizeNoticeShown).toBe(true)
-    store.flush()
-    const reloaded = await createStore()
-    expect(reloaded.getUI().trayMinimizeNoticeShown).toBe(true)
   })
 
   it('hides the setup guide sidebar entry for existing users backfilled as completed', async () => {
@@ -2008,25 +1944,6 @@ describe('Store', () => {
     expect(updated.autoRenameBranchFromWorkDefaultedOn).toBe(true)
   })
 
-  it('migrates inherited TUI scroll sensitivity defaults to one report on first load', async () => {
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: { terminalTuiScrollSensitivity: 3 },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-
-    const store = await createStore()
-
-    expect(store.getSettings().terminalTuiScrollSensitivity).toBe(1)
-    expect(store.getSettings().terminalTuiScrollSensitivityDefaultedToOne).toBe(true)
-    store.flush()
-    expect((readDataFile() as PersistedState).settings.terminalTuiScrollSensitivity).toBe(1)
-  })
-
   it('preserves TUI scroll sensitivity choices after the one-report migration', async () => {
     writeDataFile({
       schemaVersion: 1,
@@ -2045,18 +1962,6 @@ describe('Store', () => {
 
     expect(store.getSettings().terminalTuiScrollSensitivity).toBe(3)
     expect(store.getSettings().terminalTuiScrollSensitivityDefaultedToOne).toBe(true)
-  })
-
-  it('stamps the TUI scroll sensitivity migration guard on future updates', async () => {
-    const store = await createStore()
-
-    const updated = store.updateSettings({
-      terminalTuiScrollSensitivity: 3,
-      terminalTuiScrollSensitivityDefaultedToOne: false
-    })
-
-    expect(updated.terminalTuiScrollSensitivity).toBe(3)
-    expect(updated.terminalTuiScrollSensitivityDefaultedToOne).toBe(true)
   })
 
   it('merges rollback commit-message AI writes into existing source-control AI on load', async () => {
@@ -5603,36 +5508,6 @@ describe('Store', () => {
     const store = await createStore()
     expect(store.getSettings().terminalMacOptionAsAlt).toBe('auto')
     expect(store.getSettings().terminalMacOptionAsAltMigrated).toBe(true)
-  })
-
-  it('migrates inherited terminal bar cursor defaults to block on first load', async () => {
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: { terminalCursorStyle: 'bar' },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-    const store = await createStore()
-    expect(store.getSettings().terminalCursorStyle).toBe('block')
-    expect(store.getSettings().terminalCursorStyleDefaultedToBlock).toBe(true)
-  })
-
-  it('preserves terminal cursor choices after the block-default migration', async () => {
-    writeDataFile({
-      schemaVersion: 1,
-      repos: [],
-      worktreeMeta: {},
-      settings: { terminalCursorStyle: 'bar', terminalCursorStyleDefaultedToBlock: true },
-      ui: {},
-      githubCache: { pr: {}, issue: {} },
-      workspaceSession: {}
-    })
-    const store = await createStore()
-    expect(store.getSettings().terminalCursorStyle).toBe('bar')
-    expect(store.getSettings().terminalCursorStyleDefaultedToBlock).toBe(true)
   })
 
   it('preserves explicit "false" terminalMacOptionAsAlt through migration', async () => {

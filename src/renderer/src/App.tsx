@@ -25,12 +25,6 @@ import { buildAppFontFamily } from '@/lib/app-font-family'
 import { toast } from 'sonner'
 import { Toaster } from '@/components/ui/sonner'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger
-} from '@/components/ui/context-menu'
 import { useAppStore } from './store'
 import { useShallow } from 'zustand/react/shallow'
 import { isRemoteWorkspaceSnapshotApplyInProgress, useIpcEvents } from './hooks/useIpcEvents'
@@ -1592,13 +1586,7 @@ function App(): React.JSX.Element {
     })
     observer.observe(controls)
     return () => observer.disconnect()
-  }, [
-    isFullScreen,
-    settings?.showTitlebarAppName,
-    showSidebar,
-    leftTitlebarChromeLayout.isFloating,
-    sidebarOpen
-  ])
+  }, [isFullScreen, showSidebar, leftTitlebarChromeLayout.isFloating, sidebarOpen])
 
   const resolvedMountedLazyModalIds = resolveMountedLazyModalIds(activeModal, mountedLazyModalIds)
   if (resolvedMountedLazyModalIds !== mountedLazyModalIds) {
@@ -1654,31 +1642,11 @@ function App(): React.JSX.Element {
           <div className="pl-2" />
         )}
         {showSidebar && !hasCustomTitleBar && (
-          <>
-            {settings?.showTitlebarAppName !== false && (
-              <ContextMenu>
-                <ContextMenuTrigger asChild>
-                  <div
-                    className="titlebar-app-name"
-                    aria-label={translate('auto.App.5096cbbc86', 'Sol')}
-                  >
-                    <span className="titlebar-app-name-main">
-                      {translate('auto.App.5096cbbc86', 'Sol')}
-                    </span>
-                  </div>
-                </ContextMenuTrigger>
-                <ContextMenuContent>
-                  <ContextMenuItem
-                    onSelect={() => {
-                      void actions.updateSettings({ showTitlebarAppName: false })
-                    }}
-                  >
-                    {translate('auto.App.e81217c1b7', 'Hide App Name')}
-                  </ContextMenuItem>
-                </ContextMenuContent>
-              </ContextMenu>
-            )}
-          </>
+          <div className="titlebar-app-name" aria-label={translate('auto.App.5096cbbc86', 'Sol')}>
+            <span className="titlebar-app-name-main">
+              {translate('auto.App.5096cbbc86', 'Sol')}
+            </span>
+          </div>
         )}
         {showSidebar && (
           <Tooltip>

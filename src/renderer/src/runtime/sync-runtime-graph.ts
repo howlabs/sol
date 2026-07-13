@@ -1210,9 +1210,7 @@ function resolveMobileTerminalTheme(
     return undefined
   }
   const appearance = resolveEffectiveTerminalAppearance(settings, systemPrefersDark)
-  const resolvedTheme = appearance.theme
-    ? { ...appearance.theme, ...settings.terminalColorOverrides }
-    : undefined
+  const resolvedTheme = appearance.theme ? { ...appearance.theme } : undefined
   if (!resolvedTheme) {
     return undefined
   }
@@ -1221,9 +1219,6 @@ function resolveMobileTerminalTheme(
       resolvedTheme.background,
       settings.terminalBackgroundOpacity
     )
-  }
-  if (settings.terminalCursorOpacity !== undefined && isHexColor(resolvedTheme.cursor)) {
-    resolvedTheme.cursor = hexToRgba(resolvedTheme.cursor, settings.terminalCursorOpacity)
   }
 
   const theme: Record<string, string> = {}

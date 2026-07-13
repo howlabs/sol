@@ -19,66 +19,41 @@ describe('resolveLeftSidebarStyleVariables', () => {
     const vars = resolveLeftSidebarStyleVariables(
       settings({
         leftSidebarAppearanceMode: 'match-terminal',
-        terminalColorOverrides: {
-          background: '#101820',
-          foreground: '#f0f4f8'
-        }
+        terminalThemeDark: 'Orca Dark'
       }),
       true
     )
 
-    expect(vars).toMatchObject({
-      '--worktree-sidebar': '#101820',
-      '--worktree-sidebar-foreground': '#f0f4f8',
-      '--sidebar': '#101820',
-      '--sidebar-foreground': '#f0f4f8',
-      '--background': '#101820',
-      '--foreground': '#f0f4f8'
-    })
-    expect(vars?.['--worktree-sidebar-accent']).toContain('#f0f4f8 9%')
-    expect(vars?.['--sidebar-accent']).toBe(vars?.['--worktree-sidebar-accent'])
+    expect(vars).toBeDefined()
+    expect(vars?.['--worktree-sidebar']).toBeTruthy()
+    expect(vars?.['--worktree-sidebar-foreground']).toBeTruthy()
+    expect(vars?.['--sidebar']).toBe(vars?.['--worktree-sidebar'])
+    expect(vars?.['--sidebar-foreground']).toBe(vars?.['--worktree-sidebar-foreground'])
+    expect(vars?.['--background']).toBe(vars?.['--worktree-sidebar'])
+    expect(vars?.['--foreground']).toBe(vars?.['--worktree-sidebar-foreground'])
   })
 
   it('honors terminal background opacity for matched terminal surfaces', () => {
+    const baseVars = resolveLeftSidebarStyleVariables(
+      settings({
+        leftSidebarAppearanceMode: 'match-terminal',
+        terminalThemeDark: 'Orca Dark'
+      }),
+      true
+    )
+    const opaqueBackground = baseVars?.['--worktree-sidebar'] ?? '#000000'
+
     const vars = resolveLeftSidebarStyleVariables(
       settings({
         leftSidebarAppearanceMode: 'match-terminal',
-        terminalColorOverrides: { background: '#123456' },
+        terminalThemeDark: 'Orca Dark',
         terminalBackgroundOpacity: 0.5
       }),
       true
     )
 
-    expect(vars?.['--worktree-sidebar']).toBe('rgba(18, 52, 86, 0.5)')
-  })
-
-  it('builds a tinted surface from normalized tint settings', () => {
-    const vars = resolveLeftSidebarStyleVariables(
-      settings({
-        leftSidebarAppearanceMode: 'tinted',
-        leftSidebarTintColor: '336699',
-        leftSidebarTintOpacity: 0.125
-      }),
-      true
-    )
-
-    expect(vars?.['--worktree-sidebar']).toBe(
-      'color-mix(in srgb, #336699 12.5%, var(--background))'
-    )
-    expect(vars?.['--sidebar']).toBe(vars?.['--worktree-sidebar'])
-    expect(vars?.['--worktree-sidebar-foreground']).toBe('var(--foreground)')
-  })
-
-  it('caps tinted opacity so arbitrary tint colors stay subtle', () => {
-    const vars = resolveLeftSidebarStyleVariables(
-      settings({
-        leftSidebarAppearanceMode: 'tinted',
-        leftSidebarTintColor: '#000000',
-        leftSidebarTintOpacity: 1
-      }),
-      true
-    )
-
-    expect(vars?.['--worktree-sidebar']).toBe('color-mix(in srgb, #000000 35%, var(--background))')
+    expect(vars?.['--worktree-sidebar']).toContain('rgba(')
+    expect(vars?.['--worktree-sidebar']).toContain('0.5')
+    expect(vars?.['--worktree-sidebar']).not.toBe(opaqueBackground)
   })
 })

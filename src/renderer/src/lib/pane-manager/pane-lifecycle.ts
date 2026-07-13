@@ -6,7 +6,6 @@ import {
 } from './pane-fit-resize-observer'
 import { clearPendingSplitScrollRestore } from './pane-split-scroll'
 import { activateOrcaTerminalUnicodeProvider } from '../../../../shared/terminal-unicode-provider'
-import { attachTerminalMouseWheelMultiplier } from './pane-terminal-mouse-wheel'
 import { attachTerminalScrollIntentTracking } from './terminal-scroll-intent'
 import { attachDomRendererFocusClassSync } from './pane-dom-focus-class-sync'
 import { attachWebgl, cancelPendingWebglRefresh, disposeWebgl } from './pane-webgl-renderer'
@@ -27,7 +26,6 @@ export function openTerminal(pane: ManagedPaneInternal): void {
     container,
     xtermContainer,
     linkTooltip,
-    terminalTuiScrollSensitivity,
     fitAddon,
     searchAddon,
     serializeAddon,
@@ -47,9 +45,6 @@ export function openTerminal(pane: ManagedPaneInternal): void {
   terminal.loadAddon(serializeAddon)
   terminal.loadAddon(unicode11Addon)
   terminal.loadAddon(webLinksAddon)
-  attachTerminalMouseWheelMultiplier(terminal, {
-    getTuiMouseWheelMultiplier: terminalTuiScrollSensitivity
-  })
   pane.terminalScrollIntentDisposable = attachTerminalScrollIntentTracking(
     terminal,
     xtermContainer,

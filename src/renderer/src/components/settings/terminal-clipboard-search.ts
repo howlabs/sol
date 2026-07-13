@@ -5,58 +5,6 @@ import { createLocalizedCatalog } from '@/i18n/localized-catalog'
 export const getTerminalClipboardSearchEntries = createLocalizedCatalog(() => [
   {
     title: translate(
-      'auto.components.settings.terminal.clipboard.search.3bdc84f059',
-      'Copy on Select'
-    ),
-    description: translate(
-      'auto.components.settings.terminal.clipboard.search.603818e8d8',
-      'Automatically copy terminal selections to the clipboard as soon as a selection is made.'
-    ),
-    keywords: [
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.10d73e22d3',
-        'clipboard'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.a38508c419',
-        'copy'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.797fdfe4ca',
-        'select'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.c38c18be15',
-        'selection'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.664789b73a',
-        'auto'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.e87c6d776d',
-        'automatic'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.737cef6de1',
-        'x11'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.cf83ac3dbd',
-        'linux'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.4043e294d2',
-        'gnome'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.clipboard.search.5fb3512e8c',
-        'paste'
-      )
-    ]
-  },
-  {
-    title: translate(
       'auto.components.settings.terminal.clipboard.search.74db8721e4',
       'Allow TUI Clipboard Writes (OSC 52)'
     ),

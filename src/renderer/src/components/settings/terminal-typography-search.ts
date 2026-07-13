@@ -2,7 +2,7 @@ import { translate } from '@/i18n/i18n'
 import { translateSearchKeyword } from './settings-search-keywords'
 import { createLocalizedCatalog } from '@/i18n/localized-catalog'
 
-const getTerminalTypographySearchEntryCatalog = createLocalizedCatalog(() => [
+export const getTerminalTypographySearchEntries = createLocalizedCatalog(() => [
   {
     title: translate('auto.components.settings.terminal.search.5930244899', 'Font Size'),
     description: translate(
@@ -32,81 +32,8 @@ const getTerminalTypographySearchEntryCatalog = createLocalizedCatalog(() => [
       ),
       ...translateSearchKeyword('auto.components.settings.terminal.search.b0bb76ae6b', 'font')
     ]
-  },
-  {
-    title: translate('auto.components.settings.terminal.search.28ea41bd2d', 'Font Weight'),
-    description: translate(
-      'auto.components.settings.terminal.search.98c18f2c77',
-      'Controls the terminal text font weight.'
-    ),
-    keywords: [
-      ...translateSearchKeyword('auto.components.settings.terminal.search.f66a7cf715', 'terminal'),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.search.103cdb862f',
-        'typography'
-      ),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.20ce287cc6', 'weight')
-    ]
-  },
-  {
-    title: translate('auto.components.settings.terminal.search.0f2fb0cb74', 'Line Height'),
-    description: translate(
-      'auto.components.settings.terminal.search.36a1b38bc8',
-      'Controls the terminal line height multiplier.'
-    ),
-    keywords: [
-      ...translateSearchKeyword('auto.components.settings.terminal.search.f66a7cf715', 'terminal'),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.search.103cdb862f',
-        'typography'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.search.7341e3d00e',
-        'line height'
-      ),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.b2f52cb96c', 'spacing')
-    ]
-  },
-  {
-    title: translate('auto.components.settings.terminal.search.58da1ae45d', 'Font Ligatures'),
-    description: translate(
-      'auto.components.settings.terminal.search.893aa92997',
-      'Render programming ligatures (e.g. => → ≠ ≥) for fonts that ship them. "Auto" enables ligatures only for known ligature fonts (Fira Code, JetBrains Mono, Cascadia Code, Iosevka, etc.).'
-    ),
-    keywords: [
-      ...translateSearchKeyword('auto.components.settings.terminal.search.f66a7cf715', 'terminal'),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.search.103cdb862f',
-        'typography'
-      ),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.afc8d5f790', 'ligatures'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.7ab424c4d3', 'ligature'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.7f7640c29e', 'fira code'),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.search.35c2311a33',
-        'jetbrains mono'
-      ),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.search.e3aeea308e',
-        'cascadia code'
-      ),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.6ded6297fe', 'iosevka'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.a16224d16a', 'calt'),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.search.d5e6c7fab1',
-        'font features'
-      )
-    ]
   }
 ])
-
-export const getTerminalTypographySearchEntries = createLocalizedCatalog(() => [
-  ...getTerminalTypographySearchEntryCatalog()
-])
-
-export const getTerminalAdvancedTypographySearchEntries = createLocalizedCatalog(() =>
-  getTerminalTypographySearchEntryCatalog().slice(2)
-)
 
 export const getTerminalRenderingSearchEntries = createLocalizedCatalog(() => [
   {
@@ -156,22 +83,6 @@ export const getTerminalCursorSearchEntries = createLocalizedCatalog(() => [
       ...translateSearchKeyword('auto.components.settings.terminal.search.f66a7cf715', 'terminal'),
       ...translateSearchKeyword('auto.components.settings.terminal.search.6eaf7ee0e4', 'cursor'),
       ...translateSearchKeyword('auto.components.settings.terminal.search.25f606d9e5', 'blink')
-    ]
-  },
-  {
-    title: translate('auto.components.settings.terminal.search.7f1e356a54', 'Cursor Opacity'),
-    description: translate(
-      'auto.components.settings.terminal.search.d4f7d1ce5c',
-      'Opacity of the terminal cursor.'
-    ),
-    keywords: [
-      ...translateSearchKeyword('auto.components.settings.terminal.search.f66a7cf715', 'terminal'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.6eaf7ee0e4', 'cursor'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.46d99ef4bb', 'opacity'),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.search.4f7f8f28ca',
-        'transparency'
-      )
     ]
   }
 ])

@@ -8,35 +8,21 @@ import {
 } from './settings-search'
 import { useAppStore } from '../../store'
 import {
-  getTerminalAdvancedTypographySearchEntries,
   getTerminalCursorSearchEntries,
   getTerminalDarkThemeSearchEntries,
-  getTerminalGhosttyImportSearchEntries,
   getTerminalLightThemeSearchEntries,
-  getTerminalPaneAppearanceSearchEntries,
   getTerminalThemeTargetSearchEntries,
-  getTerminalWarpImportSearchEntries,
-  getTerminalYamlImportSearchEntries,
   getTerminalTypographySearchEntries,
   getTerminalWindowSearchEntries
 } from './terminal-search'
-import { Button } from '../ui/button'
 import { SettingsRow, SettingsSubsectionHeader } from './SettingsFormControls'
 import { SearchableSetting } from './SearchableSetting'
 import { FontAutocomplete } from './SettingsFormControls'
 import { TerminalFontSizeSetting } from './TerminalFontSizeSetting'
-import { TerminalAdvancedTypographyControls } from './TerminalAdvancedTypographyControls'
 import { TerminalThemeCatalogSection } from './TerminalThemeSections'
 import { TerminalWindowSection } from './TerminalWindowSection'
 import { TerminalCursorAppearanceSection } from './TerminalCursorAppearanceSection'
-import { TerminalPaneAppearanceSection } from './TerminalPaneAppearanceSection'
 import { AppearanceAdvancedDisclosure } from './AppearanceAdvancedDisclosure'
-import { GhosttyImportModal } from './GhosttyImportModal'
-import type { UseGhosttyImportReturn } from './useGhosttyImport'
-import { WarpThemeImportModal } from './WarpThemeImportModal'
-import type { UseWarpThemeImportReturn } from './useWarpThemeImport'
-import { isWebClientLocation } from '@/hooks/useSettingsNavigationMetadata'
-import ghosttyIcon from '../../../../../resources/ghostty.svg'
 import { translate } from '@/i18n/i18n'
 
 type TerminalAppearanceSectionProps = {
@@ -45,8 +31,6 @@ type TerminalAppearanceSectionProps = {
   systemPrefersDark: boolean
   terminalFontSuggestions: string[]
   onRequestFontSuggestions?: () => void
-  ghostty: UseGhosttyImportReturn
-  warpThemes: UseWarpThemeImportReturn
   forceVisiblePrimary?: boolean
 }
 
@@ -76,56 +60,34 @@ export function TerminalAppearanceSection({
   systemPrefersDark,
   terminalFontSuggestions,
   onRequestFontSuggestions,
-  ghostty,
-  warpThemes,
   forceVisiblePrimary = false
 }: TerminalAppearanceSectionProps): React.JSX.Element {
   const searchQuery = useAppStore((state) => state.settingsSearchQuery)
   const isSearching = normalizeSettingsSearchQuery(searchQuery).length > 0
   const [themeSearch, setThemeSearch] = useState('')
   const [previewFontFamily, setPreviewFontFamily] = useState<string | null>(null)
-  const showWarpThemeImport = !isWebClientLocation()
   const darkThemeSearchEntries = getTerminalDarkThemeSearchEntries()
   const lightThemeSearchEntries = getTerminalLightThemeSearchEntries()
   const terminalTypographyEntries = getTerminalTypographySearchEntries()
-  const ghosttyImportEntries = getTerminalGhosttyImportSearchEntries()
   const themeCatalogSearchEntries = [
     ...getTerminalThemeTargetSearchEntries(),
     ...darkThemeSearchEntries,
-    ...lightThemeSearchEntries,
-    ...(showWarpThemeImport
-      ? [...getTerminalWarpImportSearchEntries(), ...getTerminalYamlImportSearchEntries()]
-      : [])
+    ...lightThemeSearchEntries
   ]
   const darkThemeTargetScore = scoreThemeTargetIntent(searchQuery, darkThemeSearchEntries)
   const lightThemeTargetScore = scoreThemeTargetIntent(searchQuery, lightThemeSearchEntries)
   const preferredThemeTarget = getPreferredThemeTarget(darkThemeTargetScore, lightThemeTargetScore)
 
-  // Why: low-frequency knobs are force-opened during search; render each group
-  // only when its own search matches so an active query never leaves a dangling header.
-  const typographyMatches = matchesSettingsSearch(
-    searchQuery,
-    getTerminalAdvancedTypographySearchEntries()
-  )
   const cursorMatches = matchesSettingsSearch(searchQuery, getTerminalCursorSearchEntries())
-  const paneMatches = matchesSettingsSearch(searchQuery, getTerminalPaneAppearanceSearchEntries())
   const windowMatches = matchesSettingsSearch(searchQuery, getTerminalWindowSearchEntries())
   const themeCatalogMatches = matchesSettingsSearch(searchQuery, themeCatalogSearchEntries)
-  const previewAdvancedMatches = cursorMatches || paneMatches || windowMatches
+  const previewAdvancedMatches = cursorMatches || windowMatches
   const showThemeCatalog = !isSearching || themeCatalogMatches || previewAdvancedMatches
   const primaryTypographyMatches = matchesSettingsSearch(
     searchQuery,
     terminalTypographyEntries.slice(0, 2)
   )
-  const ghosttyImportMatches = matchesSettingsSearch(searchQuery, ghosttyImportEntries)
-  const showPrimaryTypography =
-    !isSearching ||
-    forceVisiblePrimary ||
-    primaryTypographyMatches ||
-    typographyMatches ||
-    ghosttyImportMatches
-  const showGhosttyImport = !isSearching || forceVisiblePrimary || ghosttyImportMatches
-  const showTypographyAdvancedDisclosure = !isSearching || typographyMatches
+  const showPrimaryTypography = !isSearching || forceVisiblePrimary || primaryTypographyMatches
 
   const advancedGroups = [
     cursorMatches
@@ -133,14 +95,6 @@ export function TerminalAppearanceSection({
           key: 'cursor',
           node: (
             <TerminalCursorAppearanceSection settings={settings} updateSettings={updateSettings} />
-          )
-        }
-      : null,
-    paneMatches
-      ? {
-          key: 'pane',
-          node: (
-            <TerminalPaneAppearanceSection settings={settings} updateSettings={updateSettings} />
           )
         }
       : null,
@@ -171,9 +125,6 @@ export function TerminalAppearanceSection({
 
   return (
     <div className="space-y-1.5">
-      {/* Primary: font + theme + previews. The expanded section column is far
-          narrower than the xl breakpoint, so the preview grids inside the
-          theme catalog already stack full-width below their controls. */}
       {showPrimaryTypography ? (
         <section className="space-y-1.5">
           <SettingsSubsectionHeader
@@ -182,22 +133,6 @@ export function TerminalAppearanceSection({
               'auto.components.settings.TerminalAppearanceSection.048aac8a64',
               'Terminal Typography'
             )}
-            action={
-              showGhosttyImport ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-7 gap-1.5 text-xs"
-                  onClick={() => void ghostty.handleClick()}
-                >
-                  <img src={ghosttyIcon} alt="" aria-hidden="true" className="size-4" />
-                  {translate(
-                    'auto.components.settings.TerminalAppearanceSection.855a76343a',
-                    'Import from Ghostty'
-                  )}
-                </Button>
-              ) : null
-            }
           />
 
           <div className="ml-3 divide-y divide-border/40 border-y border-border/40">
@@ -235,17 +170,6 @@ export function TerminalAppearanceSection({
               />
             </SearchableSetting>
           </div>
-
-          {showTypographyAdvancedDisclosure ? (
-            <div className="ml-3">
-              <AppearanceAdvancedDisclosure showTopBorder={false} contentClassName="ml-3">
-                <TerminalAdvancedTypographyControls
-                  settings={settings}
-                  updateSettings={updateSettings}
-                />
-              </AppearanceAdvancedDisclosure>
-            </div>
-          ) : null}
         </section>
       ) : null}
 
@@ -258,37 +182,8 @@ export function TerminalAppearanceSection({
           setThemeSearch={setThemeSearch}
           updateSettings={updateSettings}
           previewFontFamily={previewFontFamily}
-          importedHighlightSignal={warpThemes.importSignal}
-          warpThemes={warpThemes}
-          showThemeImport={showWarpThemeImport}
           preferredTarget={preferredThemeTarget}
           advancedContent={previewAdvancedContent}
-        />
-      ) : null}
-
-      <GhosttyImportModal
-        open={ghostty.open}
-        onOpenChange={ghostty.handleOpenChange}
-        preview={ghostty.preview}
-        loading={ghostty.loading}
-        onApply={ghostty.handleApply}
-        applied={ghostty.applied}
-        applyError={ghostty.applyError}
-      />
-      {showWarpThemeImport ? (
-        <WarpThemeImportModal
-          open={warpThemes.open}
-          mode={warpThemes.mode}
-          preview={warpThemes.preview}
-          loading={warpThemes.loading}
-          desktopOnly={warpThemes.desktopOnly}
-          applyError={warpThemes.applyError}
-          selectedThemeIds={warpThemes.selectedThemeIds}
-          handlePreviewSource={warpThemes.handlePreviewSource}
-          handleToggleTheme={warpThemes.handleToggleTheme}
-          handleToggleAll={warpThemes.handleToggleAll}
-          handleApply={warpThemes.handleApply}
-          handleOpenChange={warpThemes.handleOpenChange}
         />
       ) : null}
     </div>
