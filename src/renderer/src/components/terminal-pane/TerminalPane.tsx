@@ -2806,8 +2806,7 @@ export default function TerminalPane({
   const effectiveAppearance = settings
     ? resolveEffectiveTerminalAppearance(settings, systemPrefersDark)
     : null
-  const terminalBackground =
-    settings?.terminalColorOverrides?.background ?? effectiveAppearance?.theme?.background
+  const terminalBackground = effectiveAppearance?.theme?.background
   // Why: app light/dark mode can diverge from the selected terminal theme, so
   // pane-title contrast follows the effective terminal surface instead.
   const titleUsesLightSurface = isTerminalBackgroundLight(terminalBackground, {

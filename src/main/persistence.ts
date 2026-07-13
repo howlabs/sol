@@ -199,7 +199,6 @@ import {
   normalizeTuiAgentEnvRecord
 } from '../shared/tui-agent-launch-defaults'
 import { normalizeTerminalCursorStyleDefault } from '../shared/terminal-cursor-style-settings'
-import { normalizeTerminalLineHeight } from '../shared/terminal-line-height-settings'
 import { normalizeUiLanguage } from '../shared/ui-language'
 import { normalizeBrowserPageZoomLevel } from '../shared/browser-page-zoom'
 import { persistedUIValuesEqual } from '../shared/persisted-ui-equality'
@@ -586,8 +585,6 @@ type LegacyTerminalScrollbackSettings = {
   terminalScrollbackBytes?: unknown
 }
 
-const LEGACY_TERMINAL_TUI_SCROLL_SENSITIVITY_DEFAULT = 3
-
 function readLegacyTerminalScrollbackSettings(settings: unknown): LegacyTerminalScrollbackSettings {
   return settings && typeof settings === 'object'
     ? (settings as LegacyTerminalScrollbackSettings)
@@ -620,29 +617,6 @@ function migrateTerminalScrollbackRows(settings: unknown): {
   return {
     rows,
     needsSave: !hasRows || hasLegacyBytes || legacySettings.terminalScrollbackRows !== rows
-  }
-}
-
-function migrateTerminalTuiScrollSensitivityDefault(settings: GlobalSettings | undefined): {
-  settings: Pick<
-    GlobalSettings,
-    'terminalTuiScrollSensitivity' | 'terminalTuiScrollSensitivityDefaultedToOne'
-  >
-  needsSave: boolean
-} {
-  const alreadyDefaultedToOne = settings?.terminalTuiScrollSensitivityDefaultedToOne === true
-  const current = settings?.terminalTuiScrollSensitivity
-  const shouldMoveInheritedDefault =
-    !alreadyDefaultedToOne &&
-    (current === undefined || current === LEGACY_TERMINAL_TUI_SCROLL_SENSITIVITY_DEFAULT)
-  const terminalTuiScrollSensitivity = shouldMoveInheritedDefault ? 1 : (current ?? 1)
-
-  return {
-    settings: {
-      terminalTuiScrollSensitivity,
-      terminalTuiScrollSensitivityDefaultedToOne: true
-    },
-    needsSave: !alreadyDefaultedToOne || current === undefined
   }
 }
 
@@ -2785,12 +2759,6 @@ export class Store {
         if (migratedTerminalScrollback.needsSave) {
           this.loadNeedsSave = true
         }
-        const migratedTerminalTuiScrollSensitivity = migrateTerminalTuiScrollSensitivityDefault(
-          parsed.settings
-        )
-        if (migratedTerminalTuiScrollSensitivity.needsSave) {
-          this.loadNeedsSave = true
-        }
         const rawSourceControlAi = parsed.settings?.sourceControlAi
         const rawSourceControlAiMissing = rawSourceControlAi === undefined
         const rawSourceControlAiActionsMissing =
@@ -2842,15 +2810,6 @@ export class Store {
           parsed.settings
         )
         const migratedTerminalCursorStyle = normalizeTerminalCursorStyleDefault(parsed.settings)
-        const migratedTerminalLineHeight = normalizeTerminalLineHeight(
-          parsed.settings?.terminalLineHeight
-        )
-        if (
-          parsed.settings?.terminalLineHeight !== undefined &&
-          parsed.settings.terminalLineHeight !== migratedTerminalLineHeight
-        ) {
-          this.loadNeedsSave = true
-        }
         const rawTaskProviderSettings = normalizeTaskProviderSettings({
           visibleTaskProviders: parsed.settings?.visibleTaskProviders,
           defaultTaskSource: parsed.settings?.defaultTaskSource
@@ -2983,8 +2942,6 @@ export class Store {
               primarySelectionDefaultedForTerminalDefaults || stampPrimarySelectionTerminalDefaults,
             ...migratedAutoRenameBranchFromWork,
             ...migratedTerminalCursorStyle,
-            terminalLineHeight: migratedTerminalLineHeight,
-            ...migratedTerminalTuiScrollSensitivity.settings,
             experimentalActivity: migratedExperimentalActivity,
             experimentalActivityDefaultedOffForAllUsers: true,
             // Why: open first-run onboarding is the local fresh-install signal;
@@ -3005,9 +2962,6 @@ export class Store {
               parsed.settings?.terminalCustomThemes
             ),
             appIcon: normalizeAppIconId(parsed.settings?.appIcon),
-            // Why: persisted settings can be user-edited or written by older
-            // builds; keep tray-minimize false unless the stored value is true.
-            minimizeToTrayOnClose: parsed.settings?.minimizeToTrayOnClose === true,
             uiLanguage: normalizeUiLanguage(parsed.settings?.uiLanguage),
             defaultTaskSource: taskProviderSettings.defaultTaskSource,
             visibleTaskProviders: taskProviderSettings.visibleTaskProviders,
@@ -5002,12 +4956,6 @@ export class Store {
     options: { notifyListeners?: boolean; originWebContentsId?: number } = {}
   ): GlobalSettings {
     const sanitizedUpdates = stripLegacyTerminalScrollbackBytes(updates)
-    // Why: coerce strictly to boolean here (not at the IPC edge) so every write
-    // path is covered and a non-bool renderer payload can never persist a
-    // truthy non-bool that later reads as "tray-minimize on".
-    if ('minimizeToTrayOnClose' in updates) {
-      sanitizedUpdates.minimizeToTrayOnClose = updates.minimizeToTrayOnClose === true
-    }
     if ('disabledTuiAgents' in updates) {
       sanitizedUpdates.disabledTuiAgents = normalizeDisabledTuiAgents(updates.disabledTuiAgents)
     }
@@ -5033,12 +4981,6 @@ export class Store {
       sanitizedUpdates.terminalScrollbackRows = normalizeDesktopTerminalScrollbackRows(
         updates.terminalScrollbackRows
       )
-    }
-    if (
-      'terminalTuiScrollSensitivity' in updates ||
-      'terminalTuiScrollSensitivityDefaultedToOne' in updates
-    ) {
-      sanitizedUpdates.terminalTuiScrollSensitivityDefaultedToOne = true
     }
     if ('visibleTaskProviders' in updates || 'defaultTaskSource' in updates) {
       const taskProviderSettings = normalizeTaskProviderSettings({
@@ -5161,9 +5103,6 @@ export class Store {
         this.state.ui?.agentActivityDisplayMode
       ),
       workspaceStatuses: normalizeWorkspaceStatuses(this.state.ui?.workspaceStatuses),
-      // Why: strict boolean coercion so a missing/legacy value reads as false
-      // (first-run notice still fires) rather than leaking a non-bool through.
-      trayMinimizeNoticeShown: this.state.ui?.trayMinimizeNoticeShown === true,
       markdownTocPanelWidth: clampMarkdownTocPanelWidth(this.state.ui?.markdownTocPanelWidth),
       visibleWorkspaceHostIds: normalizeVisibleExecutionHostIds(
         this.state.ui?.visibleWorkspaceHostIds

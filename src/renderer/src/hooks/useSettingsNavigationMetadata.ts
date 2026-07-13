@@ -260,8 +260,7 @@ export function buildSettingsNavigationMetadata({
       ),
       icon: Palette,
       searchEntries: getAppearancePaneSearchEntries({
-        showWarpImport: showDesktopOnlySettings,
-        showSystemTray: showDesktopOnlySettings && isWindows
+        showWarpImport: showDesktopOnlySettings
       }),
       group: 'interface'
     },

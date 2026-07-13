@@ -8,14 +8,8 @@ import {
   type PaneExternalDropResolver
 } from '@/lib/pane-manager/pane-manager'
 import { consumePendingWebRuntimeSplitMirrorTelemetry } from '@/runtime/web-runtime-session'
-import {
-  normalizeTerminalFastScrollSensitivity,
-  normalizeTerminalScrollSensitivity,
-  resolveTerminalCursorInactiveStyle
-} from '@/lib/pane-manager/pane-terminal-options'
+import { resolveTerminalCursorInactiveStyle } from '@/lib/pane-manager/pane-terminal-options'
 import { normalizeDesktopTerminalScrollbackRows } from '../../../../shared/terminal-scrollback-policy'
-import { normalizeTerminalLineHeight } from '../../../../shared/terminal-line-height-settings'
-import { normalizeTerminalTuiMouseWheelMultiplier } from '@/lib/pane-manager/pane-terminal-mouse-wheel'
 import { buildWindowsPtyCompatibilityOptions } from '@/lib/pane-manager/windows-pty-compatibility'
 import { buildTerminalKeyboardProtocolOptions } from '@/lib/pane-manager/terminal-keyboard-protocol'
 import { resolvePaneKeyboardProtocolAgent } from './terminal-keyboard-protocol-pane-agent'
@@ -45,7 +39,6 @@ import type { TerminalPaneSplitSource } from '../../../../shared/feature-educati
 import type { EventProps } from '../../../../shared/telemetry-events'
 import type { StartupCommandDelivery } from '../../../../shared/codex-startup-delivery'
 import type { SleepingAgentLaunchConfig } from '../../../../shared/agent-session-resume'
-import { resolveTerminalFontWeights } from '../../../../shared/terminal-fonts'
 import {
   buildFontFamily,
   normalizeTerminalLayoutSnapshot,
@@ -87,7 +80,6 @@ import {
   TERMINAL_INTERRUPT_INPUT
 } from './xterm-bypass-policy'
 import type { PaneCwdMap } from './resolve-split-cwd'
-import { installMouseHideWhileTyping } from './mouse-hide-while-typing'
 import type { EffectiveMacOptionAsAlt } from '@/lib/keyboard-layout/detect-option-as-alt'
 import { resolveEffectiveTerminalAppearance } from '@/lib/terminal-theme'
 import { connectPanePty } from './pty-connection'
@@ -568,7 +560,6 @@ export function useTerminalPaneLifecycle({
   const mode2031DisposablesRef = useRef(new Map<number, IDisposable[]>())
   const osc52DisposablesRef = useRef(new Map<number, IDisposable>())
   const osc7DisposablesRef = useRef(new Map<number, IDisposable>())
-  const mouseHideDisposablesRef = useRef(new Map<number, IDisposable>())
   const imeCompositionDisposablesRef = useRef(new Map<number, IDisposable>())
   const imeNativeTextForwarderDisposablesRef = useRef(new Map<number, IDisposable>())
   const queuedInitialCwdRef = useRef<string | null | undefined>(undefined)
@@ -637,7 +628,6 @@ export function useTerminalPaneLifecycle({
     const httpLinkClickFallbackDisposables = httpLinkClickFallbackDisposablesRef.current
     const selectionDisposables = selectionDisposablesRef.current
     const selectionCaptureTimers = selectionCaptureTimersRef.current
-    const mouseHideDisposables = mouseHideDisposablesRef.current
     const imeCompositionDisposables = imeCompositionDisposablesRef.current
     const imeNativeTextForwarderDisposables = imeNativeTextForwarderDisposablesRef.current
     const worktreePath =
@@ -1009,18 +999,13 @@ export function useTerminalPaneLifecycle({
         // whatever the user last copied elsewhere.
         const selectionDisposable = pane.terminal.onSelectionChange(() => {
           const shouldWritePrimarySelection = isPrimarySelectionEnabled()
-          const shouldWriteClipboard = settingsRef.current?.terminalClipboardOnSelect === true
-          if (!shouldWritePrimarySelection && !shouldWriteClipboard) {
+          if (!shouldWritePrimarySelection) {
             return
           }
           if (!pane.terminal.hasSelection()) {
             return
           }
-          if (
-            shouldWritePrimarySelection &&
-            !shouldWriteClipboard &&
-            terminalSelectionExceedsPrimaryLimit(pane.terminal)
-          ) {
+          if (shouldWritePrimarySelection && terminalSelectionExceedsPrimaryLimit(pane.terminal)) {
             return
           }
 
@@ -1046,25 +1031,8 @@ export function useTerminalPaneLifecycle({
             }, 100)
             selectionCaptureTimersRef.current.set(pane.id, timer)
           }
-
-          if (!shouldWriteClipboard) {
-            return
-          }
-          const selection = pane.terminal.getSelection()
-          if (!selection) {
-            return
-          }
-          void window.api.ui.writeClipboardText(selection).catch(() => {
-            /* ignore clipboard write failures */
-          })
         })
         selectionDisposablesRef.current.set(pane.id, selectionDisposable)
-        // Hide mouse cursor while typing — classic terminal UX, scoped to the
-        // pane container so other UI elements keep their cursor.
-        if (settingsRef.current?.terminalMouseHideWhileTyping) {
-          const mouseHideDisposable = installMouseHideWhileTyping(pane.terminal, pane.container)
-          mouseHideDisposablesRef.current.set(pane.id, mouseHideDisposable)
-        }
         // Why: async tooltip formatting can resolve after hover changes, so a
         // stale result must not overwrite the tooltip for a newer hover/leave.
         let oscTooltipHoverToken = 0
@@ -1213,11 +1181,6 @@ export function useTerminalPaneLifecycle({
         // Why: drop the tracked cwd so the map doesn't accumulate dead
         // entries across splits/closes over long sessions.
         paneCwdRef.current.delete(paneId)
-        const mouseHideDisposable = mouseHideDisposablesRef.current.get(paneId)
-        if (mouseHideDisposable) {
-          mouseHideDisposable.dispose()
-          mouseHideDisposablesRef.current.delete(paneId)
-        }
         const transport = paneTransportsRef.current.get(paneId)
         const panePtyBinding = panePtyBindings.get(paneId)
         if (panePtyBinding) {
@@ -1366,7 +1329,6 @@ export function useTerminalPaneLifecycle({
       onExternalPaneDrop,
       terminalOptions: () => {
         const currentSettings = settingsRef.current
-        const terminalFontWeights = resolveTerminalFontWeights(currentSettings?.terminalFontWeight)
         const cursorStyle = currentSettings?.terminalCursorStyle ?? 'block'
         const storeState = useAppStore.getState()
         const currentTab = storeState.tabsByWorktree[worktreeId]?.find(
@@ -1400,27 +1362,15 @@ export function useTerminalPaneLifecycle({
           ...keyboardProtocolOptions,
           fontSize: currentSettings?.terminalFontSize ?? 14,
           fontFamily: buildFontFamily(currentSettings?.terminalFontFamily ?? ''),
-          fontWeight: terminalFontWeights.fontWeight,
-          fontWeightBold: terminalFontWeights.fontWeightBold,
           scrollback: normalizeDesktopTerminalScrollbackRows(
             currentSettings?.terminalScrollbackRows
           ),
           cursorStyle,
           cursorInactiveStyle: resolveTerminalCursorInactiveStyle(cursorStyle),
           cursorBlink: currentSettings?.terminalCursorBlink ?? true,
-          scrollSensitivity: normalizeTerminalScrollSensitivity(
-            currentSettings?.terminalScrollSensitivity
-          ),
-          fastScrollSensitivity: normalizeTerminalFastScrollSensitivity(
-            currentSettings?.terminalFastScrollSensitivity
-          ),
-          macOptionIsMeta: effectiveMacOptionAsAltRef.current === 'true',
-          lineHeight: normalizeTerminalLineHeight(currentSettings?.terminalLineHeight),
-          wordSeparator: currentSettings?.terminalWordSeparator
+          macOptionIsMeta: effectiveMacOptionAsAltRef.current === 'true'
         }
       },
-      terminalTuiScrollSensitivity: () =>
-        normalizeTerminalTuiMouseWheelMultiplier(settingsRef.current?.terminalTuiScrollSensitivity),
       onLinkClick: (event, url) => {
         if (!event) {
           return
@@ -1703,10 +1653,6 @@ export function useTerminalPaneLifecycle({
         window.clearTimeout(timer)
       }
       selectionCaptureTimers.clear()
-      for (const disposable of mouseHideDisposables.values()) {
-        disposable.dispose()
-      }
-      mouseHideDisposables.clear()
       for (const disposable of imeCompositionDisposables.values()) {
         disposable.dispose()
       }
@@ -1816,23 +1762,4 @@ export function useTerminalPaneLifecycle({
     // not recreate panes, replay snapshots, refit, resize, or signal the PTY.
     applyTerminalScrollbackRowsToMountedPanes(manager, terminalScrollbackRows)
   }, [managerRef, terminalScrollbackRows])
-
-  useEffect(() => {
-    const manager = managerRef.current
-    if (!manager) {
-      return
-    }
-    const hide = settings?.terminalMouseHideWhileTyping ?? false
-    for (const pane of manager.getPanes()) {
-      const existing = mouseHideDisposablesRef.current.get(pane.id)
-      if (hide && !existing) {
-        const disposable = installMouseHideWhileTyping(pane.terminal, pane.container)
-        mouseHideDisposablesRef.current.set(pane.id, disposable)
-      } else if (!hide && existing) {
-        existing.dispose()
-        mouseHideDisposablesRef.current.delete(pane.id)
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings?.terminalMouseHideWhileTyping])
 }

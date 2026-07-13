@@ -115,16 +115,11 @@ describe('getTerminalPaneSearchEntries', () => {
   })
 
   it('keeps terminal appearance settings in the Appearance search index', () => {
-    const entriesWindows = getTerminalPaneSearchEntries({ isWindows: true, isMac: false })
     const entriesMac = getTerminalPaneSearchEntries({ isWindows: false, isMac: true })
     const entriesLinux = getTerminalPaneSearchEntries({ isWindows: false, isMac: false })
 
-    expect(entriesWindows.some((entry) => entry.title === 'Import from Ghostty')).toBe(false)
     expect(entriesMac.some((entry) => entry.title === 'Font Size')).toBe(false)
     expect(entriesLinux.some((entry) => entry.title === 'Dark Theme')).toBe(false)
-    expect(
-      getAppearancePaneSearchEntries().some((entry) => entry.title === 'Import from Ghostty')
-    ).toBe(true)
     expect(getAppearancePaneSearchEntries().some((entry) => entry.title === 'Font Size')).toBe(true)
     expect(getAppearancePaneSearchEntries().some((entry) => entry.title === 'Dark Theme')).toBe(
       true
@@ -135,7 +130,6 @@ describe('getTerminalPaneSearchEntries', () => {
     'dark',
     'light',
     'divider',
-    'preview',
     'theme',
     'dark terminal theme',
     'target',
@@ -143,31 +137,9 @@ describe('getTerminalPaneSearchEntries', () => {
     'Match dark mode',
     'Customize Light Mode',
     'Match dark mode terminal theme',
-    'Use Separate Theme In Light Mode',
-    'import',
-    'Warp',
-    'YAML'
+    'Use Separate Theme In Light Mode'
   ])('matches terminal appearance search for %s', (query) => {
     expect(matchesSettingsSearch(query, getAppearancePaneSearchEntries())).toBe(true)
-  })
-
-  it('omits the Warp import appearance entry when desktop-only controls are hidden', () => {
-    const desktopEntries = getAppearancePaneSearchEntries({ showWarpImport: true })
-    const webEntries = getAppearancePaneSearchEntries({ showWarpImport: false })
-
-    expect(desktopEntries.some((entry) => entry.title === 'Import from Warp')).toBe(true)
-    expect(webEntries.some((entry) => entry.title === 'Import from Warp')).toBe(false)
-    expect(webEntries.some((entry) => entry.title === 'Import from Ghostty')).toBe(true)
-  })
-
-  it('includes the system tray appearance entry only when desktop tray controls are shown', () => {
-    const desktopEntries = getAppearancePaneSearchEntries({ showSystemTray: true })
-    const webEntries = getAppearancePaneSearchEntries({ showSystemTray: false })
-
-    expect(desktopEntries.some((entry) => entry.title === 'Minimize to Tray on Close')).toBe(true)
-    expect(webEntries.some((entry) => entry.title === 'Minimize to Tray on Close')).toBe(false)
-    expect(matchesSettingsSearch('tray', desktopEntries)).toBe(true)
-    expect(matchesSettingsSearch('tray', webEntries)).toBe(false)
   })
 
   it('keeps sidebar shortcut restore settings in the Appearance search index', () => {

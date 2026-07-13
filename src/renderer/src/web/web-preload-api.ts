@@ -2863,8 +2863,6 @@ function getStoredSettings(): GlobalSettings {
       stored.autoRenameBranchFromWorkDefaultedOn !==
         migratedStored.autoRenameBranchFromWorkDefaultedOn ||
       stored.terminalCursorStyle !== migratedStored.terminalCursorStyle ||
-      stored.terminalCursorStyleDefaultedToBlock !==
-        migratedStored.terminalCursorStyleDefaultedToBlock ||
       stored.terminalCustomThemes !== migratedStored.terminalCustomThemes ||
       stored.uiLanguage !== migratedStored.uiLanguage)
   ) {

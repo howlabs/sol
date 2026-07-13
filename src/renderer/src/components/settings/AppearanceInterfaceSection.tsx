@@ -8,18 +8,11 @@ import { AppearanceAdvancedDisclosure } from './AppearanceAdvancedDisclosure'
 import { useAppStore } from '../../store'
 import { useShortcutKeyComboDetails } from '@/hooks/useShortcutLabel'
 import { ShortcutHintList } from './AppearanceShortcutHintList'
-import {
-  FontAutocomplete,
-  SettingsRow,
-  SettingsSegmentedControl,
-  SettingsSwitchRow
-} from './SettingsFormControls'
+import { FontAutocomplete, SettingsRow, SettingsSegmentedControl } from './SettingsFormControls'
 import { DEFAULT_APP_FONT_FAMILY } from '../../../../shared/constants'
 import {
   getLanguageEntries,
-  getSystemTrayEntries,
   getThemeEntries,
-  getTitlebarEntries,
   getTypographyEntries,
   getZoomEntries
 } from './appearance-search'
@@ -37,7 +30,6 @@ type AppearanceInterfaceSectionProps = {
   updateSettings: (updates: Partial<GlobalSettings>) => void
   applyTheme: (theme: 'system' | 'dark' | 'light') => void
   fontSuggestions: string[]
-  isDesktopWindows: boolean
   onRequestFontSuggestions?: () => void
   forceVisiblePrimary?: boolean
 }
@@ -47,7 +39,6 @@ export function AppearanceInterfaceSection({
   updateSettings,
   applyTheme,
   fontSuggestions,
-  isDesktopWindows,
   onRequestFontSuggestions,
   forceVisiblePrimary = false
 }: AppearanceInterfaceSectionProps): React.JSX.Element {
@@ -56,17 +47,11 @@ export function AppearanceInterfaceSection({
   const zoomInKeyCombos = useShortcutKeyComboDetails('zoom.in')
   const zoomOutKeyCombos = useShortcutKeyComboDetails('zoom.out')
   const languageEntry = getLanguageEntries()[0]
-  const systemTrayEntry = getSystemTrayEntries({ showSystemTray: true })[0]
   const themeEntry = getThemeEntries()[0]
   const themeLabel = translate('auto.components.settings.AppearancePane.932ff1fbff', 'Theme')
-  const titlebarEntry = getTitlebarEntries()[0]
   const typographyEntry = getTypographyEntries()[0]
   const zoomEntry = getZoomEntries()[0]
-  const advancedEntries = [
-    ...(SHOW_UI_LANGUAGE_SETTING ? getLanguageEntries() : []),
-    ...getTitlebarEntries(),
-    ...getSystemTrayEntries({ showSystemTray: isDesktopWindows })
-  ]
+  const advancedEntries = [...(SHOW_UI_LANGUAGE_SETTING ? getLanguageEntries() : [])]
   const showAdvanced = !isSearching || matchesSettingsSearch(searchQuery, advancedEntries)
 
   return (
@@ -188,54 +173,6 @@ export function AppearanceInterfaceSection({
                         ))}
                       </SelectContent>
                     </Select>
-                  }
-                />
-              </SearchableSetting>
-            ) : null}
-
-            <SearchableSetting
-              title={translate(
-                'auto.components.settings.AppearancePane.9868f39007',
-                'Titlebar App Name'
-              )}
-              description={titlebarEntry?.description}
-              keywords={titlebarEntry?.keywords ?? ['titlebar', 'orca', 'app', 'name']}
-            >
-              <SettingsSwitchRow
-                label={translate(
-                  'auto.components.settings.AppearancePane.9868f39007',
-                  'Titlebar App Name'
-                )}
-                checked={settings.showTitlebarAppName}
-                onChange={() =>
-                  updateSettings({ showTitlebarAppName: !settings.showTitlebarAppName })
-                }
-              />
-            </SearchableSetting>
-
-            {isDesktopWindows ? (
-              <SearchableSetting
-                title={translate(
-                  'auto.components.settings.AppearancePane.2edf606c46',
-                  'Minimize to Tray on Close'
-                )}
-                description={systemTrayEntry?.description}
-                keywords={systemTrayEntry?.keywords ?? ['tray', 'minimize', 'close']}
-              >
-                <SettingsSwitchRow
-                  label={translate(
-                    'auto.components.settings.AppearancePane.2edf606c46',
-                    'Minimize to Tray on Close'
-                  )}
-                  // Why: platform constraint + "close keeps Orca running" consequence are
-                  // both non-obvious from the label alone.
-                  description={translate(
-                    'auto.components.settings.AppearancePane.b707773a0d',
-                    'When enabled, closing the window keeps Orca running in the system tray instead of quitting.'
-                  )}
-                  checked={settings.minimizeToTrayOnClose === true}
-                  onChange={() =>
-                    updateSettings({ minimizeToTrayOnClose: !settings.minimizeToTrayOnClose })
                   }
                 />
               </SearchableSetting>

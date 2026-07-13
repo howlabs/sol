@@ -78,7 +78,7 @@ export function TerminalAdvancedSection({
         title={translate('auto.components.settings.TerminalPane.5e5f06c82c', 'Advanced')}
         description={translate(
           'auto.components.settings.TerminalPane.267d020745',
-          'Scrollback, word boundaries, and platform-specific terminal behaviors.'
+          'Scrollback and platform-specific terminal behaviors.'
         )}
       />
 
@@ -169,34 +169,6 @@ export function TerminalAdvancedSection({
                   </div>
                 ) : null}
               </div>
-            }
-          />
-        </SearchableSetting>
-
-        <SearchableSetting
-          title={translate('auto.components.settings.TerminalPane.4bebcc2b2c', 'Word Separators')}
-          description={translate(
-            'auto.components.settings.TerminalPane.8a956cc91e',
-            'Characters treated as word boundaries for double-click selection.'
-          )}
-          keywords={['word', 'separator', 'boundary', 'double-click', 'selection']}
-        >
-          <SettingsRow
-            label={translate('auto.components.settings.TerminalPane.4bebcc2b2c', 'Word Separators')}
-            description={translate(
-              'auto.components.settings.TerminalPane.8a956cc91e',
-              'Characters treated as word boundaries for double-click selection.'
-            )}
-            control={
-              <Input
-                value={settings.terminalWordSeparator ?? ''}
-                onChange={(e) => {
-                  const value = e.target.value
-                  updateSettings({ terminalWordSeparator: value || undefined })
-                }}
-                placeholder={` ()[]{},'"\``}
-                className="w-56 font-mono text-xs"
-              />
             }
           />
         </SearchableSetting>

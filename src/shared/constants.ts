@@ -11,7 +11,6 @@ import type {
   AgentActivityDisplayMode
 } from './types'
 import { DEFAULT_STATUS_BAR_ITEMS } from './status-bar-defaults'
-import { DEFAULT_TERMINAL_FONT_WEIGHT } from './terminal-fonts'
 import { getDefaultTerminalQuickCommands } from './terminal-quick-commands'
 import { cloneDefaultWorkspaceStatuses } from './workspace-statuses'
 import { TASK_PROVIDERS } from './task-providers'
@@ -23,10 +22,6 @@ import { DEFAULT_BROWSER_PAGE_ZOOM_LEVEL } from './browser-page-zoom'
 import { DEFAULT_DISABLED_TUI_AGENTS } from './tui-agent-selection'
 import { DEFAULT_TUI_AGENT_ARGS, DEFAULT_TUI_AGENT_ENV } from './tui-agent-launch-defaults'
 import { UI_LANGUAGE_SYSTEM } from './ui-language'
-import {
-  DEFAULT_LEFT_SIDEBAR_TINT_COLOR,
-  DEFAULT_LEFT_SIDEBAR_TINT_OPACITY
-} from './left-sidebar-appearance'
 import { DEFAULT_SOURCE_CONTROL_GROUP_ORDER } from './source-control-group-order'
 import { DEFAULT_SETUP_AGENT_STARTUP_POLICY } from './setup-agent-startup-policy'
 import { DESKTOP_TERMINAL_SCROLLBACK_ROWS_DEFAULT } from './terminal-scrollback-policy'
@@ -186,8 +181,6 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     enableGitHubAttribution: false,
     theme: 'system',
     leftSidebarAppearanceMode: 'default',
-    leftSidebarTintColor: DEFAULT_LEFT_SIDEBAR_TINT_COLOR,
-    leftSidebarTintOpacity: DEFAULT_LEFT_SIDEBAR_TINT_OPACITY,
     uiLanguage: UI_LANGUAGE_SYSTEM,
     appIcon: DEFAULT_APP_ICON_ID,
     appFontFamily: DEFAULT_APP_FONT_FAMILY,
@@ -201,33 +194,15 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
       getDefaultPrimarySelectionMiddleClickPaste(),
     terminalFontSize: 14,
     terminalFontFamily: defaultTerminalFontFamily(),
-    terminalFontWeight: DEFAULT_TERMINAL_FONT_WEIGHT,
-    terminalLineHeight: 1,
-    terminalScrollSensitivity: 1.15,
-    terminalFastScrollSensitivity: 5,
-    terminalTuiScrollSensitivity: 1,
-    terminalTuiScrollSensitivityDefaultedToOne: true,
     // Why: "auto" should use WebGL when supported while keeping DOM fallback
     // for renderer failures and Linux software/unknown GPU renderers.
     terminalGpuAcceleration: 'auto',
-    // Why 'auto': when the user has picked a known ligature font we want the
-    // feature enabled by default, but we never force it if they pick a font
-    // that lacks ligatures or if they've explicitly opted out. The resolver
-    // is in shared/terminal-ligatures.ts.
-    terminalLigatures: 'auto',
     terminalCursorStyle: 'block',
-    terminalCursorStyleDefaultedToBlock: true,
     terminalCursorBlink: true,
     terminalThemeDark: 'Ghostty Default Style Dark',
-    terminalDividerColorDark: '#3f3f46',
     terminalUseSeparateLightTheme: true,
     terminalThemeLight: 'Builtin Tango Light',
     terminalCustomThemes: [],
-    terminalDividerColorLight: '#d4d4d8',
-    terminalInactivePaneOpacity: 0.8,
-    terminalActivePaneOpacity: 1,
-    terminalPaneOpacityTransitionMs: 140,
-    terminalDividerThicknessPx: 3,
     // Default true so Windows users get native right-click paste out of the
     // box. Other platforms ignore this field because the UI never exposes it,
     // and Ctrl+right-click still opens the context menu when paste is enabled.
@@ -240,16 +215,7 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     // Why: Windows users expect "PowerShell" to mean modern PowerShell when it
     // is installed, with a safe fallback to the inbox Windows PowerShell.
     terminalWindowsPowerShellImplementation: 'auto',
-    terminalMouseHideWhileTyping: false,
     terminalQuickCommands: getDefaultTerminalQuickCommands(),
-    // Default false: opt-in only (matches Ghostty's default). Existing users
-    // on upgrade inherit this default via persistence.ts's
-    // { ...defaults.settings, ...parsed.settings } merge, so enabling
-    // focus-follows-mouse never happens unexpectedly.
-    terminalFocusFollowsMouse: false,
-    windowBackgroundBlur: false,
-    minimizeToTrayOnClose: false,
-    terminalClipboardOnSelect: false,
     // Why: Grok CLI and other TUIs rely on OSC 52 write for remote copy; keep
     // user-toggleable but default on so SSH/agent copy works out of the box.
     terminalAllowOsc52Clipboard: true,
@@ -270,7 +236,6 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     sourceControlViewMode: 'list',
     sourceControlGroupOrder: DEFAULT_SOURCE_CONTROL_GROUP_ORDER,
     sourceControlCompareAgainstUpstream: false,
-    showTitlebarAppName: true,
     showTasksButton: true,
     showAutomationsButton: true,
     ctrlTabOrderMode: 'mru',
@@ -460,7 +425,6 @@ export function getDefaultUIState(): PersistedUIState {
     setupGuideBrowserMilestoneMigrated: true,
     setupGuideBrowserMilestoneLegacyComplete: false,
     browserImportHintHidden: false,
-    trayMinimizeNoticeShown: false,
     workspaceCleanup: { dismissals: {} },
     featureTipsSeenIds: [],
     featureInteractions: {},

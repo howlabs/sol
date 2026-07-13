@@ -1,7 +1,6 @@
 import type { SettingsSearchEntry } from './settings-search'
 import {
   getTerminalAdvancedSearchEntries,
-  getTerminalGhosttyImportSearchEntries,
   getTerminalMacOptionSearchEntries,
   getTerminalMacYenSearchEntries
 } from './terminal-advanced-platform-search'
@@ -12,9 +11,7 @@ import {
 import {
   getTerminalDarkThemeSearchEntries,
   getTerminalLightThemeSearchEntries,
-  getTerminalThemeTargetSearchEntries,
-  getTerminalWarpImportSearchEntries,
-  getTerminalYamlImportSearchEntries
+  getTerminalThemeTargetSearchEntries
 } from './terminal-theme-search'
 import {
   getTerminalCursorSearchEntries,
@@ -34,7 +31,6 @@ import {
 import { createLocalizedCatalog } from '@/i18n/localized-catalog'
 
 export {
-  getTerminalAdvancedTypographySearchEntries,
   getTerminalTypographySearchEntries,
   getTerminalRenderingSearchEntries,
   getTerminalCursorSearchEntries
@@ -46,15 +42,12 @@ export {
 export {
   getTerminalDarkThemeSearchEntries,
   getTerminalLightThemeSearchEntries,
-  getTerminalThemeTargetSearchEntries,
-  getTerminalWarpImportSearchEntries,
-  getTerminalYamlImportSearchEntries
+  getTerminalThemeTargetSearchEntries
 } from './terminal-theme-search'
 export {
   getTerminalAdvancedSearchEntries,
   getTerminalMacOptionSearchEntries,
-  getTerminalMacYenSearchEntries,
-  getTerminalGhosttyImportSearchEntries
+  getTerminalMacYenSearchEntries
 } from './terminal-advanced-platform-search'
 export {
   getManageSessionsSearchEntries,
@@ -62,11 +55,7 @@ export {
   getTerminalSetupScriptSearchEntries
 } from './terminal-window-setup-search'
 
-type TerminalAppearanceSearchOptions = {
-  showWarpImport?: boolean
-}
-
-const getTerminalAppearanceSearchEntriesWithoutWarp = createLocalizedCatalog(
+export const getTerminalAppearanceSearchEntries = createLocalizedCatalog(
   (): SettingsSearchEntry[] => [
     ...getTerminalTypographySearchEntries(),
     ...getTerminalCursorSearchEntries(),
@@ -74,28 +63,9 @@ const getTerminalAppearanceSearchEntriesWithoutWarp = createLocalizedCatalog(
     ...getTerminalThemeTargetSearchEntries(),
     ...getTerminalDarkThemeSearchEntries(),
     ...getTerminalLightThemeSearchEntries(),
-    ...getTerminalWindowSearchEntries(),
-    ...getTerminalGhosttyImportSearchEntries()
+    ...getTerminalWindowSearchEntries()
   ]
 )
-
-// Why: compose rather than filter — entry titles are localized, so matching on
-// an English title would leak the Warp entry back in under non-English locales.
-const getTerminalAppearanceSearchEntriesWithWarp = createLocalizedCatalog(
-  (): SettingsSearchEntry[] => [
-    ...getTerminalAppearanceSearchEntriesWithoutWarp(),
-    ...getTerminalWarpImportSearchEntries(),
-    ...getTerminalYamlImportSearchEntries()
-  ]
-)
-
-export function getTerminalAppearanceSearchEntries(
-  options: TerminalAppearanceSearchOptions = {}
-): SettingsSearchEntry[] {
-  return (options.showWarpImport ?? true)
-    ? getTerminalAppearanceSearchEntriesWithWarp()
-    : getTerminalAppearanceSearchEntriesWithoutWarp()
-}
 
 export function getTerminalPaneSearchEntries(platform: {
   isWindows: boolean

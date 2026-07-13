@@ -38,7 +38,6 @@ function buildMenuOptions() {
     getAppearanceState: vi.fn(() => ({
       showTasksButton: true,
       showAutomationsButton: true,
-      showTitlebarAppName: true,
       statusBarVisible: true
     }))
   }
@@ -274,7 +273,6 @@ describe('registerAppMenu', () => {
     options.getAppearanceState.mockReturnValue({
       showTasksButton: false,
       showAutomationsButton: false,
-      showTitlebarAppName: true,
       statusBarVisible: true
     })
     registerAppMenu(options)
@@ -295,9 +293,6 @@ describe('registerAppMenu', () => {
     expect(automationsItem?.type).toBe('checkbox')
     expect(automationsItem?.checked).toBe(false)
 
-    const titlebarItem = appearanceSubmenu.find((item) => item.label === 'Show Titlebar App Name')
-    expect(titlebarItem?.checked).toBe(true)
-
     const statusBarItem = appearanceSubmenu.find((item) => item.label === 'Show Status Bar')
     expect(statusBarItem?.checked).toBe(true)
   })
@@ -316,13 +311,9 @@ describe('registerAppMenu', () => {
     appearanceSubmenu
       .find((item) => item.label === 'Show Automations Button')
       ?.click?.({} as never, {} as never, {} as never)
-    appearanceSubmenu
-      .find((item) => item.label === 'Show Titlebar App Name')
-      ?.click?.({} as never, {} as never, {} as never)
 
     expect(options.onToggleAppearance).toHaveBeenCalledWith('showTasksButton')
     expect(options.onToggleAppearance).toHaveBeenCalledWith('showAutomationsButton')
-    expect(options.onToggleAppearance).toHaveBeenCalledWith('showTitlebarAppName')
   })
 
   it('routes sidebar toggle items through their callbacks', () => {

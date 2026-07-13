@@ -88,7 +88,6 @@ function createSettings(overrides: Partial<GlobalSettings> = {}): GlobalSettings
     sourceControlViewMode: 'list',
     sourceControlGroupOrder: 'changes-first',
     sourceControlCompareAgainstUpstream: false,
-    showTitlebarAppName: true,
     showTasksButton: true,
     diffDefaultView: 'inline',
     combinedDiffFileTreeVisibleByDefault: false,

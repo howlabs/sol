@@ -35,8 +35,6 @@ import { AppearancePane } from './AppearancePane'
 import { InputPane } from './InputPane'
 import { ShortcutsPane } from './ShortcutsPane'
 import { TerminalPane } from './TerminalPane'
-import { useGhosttyImport } from './useGhosttyImport'
-import { useWarpThemeImport } from './useWarpThemeImport'
 import { RepositoryPane } from './RepositoryPane'
 import { GitPane } from './GitPane'
 import { CommitMessageAiPane } from './CommitMessageAiPane'
@@ -279,10 +277,6 @@ function Settings(): React.JSX.Element {
   // reveals controls that the renderer will intentionally hide.
   const [scrollbackMode, setScrollbackMode] = useState<'preset' | 'custom'>('preset')
   const [prevScrollbackRows, setPrevScrollbackRows] = useState(settings?.terminalScrollbackRows)
-  // Why: Appearance owns terminal visual controls, but the Ghostty import flow
-  // still needs Settings-level state so the modal survives section remounts.
-  const ghostty = useGhosttyImport(updateSettings, settings)
-  const warpThemes = useWarpThemeImport(updateSettings, settings)
   const [fontSuggestions, setFontSuggestions] = useState<string[]>(
     mergeFontSuggestions([], getFallbackTerminalFonts())
   )
@@ -1219,8 +1213,6 @@ function Settings(): React.JSX.Element {
                       terminalFontSuggestions={terminalFontSuggestions}
                       onRequestFontSuggestions={requestFontSuggestions}
                       systemPrefersDark={systemPrefersDark}
-                      ghostty={ghostty}
-                      warpThemes={warpThemes}
                     />
                   ) : null}
                 </SettingsSection>

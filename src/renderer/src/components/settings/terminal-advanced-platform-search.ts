@@ -19,23 +19,6 @@ export const getTerminalAdvancedSearchEntries = createLocalizedCatalog(() => [
       ...translateSearchKeyword('auto.components.settings.terminal.search.fffdff40a7', 'buffer'),
       ...translateSearchKeyword('auto.components.settings.terminal.search.56fff3d113', 'memory')
     ]
-  },
-  {
-    title: translate('auto.components.settings.terminal.search.957a0203fc', 'Word Separators'),
-    description: translate(
-      'auto.components.settings.terminal.search.3ab64c47d8',
-      'Characters treated as word boundaries for double-click selection.'
-    ),
-    keywords: [
-      ...translateSearchKeyword('auto.components.settings.terminal.search.7286cd2566', 'word'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.d4aeafac10', 'separator'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.4ed3e239a8', 'boundary'),
-      ...translateSearchKeyword(
-        'auto.components.settings.terminal.search.d2a366c7f9',
-        'double-click'
-      ),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.affb14efd4', 'selection')
-    ]
   }
 ])
 
@@ -87,23 +70,6 @@ export const getTerminalMacYenSearchEntries = createLocalizedCatalog(() => [
       ...translateSearchKeyword('auto.components.settings.terminal.search.d8d6f7a3c5', 'macos'),
       ...translateSearchKeyword('auto.components.settings.terminal.search.b495dc6a9f', 'jis'),
       ...translateSearchKeyword('auto.components.settings.terminal.search.4cec42dbf7', 'intl')
-    ]
-  }
-])
-
-export const getTerminalGhosttyImportSearchEntries = createLocalizedCatalog(() => [
-  {
-    title: translate('auto.components.settings.terminal.search.a979df0083', 'Import from Ghostty'),
-    description: translate(
-      'auto.components.settings.terminal.search.73e9422f19',
-      'One-time import of supported Ghostty terminal settings.'
-    ),
-    keywords: [
-      ...translateSearchKeyword('auto.components.settings.terminal.search.82b63d07fe', 'ghostty'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.fd752b3cac', 'import'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.f66a7cf715', 'terminal'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.2ade3ea490', 'config'),
-      ...translateSearchKeyword('auto.components.settings.terminal.search.10f9fb6fea', 'settings')
     ]
   }
 ])

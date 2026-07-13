@@ -99,8 +99,7 @@ export function getAvailableTerminalThemeOptions(
       value: makeCustomTerminalThemeSelection(theme.id),
       label: theme.name,
       group: 'imported' as const,
-      sourceLabel:
-        theme.source === 'warp' ? 'Warp' : theme.source === 'ghostty' ? 'Ghostty' : 'Manual',
+      sourceLabel: 'Manual',
       mode: theme.mode,
       previewTheme: terminalCustomThemeToXtermTheme(theme)
     })
@@ -113,11 +112,9 @@ export function resolveEffectiveTerminalAppearance(
     GlobalSettings,
     | 'theme'
     | 'terminalThemeDark'
-    | 'terminalDividerColorDark'
     | 'terminalUseSeparateLightTheme'
     | 'terminalThemeLight'
     | 'terminalCustomThemes'
-    | 'terminalDividerColorLight'
   >,
   systemPrefersDark = getSystemPrefersDark()
 ): EffectiveTerminalAppearance {
@@ -128,8 +125,8 @@ export function resolveEffectiveTerminalAppearance(
     ? settings.terminalThemeLight || DEFAULT_TERMINAL_THEME_LIGHT
     : settings.terminalThemeDark || DEFAULT_TERMINAL_THEME_DARK
   const dividerColor = useLightVariant
-    ? normalizeColor(settings.terminalDividerColorLight, DEFAULT_TERMINAL_DIVIDER_LIGHT)
-    : normalizeColor(settings.terminalDividerColorDark, DEFAULT_TERMINAL_DIVIDER_DARK)
+    ? DEFAULT_TERMINAL_DIVIDER_LIGHT
+    : DEFAULT_TERMINAL_DIVIDER_DARK
 
   return {
     mode: sourceTheme,
@@ -153,23 +150,13 @@ export function clampNumber(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value))
 }
 
-export function resolvePaneStyleOptions(
-  settings: Pick<
-    GlobalSettings,
-    | 'terminalInactivePaneOpacity'
-    | 'terminalActivePaneOpacity'
-    | 'terminalPaneOpacityTransitionMs'
-    | 'terminalDividerThicknessPx'
-    | 'terminalFocusFollowsMouse'
-  >
-) {
+export function resolvePaneStyleOptions() {
   return {
-    inactivePaneOpacity: clampNumber(settings.terminalInactivePaneOpacity, 0, 1),
-    activePaneOpacity: clampNumber(settings.terminalActivePaneOpacity, 0, 1),
-    opacityTransitionMs: clampNumber(settings.terminalPaneOpacityTransitionMs, 0, 5000),
-    dividerThicknessPx: clampNumber(settings.terminalDividerThicknessPx, 1, 32),
-    // Why no clamping: boolean pass-through. Both true and false are valid.
-    focusFollowsMouse: settings.terminalFocusFollowsMouse
+    inactivePaneOpacity: 0.8,
+    activePaneOpacity: 1,
+    opacityTransitionMs: 140,
+    dividerThicknessPx: 3,
+    focusFollowsMouse: false
   }
 }
 

@@ -2437,7 +2437,7 @@ export type OpenInApplication = {
 export type SourceControlViewMode = 'list' | 'tree'
 export type SourceControlGroupOrder = 'changes-first' | 'staged-first' | 'untracked-first'
 
-export type LeftSidebarAppearanceMode = 'default' | 'match-terminal' | 'tinted'
+export type LeftSidebarAppearanceMode = 'default' | 'match-terminal'
 
 /** Per-host overrides for client preferences that genuinely vary by execution
  *  host. NARROW by design: only settings whose value is meaningless to share
@@ -2475,8 +2475,6 @@ export type GlobalSettings = {
   theme: 'system' | 'dark' | 'light'
   /** Controls the left sidebar surface without changing terminal brightness. */
   leftSidebarAppearanceMode: LeftSidebarAppearanceMode
-  leftSidebarTintColor?: string
-  leftSidebarTintOpacity?: number
   uiLanguage: UiLanguage
   appIcon: AppIconId
   appFontFamily: string
@@ -2496,54 +2494,19 @@ export type GlobalSettings = {
   primarySelectionMiddleClickPasteDefaultedForTerminalDefaults?: boolean
   terminalFontSize: number
   terminalFontFamily: string
-  terminalFontWeight: number
-  terminalLineHeight: number
-  terminalScrollSensitivity: number
-  terminalFastScrollSensitivity: number
-  terminalTuiScrollSensitivity: number
-  /** One-shot migration guard for moving inherited TUI wheel reports from 3 to 1. */
-  terminalTuiScrollSensitivityDefaultedToOne?: boolean
   /** Terminal renderer policy.
    *  - 'auto': try xterm WebGL and fall back to DOM when unsupported or risky.
    *  - 'on': always try xterm WebGL.
    *  - 'off': keep terminal rendering on xterm's DOM renderer. */
   terminalGpuAcceleration: 'auto' | 'on' | 'off'
-  /** Whether to enable programming-ligatures rendering via
-   *  `@xterm/addon-ligatures`.
-   *  - `'auto'` (default): enabled only when the configured font is known to
-   *    ship ligatures (Fira Code, JetBrains Mono, Cascadia Code, etc.). This
-   *    keeps the out-of-the-box experience right for users who install a
-   *    ligature font without touching settings.
-   *  - `'on'` / `'off'`: explicit override. Never changes when the user
-   *    switches fonts, so "off" always stays off. */
-  terminalLigatures: 'auto' | 'on' | 'off'
   terminalCursorStyle: 'bar' | 'block' | 'underline'
-  /** One-shot migration guard for moving inherited cursor defaults to block. */
-  terminalCursorStyleDefaultedToBlock?: boolean
   terminalCursorBlink: boolean
   terminalThemeDark: string
   terminalCustomThemes?: TerminalCustomTheme[]
-  terminalDividerColorDark: string
   terminalUseSeparateLightTheme: boolean
   terminalThemeLight: string
-  terminalDividerColorLight: string
-  terminalInactivePaneOpacity: number
-  terminalActivePaneOpacity: number
-  terminalPaneOpacityTransitionMs: number
-  terminalDividerThicknessPx: number
   terminalBackgroundOpacity?: number
-  terminalColorOverrides?: TerminalColorOverrides
-  terminalPaddingX?: number
-  terminalPaddingY?: number
-  terminalMouseHideWhileTyping?: boolean
-  terminalWordSeparator?: string
-  terminalCursorOpacity?: number
   terminalQuickCommands?: TerminalQuickCommand[]
-  windowBackgroundBlur?: boolean
-  /** Why: Windows-only. When on, the close (X) button hides the window to the
-   *  system tray instead of quitting Orca; off keeps the default quit-on-close.
-   *  The tray icon itself is always present on Windows regardless of this flag. */
-  minimizeToTrayOnClose?: boolean
   /** Why: Windows terminals conventionally use right-click as a paste gesture.
    *  The setting stays Windows-only so macOS/Linux keep their existing context
    *  menu behavior and users can still reach the menu with Ctrl+right-click. */
@@ -2572,12 +2535,6 @@ export type GlobalSettings = {
   /** Why: "PowerShell" is the product-facing shell family. Auto resolves to
    *  PowerShell 7+ when present and falls back to inbox Windows PowerShell. */
   terminalWindowsPowerShellImplementation: 'auto' | 'powershell.exe' | 'pwsh.exe'
-  terminalFocusFollowsMouse: boolean
-  /** Why: mirrors X11 / gnome-terminal "copy on select" UX — making a terminal
-   *  selection copies it to the system clipboard automatically, so users can
-   *  paste with Cmd/Ctrl+V without an intervening Cmd/Ctrl+Shift+C. Defaults
-   *  to false so existing users keep the explicit-copy behavior. */
-  terminalClipboardOnSelect: boolean
   /** Why: lets TUIs like Grok, tmux, nvim, and fzf copy to the system clipboard
    *  via the OSC 52 escape sequence — essential for SSH-hosted workflows where
    *  the terminal is the only bridge to the local clipboard. Defaults to
@@ -2634,8 +2591,6 @@ export type GlobalSettings = {
    *  default branch. Only affects the compare/diff view, not the PR/rebase
    *  merge target. Per-user, not per-workspace. */
   sourceControlCompareAgainstUpstream: boolean
-  /** Whether to show the Orca app name in the titlebar. */
-  showTitlebarAppName: boolean
   /** Why: some users do not use the Tasks feature and prefer to keep the
    *  left sidebar free of its button entirely. Hiding the button here also
    *  removes it from keyboard navigation. */
@@ -2925,15 +2880,6 @@ export type CommitMessageAiSettings = {
    *  `{prompt}` is substituted with the diff prompt (argv delivery). When the
    *  template has no `{prompt}`, the prompt is piped via stdin. */
   customAgentCommand: string
-}
-
-export type GhosttyImportPreview = {
-  found: boolean
-  configPath?: string
-  configPaths?: string[]
-  diff: Partial<GlobalSettings>
-  unsupportedKeys: string[]
-  error?: string
 }
 
 // Subset of the renderer's onboarding-step Ghostty `DiscoveryState['status']`
@@ -3231,9 +3177,6 @@ export type PersistedUIState = {
   /** User-dismissed browser import hint in the browser toolbar. Import remains
    *  available from Settings > Browser and the toolbar overflow menu. */
   browserImportHintHidden?: boolean
-  /** Why: Windows-only. Set once after the window first hides to the system
-   *  tray, so the "Sol is still running" notification shows only on first use. */
-  trayMinimizeNoticeShown?: boolean
   /** User-hidden empty-state usage CTA in the status bar. Permanently hides the
    *  "Connect AI accounts to see usage" prompt even if all providers are later
    *  disconnected — a dismissed teaching nudge stays dismissed. */

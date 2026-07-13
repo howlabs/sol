@@ -11,7 +11,6 @@ import { translateMain } from '../i18n/main-i18n'
 export type AppearanceMenuState = {
   showTasksButton: boolean
   showAutomationsButton: boolean
-  showTitlebarAppName: boolean
   statusBarVisible: boolean
 }
 
@@ -207,12 +206,6 @@ function buildAndApplyMenu(options: RegisterAppMenuOptions): void {
         type: 'checkbox',
         checked: appearance.showAutomationsButton,
         click: () => onToggleAppearance('showAutomationsButton')
-      },
-      {
-        label: translateMain('menu.showTitlebarAppName', 'Show Titlebar App Name'),
-        type: 'checkbox',
-        checked: appearance.showTitlebarAppName,
-        click: () => onToggleAppearance('showTitlebarAppName')
       }
     ]
   }
