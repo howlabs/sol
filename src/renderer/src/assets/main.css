@@ -135,7 +135,7 @@
      without switching primitives to base-ui yet (Phase B, still Radix). */
   --radius: 0.5rem;
   --background: oklch(1 0 0);
-  /* Why: editor stays a dedicated surface for Monaco/markdown — not pure canvas. */
+  /* Why: editor stays a dedicated surface for code/markdown — not pure canvas. */
   --editor-surface: oklch(1 0 0);
   --foreground: oklch(0.147 0.004 49.25);
   --card: oklch(1 0 0);
@@ -221,7 +221,7 @@
 
 .dark {
   --background: oklch(0.147 0.004 49.25);
-  /* Why: Monaco/markdown stay slightly lifted vs canvas (VS Code-like). */
+  /* Why: code/markdown stay slightly lifted vs canvas (VS Code-like). */
   --editor-surface: oklch(0.185 0.004 49.25);
   --foreground: oklch(0.985 0.001 106.423);
   --card: oklch(0.216 0.006 56.043);
@@ -533,7 +533,7 @@
   overscroll-behavior: contain;
 }
 
-/* ── Editor-style scrollbar (matches Monaco) ────────── */
+/* ── Editor-style scrollbar ──────────────────────────── */
 
 .scrollbar-editor {
   scrollbar-width: thin;
@@ -1694,164 +1694,49 @@
   color: var(--muted-foreground);
 }
 
-/* ── fix: ensure Monaco find widget layout is not reversed ── */
-.monaco-editor .find-widget,
-.monaco-editor .find-widget .monaco-inputbox,
-.monaco-editor .find-widget .matchesCount {
-  direction: ltr !important;
-  flex-direction: row !important;
-}
-
-.monaco-editor .find-widget .button,
-.monaco-editor .find-widget .monaco-button,
-.monaco-editor .find-widget .monaco-find-input .controls .button {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  width: 20px !important;
-  height: 20px !important;
-  line-height: normal !important;
-  box-sizing: border-box !important;
-  vertical-align: middle !important;
-  border: none !important;
-  box-shadow: none !important;
-  transition: none !important;
-}
-
-/* Why: the expand/collapse toggle (the chevron on the far left) is positioned
-   absolutely and relies on Monaco's default height:100% to vertically center
-   its icon over the find row. The generic .button override above forces a fixed
-   20px height, which pins the chevron to the top. Restore Monaco's full-height
-   18px toggle so the chevron centers like the stock find widget. */
-.monaco-editor .find-widget .button.toggle {
-  width: 18px !important;
-  height: 100% !important;
-  top: 0 !important;
-}
-
-.monaco-editor .find-widget .button > .codicon,
-.monaco-editor .find-widget .button > i {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.monaco-editor .monaco-search-result-highlight {
-  background: color-mix(in srgb, var(--warning, #f59e0b) 34%, transparent);
-  border-radius: 3px;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warning, #f59e0b) 52%, transparent);
-}
-
-.monaco-editor .monaco-markdown-doc-link {
-  color: #58a6ff !important;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
-  text-underline-offset: 2px;
-}
-
-/* Why: Monaco's faded scrollbar uses the class `invisible`, which collides with
-   Tailwind's `.invisible` utility (visibility: hidden) — so also restore visibility. */
-.monaco-editor
-  .reference-zone-widget
-  .monaco-scrollable-element
-  > .scrollbar.vertical.invisible.fade {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-
-/* Why: Monaco leaves the peek preview container `inline-block` and only sizes the
-   editor child, so the container shrink-wraps the child in BOTH axes while the
-   inherited automaticLayout ResizeObserver measures the container — a feedback
-   loop that ratchets the preview to blank at fractional zoom/DPI (issue #7405).
-   Pinning both dimensions to the splitview slot severs the loop. */
-.monaco-editor .reference-zone-widget .preview.inline {
-  height: 100%;
-  width: 100%;
-}
-
 /* ── Git conflict decorations ───────────────────────────────────── */
 
-.monaco-editor .orca-conflict-marker-line {
+.cm-editor .orca-conflict-marker-line {
   background: color-mix(in srgb, var(--destructive) 12%, transparent);
 }
 
-.monaco-editor .orca-conflict-section-line {
+.cm-editor .orca-conflict-section-line {
   border-left: 3px solid transparent;
 }
 
-.monaco-editor .orca-conflict-current-line {
+.cm-editor .orca-conflict-current-line {
   background: color-mix(in srgb, var(--git-decoration-modified) 12%, transparent);
   border-left-color: color-mix(in srgb, var(--git-decoration-modified) 72%, transparent);
 }
 
-.monaco-editor .orca-conflict-base-line {
+.cm-editor .orca-conflict-base-line {
   background: color-mix(in srgb, var(--muted-foreground) 7%, transparent);
   border-left-color: color-mix(in srgb, var(--muted-foreground) 36%, transparent);
 }
 
-.monaco-editor .orca-conflict-incoming-line {
+.cm-editor .orca-conflict-incoming-line {
   background: color-mix(in srgb, var(--git-decoration-renamed) 11%, transparent);
   border-left-color: color-mix(in srgb, var(--git-decoration-renamed) 68%, transparent);
 }
 
-.monaco-editor .orca-conflict-line-decoration {
+.cm-editor .orca-conflict-line-decoration {
   width: 4px !important;
   margin-left: 3px;
   background: var(--destructive);
   border-radius: 999px;
 }
 
-.monaco-editor .orca-conflict-margin {
+.cm-editor .orca-conflict-margin {
   background: color-mix(in srgb, var(--destructive) 8%, transparent);
 }
 
-.monaco-editor .orca-conflict-marker-label {
+.cm-editor .orca-conflict-marker-label {
   color: var(--destructive);
   font-family: var(--font-sans, system-ui, sans-serif);
   font-size: 11px;
   font-weight: 600;
   font-style: normal;
   opacity: 0.92;
-}
-
-/* Why: Monaco's find-widget button tooltips (Close, Find in Selection, etc.)
-   render inside a `.context-view` wrapper → `.workbench-hover-container` →
-   `.workbench-hover.compact`, positioned above the target button. The wrapper's
-   bounding box (z-index 2576, `pointer-events: auto`) overlaps the button hit
-   area, so as the tooltip appears it fires `mouseleave` on the button → 200ms
-   debounce → hover disposes → mouse is again "over" the button → `mouseover`
-   re-fires a new tooltip → loop. The visible effect is an infinitely flashing
-   tooltip that also blocks clicks on the button beneath it. The overlap is
-   only reliably reproducible when the right sidebar is open, because the find
-   widget's x-position shifts the wrapper onto the button rect; with the
-   sidebar closed the wrapper often lands slightly offset and doesn't intercept.
-
-   These are compact tooltips (`HoverStyle.Pointer` → `.workbench-hover.compact`)
-   configured with `hideOnHover: true`, so the CompositeMouseTracker only tracks
-   the target element — not the wrapper. Making the entire wrapper chain
-   non-interactive breaks the overlap feedback loop without affecting tracker
-   logic, keyboard focus traps, or interactive markdown hovers (which are never
-   `.compact`). The `:has()` selector ensures we only disable pointer events on
-   context-views that actually contain a compact hover, leaving menus, dropdown
-   popups and other context-view consumers untouched. */
-.context-view:has(> .workbench-hover-container > .workbench-hover.compact),
-.workbench-hover-container:has(> .workbench-hover.compact) {
-  pointer-events: none;
-}
-
-/* Why: compact hovers for simple label strings (e.g. "Find in Selection (⌥⌘L)")
-   get `white-space: pre-wrap` inline-set by Monaco, so when the tooltip lands
-   near the viewport edge its max-width clamps and the label wraps to 2–3 lines,
-   pushing the tooltip down over the find-widget buttons. These labels are
-   single-line by design; forcing nowrap keeps the tooltip on one line and lets
-   the positioning logic flip/shift as needed to fit. Only applies to compact
-   hovers — markdown hovers still wrap normally. */
-.workbench-hover.compact .hover-contents {
-  white-space: nowrap !important;
 }
 
 /* ── Update card animations ───────────────────────────────────────── */
@@ -2872,7 +2757,7 @@ html.onboarding-tour-start-transition::view-transition-new(root) {
 
 /* ── Diff comment decorations ────────────────────────────────────── */
 
-/* Why: the "+" button is appended into Monaco's editor DOM node by
+/* Why: the "+" button is appended into the editor DOM by
    useDiffCommentDecorator. Keep it visually subtle until hovered so it does
    not distract from the diff itself. Left position overlaps the glyph margin
    so the affordance reads as "add comment on this line". */
@@ -2922,7 +2807,7 @@ html.onboarding-tour-start-transition::view-transition-new(root) {
 
 .orca-diff-comment-inline {
   width: 100%;
-  /* Why: Monaco's view-zone node already starts after the diff gutter. Avoid
+  /* Why: the view-zone node already starts after the diff gutter. Avoid
      adding a second left inset so saved notes sit flush with the code column. */
   padding: 4px 24px 6px 0;
   box-sizing: border-box;
@@ -2942,11 +2827,9 @@ html.onboarding-tour-start-transition::view-transition-new(root) {
    percentages would not give equal contrast. Override lives in `.dark`. */
 .orca-diff-comment-card {
   position: relative;
-  /* Why: Monaco's view-lines overlay (data-mprt=8) is positioned absolutely on
-     top of view-zone DOM. Without an explicit z-index here, clicks on
-     interior controls (Cancel/Save in edit mode, the textarea, etc.) hit the
-     overlay first and never reach our buttons. Lifting the whole card creates
-     a stacking context that keeps every nested control clickable. */
+  /* Why: without an explicit z-index, clicks on interior note controls can
+     miss under editor overlays. Lifting the card creates a stacking context
+     that keeps nested controls clickable. */
   z-index: 1;
   display: flex;
   gap: 12px;
@@ -3183,6 +3066,173 @@ html.onboarding-tour-start-transition::view-transition-new(root) {
   justify-content: flex-end;
   gap: 8px;
   margin-top: 4px;
+}
+
+/* CodeMirror review notes stay hidden in their own narrow gutter until the
+   pointer reaches a changed line, preserving the diff's quiet scan rhythm. */
+.orca-diff-review-gutter {
+  width: 24px;
+  background: var(--editor-surface);
+}
+
+.orca-diff-review-gutter .cm-gutterElement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orca-diff-review-gutter .orca-diff-comment-add-btn {
+  position: static;
+  display: flex;
+  width: 18px;
+  height: 18px;
+  opacity: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1;
+  transition:
+    opacity 100ms ease,
+    color 100ms ease,
+    background-color 100ms ease,
+    border-color 100ms ease;
+}
+
+.orca-diff-review-gutter .cm-gutterElement:hover .orca-diff-comment-add-btn,
+.orca-diff-review-gutter .orca-diff-comment-add-btn:focus-visible {
+  opacity: 1;
+}
+
+.orca-diff-review-inline {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 6px 16px 8px 8px;
+  font-family: var(--font-sans);
+}
+
+.orca-diff-review-composer,
+.orca-diff-review-note {
+  box-sizing: border-box;
+  width: min(560px, 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--background);
+}
+
+.orca-diff-review-composer {
+  position: relative;
+  padding: 8px;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
+.orca-diff-review-composer:focus-within {
+  border-color: var(--ring);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--ring) 14%, transparent),
+    0 8px 24px color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
+.orca-diff-review-label,
+.orca-diff-review-note-header {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.orca-diff-review-label {
+  margin: 0 2px 6px;
+}
+
+.orca-diff-review-textarea {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  max-height: 160px;
+  resize: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  padding: 2px 34px 2px 2px;
+  font: 13px/1.45 var(--font-sans);
+}
+
+.orca-diff-review-textarea:focus {
+  box-shadow: none;
+}
+
+.orca-diff-review-submit,
+.orca-diff-review-note-remove {
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  font: 500 12px/1 var(--font-sans);
+}
+
+.orca-diff-review-submit {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  font-size: 16px;
+}
+
+.orca-diff-review-submit:hover,
+.orca-diff-review-note-remove:hover {
+  background: var(--accent);
+  color: var(--foreground);
+}
+
+.orca-diff-review-submit:not(:disabled) {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.orca-diff-review-submit:not(:disabled):hover {
+  background: color-mix(in srgb, var(--primary) 88%, transparent);
+  color: var(--primary-foreground);
+}
+
+.orca-diff-review-submit:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.orca-diff-review-note {
+  padding: 8px 10px;
+  border-left: 2px solid var(--muted-foreground);
+}
+
+.orca-diff-review-note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.orca-diff-review-note-remove {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  font-size: 16px;
+}
+
+.orca-diff-review-note-body {
+  margin-top: 4px;
+  color: var(--foreground);
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* Why: tours need a distinct item surface without highlighting the underlying target. */

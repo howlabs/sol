@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { formatCopiedSelectionWithContext, getContextualCopyLineRange } from './selection-copy'
+import {
+  formatCopiedSelectionLines,
+  formatCopiedSelectionWithContext,
+  getContextualCopyLineRange
+} from './selection-copy'
 
 describe('formatCopiedSelectionWithContext', () => {
   it('formats multi-line selections with file and line context', () => {
@@ -80,5 +84,19 @@ describe('formatCopiedSelectionWithContext', () => {
         selectedText: 'line.startsWith'
       })
     ).toBeNull()
+  })
+})
+
+describe('formatCopiedSelectionLines', () => {
+  it('formats multi-line via line numbers without the editor ranges', () => {
+    expect(
+      formatCopiedSelectionLines({
+        relativePath: 'a.ts',
+        language: 'typescript',
+        startLine: 2,
+        endLine: 4,
+        selectedText: 'b\nc\n'
+      })
+    ).toBe('File: a.ts\nLines: 2-4\n\n```ts\nb\nc\n```')
   })
 })

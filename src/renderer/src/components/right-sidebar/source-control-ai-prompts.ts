@@ -12,3 +12,7 @@ export {
   buildResolveConflictsPrompt,
   buildResolvePullRequestConflictsPrompt
 } from '../../../../shared/source-control-conflict-prompts'
+export {
+  buildReviewChangesPrompt,
+  hasReviewableSourceControlChanges
+} from '../../../../shared/source-control-review-changes-prompt'

@@ -58,7 +58,6 @@ function createSettings(overrides: Partial<GlobalSettings> = {}): GlobalSettings
     appIcon: overrides.appIcon ?? 'classic',
     editorAutoSave: false,
     editorAutoSaveDelayMs: 1000,
-    editorMinimapEnabled: false,
     terminalFontSize: 14,
     terminalFontFamily: 'JetBrains Mono',
     terminalFontWeight: 500,

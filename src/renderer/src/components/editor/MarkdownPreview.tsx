@@ -929,7 +929,7 @@ export default function MarkdownPreview({
             return
           }
 
-          // Why: line targets like #L10 and path.ts:10 should reveal in Monaco,
+          // Why: line targets like #L10 and path.ts:10 should reveal in the editor,
           // not open a preview tab or a literal path with the suffix included.
           if (lineTarget) {
             openFile({

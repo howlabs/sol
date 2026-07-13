@@ -8,7 +8,7 @@ export type CombinedDiffLoadScheduler = {
 export function createCombinedDiffLoadScheduler({
   loadSection,
   schedule = (callback) => queueMicrotask(callback),
-  // Why: a settled section usually mounts a Monaco DiffEditor. Serializing by
+  // Why: a settled section mounts a CodeMirror merge view. Serializing by
   // default keeps large lockfile-style diffs from stacking render work.
   maxConcurrent = 1
 }: {

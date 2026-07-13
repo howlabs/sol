@@ -9,9 +9,9 @@ describe('normalizeRightSidebarRoute', () => {
     })
   })
 
-  it('preserves the agent-changes review panel route', () => {
+  it('maps the removed Changes activity onto Source Control', () => {
     expect(normalizeRightSidebarRoute('agent-changes')).toEqual({
-      rightSidebarTab: 'agent-changes',
+      rightSidebarTab: 'source-control',
       rightSidebarExplorerView: 'files'
     })
   })

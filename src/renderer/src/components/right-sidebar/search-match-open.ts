@@ -52,7 +52,7 @@ export function openMatchResult(params: {
   cancelRevealFrame(revealInnerRafRef)
   setPendingEditorReveal(null)
 
-  // Why: opening a result can replace the active tab and mount Monaco
+  // Why: opening a result can replace the active tab and mount the editor
   // asynchronously. Matching terminal-link navigation, wait two frames so
   // the destination editor owns focus/layout before we ask it to reveal.
   revealRafRef.current = requestAnimationFrame(() => {

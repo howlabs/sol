@@ -1,7 +1,7 @@
 /**
  * CodeMirror 6 editor for notebook code cells.
  *
- * Replaces the Monaco `Editor` from `@monaco-editor/react` in the notebook
+ * CodeMirror 6 editor for notebook code cells.
  * viewer. Supports: syntax highlighting, auto-height, save shortcut, escape
  * to deactivate, blur to deactivate, focus on mount, dark/light theme.
  */

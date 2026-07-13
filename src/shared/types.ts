@@ -2482,7 +2482,6 @@ export type GlobalSettings = {
   appFontFamily: string
   editorAutoSave: boolean
   editorAutoSaveDelayMs: number
-  editorMinimapEnabled: boolean
   /** Persisted opt-out for browser spellcheck noise in rich Markdown editing surfaces. */
   richMarkdownSpellcheckEnabled?: boolean
   /** Why: mirrors terminal selection-paste muscle memory without mutating the
@@ -3114,7 +3113,6 @@ export type RightSidebarTab =
   | 'workspaces'
   | 'pr-checks'
   | 'source-control'
-  | 'agent-changes'
   | 'checks'
   | 'ports'
 export type ActiveRightSidebarTab = Exclude<RightSidebarTab, 'search'>

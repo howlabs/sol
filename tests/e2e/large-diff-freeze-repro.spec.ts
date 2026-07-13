@@ -115,7 +115,9 @@ test.describe('Large diff freeze repro', () => {
           let editorCount = 0
           while (performance.now() - startedAt < 30_000) {
             await new Promise((resolve) => window.setTimeout(resolve, 50))
-            editorCount = document.querySelectorAll('.monaco-diff-editor').length
+            editorCount = document.querySelectorAll(
+              '.cm-mergeView, [data-testid="codemirror-diff-section"], [data-testid="codemirror-diff-viewer"]'
+            ).length
             fallbackVisible = Boolean(document.querySelector('[data-testid="large-diff-fallback"]'))
             if ((!expectFallback && editorCount > 0) || (expectFallback && fallbackVisible)) {
               await new Promise((resolve) => window.setTimeout(resolve, 1_000))
@@ -207,7 +209,9 @@ test.describe('Large diff freeze repro', () => {
           try {
             while (performance.now() - startedAt < 30_000) {
               await new Promise((resolve) => window.setTimeout(resolve, 50))
-              editorCount = document.querySelectorAll('.monaco-diff-editor').length
+              editorCount = document.querySelectorAll(
+                '.cm-mergeView, [data-testid="codemirror-diff-section"], [data-testid="codemirror-diff-viewer"]'
+              ).length
               fallbackCount = document.querySelectorAll(
                 '[data-testid="large-diff-fallback"]'
               ).length
@@ -222,7 +226,7 @@ test.describe('Large diff freeze repro', () => {
 
           const classHits = Array.from(
             document.querySelectorAll(
-              '.monaco-diff-editor .line-insert, .monaco-diff-editor .line-delete, .monaco-diff-editor .char-insert, .monaco-diff-editor .char-delete'
+              '.cm-insertedLine, .cm-deletedLine, .cm-changedText, .cm-deletedText, .cm-deletedChunk, .cm-insertedChunk'
             )
           ).length
           return {

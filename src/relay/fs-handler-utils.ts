@@ -20,7 +20,7 @@ import type { SearchResult as SharedSearchResult } from '../shared/types'
 // ─── Constants ───────────────────────────────────────────────────────
 
 // Why: remote reads still travel through bounded JSON-RPC frames, but matching
-// the old 5MB search cap would block common JSON/log files before Monaco's
+// the old 5MB search cap would block common JSON/log files before the editor's
 // large-file optimizations can handle them.
 export const MAX_TEXT_FILE_SIZE = 10 * 1024 * 1024
 // Why: matches the local cap (src/main/ipc/filesystem.ts MAX_PREVIEWABLE_BINARY_SIZE).

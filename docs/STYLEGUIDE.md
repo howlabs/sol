@@ -4,7 +4,7 @@ This is the **UI/visual design** doc for Sol — color tokens, typography, compo
 
 ## Overview
 
-Sol is an Electron desktop app for orchestrating coding agents across git worktrees. The visual identity is **monochrome and quiet** — neutral grays carry the chrome, color is reserved for state (selection ring, destructive, git decorations). The product spends most of its time hosting other people's tools (Monaco, xterm, Markdown previews), so Sol's own UI should recede and frame.
+Sol is an Electron desktop app for orchestrating coding agents across git worktrees. The visual identity is **monochrome and quiet** — neutral grays carry the chrome, color is reserved for state (selection ring, destructive, git decorations). The product spends most of its time hosting other people's tools (CodeMirror, xterm, Markdown previews), so Sol's own UI should recede and frame.
 
 When in doubt:
 
@@ -15,14 +15,14 @@ When in doubt:
 
 ## Design system target (migration in progress)
 
-Target stack for app chrome (not Monaco/xterm content surfaces):
+Target stack for app chrome (not CodeMirror/xterm content surfaces):
 
-| Dimension     | Target                         | Notes |
-| ------------- | ------------------------------ | ----- |
-| Visual style  | **shadcn Mira** (compact)      | Dense IDE/settings density |
-| Primitives    | **Base UI** via `base-mira`    | `@base-ui/react` |
-| Base color    | **Stone**                      | CSS variables in `main.css` |
-| Icons         | **Phosphor Icons**             | via `@/lib/icons` |
+| Dimension    | Target                      | Notes                       |
+| ------------ | --------------------------- | --------------------------- |
+| Visual style | **shadcn Mira** (compact)   | Dense IDE/settings density  |
+| Primitives   | **Base UI** via `base-mira` | `@base-ui/react`            |
+| Base color   | **Stone**                   | CSS variables in `main.css` |
+| Icons        | **Phosphor Icons**          | via `@/lib/icons`           |
 
 **Runtime progress (A–E done):**
 
@@ -47,15 +47,15 @@ Rules for new UI:
 
 ## Source of truth
 
-| Concern                                       | Canonical location                                    |
-| --------------------------------------------- | ----------------------------------------------------- |
-| Color tokens                                  | `src/renderer/src/assets/main.css` (`:root`, `.dark`) |
-| Tailwind theme bindings                       | Same file, `@theme inline { … }` block                |
-| Component primitives                          | `src/renderer/src/components/ui/` (shadcn-style)      |
+| Concern                                       | Canonical location                                              |
+| --------------------------------------------- | --------------------------------------------------------------- |
+| Color tokens                                  | `src/renderer/src/assets/main.css` (`:root`, `.dark`)           |
+| Tailwind theme bindings                       | Same file, `@theme inline { … }` block                          |
+| Component primitives                          | `src/renderer/src/components/ui/` (shadcn-style)                |
 | Settings form grammar                         | `src/renderer/src/components/settings/SettingsFormControls.tsx` |
-| shadcn CLI target config                      | `components.json`                                     |
-| Migration plan                                | `docs/reference/design-system-migration.md`           |
-| App typography / scrollbars / titlebar chrome | Same `main.css`                                       |
+| shadcn CLI target config                      | `components.json`                                               |
+| Migration plan                                | `docs/reference/design-system-migration.md`                     |
+| App typography / scrollbars / titlebar chrome | Same `main.css`                                                 |
 
 Never hardcode a hex value in component code if a variable already covers it. If a new token is needed, add it to `main.css` (both `:root` and `.dark`), expose it in the `@theme inline` block, then use it.
 
@@ -63,11 +63,11 @@ Never hardcode a hex value in component code if a variable already covers it. If
 
 Every Settings content pane (body under `SettingsSection`) must pick **one** layout template. Do not invent a fourth spacing/title scale.
 
-| Template | Use when | Density / chrome | Headers & rows |
-| -------- | -------- | ---------------- | -------------- |
-| **form-list** | Toggle/input/select rows, preference lists (General, Advanced, Notifications, Git rows, Privacy, Input, …) | Root stack **`space-y-1`**; subsection blocks **`space-y-1.5`** | `SettingsSubsectionHeader` + `SettingsRow` / `SettingsSwitchRow` / house selects. No one-off `text-sm font-medium` section titles. |
-| **collection / accordion** | Grouped cards or expanders (Appearance sections, Integrations cards, Tasks providers, Accounts provider blocks) | Root **`space-y-1`** between groups; cards `rounded-lg border border-border/60 bg-card/30` (or `integration-card-shell`) | Accordion titles match compact `text-xs font-semibold` + optional `text-[11px]` summary. Prefer house switches/rows inside expanded bodies. |
-| **setup / skill** | Install/setup flows, multi-step skill panels, orchestration onboarding (Ephemeral VMs skill, Orchestration, Agent skill terminals, Developer Permissions grant lists) | Root **`space-y-4`–`space-y-6`** only (never `space-y-8`+ / `space-y-10` without a short in-code “Why: setup/skill template” comment). Inner cards may use `p-3`/`p-4` | May use short prose + primary CTAs; still prefer `SettingsSubsectionHeader` scale (`text-xs` title / `11px` description) over `text-sm` ad-hoc headers when labeling a block. |
+| Template                   | Use when                                                                                                                                                              | Density / chrome                                                                                                                                                       | Headers & rows                                                                                                                                                                |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **form-list**              | Toggle/input/select rows, preference lists (General, Advanced, Notifications, Git rows, Privacy, Input, …)                                                            | Root stack **`space-y-1`**; subsection blocks **`space-y-1.5`**                                                                                                        | `SettingsSubsectionHeader` + `SettingsRow` / `SettingsSwitchRow` / house selects. No one-off `text-sm font-medium` section titles.                                            |
+| **collection / accordion** | Grouped cards or expanders (Appearance sections, Integrations cards, Tasks providers, Accounts provider blocks)                                                       | Root **`space-y-1`** between groups; cards `rounded-lg border border-border/60 bg-card/30` (or `integration-card-shell`)                                               | Accordion titles match compact `text-xs font-semibold` + optional `text-[11px]` summary. Prefer house switches/rows inside expanded bodies.                                   |
+| **setup / skill**          | Install/setup flows, multi-step skill panels, orchestration onboarding (Ephemeral VMs skill, Orchestration, Agent skill terminals, Developer Permissions grant lists) | Root **`space-y-4`–`space-y-6`** only (never `space-y-8`+ / `space-y-10` without a short in-code “Why: setup/skill template” comment). Inner cards may use `p-3`/`p-4` | May use short prose + primary CTAs; still prefer `SettingsSubsectionHeader` scale (`text-xs` title / `11px` description) over `text-sm` ad-hoc headers when labeling a block. |
 
 ### Rules for all templates
 
@@ -95,9 +95,9 @@ Tokens come in pairs: a **surface** and a **foreground** that meets contrast on 
 | `input`                                  | Form field background only                                  | Anywhere outside form fields                        |
 | `ring`                                   | Focus-visible outlines, active selection halos              | Persistent decoration                               |
 | `sidebar` (+ variants)                   | The worktree sidebar and its children                       | Other panels                                        |
-| `editor-surface`                         | Background of Monaco / markdown editor panes                | App chrome                                          |
+| `editor-surface`                         | Background of code / markdown editor panes                  | App chrome                                          |
 
-The `sidebar` family expands into `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`, `--sidebar-accent-foreground`, `--sidebar-border`, and `--sidebar-ring` — use them inside the worktree sidebar so its hover/selected/focus states stay consistent and don't bleed into other panels. `editor-surface` is its own token (not just `background`) because Monaco and the markdown editor have a slightly darker surface in dark mode to match VS Code conventions; reach for it whenever you're rendering an editor pane.
+The `sidebar` family expands into `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`, `--sidebar-primary-foreground`, `--sidebar-accent`, `--sidebar-accent-foreground`, `--sidebar-border`, and `--sidebar-ring` — use them inside the worktree sidebar so its hover/selected/focus states stay consistent and don't bleed into other panels. `editor-surface` is its own token (not just `background`) because the code and markdown editors have a slightly darker surface in dark mode to match VS Code conventions; reach for it whenever you're rendering an editor pane.
 
 ### Git decoration colors
 
@@ -156,13 +156,13 @@ This keeps light/dark parity automatic.
 
 Default control height is **compact**:
 
-| Control | Default height |
-| ------- | -------------- |
-| Button `default` | `h-7` (28px) |
-| Button `sm` / `xs` | `h-6` / `h-5` |
-| Input | `h-7` |
-| Select trigger | `h-7` (`sm` = `h-6`) |
-| Settings switch | `h-4` track |
+| Control            | Default height       |
+| ------------------ | -------------------- |
+| Button `default`   | `h-7` (28px)         |
+| Button `sm` / `xs` | `h-6` / `h-5`        |
+| Input              | `h-7`                |
+| Select trigger     | `h-7` (`sm` = `h-6`) |
+| Settings switch    | `h-4` track          |
 
 Prefer these sizes for settings and chrome. Only use larger sizes when the surface is marketing-like or a sparse empty state.
 
@@ -295,7 +295,7 @@ The pattern in `src/renderer/src/components/settings/SettingsFormControls.tsx` i
 Three scrollbar classes are defined globally in `main.css`:
 
 - **`.scrollbar-sleek`** — the default thin, neutral scrollbar for sidebars, lists, popovers. Pair with `.scrollbar-sleek-parent` on a hover-target ancestor if you want the thumb to fade in only on parent hover.
-- **`.scrollbar-editor`** — slightly heavier, used inside Monaco-adjacent surfaces.
+- **`.scrollbar-editor`** — slightly heavier, used inside editor surfaces.
 - **`.worktree-sidebar-scrollbar`** — reserves the gutter but keeps the thumb invisible until the parent (`.scrollbar-sleek-parent`) is hovered. Used only in the worktree sidebar so the chrome stays still.
 
 Apply one of these to overflow containers; don't write a fourth style.

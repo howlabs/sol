@@ -2,7 +2,7 @@
 every editor mode (edit, diff, conflict, markdown-preview, combined-diff, and
 now Changes view mode). Keeping the mode-selection branches colocated is easier
 to reason about than scattering the switch across per-mode wrappers. Individual
-renderers (MonacoEditor, DiffViewer, ChangesModeView, MarkdownPreview, etc.)
+renderers (CodeEditor, DiffViewer, ChangesModeView, MarkdownPreview, etc.)
 already live in their own modules. */
 import React from 'react'
 import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
@@ -26,16 +26,13 @@ import { exceedsMarkdownRichModeSizeLimit } from './markdown-rich-size-limit'
 import { extractFrontMatter, prependFrontMatter } from './markdown-frontmatter'
 import { RichMarkdownErrorBoundary } from './RichMarkdownErrorBoundary'
 import { useMarkdownDocuments } from './useMarkdownDocuments'
-import {
-  findGitConflictBlocks,
-  getGitConflictMarkerLineLength
-} from './monaco-conflict-decorations'
+import { findGitConflictBlocks, getGitConflictMarkerLineLength } from './conflict-markers'
 import { getDiffContentSignature } from './diff-content-signature'
 import { translate } from '@/i18n/i18n'
 import { CheckRunDetailsPanel } from './CheckRunDetailsPanel'
 import { ExternalFileChangeBanner } from './ExternalFileChangeBanner'
 
-const MonacoEditor = lazy(() => import('./MonacoEditor'))
+const CodeEditor = lazy(() => import('./CodeEditor'))
 const DiffViewer = lazy(() => import('./DiffViewer'))
 const CombinedDiffViewer = lazy(() => import('./CombinedDiffViewer'))
 const RichMarkdownEditor = lazy(() => import('./RichMarkdownEditor'))
@@ -155,7 +152,7 @@ export function EditorContent({
     viewStateScopeId === activeFile.id
       ? `${activeFile.id}:preview`
       : `${activeFile.id}::${viewStateScopeId}:preview`
-  const monacoLanguage = resolvedLanguage === 'notebook' ? 'json' : resolvedLanguage
+  const editorLanguage = resolvedLanguage === 'notebook' ? 'json' : resolvedLanguage
 
   const openConflictReviewFile = useAppStore((s) => s.openConflictReviewFile)
   const openConflictReview = useAppStore((s) => s.openConflictReview)
@@ -204,7 +201,7 @@ export function EditorContent({
           const line = blocks[nextIndex].startLine
           const markerLineLength = getGitConflictMarkerLineLength(content, line)
           setConflictNavigationIndexByFile((prev) => ({ ...prev, [file.id]: nextIndex }))
-          // Why: a same-location reveal can be requested twice before Monaco
+          // Why: a same-location reveal can be requested twice before the editor
           // consumes the first one. Clearing first guarantees the prop changes
           // and the mounted editor runs its reveal effect again.
           setPendingEditorReveal(null)
@@ -279,23 +276,22 @@ export function EditorContent({
     }
   }
 
-  const renderMonacoEditor = (fc: FileContent): React.JSX.Element => (
-    // Why: Without a key, React reuses the same MonacoEditor instance when
+  const renderCodeEditor = (fc: FileContent): React.JSX.Element => (
+    // Why: Without a key, React reuses the same CodeEditor instance when
     // switching tabs or split panes, just updating props. That means
     // useLayoutEffect cleanup (which snapshots scroll position) never fires.
     // Keying on the visible pane identity forces unmount/remount so each split
     // tab keeps its own viewport state even when the underlying file is shared.
-    <MonacoEditor
+    <CodeEditor
       key={viewStateScopeId}
       fileId={activeFile.id}
       filePath={activeFile.filePath}
       viewStateKey={editorViewStateKey}
       relativePath={activeFile.relativePath}
       content={editBuffers[activeFile.id] ?? fc.content}
-      language={monacoLanguage}
+      language={editorLanguage}
       onContentChange={handleContentChange}
       onSave={isMarkdown ? md.mdSave : handleSave}
-      worktreeId={activeFile.worktreeId}
       conflictDecorationsEnabled={activeFile.conflict?.conflictStatus === 'unresolved'}
       revealLine={
         matchesPendingEditorReveal(pendingEditorReveal, activeFile)
@@ -312,7 +308,6 @@ export function EditorContent({
           ? pendingEditorReveal.matchLength
           : undefined
       }
-      markdownDocuments={isMarkdown ? md.markdownDocuments : undefined}
     />
   )
 
@@ -328,12 +323,12 @@ export function EditorContent({
     if (activeFile.conflict?.conflictStatus === 'unresolved') {
       // Why: conflict markers are source text the user must edit directly.
       // Rich/preview markdown modes can hide or reinterpret those marker lines.
-      return <div className="h-full min-h-0">{renderMonacoEditor(fc)}</div>
+      return <div className="h-full min-h-0">{renderCodeEditor(fc)}</div>
     }
 
     // Why: the render-mode helper already folded size into the mode decision.
     // Keep the explanatory banner here so the user understands why "rich" view
-    // currently shows Monaco instead.
+    // currently shows source mode instead.
     if (renderMode === 'source' && mdViewMode === 'rich') {
       const richFallbackMessage =
         richModeUnsupportedMessage ??
@@ -343,7 +338,7 @@ export function EditorContent({
           <div className="border-b border-border/60 bg-blue-500/10 px-3 py-2 text-xs text-blue-950 dark:text-blue-100">
             {richFallbackMessage}
           </div>
-          <div className="min-h-0 flex-1 h-full">{renderMonacoEditor(fc)}</div>
+          <div className="min-h-0 flex-1 h-full">{renderCodeEditor(fc)}</div>
         </div>
       )
     }
@@ -368,7 +363,7 @@ export function EditorContent({
       return (
         <div className="flex h-full min-h-0 flex-col">
           <div className="min-h-0 flex-1">
-            {/* Why: same remount reasoning as MonacoEditor — see renderMonacoEditor.
+            {/* Why: same remount reasoning as CodeEditor — see renderCodeEditor.
                 The boundary contains a TipTap/ProseMirror render crash (e.g.
                 when a setContent transaction throws under split-pane external
                 reload, issue #826) to this pane instead of letting it tear down
@@ -433,11 +428,11 @@ export function EditorContent({
       )
     }
 
-    // Why: Monaco sizes itself against the immediate parent when `height="100%"`
+    // Why: The editor sizes itself against the immediate parent when `height="100%"`
     // is used. Markdown source mode briefly wrapped it in a non-flex container
     // with no explicit height, which made the code surface collapse even though
     // the surrounding editor pane was tall enough.
-    return <div className="h-full min-h-0">{renderMonacoEditor(fc)}</div>
+    return <div className="h-full min-h-0">{renderCodeEditor(fc)}</div>
   }
 
   const renderConflictReviewEditorContent = ({
@@ -505,7 +500,7 @@ export function EditorContent({
     }
 
     const selectedLanguage = detectLanguage(contentFile.relativePath)
-    const monacoSelectedLanguage = selectedLanguage === 'notebook' ? 'json' : selectedLanguage
+    const editorSelectedLanguage = selectedLanguage === 'notebook' ? 'json' : selectedLanguage
     const selectedViewStateKey = `${contentFile.filePath}::${viewStateScopeId}:${viewStateKeySuffix}`
     const selectedContent = editBuffers[contentFile.id] ?? fc.content
 
@@ -519,19 +514,18 @@ export function EditorContent({
           />
         )}
         <div className={autoHeight ? 'shrink-0' : 'min-h-0 flex-1'}>
-          <MonacoEditor
+          <CodeEditor
             key={`${viewStateScopeId}:${contentFile.id}:${viewStateKeySuffix}`}
             fileId={contentFile.id}
             filePath={contentFile.filePath}
             viewStateKey={selectedViewStateKey}
             relativePath={contentFile.relativePath}
             content={selectedContent}
-            language={monacoSelectedLanguage}
+            language={editorSelectedLanguage}
             onContentChange={
               readOnly ? () => {} : (content) => handleContentChangeForFile(contentFile, content)
             }
             onSave={readOnly ? () => {} : (content) => handleSaveForFile(contentFile, content)}
-            worktreeId={contentFile.worktreeId}
             conflictDecorationsEnabled={contentFile.conflict?.conflictStatus === 'unresolved'}
             readOnly={readOnly}
             autoHeight={autoHeight}
@@ -754,7 +748,7 @@ export function EditorContent({
           dc={diffContents[activeFile.id]}
           modifiedContent={editBuffers[activeFile.id] ?? fc.content}
           activeConflictEntry={activeConflictEntry}
-          resolvedLanguage={monacoLanguage}
+          resolvedLanguage={editorLanguage}
           sideBySide={sideBySide}
           viewStateScopeId={viewStateScopeId}
           diffViewStateKey={diffViewStateKey}
@@ -813,7 +807,7 @@ export function EditorContent({
               onSave={handleSave}
             />
           ) : (
-            renderMonacoEditor(fc)
+            renderCodeEditor(fc)
           )}
         </div>
       </div>
@@ -911,7 +905,7 @@ export function EditorContent({
       </div>
     )
   }
-  // Why: kept Monaco models ignore refreshed git blobs unless the model identity
+  // Why: kept editor models ignore refreshed git blobs unless the model identity
   // rotates. Key off fetched diff content and explicit reload nonce, not live
   // edit-buffer text, so editable unstaged diffs keep their undo stack.
   const diffReloadNonce = activeFile.diffContentReloadNonce ?? 0
@@ -927,7 +921,7 @@ export function EditorContent({
       modifiedContent={modifiedDiffContent}
       largeDiffRenderLimit={dc.largeDiffRenderLimit}
       largeDiffSaveContentAvailable={largeDiffSaveContentAvailable}
-      language={monacoLanguage}
+      language={editorLanguage}
       filePath={activeFile.filePath}
       relativePath={activeFile.relativePath}
       sideBySide={sideBySide}

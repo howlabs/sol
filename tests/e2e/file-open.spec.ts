@@ -110,7 +110,7 @@ test.describe('File Open & Markdown Preview', () => {
     // check would pass even if EditorPanel crashed on mount and the surface
     // is blank. Timeout is generous (20s) because EditorPanel is lazy-loaded
     // the first time the editor opens in a session — headless Electron runs
-    // routinely take 10s+ to hydrate that chunk plus the inner Monaco/Rich
+    // routinely take 10s+ to hydrate that chunk plus the inner editor/Rich
     // Markdown chunks, during which the outer Suspense shows "Loading
     // editor…" and `.editor-header-path` is not yet in the DOM.
     await expect(orcaPage.locator('.editor-header-path').first()).toContainText(clickedFile!, {

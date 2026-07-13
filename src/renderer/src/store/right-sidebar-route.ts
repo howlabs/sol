@@ -17,13 +17,16 @@ export function normalizeRightSidebarRoute(
   if (tab === 'search') {
     return { rightSidebarTab: 'explorer', rightSidebarExplorerView: 'search' }
   }
+  // Why: legacy Changes activity tab maps onto Source Control.
+  if (tab === 'agent-changes') {
+    return { rightSidebarTab: 'source-control', rightSidebarExplorerView: 'files' }
+  }
   if (
     tab === 'explorer' ||
     tab === 'vault' ||
     tab === 'workspaces' ||
     tab === 'pr-checks' ||
     tab === 'source-control' ||
-    tab === 'agent-changes' ||
     tab === 'checks' ||
     tab === 'ports'
   ) {

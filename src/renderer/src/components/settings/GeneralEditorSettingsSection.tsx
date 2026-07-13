@@ -258,31 +258,6 @@ export function GeneralEditorSettingsSection({
         />
       </SearchableSetting>
 
-      <SearchableSetting
-        title={translate(
-          'auto.components.settings.GeneralEditorSettingsSection.6690b1ffb9',
-          'Minimap'
-        )}
-        description={translate(
-          'auto.components.settings.GeneralEditorSettingsSection.51161d1647',
-          'Show the minimap overview when editing a file.'
-        )}
-        keywords={['minimap', 'overview', 'code', 'scroll']}
-      >
-        <SettingsSwitchRow
-          label={translate(
-            'auto.components.settings.GeneralEditorSettingsSection.6690b1ffb9',
-            'Minimap'
-          )}
-          description={translate(
-            'auto.components.settings.GeneralEditorSettingsSection.51161d1647',
-            'Show the minimap overview when editing a file.'
-          )}
-          checked={settings.editorMinimapEnabled}
-          onChange={() => updateSettings({ editorMinimapEnabled: !settings.editorMinimapEnabled })}
-        />
-      </SearchableSetting>
-
       <RichMarkdownSpellcheckSetting settings={settings} updateSettings={updateSettings} />
     </section>
   )

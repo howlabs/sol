@@ -94,7 +94,7 @@ export function EditorPanelMarkdownActionsMenu({
         ) : null}
         {shouldShowMarkdownExportAction ? (
           <DropdownMenuItem
-            // Why: source/Monaco fallbacks have no rendered document DOM to export.
+            // Why: source/the editor fallbacks have no rendered document DOM to export.
             disabled={!canExportMarkdownToPdf}
             onSelect={onExportMarkdownToPdf}
           >

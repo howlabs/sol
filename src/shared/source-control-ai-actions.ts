@@ -10,6 +10,7 @@ export type SourceControlLaunchActionId =
   | 'fixChecks'
   | 'resolveConflicts'
   | 'resolveComments'
+  | 'reviewChanges'
 
 export type SourceControlActionId = SourceControlTextActionId | SourceControlLaunchActionId
 
@@ -34,7 +35,8 @@ export const SOURCE_CONTROL_LAUNCH_ACTION_IDS = [
   'fixPushFailure',
   'fixChecks',
   'resolveConflicts',
-  'resolveComments'
+  'resolveComments',
+  'reviewChanges'
 ] as const satisfies readonly SourceControlLaunchActionId[]
 
 export const SOURCE_CONTROL_ACTION_IDS = [
@@ -53,7 +55,8 @@ export const SOURCE_CONTROL_LAUNCH_ACTION_LABELS: Record<SourceControlLaunchActi
   fixPushFailure: 'Push failure fixes',
   fixChecks: 'Broken checks fixes',
   resolveConflicts: 'Conflict resolution',
-  resolveComments: 'Review comment resolution'
+  resolveComments: 'Review comment resolution',
+  reviewChanges: 'Review changes'
 }
 
 export const SOURCE_CONTROL_ACTION_LABELS: Record<SourceControlActionId, string> = {
@@ -72,7 +75,8 @@ export const DEFAULT_SOURCE_CONTROL_ACTION_COMMAND_TEMPLATES: Record<
   fixPushFailure: '{basePrompt}',
   fixChecks: '{basePrompt}',
   resolveConflicts: '{basePrompt}',
-  resolveComments: '{basePrompt}'
+  resolveComments: '{basePrompt}',
+  reviewChanges: '{basePrompt}'
 }
 
 export const SOURCE_CONTROL_ACTION_VARIABLES: Record<SourceControlActionId, string[]> = {
@@ -92,7 +96,8 @@ export const SOURCE_CONTROL_ACTION_VARIABLES: Record<SourceControlActionId, stri
   fixPushFailure: ['basePrompt'],
   fixChecks: ['basePrompt'],
   resolveConflicts: ['basePrompt'],
-  resolveComments: ['basePrompt']
+  resolveComments: ['basePrompt'],
+  reviewChanges: ['basePrompt']
 }
 
 export type SourceControlActionVariableInfo = {

@@ -375,7 +375,7 @@ function scheduleEditorLineReveal(
   column?: number,
   fileId?: string
 ): void {
-  // Why: openFile can replace a preview and remount Monaco asynchronously; the
+  // Why: openFile can replace a preview and remount the editor asynchronously; the
   // reveal must land after that remount or the old editor can clear it.
   cancelPendingEditorLineRevealFrames()
   get().setPendingEditorReveal(null)
@@ -482,7 +482,7 @@ export type EditorSlice = {
   openNewMarkdownInActiveWorkspace: (groupId: string) => Promise<void>
   // Why: dispatcher for markdown link activation. Lives on the slice because it
   // sequences openFile, setMarkdownViewMode, and setPendingEditorReveal around
-  // an async Monaco remount — all reading/writing state in this slice. See
+  // an async editor remount — all reading/writing state in this slice. See
   // docs/markdown-internal-link-opening-design.md.
   activateMarkdownLink: (
     rawHref: string | undefined,
@@ -2427,7 +2427,7 @@ export const createEditorSlice: StateCreator<AppState, [], [], EditorSlice> = (s
     set((s) => {
       // Why: typing fires this on every keystroke. Rebuilding openFiles
       // unconditionally thrashes every subscriber (EditorPanel → EditorContent
-      // → MonacoEditor re-renders) and produced visible typing lag. Bail out
+      // → CodeEditor re-renders) and produced visible typing lag. Bail out
       // when the dirty bit is already the target value and the preview-promote
       // side effect is a no-op.
       const file = s.openFiles.find((f) => f.id === fileId)
@@ -4262,7 +4262,7 @@ export const createEditorSlice: StateCreator<AppState, [], [], EditorSlice> = (s
 
     if (line !== undefined) {
       const fileId = getOpenedEditFileIdAfterOpen(get(), absolutePath, ctx.worktreeId)
-      // Why: pendingEditorReveal is consumed by MonacoEditor on mount. If the
+      // Why: pendingEditorReveal is consumed by CodeEditor on mount. If the
       // file stays in rich mode, the reveal is silently dropped; use the final
       // owner-qualified id after openFile has resolved the tab identity.
       get().setMarkdownViewMode(fileId, 'source')

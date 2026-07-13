@@ -15,7 +15,7 @@ const MAX_COL_PX = 320
 const ROW_NUMBER_COL_PX = 48
 const CHAR_PX = 7
 
-// Why: CsvViewer is the table counterpart to source-mode Monaco for .csv/.tsv
+// Why: CsvViewer is the table counterpart to source-mode editor for .csv/.tsv
 // files. Row virtualization via @tanstack/react-virtual keeps large files
 // (100k+ rows) responsive. We use CSS grid with a shared grid-template-columns
 // rather than a <table>, because absolutely-positioned virtualized rows break

@@ -24,7 +24,7 @@ export function getMarkdownRenderMode({
 
   // Why: large markdown files stay editable, but ProseMirror's full-document
   // tree and serialization path make rich mode noticeably laggy there. Treat
-  // "too large" as another safety condition that routes the user to Monaco
+  // "too large" as another safety condition that routes the user to the editor
   // instead of leaving the choice scattered across render branches.
   if (exceedsRichModeSizeLimit) {
     return 'source'

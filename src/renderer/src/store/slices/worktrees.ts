@@ -1946,17 +1946,22 @@ function buildWorktreePurgeState(s: AppState, worktreeIds: string[]): Partial<Ap
     let changed = omitted !== s.rightSidebarTabByWorktree
     const out: AppState['rightSidebarTabByWorktree'] = {}
     for (const [id, tab] of Object.entries(omitted)) {
-      if (
-        tab === 'explorer' ||
-        tab === 'vault' ||
-        tab === 'workspaces' ||
-        tab === 'pr-checks' ||
-        tab === 'source-control' ||
-        tab === 'agent-changes' ||
-        tab === 'checks' ||
-        tab === 'ports'
+      // Why: map legacy Changes activity onto Source Control per worktree.
+      // Read as string so persisted legacy values still migrate after the type drop.
+      const rawTab = tab as string
+      if (rawTab === 'agent-changes') {
+        out[id] = 'source-control'
+        changed = true
+      } else if (
+        rawTab === 'explorer' ||
+        rawTab === 'vault' ||
+        rawTab === 'workspaces' ||
+        rawTab === 'pr-checks' ||
+        rawTab === 'source-control' ||
+        rawTab === 'checks' ||
+        rawTab === 'ports'
       ) {
-        out[id] = tab
+        out[id] = rawTab as typeof tab
       } else {
         changed = true
       }

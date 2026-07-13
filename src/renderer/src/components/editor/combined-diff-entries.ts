@@ -73,7 +73,7 @@ export function resolveCombinedUncommittedSnapshotEntries(
     }
 
     // Why: a snapshot-backed Changes tab can outlive stage/unstage actions.
-    // Load the area Git now reports so Monaco doesn't diff identical files.
+    // Load the area Git now reports so the editor doesn't diff identical files.
     pushResolvedEntry({
       ...snapshotEntry,
       area: movedEntry.area,

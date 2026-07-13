@@ -196,7 +196,6 @@ inline src/renderer/src/components/editor/CombinedDiffViewer.tsx
 inline src/renderer/src/components/editor/EditorContent.tsx
 inline src/renderer/src/components/editor/IpynbViewer.tsx
 inline src/renderer/src/components/editor/MarkdownPreview.tsx
-inline src/renderer/src/components/editor/MonacoEditor.tsx
 inline src/renderer/src/components/editor/editor-autosave-controller.ts
 inline src/renderer/src/components/editor/ipynb-parse.ts
 inline src/renderer/src/components/editor/useEditorPanelContentState.ts

@@ -1,14 +1,11 @@
 import type { RefObject } from 'react'
 import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
 import { AlertCircle, RefreshCw } from '@/lib/icons'
-import { DiffEditor, type DiffOnMount } from '@monaco-editor/react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { combinedDiffSectionScrollbarOptions } from './diff-editor-scrollbar-options'
 import type { DiffSection } from './diff-section-types'
 import { translate } from '@/i18n/i18n'
 import { LargeDiffFallback } from './LargeDiffFallback'
-import { buildDiffEditorWordWrapOptions } from './diff-editor-word-wrap-options'
 
 const ImageDiffViewer = lazy(() => import('./ImageDiffViewer'))
 
@@ -16,42 +13,35 @@ type DiffSectionBodyProps = {
   section: DiffSection
   index: number
   sectionBodyRef: RefObject<HTMLDivElement | null>
+  editorHostRef: RefObject<HTMLDivElement | null>
   sectionBodyHeight: number | undefined
   useIntrinsicImageHeight: boolean
   isBranchMode: boolean
   sideBySide: boolean
-  isDark: boolean
-  language: string
-  modelPathBase: string
   isEditable: boolean
-  diffEditorFontSize: number
-  diffWordWrap?: boolean
-  terminalFontFamily?: string
   onRetrySection: (index: number) => void
   onSaveLimitedDiff: () => void
-  onMount: DiffOnMount
 }
 
 export function DiffSectionBody({
   section,
   index,
   sectionBodyRef,
+  editorHostRef,
   sectionBodyHeight,
   useIntrinsicImageHeight,
   isBranchMode,
   sideBySide,
-  isDark,
-  language,
-  modelPathBase,
   isEditable,
-  diffEditorFontSize,
-  diffWordWrap,
-  terminalFontFamily,
   onRetrySection,
-  onSaveLimitedDiff,
-  onMount
+  onSaveLimitedDiff
 }: DiffSectionBodyProps): React.JSX.Element {
   const renderLimit = section.largeDiffRenderLimit?.limited ? section.largeDiffRenderLimit : null
+  const showTextDiffHost =
+    !section.loading &&
+    !section.error &&
+    section.diffResult?.kind !== 'binary' &&
+    !renderLimit?.limited
 
   return (
     <div
@@ -136,42 +126,19 @@ export function DiffSectionBody({
               : undefined
           }
         />
-      ) : (
-        <DiffEditor
-          height="100%"
-          language={language}
-          original={section.originalContent}
-          modified={section.modifiedContent}
-          theme={isDark ? 'vs-dark' : 'vs'}
-          onMount={onMount}
-          // Why: @monaco-editor/react can dispose models before widget teardown.
-          // Keep them through unmount and dispose unattached models next tick.
-          originalModelPath={`${modelPathBase}:original`}
-          modifiedModelPath={`${modelPathBase}:modified`}
-          keepCurrentOriginalModel
-          keepCurrentModifiedModel
-          options={{
-            readOnly: !isEditable,
-            originalEditable: false,
-            renderSideBySide: sideBySide,
-            minimap: { enabled: false },
-            scrollBeyondLastLine: false,
-            fontSize: diffEditorFontSize,
-            fontFamily: terminalFontFamily || 'monospace',
-            lineNumbers: 'on',
-            ...buildDiffEditorWordWrapOptions(diffWordWrap),
-            automaticLayout: true,
-            renderOverviewRuler: false,
-            scrollbar: combinedDiffSectionScrollbarOptions,
-            hideUnchangedRegions: { enabled: true },
-            find: {
-              addExtraSpaceOnTop: false,
-              autoFindInSelection: 'never',
-              seedSearchStringFromSelection: 'never'
-            }
-          }}
+      ) : null}
+
+      {showTextDiffHost ? (
+        <div
+          ref={editorHostRef}
+          className="h-full min-h-0 overflow-hidden bg-editor-surface [&_.cm-mergeView]:h-full [&_.cm-editor]:h-full"
+          data-testid="codemirror-diff-section"
+          data-side-by-side={sideBySide ? 'true' : 'false'}
+          data-editable={isEditable ? 'true' : 'false'}
+          role="region"
+          aria-label={section.path}
         />
-      )}
+      ) : null}
     </div>
   )
 }

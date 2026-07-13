@@ -6,6 +6,7 @@ import {
   ArrowUp,
   ChevronDown,
   CloudUpload,
+  ListChecks,
   Minus,
   Plus,
   Loader2,
@@ -1728,6 +1729,8 @@ function SourceControlInner(): React.JSX.Element {
     resolvedPrCreationDefaults,
     resolveConflictsComposerOpen,
     setResolveConflictsComposerOpen,
+    reviewChangesComposerOpen,
+    setReviewChangesComposerOpen,
     commitGenerationDialogOpen,
     setCommitGenerationDialogOpen,
     pullRequestGenerationDialogOpen,
@@ -1737,10 +1740,13 @@ function SourceControlInner(): React.JSX.Element {
     isLaunchingCommitFailureAgent,
     isLaunchingPushFailureAgent,
     resolveConflictsPrompt,
+    reviewChangesPrompt,
+    canReviewChanges,
     commitFailureRecoveryPrompt,
     getLaunchActionRecipe,
     saveLaunchActionDefault,
     handleResolveConflictsWithAI,
+    handleReviewChangesWithAI,
     handleFixCommitFailureWithAI,
     handleFixPushFailureWithAI,
     handleSaveCommitMessageGenerationDefaults,
@@ -1757,6 +1763,21 @@ function SourceControlInner(): React.JSX.Element {
     unresolvedConflicts,
     stagedEntries: grouped.staged,
     worktreePath,
+    branchName: branchName || null,
+    uncommittedCounts: {
+      stagedCount: grouped.staged.length,
+      unstagedCount: grouped.unstaged.length,
+      untrackedCount: grouped.untracked.length
+    },
+    branchReviewContext: branchSummary
+      ? {
+          baseRef: branchSummary.baseRef ?? compareBaseRef ?? null,
+          commitsAhead: branchSummary.commitsAhead ?? null,
+          changedFiles: branchSummary.changedFiles ?? null
+        }
+      : compareBaseRef
+        ? { baseRef: compareBaseRef, commitsAhead: null, changedFiles: null }
+        : null,
     commitMessage,
     commitError,
     pushRecoveryPrompt: pushRecovery?.prompt ?? null,
@@ -1771,12 +1792,14 @@ function SourceControlInner(): React.JSX.Element {
       return
     }
     setResolveConflictsComposerOpen(false)
+    setReviewChangesComposerOpen(false)
     setCommitGenerationDialogOpen(false)
     setPullRequestGenerationDialogOpen(false)
   }, [
     setCommitGenerationDialogOpen,
     setPullRequestGenerationDialogOpen,
     setResolveConflictsComposerOpen,
+    setReviewChangesComposerOpen,
     sourceControlAiActionsVisible
   ])
 
@@ -5440,6 +5463,8 @@ function SourceControlInner(): React.JSX.Element {
                 inFlightRemoteOpKind={inFlightRemoteOpKind}
                 primaryAction={primaryAction}
                 dropdownItems={dropdownItems}
+                canReviewChanges={canReviewChanges}
+                onReviewChanges={handleReviewChangesWithAI}
                 fixCommitFailureRecipe={getLaunchActionRecipe('fixCommitFailure')}
                 fixPushFailureRecipe={getLaunchActionRecipe('fixPushFailure')}
                 onCommitMessageChange={(value) => {
@@ -5923,6 +5948,46 @@ function SourceControlInner(): React.JSX.Element {
           )
         }
       />
+      <SourceControlAgentActionDialog
+        open={sourceControlAiActionsVisible && reviewChangesComposerOpen}
+        onOpenChange={setReviewChangesComposerOpen}
+        actionId="reviewChanges"
+        title={translate(
+          'auto.components.right.sidebar.SourceControl.reviewChanges.title',
+          'Review Changes'
+        )}
+        description={translate(
+          'auto.components.right.sidebar.SourceControl.reviewChanges.description',
+          'Read-only review. The agent reports findings and must not edit files.'
+        )}
+        baseCommandInput={reviewChangesPrompt}
+        worktreeId={activeWorktreeId}
+        groupId={activeGroupId ?? activeWorktreeId}
+        connectionId={activeConnectionId}
+        repoId={activeRepo?.id ?? null}
+        promptDelivery="submit-after-ready"
+        launchPlatform={activeSourceControlLaunchPlatform}
+        launchSource="source_control_review"
+        startLabel={translate(
+          'auto.components.right.sidebar.SourceControl.reviewChanges.start',
+          'Start review'
+        )}
+        savedAgentId={readSourceControlLaunchRecipeAgentId(getLaunchActionRecipe('reviewChanges'))}
+        savedCommandInputTemplate={
+          getLaunchActionRecipe('reviewChanges').commandInputTemplate ?? null
+        }
+        savedAgentArgs={getLaunchActionRecipe('reviewChanges').agentArgs ?? null}
+        onSaveAgentDefault={saveLaunchActionDefault}
+        onOpenSettings={openSourceControlAiSettings}
+        onLaunched={() =>
+          toast.success(
+            translate(
+              'auto.components.right.sidebar.SourceControl.reviewChanges.started',
+              'Started a read-only review agent.'
+            )
+          )
+        }
+      />
       <SourceControlTextGenerationDialog
         open={sourceControlAiActionsVisible && commitGenerationDialogOpen}
         onOpenChange={setCommitGenerationDialogOpen}
@@ -6002,6 +6067,8 @@ type CommitAreaProps = {
   inFlightRemoteOpKind: RemoteOpKind | null
   primaryAction: PrimaryAction
   dropdownItems: DropdownEntry[]
+  canReviewChanges?: boolean
+  onReviewChanges?: () => void
   fixCommitFailureRecipe?: SourceControlActionRecipe
   fixPushFailureRecipe?: SourceControlActionRecipe
   onCommitMessageChange: (message: string) => void
@@ -6049,6 +6116,8 @@ export function CommitArea({
   inFlightRemoteOpKind,
   primaryAction,
   dropdownItems,
+  canReviewChanges = false,
+  onReviewChanges,
   fixCommitFailureRecipe,
   fixPushFailureRecipe,
   onCommitMessageChange,
@@ -6061,6 +6130,7 @@ export function CommitArea({
   onPrimaryAction,
   onDropdownAction
 }: CommitAreaProps): React.JSX.Element {
+  const showReviewChanges = canReviewChanges && typeof onReviewChanges === 'function'
   // Why: cap at 12 rows so a pasted multi-page commit message doesn't push
   // the Commit button off-screen. The textarea keeps `resize-none` (matching
   // the existing style) — the browser scrolls internally past 12 rows.
@@ -6314,20 +6384,53 @@ export function CommitArea({
             ))}
         </div>
       ) : null}
-      {/* Why: the current manual action + chevron sit together as a visual
-          split button so the edit → commit → push loop stays in a single
-          vertical band. The chevron exposes the full action surface without
-          forcing morphing labels to carry every possible intent. */}
+      {/* Why: read-only Review is a sibling of Commit; remote ops stay in the chevron. */}
       <div
         className={cn(showComposer ? 'mt-1 flex items-stretch gap-1' : 'flex items-stretch gap-1')}
       >
-        <div className="flex flex-1 items-stretch">
+        {showReviewChanges ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="inline-flex shrink-0">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="xs"
+                  data-testid="source-control-review-changes"
+                  onClick={() => onReviewChanges?.()}
+                  className="px-2.5 text-[11px]"
+                  title={translate(
+                    'auto.components.right.sidebar.SourceControl.reviewChanges.buttonTitle',
+                    'Ask an agent for a read-only review of current changes'
+                  )}
+                  aria-label={translate(
+                    'auto.components.right.sidebar.SourceControl.reviewChanges.buttonLabel',
+                    'Review changes'
+                  )}
+                >
+                  <ListChecks className="size-3.5" aria-hidden="true" />
+                  {translate(
+                    'auto.components.right.sidebar.SourceControl.reviewChanges.buttonLabel',
+                    'Review changes'
+                  )}
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={6} className="max-w-72">
+              {translate(
+                'auto.components.right.sidebar.SourceControl.reviewChanges.buttonTitle',
+                'Ask an agent for a read-only review of current changes'
+              )}
+            </TooltipContent>
+          </Tooltip>
+        ) : null}
+        <div className="flex min-w-0 flex-1 items-stretch">
           {/* Why: match the hosted-review action buttons in Checks
               (size="xs", px-3 text-[11px]) so the sidebar has a consistent
               action-button shape across Source Control and Checks. */}
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className="flex flex-1">
+              <span className="flex min-w-0 flex-1">
                 <Button
                   type="button"
                   variant="outline"

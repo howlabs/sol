@@ -1,9 +1,9 @@
 /**
  * Shiki highlighter singleton for read-only code excerpts.
  *
- * Replaces `monaco.editor.colorize()` for notebook inactive cells and PR
+ * Syntax highlighting for notebook inactive cells and PR
  * comment code excerpts. Uses VS Code's `light-plus` / `dark-plus` themes
- * to stay visually close to Monaco's `vs` / `vs-dark`.
+ * using GitHub light/dark themes.
  *
  * Languages are loaded lazily — only the first excerpt for a given language
  * pays the grammar fetch cost.
@@ -56,10 +56,10 @@ function getHighlighter(): Promise<Highlighter> {
 }
 
 /**
- * Map Monaco/Monarch language IDs to Shiki grammar IDs.
+ * Map Editor language IDs to Shiki grammar IDs.
  * Most are identical; a few need translation.
  */
-function monacoToShikiLang(language: string): string {
+function editorLangToShikiLang(language: string): string {
   const lower = language.toLowerCase()
   switch (lower) {
     case 'csharp':
@@ -89,7 +89,7 @@ function monacoToShikiLang(language: string): string {
  * Falls back to `text` (plain) if the grammar is unavailable.
  */
 async function ensureLanguage(highlighter: Highlighter, lang: string): Promise<string> {
-  const shikiLang = monacoToShikiLang(lang)
+  const shikiLang = editorLangToShikiLang(lang)
   try {
     const loaded = highlighter.getLoadedLanguages()
     if (loaded.includes(shikiLang)) {

@@ -1,11 +1,6 @@
 import { useEffect, useRef } from 'react'
-import * as monaco from 'monaco-editor'
 import type { OpenFile } from '@/store/slices/editor'
 import { cursorPositionCache, diffViewStateCache, scrollTopCache } from '@/lib/scroll-cache'
-import {
-  disposeUnattachedMonacoModelsByPathPrefix,
-  getDiffViewerMonacoModelPathPrefixes
-} from './diff-monaco-model-disposal'
 
 function deleteCacheEntriesByPrefix<T>(cache: Map<string, T>, prefix: string): void {
   for (const key of cache.keys()) {
@@ -32,9 +27,6 @@ export function useClosedEditorTabCleanup(openFiles: OpenFile[]): void {
 function disposeClosedEditorTab(prevId: string, prevFile: OpenFile): void {
   switch (prevFile.mode) {
     case 'edit':
-      // Why: the edit model URI is constructed via monaco.Uri.parse(filePath)
-      // to match @monaco-editor/react's `path` prop convention.
-      monaco.editor.getModel(monaco.Uri.parse(prevFile.filePath))?.dispose()
       scrollTopCache.delete(prevFile.filePath)
       deleteCacheEntriesByPrefix(scrollTopCache, `${prevFile.filePath}::`)
       // Why: markdown and mermaid surfaces keep mode-scoped scroll positions.
@@ -45,20 +37,11 @@ function disposeClosedEditorTab(prevId: string, prevFile: OpenFile): void {
       deleteCacheEntriesByPrefix(cursorPositionCache, `${prevFile.filePath}::`)
       break
     case 'markdown-preview':
-      // Why: preview tabs own pane-scoped preview scroll cache entries even
-      // though they do not retain Monaco models.
+      // Why: preview tabs own pane-scoped preview scroll cache entries.
       scrollTopCache.delete(`${prevFile.id}:preview`)
       deleteCacheEntriesByPrefix(scrollTopCache, `${prevFile.id}::`)
       break
     case 'diff':
-      // Why: kept diff models are keyed by tab id, and fallback recovery can
-      // append generation suffixes; closing the tab owns that whole namespace.
-      {
-        const { originalModelPathPrefix, modifiedModelPathPrefix } =
-          getDiffViewerMonacoModelPathPrefixes(prevId)
-        disposeUnattachedMonacoModelsByPathPrefix(monaco, originalModelPathPrefix)
-        disposeUnattachedMonacoModelsByPathPrefix(monaco, modifiedModelPathPrefix)
-      }
       diffViewStateCache.delete(prevId)
       deleteCacheEntriesByPrefix(diffViewStateCache, `${prevId}::`)
       scrollTopCache.delete(`${prevId}:preview`)

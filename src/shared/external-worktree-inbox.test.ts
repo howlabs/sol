@@ -78,7 +78,6 @@ function makeSettings(): GlobalSettings {
     appFontFamily: 'Geist',
     editorAutoSave: false,
     editorAutoSaveDelayMs: 1000,
-    editorMinimapEnabled: false,
     terminalFontSize: 14,
     terminalFontFamily: 'monospace',
     terminalFontWeight: 400,

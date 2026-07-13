@@ -363,7 +363,7 @@
 }
 
 .rich-markdown-search {
-  /* Why: overlay the editor like Monaco's find widget instead of occupying
+  /* Why: overlay the editor like a floating find widget instead of occupying
      layout space — otherwise opening cmd+f shifts the document content down. */
   position: absolute;
   top: 8px;

@@ -1,8 +1,8 @@
 /**
  * E2E test for the saved-note "Delete" button inside a diff view.
  *
- * Why: the saved note card (DiffCommentCard) is rendered into a Monaco view
- * zone. Monaco routes mouse events to the editor by default, so the delete
+ * Why: the saved note card (DiffCommentCard) is rendered into a diff view
+ * zone. The editor routes mouse events to the editor by default, so the delete
  * button relies on `suppressMouseDown: false` plus per-element
  * stopPropagation handlers in `useDiffCommentDecorator.tsx`. A regression
  * anywhere in that chain (e.g. flipping suppressMouseDown, adding an
@@ -32,7 +32,7 @@ test.describe('Diff note delete', () => {
     // Why: modify a tracked file so opening a diff shows real added/removed
     // content rather than an empty "no changes" state. `src/index.ts` is
     // seeded by global-setup with a single line, so rewriting it produces a
-    // diff the modified Monaco editor will render against.
+    // diff the modified CodeMirror diff will render against.
     const { relativePath } = await orcaPage.evaluate(async (wId) => {
       const store = window.__store
       if (!store) {
@@ -100,7 +100,7 @@ test.describe('Diff note delete', () => {
       { wId: worktreeId, rel: relativePath }
     )
 
-    // The note card is rendered into a Monaco view zone. Wait for the
+    // The note card is rendered into a diff view zone. Wait for the
     // trash button itself rather than any parent container so we know the
     // React root inside the zone has actually mounted.
     const deleteButton = orcaPage.getByTitle('Delete note').first()

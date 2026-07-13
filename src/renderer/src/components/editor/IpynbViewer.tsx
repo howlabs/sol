@@ -51,7 +51,7 @@ import { useShortcutKeyDetails, type ShortcutKeyComboDetails } from '@/hooks/use
 import { registerPendingEditorFlush } from './editor-pending-flush'
 import { editorShortcutMatches } from './editor-shortcuts'
 import { getIpynbCodeCellEditorHeight, getIpynbCodeCellPreviewLines } from './ipynb-code-cell-lines'
-import MonacoCodeExcerpt from './MonacoCodeExcerpt'
+import CodeExcerpt from './CodeExcerpt'
 import { NotebookCodeEditor } from './NotebookCodeEditor'
 import {
   deleteIpynbCell,
@@ -354,7 +354,7 @@ function CodeCell({
           }
         }}
       >
-        <MonacoCodeExcerpt
+        <CodeExcerpt
           lines={lines}
           firstLineNumber={1}
           highlightedStartLine={-1}
@@ -759,7 +759,7 @@ export default function IpynbViewer({
     getNextContent: (latestContent: string) => string
   ): void => {
     const latestContent = flushSourceDrafts()
-    // Why: Monaco can still have a render frame queued for the active cell.
+    // Why: The editor can still have a render frame queued for the active cell.
     // Exit edit mode first, then reorder/replace cells on the next frame so
     // structural notebook actions do not dispose an editor mid-render.
     setEditingCellKey(null)

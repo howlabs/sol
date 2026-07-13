@@ -23,7 +23,7 @@ export function isIntrinsicHeightImageDiff(diffResult: GitDiffResult | null | un
 }
 
 export function getLargeDiffFallbackBodyHeight(): number {
-  // Why: section measurements may be stale Monaco heights from before a diff
+  // Why: section measurements may be stale the editor heights from before a diff
   // crossed the render limit; the fallback must always stay bounded.
   return LARGE_DIFF_FALLBACK_BODY_HEIGHT
 }
@@ -55,7 +55,7 @@ export function getDiffSectionBodyHeight({
         )
       : Math.min(fullLineCount, MAX_UNMEASURED_TEXT_BODY_LINES)
 
-  // Why: combined diffs hide unchanged regions inside Monaco. Before Monaco
+  // Why: combined diffs hide unchanged regions in the editor. Before the editor
   // reports its collapsed content height, sizing from full file length makes
   // large files flash open and forces the virtualizer to jump on scroll.
   return Math.max(

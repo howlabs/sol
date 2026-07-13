@@ -22,6 +22,17 @@ export type SourceControlAiControllerParams = {
   unresolvedConflicts: Pick<GitStatusEntry, 'path' | 'conflictKind'>[]
   stagedEntries: Pick<GitStatusEntry, 'path' | 'status' | 'area'>[]
   worktreePath: string | null
+  branchName: string | null
+  uncommittedCounts: {
+    stagedCount: number
+    unstagedCount: number
+    untrackedCount: number
+  }
+  branchReviewContext: {
+    baseRef: string | null
+    commitsAhead: number | null
+    changedFiles: number | null
+  } | null
   commitMessage: string
   commitError: string | null
   pushRecoveryPrompt: string | null

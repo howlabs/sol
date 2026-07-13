@@ -433,7 +433,7 @@ describe('handleOscLink', () => {
     })
   })
 
-  it('cancels a pending Monaco reveal frame when another file open starts', async () => {
+  it('cancels a pending the editor reveal frame when another file open starts', async () => {
     setPlatform('Macintosh')
     const cancelAnimationFrame = vi.fn()
     vi.stubGlobal(

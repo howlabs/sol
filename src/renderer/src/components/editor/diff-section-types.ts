@@ -17,7 +17,7 @@ export type DiffSection = {
   dirty: boolean
   diffResult: GitDiffResult | null
   largeDiffRenderLimit: LargeDiffRenderLimit | null
-  // Why: combined sections keep Monaco models by path; bump on reload so
+  // Why: combined sections keep editor models by path; bump on reload so
   // refetched git content does not replay through keepCurrent* model reuse.
   contentGeneration?: number
 }

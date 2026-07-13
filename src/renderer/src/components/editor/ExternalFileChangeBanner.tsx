@@ -39,7 +39,7 @@ export function reloadTabContentFromDisk(
   if (discardedDraft === undefined) {
     return
   }
-  // Why: on diff tabs the reload rotates the Monaco model, destroying the undo
+  // Why: on diff tabs the reload rotates the editor model, destroying the undo
   // stack — without this toast a mistaken click is an unrecoverable discard.
   toast(
     translate('auto.components.editor.ExternalFileChangeBanner.5c02de9b31', 'Reloaded from disk'),

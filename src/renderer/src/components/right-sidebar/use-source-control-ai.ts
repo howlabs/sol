@@ -25,6 +25,7 @@ import {
 import type { SourceControlAiControllerParams } from './source-control-ai-controller-types'
 import { openSourceControlAiSettingsTarget } from './source-control-ai-settings-navigation'
 import { useSourceControlRecoveryAi } from './use-source-control-recovery-ai'
+import { useSourceControlReviewChangesAi } from './use-source-control-review-changes-ai'
 import { translate } from '@/i18n/i18n'
 
 export function getSourceControlAiControllerDiscoveryHostKey(
@@ -47,6 +48,9 @@ export function useSourceControlAi({
   unresolvedConflicts,
   stagedEntries,
   worktreePath,
+  branchName,
+  uncommittedCounts,
+  branchReviewContext,
   commitMessage,
   commitError,
   pushRecoveryPrompt,
@@ -173,6 +177,21 @@ export function useSourceControlAi({
   }, [activeWorktreeId, unresolvedConflicts.length])
 
   const {
+    reviewChangesComposerOpen,
+    setReviewChangesComposerOpen,
+    reviewChangesPrompt,
+    canReviewChanges,
+    handleReviewChangesWithAI
+  } = useSourceControlReviewChangesAi({
+    activeWorktreeId,
+    worktreePath,
+    branchName,
+    uncommittedCounts,
+    branchReviewContext,
+    sourceControlAiActionsVisible
+  })
+
+  const {
     isLaunchingCommitFailureAgent,
     isLaunchingPushFailureAgent,
     commitFailureRecoveryPrompt,
@@ -237,6 +256,8 @@ export function useSourceControlAi({
     resolvedPrCreationDefaults,
     resolveConflictsComposerOpen,
     setResolveConflictsComposerOpen,
+    reviewChangesComposerOpen,
+    setReviewChangesComposerOpen,
     commitGenerationDialogOpen,
     setCommitGenerationDialogOpen,
     pullRequestGenerationDialogOpen,
@@ -246,11 +267,14 @@ export function useSourceControlAi({
     isLaunchingCommitFailureAgent,
     isLaunchingPushFailureAgent,
     resolveConflictsPrompt,
+    reviewChangesPrompt,
+    canReviewChanges,
     commitFailureRecoveryPrompt,
     pushFailureRecoveryPrompt,
     getLaunchActionRecipe,
     saveLaunchActionDefault,
     handleResolveConflictsWithAI,
+    handleReviewChangesWithAI,
     handleFixCommitFailureWithAI,
     handleFixPushFailureWithAI,
     handleSaveCommitMessageGenerationDefaults,

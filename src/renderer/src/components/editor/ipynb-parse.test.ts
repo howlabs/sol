@@ -5,7 +5,7 @@ import {
   insertIpynbCell,
   moveIpynbCell,
   parseIpynb,
-  translateKernelLanguageToMonaco,
+  translateKernelLanguageToEditor,
   updateIpynbCellKind,
   updateIpynbCellOutputs,
   updateIpynbCellSource,
@@ -21,10 +21,10 @@ describe('ipynb parsing', () => {
     expect(concatIpynbMultilineString(['a', 'b\n', 'c\r\n'])).toBe('a\nb\nc\n')
   })
 
-  it('maps Jupyter kernel language names to Monaco language ids', () => {
-    expect(translateKernelLanguageToMonaco('c#')).toBe('csharp')
-    expect(translateKernelLanguageToMonaco('c++11')).toBe('cpp')
-    expect(translateKernelLanguageToMonaco('python')).toBe('python')
+  it('maps Jupyter kernel language names to the editor language ids', () => {
+    expect(translateKernelLanguageToEditor('c#')).toBe('csharp')
+    expect(translateKernelLanguageToEditor('c++11')).toBe('cpp')
+    expect(translateKernelLanguageToEditor('python')).toBe('python')
   })
 
   it('parses cells, metadata, and common output types', () => {

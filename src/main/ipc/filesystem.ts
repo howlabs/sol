@@ -121,7 +121,7 @@ import { splitWorktreeId } from '../../shared/worktree-id'
 import { getRuntimePathBasename } from '../../shared/cross-platform-path'
 import type { LocalProjectWorktreeGitOptions } from '../project-runtime-git-options'
 
-// Why: Monaco has large-file optimizations like VS Code; blocking at 5MB makes
+// Why: The editor has large-file optimizations like VS Code; blocking at 5MB makes
 // ordinary JSON/log files inaccessible before the editor can degrade features.
 const MAX_TEXT_FILE_SIZE = 50 * 1024 * 1024 // 50MB
 const BINARY_PROBE_BYTES = 8192

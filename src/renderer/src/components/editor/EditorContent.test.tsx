@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { OpenFile } from '@/store/slices/editor'
 
-// Why: EditorContent's mode renderers (Monaco, DiffViewer, ...) are lazy();
+// Why: EditorContent's mode renderers (the editor, DiffViewer, ...) are lazy();
 // renderToStaticMarkup cannot resolve them. Stubbing them keeps the banner
 // branch structure renderable so its placement is pinned by tests.
 vi.mock('@/lib/lazy-with-retry', () => ({

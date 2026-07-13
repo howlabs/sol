@@ -49,7 +49,7 @@ const DISPLAY_MIME_ORDER = [
   'text/plain'
 ] as const
 
-const JUPYTER_LANGUAGE_TO_MONACO_LANGUAGE: Record<string, string> = {
+const JUPYTER_LANGUAGE_TO_EDITOR_LANGUAGE: Record<string, string> = {
   'c#': 'csharp',
   'f#': 'fsharp',
   'q#': 'qsharp',
@@ -75,12 +75,12 @@ export function concatIpynbMultilineString(value: unknown): string {
   return String(value ?? '').replace(/\r\n/g, '\n')
 }
 
-export function translateKernelLanguageToMonaco(language: string | null | undefined): string {
+export function translateKernelLanguageToEditor(language: string | null | undefined): string {
   const normalized = (language ?? 'python').toLowerCase()
   if (normalized.length === 2 && normalized.endsWith('#')) {
     return `${normalized.slice(0, 1)}sharp`
   }
-  return JUPYTER_LANGUAGE_TO_MONACO_LANGUAGE[normalized] ?? normalized
+  return JUPYTER_LANGUAGE_TO_EDITOR_LANGUAGE[normalized] ?? normalized
 }
 
 function getPreferredLanguage(content: Record<string, unknown>): string {
@@ -93,7 +93,7 @@ function getPreferredLanguage(content: Record<string, unknown>): string {
       : typeof kernelSpec.language === 'string'
         ? kernelSpec.language
         : 'python'
-  return translateKernelLanguageToMonaco(language)
+  return translateKernelLanguageToEditor(language)
 }
 
 function getKernelName(content: Record<string, unknown>): string | null {

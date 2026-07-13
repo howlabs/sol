@@ -38,7 +38,7 @@ function findDocumentSubtree(root: ParentNode): Element | null {
 /**
  * Extract a clean, self-contained HTML export payload from a panel-scoped
  * markdown surface. Returns null when the requested file is stale or the
- * surface is in a mode (Monaco source) that does not render a document DOM.
+ * surface is in a mode (the editor source) that does not render a document DOM.
  */
 export async function getActiveMarkdownExportPayload({
   fileId,

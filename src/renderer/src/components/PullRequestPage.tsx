@@ -12,7 +12,6 @@ import React, {
 import { lazyWithRetry as lazy } from '@/lib/lazy-with-retry'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useShallow } from 'zustand/react/shallow'
-import type { editor as monacoEditor } from 'monaco-editor'
 import {
   ArrowDown,
   ArrowLeft,
@@ -253,7 +252,7 @@ function parseOwnerRepoFromItemUrl(url: string): GitHubOwnerRepo | null {
   }
 }
 
-const MonacoCodeExcerpt = lazy(() => import('@/components/editor/MonacoCodeExcerpt'))
+const CodeExcerpt = lazy(() => import('@/components/editor/CodeExcerpt'))
 
 export type ItemDialogTab = 'conversation' | 'checks' | 'files'
 
@@ -2218,7 +2217,7 @@ function PRFilesCombinedDiffViewer({
   const loadingIndicesRef = useRef<Set<number>>(new Set())
   const sectionsRef = useRef<DiffSection[]>([])
   const generationRef = useRef(0)
-  const modifiedEditorsRef = useRef<Map<number, monacoEditor.IStandaloneCodeEditor>>(new Map())
+  const modifiedContentGettersRef = useRef<Map<number, () => string>>(new Map())
   const handleSectionSaveRef = useRef<(index: number) => Promise<void>>(async () => {})
   sectionsRef.current = sections
 
@@ -2695,7 +2694,7 @@ function PRFilesCombinedDiffViewer({
                     renderHeaderTrailingContent={renderViewedCheckbox}
                     setSectionHeights={setSectionHeights}
                     setSections={setSections}
-                    modifiedEditorsRef={modifiedEditorsRef}
+                    modifiedContentGettersRef={modifiedContentGettersRef}
                     handleSectionSaveRef={handleSectionSaveRef}
                   />
                 </div>
@@ -2997,7 +2996,7 @@ function CommentCodeContext({
           </pre>
         }
       >
-        <MonacoCodeExcerpt
+        <CodeExcerpt
           lines={selectedLines}
           firstLineNumber={from}
           highlightedStartLine={commentFrom}

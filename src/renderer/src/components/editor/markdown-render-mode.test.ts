@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { getMarkdownRenderMode } from './markdown-render-mode'
 
 describe('getMarkdownRenderMode', () => {
-  it('keeps explicit source mode in Monaco', () => {
+  it('keeps explicit source mode', () => {
     expect(
       getMarkdownRenderMode({
         exceedsRichModeSizeLimit: false,

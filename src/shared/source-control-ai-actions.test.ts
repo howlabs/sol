@@ -128,6 +128,31 @@ describe('source-control AI launch action defaults', () => {
     expect(SOURCE_CONTROL_ACTION_VARIABLES.resolveComments).toEqual(['basePrompt'])
   })
 
+  it('exposes read-only review changes as a launch action', () => {
+    expect(SOURCE_CONTROL_LAUNCH_ACTION_IDS).toContain('reviewChanges')
+    expect(SOURCE_CONTROL_LAUNCH_ACTION_LABELS.reviewChanges).toBe('Review changes')
+    expect(DEFAULT_SOURCE_CONTROL_ACTION_COMMAND_TEMPLATES.reviewChanges).toBe('{basePrompt}')
+    expect(resolveSourceControlActionCommandTemplate(undefined, 'reviewChanges')).toBe(
+      '{basePrompt}'
+    )
+    expect(SOURCE_CONTROL_ACTION_VARIABLES.reviewChanges).toEqual(['basePrompt'])
+    expect(
+      normalizeSourceControlAiActionDefaults({
+        reviewChanges: {
+          agentId: 'codex',
+          commandInputTemplate: 'Review only: {basePrompt}',
+          agentArgs: '--model o3'
+        }
+      })
+    ).toEqual({
+      reviewChanges: {
+        agentId: 'codex',
+        commandInputTemplate: 'Review only: {basePrompt}',
+        agentArgs: '--model o3'
+      }
+    })
+  })
+
   it('exposes push failure recovery as a launch action with basePrompt defaults', () => {
     expect(SOURCE_CONTROL_LAUNCH_ACTION_IDS).toContain('fixPushFailure')
     expect(SOURCE_CONTROL_LAUNCH_ACTION_LABELS.fixPushFailure).toBe('Push failure fixes')

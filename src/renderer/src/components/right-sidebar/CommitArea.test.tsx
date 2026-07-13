@@ -530,6 +530,40 @@ describe('CommitArea', () => {
     expect(notice).toContain('break-words')
     expect(notice).not.toContain('truncate')
   })
+
+  it('shows Review changes before the commit split-button when available', () => {
+    const markup = renderCommitArea({
+      ...baseProps(),
+      canReviewChanges: true,
+      onReviewChanges: vi.fn()
+    })
+
+    const reviewButton = buttonContaining(markup, 'Review changes')
+    expect(reviewButton).toContain('data-testid="source-control-review-changes"')
+    expect(markup).toContain('Ask an agent for a read-only review of current changes')
+    expect(markup).toContain('Commit')
+    expect(markup).toContain('aria-label="More commit and remote actions"')
+    expect(markup.indexOf('source-control-review-changes')).toBeLessThan(
+      markup.indexOf('Commit staged changes')
+    )
+  })
+
+  it('hides Review changes when unavailable or missing a handler', () => {
+    expect(
+      renderCommitArea({
+        ...baseProps(),
+        canReviewChanges: false,
+        onReviewChanges: vi.fn()
+      })
+    ).not.toContain('data-testid="source-control-review-changes"')
+
+    expect(
+      renderCommitArea({
+        ...baseProps(),
+        canReviewChanges: true
+      })
+    ).not.toContain('data-testid="source-control-review-changes"')
+  })
 })
 
 describe('ConflictSummaryCard', () => {

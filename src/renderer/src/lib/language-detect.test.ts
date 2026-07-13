@@ -25,12 +25,12 @@ describe('detectLanguage', () => {
     expect(detectLanguage('C:\\Users\\alice\\repo\\CMakeLists.txt')).toBe('cmake')
   })
 
-  it('maps Windows Batch files to Monaco built-in Batch language id', () => {
+  it('maps Windows Batch files to the Batch language id', () => {
     expect(detectLanguage('scripts/setup.bat')).toBe('bat')
     expect(detectLanguage('C:\\repo\\scripts\\bootstrap.CMD')).toBe('bat')
   })
 
-  it('maps SystemVerilog and Verilog files to their Monaco language ids', () => {
+  it('maps SystemVerilog and Verilog files to their editor language ids', () => {
     expect(detectLanguage('rtl/cpu.sv')).toBe('systemverilog')
     expect(detectLanguage('rtl/pkg.svh')).toBe('systemverilog')
     expect(detectLanguage('rtl/alu.v')).toBe('verilog')

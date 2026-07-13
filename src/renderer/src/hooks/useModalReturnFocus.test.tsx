@@ -96,43 +96,49 @@ describe('useModalReturnFocus', () => {
     const terminalTextarea = document.createElement('textarea')
     terminalTextarea.className = 'xterm-helper-textarea'
     document.body.append(terminalTextarea)
-    const monaco = document.createElement('div')
-    monaco.className = 'monaco-editor'
-    const editorTextarea = document.createElement('textarea')
-    monaco.append(editorTextarea)
-    document.body.append(monaco)
+    const editorRoot = document.createElement('div')
+    editorRoot.className = 'cm-editor'
+    const editorContent = document.createElement('div')
+    editorContent.className = 'cm-content'
+    editorContent.contentEditable = 'true'
+    editorRoot.append(editorContent)
+    document.body.append(editorRoot)
 
     await renderProbe(true)
     await renderProbe(false)
     flushAnimationFrames()
 
-    expect(document.activeElement).toBe(editorTextarea)
+    expect(document.activeElement).toBe(editorContent)
     expect(focusTerminalTabSurface).not.toHaveBeenCalled()
   })
 
   it('returns focus to the captured editor when multiple editors are mounted', async () => {
     installAnimationFrameStubs()
     useAppStore.setState({ activeWorktreeId: 'wt-1', activeTabType: 'editor' })
-    const firstEditor = document.createElement('textarea')
-    const firstMonaco = document.createElement('div')
-    firstMonaco.className = 'monaco-editor'
-    firstMonaco.append(firstEditor)
-    document.body.append(firstMonaco)
-    const secondEditor = document.createElement('textarea')
-    const secondMonaco = document.createElement('div')
-    secondMonaco.className = 'monaco-editor'
-    secondMonaco.append(secondEditor)
-    document.body.append(secondMonaco)
+    const firstRoot = document.createElement('div')
+    firstRoot.className = 'cm-editor'
+    const firstContent = document.createElement('div')
+    firstContent.className = 'cm-content'
+    firstContent.contentEditable = 'true'
+    firstRoot.append(firstContent)
+    document.body.append(firstRoot)
+    const secondRoot = document.createElement('div')
+    secondRoot.className = 'cm-editor'
+    const secondContent = document.createElement('div')
+    secondContent.className = 'cm-content'
+    secondContent.contentEditable = 'true'
+    secondRoot.append(secondContent)
+    document.body.append(secondRoot)
 
     await renderProbe(false)
-    secondEditor.focus()
+    secondContent.focus()
     latestCaptureReturnFocus?.()
     await renderProbe(true)
-    firstEditor.focus()
+    firstContent.focus()
     await renderProbe(false)
     flushAnimationFrames()
 
-    expect(document.activeElement).toBe(secondEditor)
+    expect(document.activeElement).toBe(secondContent)
   })
 
   it('captures browser address-bar focus before dialog autofocus moves focus', async () => {
@@ -201,18 +207,20 @@ describe('useModalReturnFocus', () => {
   it('skips return focus when the close action already moved focus', async () => {
     installAnimationFrameStubs()
     useAppStore.setState({ activeWorktreeId: 'wt-1', activeTabType: 'editor' })
-    const monaco = document.createElement('div')
-    monaco.className = 'monaco-editor'
-    const editorTextarea = document.createElement('textarea')
-    monaco.append(editorTextarea)
-    document.body.append(monaco)
+    const editorRoot = document.createElement('div')
+    editorRoot.className = 'cm-editor'
+    const editorContent = document.createElement('div')
+    editorContent.className = 'cm-content'
+    editorContent.contentEditable = 'true'
+    editorRoot.append(editorContent)
+    document.body.append(editorRoot)
 
     await renderProbe(true)
     latestSkipReturnFocus?.()
     await renderProbe(false)
     flushAnimationFrames()
 
-    expect(document.activeElement).not.toBe(editorTextarea)
+    expect(document.activeElement).not.toBe(editorContent)
     expect(focusTerminalTabSurface).not.toHaveBeenCalled()
   })
 })

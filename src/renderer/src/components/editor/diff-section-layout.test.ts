@@ -8,7 +8,7 @@ import {
 import type { GitDiffResult } from '../../../../shared/types'
 
 describe('diff section layout', () => {
-  it('uses Monaco measured content height for text diffs', () => {
+  it('uses measured content height for text diffs', () => {
     expect(
       getDiffSectionBodyHeight({
         measuredContentHeight: 120,
@@ -23,7 +23,7 @@ describe('diff section layout', () => {
     expect(getLargeDiffFallbackBodyHeight()).toBe(160)
   })
 
-  it('falls back to line-count height before Monaco has mounted', () => {
+  it('falls back to line-count height before the editor has mounted', () => {
     expect(
       getDiffSectionBodyHeight({
         measuredContentHeight: undefined,
@@ -34,7 +34,7 @@ describe('diff section layout', () => {
     ).toBe(76)
   })
 
-  it('uses changed-line count before Monaco reports collapsed diff height', () => {
+  it('uses changed-line count before the editor reports collapsed diff height', () => {
     const largeUnchangedFile = Array.from({ length: 10_000 }, (_, index) => `line ${index}`).join(
       '\n'
     )
@@ -199,7 +199,7 @@ describe('diff section layout', () => {
     ).toBe(188)
   })
 
-  it('ignores stale Monaco measurements for oversized virtualized sections', () => {
+  it('ignores stale editor measurements for oversized virtualized sections', () => {
     expect(
       getDiffSectionEstimatedHeight({
         collapsed: false,

@@ -47,7 +47,7 @@ export function openAnnotationLocation(params: {
   cancelAnnotationRevealFrame(revealInnerRafRef)
   store.setPendingEditorReveal(null)
 
-  // Why: opening can replace the active tab and mount Monaco asynchronously.
+  // Why: opening can replace the active tab and mount the editor asynchronously.
   // Matching search and terminal-link navigation, wait two frames so the
   // destination editor owns layout before we ask it to reveal the line.
   revealRafRef.current = requestAnimationFrame(() => {

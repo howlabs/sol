@@ -194,6 +194,7 @@ export const launchSourceSchema = z.enum([
   'notes_send',
   'conflict_resolution',
   'source_control_recovery',
+  'source_control_review',
   'terminal_context_menu',
   'unknown'
 ])

@@ -102,7 +102,7 @@ export const getDefaultPrimarySelectionMiddleClickPaste = (
 /**
  * Why: ProseMirror builds an in-memory tree for the entire document, so large
  * markdown files cause noticeable typing lag in the rich editor. Files above
- * this threshold fall back to source mode (Monaco) which handles large files
+ * this threshold fall back to source mode which handles large files
  * efficiently via virtualized line rendering.
  */
 export const RICH_MARKDOWN_MAX_SIZE_BYTES = 300 * 1024
@@ -193,7 +193,6 @@ export function getDefaultSettings(homedir: string): GlobalSettings {
     appFontFamily: DEFAULT_APP_FONT_FAMILY,
     editorAutoSave: false,
     editorAutoSaveDelayMs: DEFAULT_EDITOR_AUTO_SAVE_DELAY_MS,
-    editorMinimapEnabled: false,
     richMarkdownSpellcheckEnabled: true,
     primarySelectionMiddleClickPaste: getDefaultPrimarySelectionMiddleClickPaste(),
     primarySelectionMiddleClickPasteDefaultedForLinux:

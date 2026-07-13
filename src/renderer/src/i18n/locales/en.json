@@ -8198,7 +8198,8 @@
                   "supportedAgents": "Supported agents for this recipe: {{value0}}.",
                   "unsupportedSavedAgent": "{{value0}} cannot run this text-generation recipe. Pick one of the supported agents below.",
                   "resolveComments": "Start an agent from selected unresolved PR or MR comments.",
-                  "fixPushFailure": "Start an agent when a pre-push hook or git push fails."
+                  "fixPushFailure": "Start an agent when a pre-push hook or git push fails.",
+                  "reviewChanges": "Start a read-only agent review of current changes (findings only, no edits)."
                 }
               }
             }
@@ -9084,6 +9085,14 @@
               "a9bf7c171a": "Push Failed",
               "834cb3f23d": "Fix with AI",
               "783a808870": "Close"
+            },
+            "reviewChanges": {
+              "title": "Review Changes",
+              "description": "Read-only review. The agent reports findings and must not edit files.",
+              "start": "Start review",
+              "started": "Started a read-only review agent.",
+              "buttonTitle": "Ask an agent for a read-only review of current changes",
+              "buttonLabel": "Review changes"
             }
           },
           "SourceControlAgentActionDialog": {
@@ -9451,7 +9460,10 @@
             "source": {
               "control": {
                 "ai": {
-                  "cfafa92509": "No unresolved conflicts to send."
+                  "cfafa92509": "No unresolved conflicts to send.",
+                  "reviewChanges": {
+                    "empty": "No changes to review."
+                  }
                 }
               }
             }

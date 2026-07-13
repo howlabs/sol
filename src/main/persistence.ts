@@ -804,6 +804,10 @@ function normalizeProjectOrderBy(projectOrderBy: unknown): PersistedState['ui'][
 }
 
 function normalizeRightSidebarTab(tab: unknown): PersistedState['ui']['rightSidebarTab'] {
+  // Why: legacy Changes activity tab maps onto Source Control.
+  if (tab === 'agent-changes') {
+    return 'source-control'
+  }
   if (
     tab === 'explorer' ||
     tab === 'search' ||
@@ -811,7 +815,6 @@ function normalizeRightSidebarTab(tab: unknown): PersistedState['ui']['rightSide
     tab === 'workspaces' ||
     tab === 'pr-checks' ||
     tab === 'source-control' ||
-    tab === 'agent-changes' ||
     tab === 'checks' ||
     tab === 'ports'
   ) {

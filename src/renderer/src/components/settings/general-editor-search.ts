@@ -67,19 +67,6 @@ export const getGeneralEditorSearchEntries = createLocalizedCatalog(() => [
     ]
   },
   {
-    title: translate('auto.components.settings.general.search.6f584fcb48', 'Minimap'),
-    description: translate(
-      'auto.components.settings.general.search.716a4dfb1f',
-      'Show the minimap overview when editing a file.'
-    ),
-    keywords: [
-      ...translateSearchKeyword('auto.components.settings.general.search.9c72990db8', 'minimap'),
-      ...translateSearchKeyword('auto.components.settings.general.search.e3919429c0', 'overview'),
-      ...translateSearchKeyword('auto.components.settings.general.search.3ca5ab78a5', 'code'),
-      ...translateSearchKeyword('auto.components.settings.general.search.a0014961ae', 'scroll')
-    ]
-  },
-  {
     title: translate(
       'auto.components.settings.general.search.d2d2d929c0',
       'Rich Markdown Spellcheck'

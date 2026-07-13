@@ -1077,7 +1077,7 @@ export async function getWorkItemDetails(
 }
 
 // Why: base64-decoded contents at specific commits are needed to feed Orca's
-// Monaco-based DiffViewer (which expects original/modified text, not unified
+// CodeMirror DiffViewer (which expects original/modified text, not unified
 // diff patches). Fetching via gh api --cache keeps rate-limit usage bounded
 // during rapid file-expand clicks in the drawer.
 async function fetchContentAtRef(args: {

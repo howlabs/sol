@@ -1379,7 +1379,7 @@ function Terminal(): React.JSX.Element | null {
       if (!e.repeat && matchShortcut('editor.save')) {
         const target = e.target as HTMLElement | null
         const inEditor =
-          target?.closest('.monaco-editor, [contenteditable]') !== null ||
+          target?.closest('.cm-editor, [contenteditable]') !== null ||
           target?.closest('textarea:not(.xterm-helper-textarea), input') !== null
         if (!inEditor) {
           const state = useAppStore.getState()

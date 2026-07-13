@@ -67,7 +67,7 @@ export const DEFAULT_SEARCH_MAX_RESULTS = 2000
 export const SEARCH_TIMEOUT_MS = 15_000
 
 // Why: search should stay cheaper than opening a file in the editor. The
-// editor read path has a larger cap and relies on Monaco large-file handling.
+// editor read path has a larger cap and relies on editor large-file handling.
 const SEARCH_MAX_FILE_SIZE = 5 * 1024 * 1024
 
 // Why: `lineContent` is carried per-match to the renderer. Minified bundles

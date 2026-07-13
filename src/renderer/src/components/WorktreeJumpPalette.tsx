@@ -1139,9 +1139,9 @@ export default function WorktreeJumpPalette(): React.JSX.Element | null {
           xterm.focus()
           return
         }
-        const monaco = document.querySelector('.monaco-editor textarea') as HTMLElement | null
-        if (monaco) {
-          monaco.focus()
+        const editorContent = document.querySelector('.cm-content') as HTMLElement | null
+        if (editorContent) {
+          editorContent.focus()
         }
       })
     })

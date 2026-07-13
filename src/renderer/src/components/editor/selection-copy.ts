@@ -1,24 +1,31 @@
-import type { IRange } from 'monaco-editor'
+export type LineRangeSelection = {
+  startLineNumber: number
+  startColumn: number
+  endLineNumber: number
+  endColumn: number
+}
 
 type FormatCopiedSelectionArgs = {
   relativePath: string
   language: string
-  selection: IRange
+  selection: LineRangeSelection
   selectedText: string
 }
 
-export function formatCopiedSelectionWithContext({
+/** Format a selection for agent-ready paste (editor line numbers). */
+export function formatCopiedSelectionLines({
   relativePath,
   language,
-  selection,
+  startLine,
+  endLine,
   selectedText
-}: FormatCopiedSelectionArgs): string | null {
-  const { startLine, endLine } = getContextualCopyLineRange(selection)
-  const isSingleLineSelection = selection.startLineNumber === selection.endLineNumber
-  if (isSingleLineSelection) {
-    return null
-  }
-
+}: {
+  relativePath: string
+  language: string
+  startLine: number
+  endLine: number
+  selectedText: string
+}): string | null {
   if (endLine < startLine) {
     return null
   }
@@ -30,7 +37,28 @@ export function formatCopiedSelectionWithContext({
   return `File: ${relativePath}\n${lineLabel}\n\n\`\`\`${codeFenceLanguage}\n${codeBlock}\`\`\``
 }
 
-export function getContextualCopyLineRange(selection: IRange): {
+export function formatCopiedSelectionWithContext({
+  relativePath,
+  language,
+  selection,
+  selectedText
+}: FormatCopiedSelectionArgs): string | null {
+  // Why: caret-sized one-line the editor selections stay plain clipboard text.
+  const isSingleLineSelection = selection.startLineNumber === selection.endLineNumber
+  if (isSingleLineSelection) {
+    return null
+  }
+  const { startLine, endLine } = getContextualCopyLineRange(selection)
+  return formatCopiedSelectionLines({
+    relativePath,
+    language,
+    startLine,
+    endLine,
+    selectedText
+  })
+}
+
+export function getContextualCopyLineRange(selection: LineRangeSelection): {
   startLine: number
   endLine: number
 } {
@@ -40,12 +68,12 @@ export function getContextualCopyLineRange(selection: IRange): {
   }
 }
 
-export function getInclusiveEndLine(selection: IRange): number {
+export function getInclusiveEndLine(selection: LineRangeSelection): number {
   if (selection.startLineNumber === selection.endLineNumber) {
     return selection.endLineNumber
   }
 
-  // Why: Monaco reports a full-line selection as ending at column 1 of the
+  // Why: the editor reports a full-line selection as ending at column 1 of the
   // following line. We translate that boundary back to the last copied line so
   // pasted context matches what the user actually selected.
   if (selection.endColumn === 1) {

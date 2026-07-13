@@ -6,7 +6,7 @@ more error-prone than keeping the whole viewer flow together. */
 /* oxlint-disable react-doctor/no-adjust-state-on-prop-change -- Why: diff entry changes must reset virtualizer measurement and generation state in lockstep with external scroll restoration. */
 import React, { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import type { editor as monacoEditor } from 'monaco-editor'
+
 import { useAppStore } from '@/store'
 import {
   useVirtualizedScrollAnchor,
@@ -25,7 +25,7 @@ import {
   getRuntimeGitCommitDiff,
   getRuntimeGitDiff
 } from '@/runtime/runtime-git-client'
-import '@/lib/monaco-setup'
+
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { OpenFile } from '@/store/slices/editor'
@@ -750,7 +750,7 @@ export default function CombinedDiffViewer({
   )
   retrySectionRef.current = retrySection
 
-  const modifiedEditorsRef = useRef<Map<number, monacoEditor.IStandaloneCodeEditor>>(new Map())
+  const modifiedContentGettersRef = useRef<Map<number, () => string>>(new Map())
 
   const virtualizer = useVirtualizer({
     count: sections.length,
@@ -884,7 +884,7 @@ export default function CombinedDiffViewer({
   })
 
   useLayoutEffect(() => {
-    // Why: inline vs side-by-side can change Monaco content heights across
+    // Why: inline vs side-by-side can change the editor content heights across
     // every loaded row. Re-measure on this explicit mode change, not on every
     // section load.
     virtualizer.measure()
@@ -1107,12 +1107,12 @@ export default function CombinedDiffViewer({
       if (!section) {
         return
       }
-      const modifiedEditor = modifiedEditorsRef.current.get(index)
-      if (!modifiedEditor && !section.dirty) {
+      const liveContent = modifiedContentGettersRef.current.get(index)?.()
+      if (liveContent === undefined && !section.dirty) {
         return
       }
 
-      const content = modifiedEditor?.getValue() ?? section.modifiedContent
+      const content = liveContent ?? section.modifiedContent
       const absolutePath = joinPath(file.filePath, section.path)
       try {
         const connectionId = getConnectionIdForFile(file.worktreeId, absolutePath) ?? undefined
@@ -1737,7 +1737,7 @@ export default function CombinedDiffViewer({
                       }
                       setSectionHeights={setSectionHeights}
                       setSections={setSections}
-                      modifiedEditorsRef={modifiedEditorsRef}
+                      modifiedContentGettersRef={modifiedContentGettersRef}
                       handleSectionSaveRef={handleSectionSaveRef}
                     />
                   </div>

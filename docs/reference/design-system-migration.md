@@ -4,12 +4,12 @@ Status: **Phases A–F landed** (stone + Mira density + Phosphor + Base UI + har
 
 ## Target
 
-| Dimension        | Runtime now                         | Target                                      |
-| ---------------- | ----------------------------------- | ------------------------------------------- |
-| shadcn visual style | Mira density on Base UI            | **Mira** (`base-mira`)                      |
-| Primitive library   | **Base UI** (`@base-ui/react`)     | **Base UI** (done; `radix-ui` removed)      |
-| Base color          | **Stone** oklch in `main.css`     | **Stone** (done)                            |
-| Icons               | **`@/lib/icons` → Phosphor**      | **Phosphor** (done; Lucide names retained)  |
+| Dimension           | Runtime now                    | Target                                     |
+| ------------------- | ------------------------------ | ------------------------------------------ |
+| shadcn visual style | Mira density on Base UI        | **Mira** (`base-mira`)                     |
+| Primitive library   | **Base UI** (`@base-ui/react`) | **Base UI** (done; `radix-ui` removed)     |
+| Base color          | **Stone** oklch in `main.css`  | **Stone** (done)                           |
+| Icons               | **`@/lib/icons` → Phosphor**   | **Phosphor** (done; Lucide names retained) |
 
 Why this combo for Sol:
 
@@ -21,18 +21,18 @@ Why this combo for Sol:
 ## Non-goals (this migration)
 
 - No big-bang rewrite of all settings panes or product screens in one PR.
-- Do not re-theme Monaco, xterm, or markdown preview palettes as part of chrome migration.
+- Do not re-theme CodeMirror, xterm, or markdown preview palettes as part of chrome migration.
 - Do not invent parallel design tokens outside `main.css` / STYLEGUIDE roles.
 - Do not run a full `shadcn add --overwrite` of every primitive until Phase C is intentional.
 
 ## Source of truth during migration
 
-| Artifact            | Role                                                                 |
-| ------------------- | -------------------------------------------------------------------- |
-| `components.json`   | **Target** for new shadcn CLI adds (`base-mira`, stone, phosphor)    |
-| `src/renderer/src/components/ui/*` | **Runtime** primitives (Base UI + Phosphor via `@/lib/icons`) |
-| `src/renderer/src/assets/main.css` | Token source of truth; stone + positioner/collapsible CSS vars |
-| `docs/STYLEGUIDE.md` | Visual/UX rules; documents target + “prefer house form grammar”    |
+| Artifact                           | Role                                                              |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `components.json`                  | **Target** for new shadcn CLI adds (`base-mira`, stone, phosphor) |
+| `src/renderer/src/components/ui/*` | **Runtime** primitives (Base UI + Phosphor via `@/lib/icons`)     |
+| `src/renderer/src/assets/main.css` | Token source of truth; stone + positioner/collapsible CSS vars    |
+| `docs/STYLEGUIDE.md`               | Visual/UX rules; documents target + “prefer house form grammar”   |
 
 Treat existing `ui/*` APIs as stable. App code should keep importing `@/components/ui/*` and house form controls in `SettingsFormControls.tsx`.
 

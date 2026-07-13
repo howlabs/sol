@@ -60,15 +60,15 @@ export function ChangesModeView({
       </div>
     )
   }
-  // Why: Monaco renders an empty diff when the two sides match, which reads as
+  // Why: the editor renders an empty diff when the two sides match, which reads as
   // a broken view. Surface an inline banner so the user knows Changes mode is
   // active but there is simply nothing to diff right now.
   const isDiffBodyPruned = dc.largeDiffRenderLimit?.limited === true
   const isIdentical = !isDiffBodyPruned && dc.originalContent === modifiedContent
   // Why: after a terminal commit/pull/rebase, Changes mode refreshes the
-  // HEAD-side blob in React state, but Monaco can keep painting the previous
+  // HEAD-side blob in React state, but the editor can keep painting the previous
   // diff if we reuse the same kept model identities. Rotate only the
-  // original-side model identity so Monaco rebuilds the stale HEAD snapshot
+  // original-side model identity so the editor rebuilds the stale HEAD snapshot
   // without throwing away the modified-side undo history.
   const headContentSignature = getDiffContentSignature(dc.originalContent)
   const originalModelKey = `${diffViewStateKey}:original:${headContentSignature}`
