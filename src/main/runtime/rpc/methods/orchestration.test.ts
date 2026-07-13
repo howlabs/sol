@@ -22,6 +22,9 @@ describe('orchestration RPC methods', () => {
     dbOpen = true
     runtime = new OrcaRuntimeService()
     runtime.setOrchestrationDb(db)
+    vi.spyOn(runtime, 'getClientSettings').mockReturnValue({
+      enableGitHubAttribution: false
+    } as never)
     ctx = { runtime }
   }
 

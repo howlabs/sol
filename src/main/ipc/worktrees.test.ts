@@ -499,7 +499,7 @@ describe('registerWorktreeHandlers', () => {
       displayName: 'repo',
       badgeColor: '#000',
       addedAt: 0,
-      worktreeBaseRef: 'origin/master'
+      worktreeBaseRef: 'fresh'
     }
     const remoteBase = {
       remote: 'origin',
@@ -2767,7 +2767,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -2837,7 +2837,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -2934,7 +2934,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -3037,7 +3037,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'refs/remotes/origin/main'
+      worktreeBaseRef: 'fresh'
     }
     let registeredRoots = false
     const provider = {
@@ -3148,7 +3148,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'refs/remotes/origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const methodNotFound = Object.assign(
       new Error('Method not found: git.refreshLocalBaseRefForWorktreeCreate'),
@@ -3225,7 +3225,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -3317,7 +3317,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -3414,7 +3414,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'abc123'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -3509,7 +3509,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -3574,7 +3574,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -3636,7 +3636,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const setupError = new Error('sparse init failed')
     const provider = {
@@ -3692,7 +3692,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -3747,7 +3747,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/master'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -3820,7 +3820,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'develop'
+      worktreeBaseRef: 'fresh'
     }
     let repoRootRegistered = false
     const provider = {
@@ -3892,7 +3892,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'team/feature'
+      worktreeBaseRef: 'fresh'
     }
     let repoRootRegistered = false
     const provider = {
@@ -3974,7 +3974,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -4111,7 +4111,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     let resolveFetch!: () => void
     const pendingFetch = new Promise<void>((resolve) => {
@@ -4176,7 +4176,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/master'
+      worktreeBaseRef: 'fresh'
     }
     const registeredRoots = new Set<string>()
     const events: string[] = []
@@ -4255,7 +4255,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'team/feature'
+      worktreeBaseRef: 'fresh'
     }
     const provider = {
       exec: vi.fn().mockImplementation(async (args: string[]) => {
@@ -4330,7 +4330,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     let resolveRemoteList!: () => void
     const pendingRemoteList = new Promise<{ stdout: string; stderr: string }>((resolve) => {
@@ -4396,7 +4396,7 @@ describe('registerWorktreeHandlers', () => {
       badgeColor: '#000',
       addedAt: 0,
       connectionId: 'conn-1',
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     }
     let resolveExactFetch!: () => void
     const pendingExactFetch = new Promise<void>((resolve) => {
@@ -4630,7 +4630,7 @@ describe('registerWorktreeHandlers', () => {
       displayName: 'repo',
       badgeColor: '#000',
       addedAt: 0,
-      worktreeBaseRef: 'origin/master'
+      worktreeBaseRef: 'fresh'
     })
     runtimeStub.resolveRemoteTrackingBase.mockImplementation(async (_repoPath, baseBranch) =>
       baseBranch === 'origin/main' ? remoteBase : null
@@ -4688,7 +4688,7 @@ describe('registerWorktreeHandlers', () => {
       displayName: 'repo',
       badgeColor: '#000',
       addedAt: 0,
-      worktreeBaseRef: 'develop'
+      worktreeBaseRef: 'fresh'
     })
     runtimeStub.resolveRemoteTrackingBase.mockResolvedValue(null)
     runtimeStub.getOrStartRemoteTrackingBaseRefresh.mockResolvedValue({
@@ -4743,7 +4743,7 @@ describe('registerWorktreeHandlers', () => {
       displayName: 'repo',
       badgeColor: '#000',
       addedAt: 0,
-      worktreeBaseRef: 'team/feature'
+      worktreeBaseRef: 'fresh'
     })
     runtimeStub.resolveRemoteTrackingBase.mockImplementation(async (_repoPath, baseBranch) =>
       baseBranch === 'team/feature' ? remoteBase : null
@@ -4807,7 +4807,7 @@ describe('registerWorktreeHandlers', () => {
       displayName: 'repo',
       badgeColor: '#000',
       addedAt: 0,
-      worktreeBaseRef: 'origin/main'
+      worktreeBaseRef: 'fresh'
     })
 
     await expect(

@@ -67,6 +67,7 @@ export type CoordinatorOptions = {
   pollIntervalMs?: number
   maxConcurrent?: number
   worktree?: string
+  enableGitHubAttribution?: boolean
   onLog?: (msg: string) => void
 }
 
@@ -93,9 +94,12 @@ export class Coordinator {
   private runtime: CoordinatorRuntime
   private state: CoordinatorState
   private stopped = false
-  private opts: Required<Omit<CoordinatorOptions, 'onLog' | 'worktree'>> & {
+  private opts: Required<
+    Omit<CoordinatorOptions, 'onLog' | 'worktree' | 'enableGitHubAttribution'>
+  > & {
     onLog: (msg: string) => void
     worktree?: string
+    enableGitHubAttribution?: boolean
   }
 
   constructor(db: OrchestrationDb, runtime: CoordinatorRuntime, options: CoordinatorOptions) {
@@ -107,6 +111,7 @@ export class Coordinator {
       pollIntervalMs: options.pollIntervalMs ?? DEFAULT_POLL_MS,
       maxConcurrent: options.maxConcurrent ?? MAX_CONCURRENT_DEFAULT,
       worktree: options.worktree,
+      enableGitHubAttribution: options.enableGitHubAttribution,
       onLog: options.onLog ?? (() => {})
     }
     this.state = {
@@ -478,6 +483,7 @@ export class Coordinator {
       taskSpec: strippedSpec,
       coordinatorHandle: this.opts.coordinatorHandle,
       devMode: process.env.ORCA_USER_DATA_PATH?.includes('orca-dev'),
+      enableGitHubAttribution: this.opts.enableGitHubAttribution,
       // Why (§3.2): drift section fires only when behind > 0. The preamble
       // builder gates on this itself; passing the object unconditionally lets
       // the coordinator stay dumb about the display rule.

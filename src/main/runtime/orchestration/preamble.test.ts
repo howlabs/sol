@@ -245,4 +245,15 @@ describe('buildDispatchPreamble', () => {
     })
     expect(result).toMatchSnapshot()
   })
+
+  it('injects attribution fragment when enableGitHubAttribution is true', () => {
+    const result = buildDispatchPreamble(baseParams({ enableGitHubAttribution: true }))
+    expect(result).toContain('Co-authored-by: Sol')
+    expect(result).toContain('exactly once')
+  })
+
+  it('omits attribution fragment when enableGitHubAttribution is false', () => {
+    const result = buildDispatchPreamble(baseParams({ enableGitHubAttribution: false }))
+    expect(result).not.toContain('Co-authored-by')
+  })
 })

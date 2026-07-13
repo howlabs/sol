@@ -1,9 +1,5 @@
 import { isNoUpstreamError } from './git-remote-error'
 import type { GitUpstreamStatus } from './types'
-import {
-  getConfiguredBranchRemoteUpstream,
-  hasConfiguredBranchPushTarget
-} from './git-configured-branch-target'
 import { splitRemoteBranchName } from './git-remote-branch-name'
 import { parseGitRevListAheadBehindCounts } from './git-rev-list-output'
 import { iterateProcessOutputLines } from './process-output-field-scanner'
@@ -28,6 +24,16 @@ export type EffectiveGitUpstream =
 
 function hasMultipleSlashSegments(refName: string): boolean {
   return refName.includes('/') && refName.indexOf('/') !== refName.lastIndexOf('/')
+}
+
+async function getGitConfigValue(runGit: GitCommandRunner, key: string): Promise<string | null> {
+  try {
+    const { stdout } = await runGit(['config', '--get', key])
+    const value = stdout.trim()
+    return value || null
+  } catch {
+    return null
+  }
 }
 
 async function splitRemoteBranchNameByKnownRemote(
@@ -158,15 +164,25 @@ async function resolveEffectiveGitUpstreamForBranch(
   }
 
   if (currentBranchName) {
-    const branchRemoteUpstream = await getConfiguredBranchRemoteUpstream(
-      runGit,
-      currentBranchName,
-      (remoteName, branchName) => remoteTrackingRefExists(runGit, remoteName, branchName)
-    )
-    if (branchRemoteUpstream) {
-      // Why: Git cannot resolve HEAD@{u} when branch.<name>.remote is a URL,
-      // but older fork-review worktrees still carry the usable merge target.
-      return branchRemoteUpstream
+    // Why: simple branch.remote + branch.merge — no fork/pushDefault/URL detection.
+    const [remote, mergeRef] = await Promise.all([
+      getGitConfigValue(runGit, `branch.${currentBranchName}.remote`),
+      getGitConfigValue(runGit, `branch.${currentBranchName}.merge`)
+    ])
+    const branchName = mergeRef?.replace(/^refs\/heads\//, '') ?? ''
+    if (
+      remote &&
+      remote !== '.' &&
+      branchName &&
+      branchName !== mergeRef &&
+      (await remoteTrackingRefExists(runGit, remote, branchName))
+    ) {
+      return {
+        upstreamName: `${remote}/${branchName}`,
+        remoteName: remote,
+        branchName,
+        isConfiguredUpstream: false
+      }
     }
   }
 
@@ -195,9 +211,17 @@ export async function getEffectiveGitUpstreamStatus(
   const currentBranchName = await getCurrentBranchName(runGit)
   const upstream = await resolveEffectiveGitUpstreamForBranch(runGit, currentBranchName)
   if (!upstream) {
-    const hasConfiguredPushTarget = currentBranchName
-      ? await hasConfiguredBranchPushTarget(runGit, currentBranchName)
-      : false
+    let hasConfiguredPushTarget = false
+    if (currentBranchName) {
+      const [remote, mergeRef] = await Promise.all([
+        getGitConfigValue(runGit, `branch.${currentBranchName}.remote`),
+        getGitConfigValue(runGit, `branch.${currentBranchName}.merge`)
+      ])
+      const branchName = mergeRef?.replace(/^refs\/heads\//, '') ?? ''
+      hasConfiguredPushTarget = Boolean(
+        remote && remote !== '.' && branchName && branchName !== mergeRef
+      )
+    }
     return {
       hasUpstream: false,
       ahead: 0,

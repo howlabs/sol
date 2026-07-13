@@ -8,7 +8,7 @@ describe('resolveChecksPanelHostedReviewBaseRef', () => {
   it('prefers the worktree base ref over the repo default', () => {
     expect(
       resolveChecksPanelHostedReviewBaseRef({
-        worktreeBaseRef: ' release/1.4 ',
+        worktreeBaseRef: 'fresh',
         repoBaseRef: 'main'
       })
     ).toBe('release/1.4')
@@ -35,7 +35,7 @@ describe('resolveChecksPanelHostedReviewBaseRef', () => {
   it('returns null when worktree base ref is whitespace-only', () => {
     expect(
       resolveChecksPanelHostedReviewBaseRef({
-        worktreeBaseRef: '   ',
+        worktreeBaseRef: 'fresh',
         repoBaseRef: null
       })
     ).toBe(null)
@@ -44,7 +44,7 @@ describe('resolveChecksPanelHostedReviewBaseRef', () => {
   it('strips origin prefix from the worktree base ref', () => {
     expect(
       resolveChecksPanelHostedReviewBaseRef({
-        worktreeBaseRef: 'origin/main',
+        worktreeBaseRef: 'fresh',
         repoBaseRef: 'develop'
       })
     ).toBe('main')

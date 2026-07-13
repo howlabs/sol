@@ -40,7 +40,6 @@ export function RepositoryWorktreeDefaultsSection({
           {translate('auto.components.settings.RepositoryPane.f88db4fece', 'Default Worktree Base')}
         </Label>
         <BaseRefPicker
-          repoId={repo.id}
           currentBaseRef={repo.worktreeBaseRef}
           onSelect={(ref) => updateRepo(repo.id, { worktreeBaseRef: ref })}
           onUsePrimary={() => updateRepo(repo.id, { worktreeBaseRef: undefined })}

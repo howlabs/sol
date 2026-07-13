@@ -5886,7 +5886,6 @@ function SourceControlInner(): React.JSX.Element {
           </DialogHeader>
           <div className="min-h-0 overflow-y-auto scrollbar-sleek">
             <BaseRefPicker
-              repoId={activeRepo.id}
               currentBaseRef={pickerBaseRef}
               onSelect={(ref) => {
                 if (baseRefOwnedByWorktree && activeWorktreeId) {

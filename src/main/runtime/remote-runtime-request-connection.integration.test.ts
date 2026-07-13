@@ -34,7 +34,7 @@ describe('remote runtime request connection integration', () => {
           badgeColor: 'blue',
           addedAt: 1,
           hookSettings: getDefaultRepoHookSettings(),
-          worktreeBaseRef: 'main',
+          worktreeBaseRef: 'fresh',
           kind: 'git'
         }
       ]
@@ -93,7 +93,7 @@ describe('remote runtime request connection integration', () => {
         badgeColor: 'blue',
         addedAt: 1,
         hookSettings: getDefaultRepoHookSettings(),
-        worktreeBaseRef: 'main',
+        worktreeBaseRef: 'fresh',
         kind: 'git'
       }
       const worktrees: unknown[] = [
@@ -261,7 +261,7 @@ describe('remote runtime request connection integration', () => {
         badgeColor: 'blue',
         addedAt: 1,
         hookSettings: getDefaultRepoHookSettings(),
-        worktreeBaseRef: 'main',
+        worktreeBaseRef: 'fresh',
         kind: 'git'
       }
       const worktrees: unknown[] = [

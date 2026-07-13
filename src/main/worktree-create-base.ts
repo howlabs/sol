@@ -1,6 +1,8 @@
+import type { WorktreeBaseRef } from '../shared/types'
+
 type ResolveWorktreeCreateBaseArgs = {
   requestedBaseBranch?: string
-  repoWorktreeBaseRef?: string | null
+  repoWorktreeBaseRef?: WorktreeBaseRef | null
   resolveDefaultBaseRef: () => Promise<string | null>
   isBaseUsable: (baseBranch: string) => Promise<boolean>
 }

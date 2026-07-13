@@ -57,7 +57,8 @@ export const ORCHESTRATION_GATE_METHODS: RpcMethod[] = [
         coordinatorHandle,
         pollIntervalMs: params.pollIntervalMs,
         maxConcurrent: params.maxConcurrent,
-        worktree: params.worktree
+        worktree: params.worktree,
+        enableGitHubAttribution: runtime.getClientSettings().enableGitHubAttribution
       })
 
       activeCoordinator = coordinator

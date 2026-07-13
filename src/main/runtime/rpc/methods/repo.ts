@@ -27,7 +27,7 @@ const RepoClone = z.object({
 
 const RepoSetBaseRef = z.object({
   repo: requiredString('Missing repo selector'),
-  ref: requiredString('Missing base ref')
+  ref: z.enum(['fresh', 'head'])
 })
 
 const RepoUpdate = createRepoUpdateSchema(RepoSelector.shape)

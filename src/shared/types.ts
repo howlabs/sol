@@ -240,7 +240,7 @@ export type Repo = {
   addedAt: number
   kind?: RepoKind
   gitUsername?: string
-  worktreeBaseRef?: string
+  worktreeBaseRef?: WorktreeBaseRef
   /** Optional repo-scoped workspace root override. Relative paths resolve from `path`. */
   worktreeBasePath?: string
   hookSettings?: RepoHookSettings
@@ -393,6 +393,8 @@ export type SetupRunPolicy = 'ask' | 'run-by-default' | 'skip-by-default'
 export type SetupAgentStartupPolicy = 'start-immediately' | 'wait-for-setup'
 export type SetupDecision = 'inherit' | 'run' | 'skip'
 export type HookCommandSourcePolicy = 'shared-only' | 'local-only' | 'run-both'
+
+export type WorktreeBaseRef = 'fresh' | 'head'
 
 /**
  * Envelope returned by the `repos:getBaseRefDefault` IPC handler.

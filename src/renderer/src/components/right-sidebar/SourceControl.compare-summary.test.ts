@@ -86,7 +86,7 @@ describe('SourceControl compare summary', () => {
   it('prefers the worktree creation base for branch compare', () => {
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: 'refs/remotes/origin/main',
+        worktreeBaseRef: 'fresh',
         reviewBaseRefName: 'main',
         repoBaseRef: 'main',
         defaultBaseRef: 'origin/main'
@@ -97,7 +97,7 @@ describe('SourceControl compare summary', () => {
   it('repairs stale PR head SHA compare bases from linked review metadata', () => {
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: '06103ea1889e259fd771b93d206e14c9a4c66391',
+        worktreeBaseRef: 'fresh',
         reviewBaseRefName: 'main',
         repoBaseRef: null,
         defaultBaseRef: 'origin/main'
@@ -108,7 +108,7 @@ describe('SourceControl compare summary', () => {
   it('keeps non-SHA worktree base refs ahead of review metadata', () => {
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: 'refs/remotes/upstream/release',
+        worktreeBaseRef: 'fresh',
         reviewBaseRefName: 'main',
         repoBaseRef: null,
         defaultBaseRef: 'origin/main'
@@ -119,7 +119,7 @@ describe('SourceControl compare summary', () => {
   it('rewrites stale SHA compare bases using the configured remote style', () => {
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: '06103ea1889e259fd771b93d206e14c9a4c66391',
+        worktreeBaseRef: 'fresh',
         reviewBaseRefName: 'release/next',
         repoBaseRef: null,
         defaultBaseRef: 'refs/remotes/upstream/main'
@@ -128,7 +128,7 @@ describe('SourceControl compare summary', () => {
 
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: '06103ea1889e259fd771b93d206e14c9a4c66391',
+        worktreeBaseRef: 'fresh',
         reviewBaseRefName: 'release',
         repoBaseRef: null,
         defaultBaseRef: 'upstream/main'
@@ -139,7 +139,7 @@ describe('SourceControl compare summary', () => {
   it('does not treat nested branch suffix matches as the review target', () => {
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: '06103ea1889e259fd771b93d206e14c9a4c66391',
+        worktreeBaseRef: 'fresh',
         reviewBaseRefName: 'main',
         repoBaseRef: null,
         defaultBaseRef: 'origin/release/main'
@@ -148,7 +148,7 @@ describe('SourceControl compare summary', () => {
 
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: '06103ea1889e259fd771b93d206e14c9a4c66391',
+        worktreeBaseRef: 'fresh',
         reviewBaseRefName: 'main',
         repoBaseRef: null,
         defaultBaseRef: 'refs/remotes/upstream/release/main'
@@ -159,7 +159,7 @@ describe('SourceControl compare summary', () => {
   it('keeps exact slash-containing target branch matches', () => {
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: '06103ea1889e259fd771b93d206e14c9a4c66391',
+        worktreeBaseRef: 'fresh',
         reviewBaseRefName: 'release/main',
         repoBaseRef: null,
         defaultBaseRef: 'origin/release/main'
@@ -170,7 +170,7 @@ describe('SourceControl compare summary', () => {
   it('waits for a remote candidate before repairing stale SHA compare bases', () => {
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: '06103ea1889e259fd771b93d206e14c9a4c66391',
+        worktreeBaseRef: 'fresh',
         reviewBaseRefName: 'release',
         repoBaseRef: null,
         defaultBaseRef: null
@@ -197,7 +197,7 @@ describe('SourceControl compare summary', () => {
   it('falls back to repo and default base refs when worktree metadata is absent', () => {
     expect(
       resolveSourceControlBaseRef({
-        worktreeBaseRef: '  ',
+        worktreeBaseRef: 'fresh',
         repoBaseRef: ' origin/release ',
         defaultBaseRef: 'origin/main'
       })
@@ -235,7 +235,7 @@ describe('SourceControl compare summary', () => {
     expect(
       resolveSourceControlCompareBaseRef({
         enabled: true,
-        worktreeBaseRef: 'refs/remotes/origin/release',
+        worktreeBaseRef: 'fresh',
         repoBaseRef: 'origin/main',
         upstreamName: 'origin/feature',
         fallbackBaseRef: 'origin/master'

@@ -126,7 +126,8 @@ import type {
   TuiAgent,
   WorkspaceCreateTelemetrySource,
   WorkspaceSessionState,
-  DirEntry
+  DirEntry,
+  WorktreeBaseRef
 } from '../../shared/types'
 import { parseExecutionHostId, type ExecutionHostId } from '../../shared/execution-host'
 import type { SleepingAgentLaunchConfig } from '../../shared/agent-session-resume'
@@ -2411,6 +2412,7 @@ export class OrcaRuntimeService {
     | 'compactWorktreeCards'
     | 'minimaxGroupId'
     | 'minimaxUsageModels'
+    | 'enableGitHubAttribution'
   > {
     if (!this.store?.getSettings) {
       throw new Error('runtime_unavailable')
@@ -2432,7 +2434,8 @@ export class OrcaRuntimeService {
       experimentalNewWorktreeCardStyle: settings.experimentalNewWorktreeCardStyle === true,
       compactWorktreeCards: settings.compactWorktreeCards === true,
       minimaxGroupId: settings.minimaxGroupId ?? '',
-      minimaxUsageModels: settings.minimaxUsageModels ?? 'general'
+      minimaxUsageModels: settings.minimaxUsageModels ?? 'general',
+      enableGitHubAttribution: settings.enableGitHubAttribution === true
     }
   }
 
@@ -10421,7 +10424,7 @@ export class OrcaRuntimeService {
     return await this.resolveRepoSelector(repoSelector)
   }
 
-  async setRepoBaseRef(repoSelector: string, baseRef: string): Promise<Repo> {
+  async setRepoBaseRef(repoSelector: string, baseRef: WorktreeBaseRef): Promise<Repo> {
     if (!this.store) {
       throw new Error('runtime_unavailable')
     }

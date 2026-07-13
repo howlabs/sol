@@ -8,14 +8,14 @@ describe('resolveWorktreeCreateBase', () => {
 
     await expect(
       resolveWorktreeCreateBase({
-        repoWorktreeBaseRef: 'origin/master',
+        repoWorktreeBaseRef: 'head',
         resolveDefaultBaseRef,
         isBaseUsable
       })
     ).resolves.toBe('origin/main')
 
     expect(resolveDefaultBaseRef).toHaveBeenCalledTimes(1)
-    expect(isBaseUsable).toHaveBeenCalledWith('origin/master')
+    expect(isBaseUsable).toHaveBeenCalledWith('head')
   })
 
   it('returns an explicit base without probing defaults or usability', async () => {
@@ -25,7 +25,7 @@ describe('resolveWorktreeCreateBase', () => {
     await expect(
       resolveWorktreeCreateBase({
         requestedBaseBranch: 'origin/master',
-        repoWorktreeBaseRef: 'origin/main',
+        repoWorktreeBaseRef: 'fresh',
         resolveDefaultBaseRef,
         isBaseUsable
       })
@@ -41,13 +41,13 @@ describe('resolveWorktreeCreateBase', () => {
 
     await expect(
       resolveWorktreeCreateBase({
-        repoWorktreeBaseRef: 'origin/master',
+        repoWorktreeBaseRef: 'head',
         resolveDefaultBaseRef,
         isBaseUsable
       })
-    ).resolves.toBe('origin/master')
+    ).resolves.toBe('head')
 
     expect(resolveDefaultBaseRef).toHaveBeenCalledTimes(1)
-    expect(isBaseUsable).toHaveBeenCalledWith('origin/master')
+    expect(isBaseUsable).toHaveBeenCalledWith('head')
   })
 })

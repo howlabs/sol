@@ -1332,7 +1332,7 @@ describe('Store', () => {
 
   it('can clear an automation back to the project default branch', async () => {
     const store = await createStore()
-    store.addRepo(makeRepo({ worktreeBaseRef: 'origin/main' }))
+    store.addRepo(makeRepo({ worktreeBaseRef: 'fresh' }))
     const automation = store.createAutomation({
       name: 'Nightly',
       prompt: 'Run checks',

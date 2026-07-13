@@ -379,17 +379,15 @@ describe('useComposerState host-context boundaries', () => {
     expect(section).not.toContain('folderSourceRequiresConnection')
   })
 
-  it('clears branch reuse state when manually editing the branch name', () => {
+  it('clears push target when manually editing the branch name to a different branch', () => {
     const section = sourceBetween(
       HOOK_SOURCE,
       'const handleBranchNameOverrideChange = useCallback',
       'const addComposerAttachments = useCallback'
     )
 
-    expect(section).toContain('resolveComposerManualBranchNameChange')
-    expect(section).toContain('setReuseEligibleBranch(null)')
-    expect(section).toContain('setReuseSelectedBranch(false)')
-    expect(section).toContain("branchAutoNameRef.current = ''")
+    expect(section).toContain('pushTarget.branchName !== branchNameOverride')
+    expect(section).toContain('setPushTarget(undefined)')
   })
 
   it('forces repo-scoped source reset when returning from folder target to a repo with the same id', () => {

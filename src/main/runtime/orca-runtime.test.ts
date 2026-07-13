@@ -2734,7 +2734,7 @@ describe('OrcaRuntimeService', () => {
       isBare: false,
       isMainWorktree: false
     }
-    const repo = { ...store.getRepos()[0], worktreeBaseRef: 'origin/master' }
+    const repo = { ...store.getRepos()[0], worktreeBaseRef: 'fresh' }
     const getReposSpy = vi.spyOn(store, 'getRepos').mockReturnValue([repo] as never)
     computeWorktreePathMock.mockReturnValue(createdWorktree.path)
     ensurePathWithinWorkspaceMock.mockReturnValue(createdWorktree.path)
@@ -2799,7 +2799,7 @@ describe('OrcaRuntimeService', () => {
       isBare: false,
       isMainWorktree: false
     }
-    const repo = { ...store.getRepos()[0], worktreeBaseRef: 'develop' }
+    const repo = { ...store.getRepos()[0], worktreeBaseRef: 'fresh' }
     const getReposSpy = vi.spyOn(store, 'getRepos').mockReturnValue([repo] as never)
     computeWorktreePathMock.mockReturnValue(createdWorktree.path)
     ensurePathWithinWorkspaceMock.mockReturnValue(createdWorktree.path)
@@ -2850,7 +2850,7 @@ describe('OrcaRuntimeService', () => {
       isBare: false,
       isMainWorktree: false
     }
-    const repo = { ...store.getRepos()[0], worktreeBaseRef: 'team/feature' }
+    const repo = { ...store.getRepos()[0], worktreeBaseRef: 'fresh' }
     const getReposSpy = vi.spyOn(store, 'getRepos').mockReturnValue([repo] as never)
     computeWorktreePathMock.mockReturnValue(createdWorktree.path)
     ensurePathWithinWorkspaceMock.mockReturnValue(createdWorktree.path)

@@ -145,7 +145,6 @@ import { getSettingsForRepoRuntimeOwner } from '@/lib/repo-runtime-owner'
 import { getSuggestedCreatureName } from '@/components/sidebar/worktree-name-suggestions'
 import type { SmartWorkspaceNameSelection } from '@/components/new-workspace/SmartWorkspaceNameField'
 import type { SmartNameMode } from '@/components/new-workspace/smart-workspace-source-results'
-import { getForkPushWarning } from './fork-push-warning'
 import { CONTEXTUAL_TOUR_ENABLE_AUTO_WORKSPACE_NAME_EVENT } from '@/components/contextual-tours/contextual-tour-composer-events'
 import { ensureHooksConfirmed } from '@/lib/ensure-hooks-confirmed'
 import { normalizeSparseDirectoryLines, sparseDirectoriesMatch } from '@/lib/sparse-paths'
@@ -163,12 +162,9 @@ import {
 } from '@/lib/workspace-create-error-format'
 import type { SshConnectionStatus } from '../../../shared/ssh-types'
 import {
-  isBranchCheckedOutInWorktrees,
-  resolveComposerBranchNameOverrideForCreate,
-  resolveComposerBranchReuse,
   resolveComposerBranchSelection,
-  resolveComposerManualBranchNameChange,
-  resolveComposerReuseOverride
+  resolveEffectiveBranchNameOverride,
+  resolveUniqueBranchName
 } from './composer-branch-selection'
 import { isCurrentComposerDropOwner } from './composer-drop-owner'
 import {
@@ -277,13 +273,6 @@ export type ComposerCardProps = {
   ) => void
   smartNameSelection: SmartWorkspaceNameSelection | null
   onClearSmartNameSelection: () => void
-  /** True when the selected source is an existing LOCAL branch that can be
-   *  reused (checked out) instead of branched off — gates the reuse checkbox. */
-  canReuseSelectedBranch: boolean
-  /** Whether the selected existing local branch will be reused (checked out)
-   *  rather than used as the base for a new branch. */
-  reuseSelectedBranch: boolean
-  onReuseSelectedBranchChange: (next: boolean) => void
   /** Whether the "create multiple" toggle is shown — worktree (git) targets
    *  only; folder-workspace targets create-and-close as before. */
   showCreateMultiple: boolean
@@ -350,9 +339,6 @@ export type ComposerCardProps = {
   /** Transient inline hint shown next to the Start-from trigger after a repo
    *  switch resets a prior selection (e.g. "was PR #8778"). Null when none. */
   startFromResetHint: string | null
-  /** Warning shown when a selected fork PR has "Allow edits from maintainers"
-   *  off, so a push to the fork may be rejected. Null when none. */
-  forkPushWarning: string | null
   setupConfig: SetupConfig | null
   setupControlsEnabled?: boolean
   requiresExplicitSetupChoice: boolean
@@ -1075,24 +1061,12 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
     persistDraft ? newWorkspaceDraft?.compareBaseRef : undefined
   )
   const [branchNameOverride, setBranchNameOverride] = useState<string | undefined>(undefined)
-  const [branchNameOverridePreservesNameEdits, setBranchNameOverridePreservesNameEdits] =
-    useState(false)
   const [smartNameMode, setSmartNameMode] = useState<SmartNameMode>('smart')
-  // Why (#5181): when the user picks an existing LOCAL branch, let them reuse it
-  // (check it out) instead of creating a new branch from it. `reuseEligibleBranch`
-  // is the local branch name eligible for reuse (null = not a reusable local
-  // branch, e.g. a remote-only ref or non-branch source); `reuseSelectedBranch`
-  // is the explicit checkbox value driving whether reuse actually happens.
-  const [reuseEligibleBranch, setReuseEligibleBranch] = useState<string | null>(null)
-  const [reuseSelectedBranch, setReuseSelectedBranch] = useState(false)
   const [pushTarget, setPushTarget] = useState<GitPushTarget | undefined>(undefined)
   // Why: when a repo switch wipes a prior Start-from selection, surface the
   // reset inline (e.g. "was PR #8778") so the change is recoverable visually
   // instead of slipping past the user. Cleared on any subsequent selection.
   const [startFromResetHint, setStartFromResetHint] = useState<string | null>(null)
-  // Why: a fork PR with "Allow edits from maintainers" off can't be pushed to;
-  // warn (but don't block) so the maintainer isn't surprised by a rejected push.
-  const [forkPushWarning, setForkPushWarning] = useState<string | null>(null)
   const disabledTuiAgentKey = (settings?.disabledTuiAgents ?? []).join('\u0000')
   const disabledTuiAgents = useMemo<TuiAgent[]>(
     () => settings?.disabledTuiAgents ?? [],
@@ -1197,7 +1171,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
   )
   const nameRef = useRef<string>(name)
   nameRef.current = name
-  const branchAutoNameRef = useRef<string>('')
   // Why: tracks the note value we auto-prefilled from a Start-from PR pick, so
   // a subsequent PR change can replace it without clobbering user-typed text.
   const lastAutoNoteRef = useRef<string>('')
@@ -2136,12 +2109,9 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
           setPushTarget(selectedPrStartPoint.pushTarget)
           if (selectedPrStartPoint.branchNameOverride) {
             setBranchNameOverride(selectedPrStartPoint.branchNameOverride)
-            setBranchNameOverridePreservesNameEdits(true)
           } else {
             setBranchNameOverride(undefined)
-            setBranchNameOverridePreservesNameEdits(false)
           }
-          setForkPushWarning(getForkPushWarning(selectedPrStartPoint))
           return resolution
         }
         return { kind: 'none' }
@@ -2238,17 +2208,12 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
         setPushTarget(prStartPoint.pushTarget)
         if (prStartPoint.branchNameOverride) {
           setBranchNameOverride(prStartPoint.branchNameOverride)
-          setBranchNameOverridePreservesNameEdits(true)
         } else {
           setBranchNameOverride(undefined)
-          setBranchNameOverridePreservesNameEdits(false)
         }
-        setForkPushWarning(getForkPushWarning(prStartPoint))
       } else {
         setBranchNameOverride(undefined)
-        setBranchNameOverridePreservesNameEdits(false)
       }
-      branchAutoNameRef.current = ''
       setStartFromResetHint(null)
       return resolution
     }, [
@@ -2337,7 +2302,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
     setLinkedWorkItem(null)
     setLinkedIssue('')
     setLinkedPR(null)
-    setForkPushWarning(null)
     if (name === lastAutoNameRef.current) {
       lastAutoNameRef.current = ''
     }
@@ -2354,35 +2318,20 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
       } else if (name !== lastAutoNameRef.current) {
         lastAutoNameRef.current = ''
       }
-      if (
-        branchNameOverride &&
-        !branchNameOverridePreservesNameEdits &&
-        nextName !== branchAutoNameRef.current
-      ) {
-        setBranchNameOverride(undefined)
-        branchAutoNameRef.current = ''
-      }
       setName(nextName)
       setCreateError(null)
     },
-    [branchNameOverride, branchNameOverridePreservesNameEdits, name]
+    [name]
   )
   const handleBranchNameOverrideChange = useCallback(
     (value: string | undefined): void => {
-      const next = resolveComposerManualBranchNameChange({
-        value,
-        pushTarget,
-        forkPushWarning
-      })
-      setBranchNameOverride(next.branchNameOverride)
-      setBranchNameOverridePreservesNameEdits(Boolean(next.branchNameOverride))
-      setPushTarget(next.pushTarget)
-      setForkPushWarning(next.forkPushWarning)
-      setReuseEligibleBranch(null)
-      setReuseSelectedBranch(false)
-      branchAutoNameRef.current = ''
+      const branchNameOverride = value?.trim() || undefined
+      setBranchNameOverride(branchNameOverride)
+      if (pushTarget && pushTarget.branchName !== branchNameOverride) {
+        setPushTarget(undefined)
+      }
     },
-    [forkPushWarning, pushTarget]
+    [pushTarget]
   )
 
   const addComposerAttachments = useCallback((paths: string[]): void => {
@@ -2659,12 +2608,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
         setCompareBaseRef(undefined)
         setPushTarget(undefined)
         setBranchNameOverride(undefined)
-        // Why (#5181): reuse state is branch-scoped, so a repo switch must clear
-        // it alongside the branch override (matches the other reset paths).
-        setBranchNameOverridePreservesNameEdits(false)
-        setReuseEligibleBranch(null)
-        setReuseSelectedBranch(false)
-        setForkPushWarning(null)
         setStartFromResetHint(hint)
       }
     },
@@ -2736,11 +2679,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
         setBaseBranch(undefined)
         setPushTarget(undefined)
         setBranchNameOverride(undefined)
-        // Why (#5181): clear branch-scoped reuse state on a project switch too.
-        setBranchNameOverridePreservesNameEdits(false)
-        setReuseEligibleBranch(null)
-        setReuseSelectedBranch(false)
-        setForkPushWarning(null)
         setStartFromResetHint(null)
         return
       }
@@ -2809,14 +2747,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
     setCompareBaseRef(undefined)
     setPushTarget(undefined)
     setBranchNameOverride(undefined)
-    // Why (#5181): the Start-from picker means "create a new branch from this
-    // base", so it never offers branch reuse — clear any reuse state left over
-    // from a prior smart-field branch pick.
-    setBranchNameOverridePreservesNameEdits(false)
-    setReuseEligibleBranch(null)
-    setReuseSelectedBranch(false)
-    setForkPushWarning(null)
-    branchAutoNameRef.current = ''
     setStartFromResetHint(null)
   }, [])
 
@@ -2832,8 +2762,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
       setCompareBaseRef(nextCompareBaseRef)
       setPushTarget(nextPushTarget)
       setBranchNameOverride(nextBranchNameOverride)
-      setBranchNameOverridePreservesNameEdits(Boolean(nextBranchNameOverride))
-      branchAutoNameRef.current = ''
       setStartFromResetHint(null)
       // Why: per spec, a PR selection in the Start-from picker is also a
       // linkedWorkItem assignment. Reuse applyLinkedWorkItem so auto-name and
@@ -2870,7 +2798,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
       setCompareBaseRef(nextCompareBaseRef)
       setPushTarget(nextPushTarget)
       setBranchNameOverride(undefined)
-      branchAutoNameRef.current = ''
       setStartFromResetHint(null)
       applyLinkedGitLabWorkItem(item)
       if (item.type === 'mr') {
@@ -2912,8 +2839,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
       }
       setStartFromResetHint(null)
       setBranchNameOverride(undefined)
-      setForkPushWarning(null)
-      branchAutoNameRef.current = ''
       smartGitHubPrStartPointSelectionRef.current = null
       // Why: provider items can come from a different source host than the
       // selected run host. Resolve git refs against the run repo; keep item
@@ -2961,9 +2886,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
             result.branchNameOverride,
             result.compareBaseRef
           )
-          // Why: a fork PR push lands on the contributor's fork; if they didn't
-          // allow maintainer edits, GitHub will reject it. Warn up front.
-          setForkPushWarning(getForkPushWarning(result))
         })
         .catch((error: unknown) => {
           if (smartGitHubPrStartPointSelectionRef.current !== startPointSelection) {
@@ -3017,8 +2939,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
       applyLinkedGitLabWorkItem(item)
       setStartFromResetHint(null)
       setBranchNameOverride(undefined)
-      setForkPushWarning(null)
-      branchAutoNameRef.current = ''
       // Why: MR metadata can be sourced from one host/account while the
       // workspace is created on another host for the same logical project.
       const runRepo = selectedRepo ?? eligibleRepos.find((repo) => repo.id === item.repoId)
@@ -3114,66 +3034,13 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
       setCompareBaseRef(undefined)
       setPushTarget(undefined)
       setStartFromResetHint(null)
-      setForkPushWarning(null)
-      // Why (#5181): reuse an existing local branch (check it out) instead of
-      // branching off it. Default reuse ON when the worktree name was
-      // auto-derived from the branch, and preserve name edits so reuse survives
-      // renaming the worktree folder. Reuse is impossible when the branch is
-      // already checked out in another worktree (git allows it in only one), so
-      // gate eligibility on that and don't pin the override to a busy branch.
-      // Note: worktreesByRepo only covers visible worktrees; a branch busy only
-      // in a hidden external worktree falls through to the backend conflict
-      // check, which rejects it with a clear "already exists locally" error.
-      const branchCheckedOutElsewhere = isBranchCheckedOutInWorktrees(
-        localBranchName,
-        (worktreesByRepo[repoId] ?? []).map((worktree) => worktree.branch)
-      )
-      const { reuseEligibleBranch: nextReuseEligibleBranch, defaultReuse } =
-        resolveComposerBranchReuse({
-          refName,
-          localBranchName,
-          selectionProducedOverride: selection.branchNameOverride !== undefined,
-          branchCheckedOutElsewhere
-        })
-      setReuseEligibleBranch(nextReuseEligibleBranch)
-      setReuseSelectedBranch(defaultReuse)
-      setBranchNameOverridePreservesNameEdits(defaultReuse)
-      const effectiveOverride = resolveComposerReuseOverride({
-        refName,
-        localBranchName,
-        branchNameOverride: selection.branchNameOverride,
-        branchCheckedOutElsewhere
-      })
-      if (selection.name !== undefined && selection.lastAutoName !== undefined) {
-        setName(selection.name)
-        lastAutoNameRef.current = selection.lastAutoName
-        branchAutoNameRef.current = effectiveOverride ? selection.branchAutoName : ''
-        setBranchNameOverride(effectiveOverride)
-      } else {
-        setBranchNameOverride(effectiveOverride)
-        branchAutoNameRef.current = effectiveOverride ? selection.branchAutoName : ''
+      setBranchNameOverride(undefined)
+      if (selection.autoName !== undefined) {
+        setName(selection.autoName)
+        lastAutoNameRef.current = selection.autoName
       }
     },
-    [name, worktreesByRepo, repoId]
-  )
-
-  const handleReuseSelectedBranchChange = useCallback(
-    (next: boolean): void => {
-      if (!reuseEligibleBranch) {
-        return
-      }
-      setReuseSelectedBranch(next)
-      // Why (#5181): reuse pins the exact existing branch as the override and
-      // preserves it across worktree-name edits, so the folder can be named
-      // independently while the branch is checked out. Opting out drops the
-      // override so a fresh branch is created from the selected ref as base.
-      setBranchNameOverridePreservesNameEdits(next)
-      setBranchNameOverride(next ? reuseEligibleBranch : undefined)
-      if (next) {
-        branchAutoNameRef.current = reuseEligibleBranch
-      }
-    },
-    [reuseEligibleBranch]
+    [name]
   )
 
   const handleSmartLinearIssueSelect = useCallback(
@@ -3216,8 +3083,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
         lastAutoNameRef.current = suggestedName
       }
       setBranchNameOverride(undefined)
-      setForkPushWarning(null)
-      branchAutoNameRef.current = ''
       // Why: match the GitHub issue/PR flow by drafting linked context for
       // review instead of auto-submitting. Auto-filling the note here would
       // turn a source selection into user-authored instructions.
@@ -3236,11 +3101,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
     setCompareBaseRef(undefined)
     setPushTarget(undefined)
     setBranchNameOverride(undefined)
-    setBranchNameOverridePreservesNameEdits(false)
-    setReuseEligibleBranch(null)
-    setReuseSelectedBranch(false)
-    setForkPushWarning(null)
-    branchAutoNameRef.current = ''
     setStartFromResetHint(null)
     if (name === lastAutoNameRef.current) {
       setName('')
@@ -3567,15 +3427,18 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
         submitLinkedWorkItem && submitLinkedWorkItemProvider === 'linear'
           ? submitLinkedWorkItem.linearOrganizationUrlKey
           : undefined
-      const effectiveBranchNameOverride = resolveComposerBranchNameOverrideForCreate({
+      const effectiveBranchNameOverride = resolveEffectiveBranchNameOverride({
         branchNameOverride: submitBranchNameOverride,
-        branchAutoName: branchAutoNameRef.current,
         workspaceName,
-        preserveWorkspaceNameEdits:
-          smartGitHubResolution.kind === 'pr-start-point' || branchNameOverridePreservesNameEdits,
         createBranchFromWorkspaceName:
           smartGitHubResolution.kind === 'none' && smartNameMode === 'branches'
       })
+      const uniqueBranchNameOverride = effectiveBranchNameOverride
+        ? resolveUniqueBranchName(
+            effectiveBranchNameOverride,
+            (worktreesByRepo[repoId] ?? []).map((worktree) => worktree.branch)
+          )
+        : undefined
       const createDisplayName =
         smartGitHubResolution.kind === 'none'
           ? nameIsAutoManaged
@@ -3589,7 +3452,7 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
         settings?.autoRenameBranchFromWork === true &&
         !name.trim() &&
         Boolean(tuiAgent) &&
-        !effectiveBranchNameOverride &&
+        !uniqueBranchNameOverride &&
         !createDisplayName
       const startupPlan = buildAgentStartupPlan({
         agent: tuiAgent,
@@ -3649,7 +3512,7 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
         submitPushTarget,
         tuiAgent,
         linkedLinearIssue,
-        effectiveBranchNameOverride,
+        uniqueBranchNameOverride,
         resolvedInitialWorkspaceStatus,
         smartGitHubResolution.kind === 'none' ? (linkedGitLabMR ?? undefined) : undefined,
         smartGitHubResolution.kind === 'none' ? (linkedGitLabIssue ?? undefined) : undefined,
@@ -3740,7 +3603,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
     attachmentPaths,
     baseBranch,
     branchNameOverride,
-    branchNameOverridePreservesNameEdits,
     clearNewWorkspaceDraft,
     compareBaseRef,
     createWorktree,
@@ -3788,6 +3650,7 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
     shouldWaitForIssueAutomationCheck,
     shouldWaitForSetupCheck,
     workspaceSeedName,
+    worktreesByRepo,
     isProjectGroupTarget,
     submitFolderTarget
   ])
@@ -3811,12 +3674,9 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
     setLinkedGitLabIssue(null)
     setLinkedGitLabMR(null)
     setBranchNameOverride(undefined)
-    setBranchNameOverridePreservesNameEdits(false)
     setCompareBaseRef(undefined)
     setPushTarget(undefined)
-    setReuseSelectedBranch(false)
     setStartFromResetHint(null)
-    setForkPushWarning(null)
     setCreateError(null)
     // Refocus the name field on the next frame (after the reset re-render) so the
     // user can immediately type the next worktree name.
@@ -3968,15 +3828,18 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
           submitLinkedWorkItem && submitLinkedWorkItemProvider === 'linear'
             ? submitLinkedWorkItem.linearOrganizationUrlKey
             : undefined
-        const effectiveBranchNameOverride = resolveComposerBranchNameOverrideForCreate({
+        const effectiveBranchNameOverride = resolveEffectiveBranchNameOverride({
           branchNameOverride: submitBranchNameOverride,
-          branchAutoName: branchAutoNameRef.current,
           workspaceName,
-          preserveWorkspaceNameEdits:
-            smartGitHubResolution.kind === 'pr-start-point' || branchNameOverridePreservesNameEdits,
           createBranchFromWorkspaceName:
             smartGitHubResolution.kind === 'none' && smartNameMode === 'branches'
         })
+        const uniqueBranchNameOverride = effectiveBranchNameOverride
+          ? resolveUniqueBranchName(
+              effectiveBranchNameOverride,
+              (worktreesByRepo[repoId] ?? []).map((worktree) => worktree.branch)
+            )
+          : undefined
         const submitBaseBranch = selectedRepoIsGit
           ? await resolveWorktreeCreateBaseBranch({
               explicitBaseBranch: smartSubmitBaseBranch
@@ -3995,7 +3858,7 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
           settings?.autoRenameBranchFromWork === true &&
           !name.trim() &&
           Boolean(agent) &&
-          !effectiveBranchNameOverride &&
+          !uniqueBranchNameOverride &&
           !createDisplayName
         const trimmedNote = note.trim()
         // Why: backend startup is safe only when the launch command is
@@ -4142,9 +4005,7 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
           ...(linkedLinearIssueOrganizationUrlKey !== undefined
             ? { linkedLinearIssueOrganizationUrlKey }
             : {}),
-          ...(effectiveBranchNameOverride
-            ? { branchNameOverride: effectiveBranchNameOverride }
-            : {}),
+          ...(uniqueBranchNameOverride ? { branchNameOverride: uniqueBranchNameOverride } : {}),
           ...(resolvedInitialWorkspaceStatus
             ? { workspaceStatus: resolvedInitialWorkspaceStatus }
             : {}),
@@ -4189,7 +4050,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
       baseBranch,
       compareBaseRef,
       branchNameOverride,
-      branchNameOverridePreservesNameEdits,
       clearNewWorkspaceDraft,
       fallbackCreatureName,
       effectiveLinkedPR,
@@ -4240,7 +4100,8 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
       isProjectGroupTarget,
       submitFolderTarget,
       createMultiple,
-      resetForNextCreate
+      resetForNextCreate,
+      worktreesByRepo
     ]
   )
 
@@ -4293,12 +4154,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
     smartNameGitHubSourceContext: selectedRepoGitHubSourceContext,
     smartNameSelection,
     onClearSmartNameSelection: handleClearSmartNameSelection,
-    canReuseSelectedBranch:
-      !isProjectGroupTarget &&
-      reuseEligibleBranch !== null &&
-      smartNameSelection?.kind === 'branch',
-    reuseSelectedBranch,
-    onReuseSelectedBranchChange: handleReuseSelectedBranchChange,
     // Why: the "create multiple" toggle only applies to worktree (git) targets;
     // folder-workspace targets keep the create-and-close behavior.
     showCreateMultiple: !isProjectGroupTarget,
@@ -4357,7 +4212,6 @@ export function useComposerState(options: UseComposerStateOptions): UseComposerS
       ? onConnectSelectedProjectGroup
       : onConnectSelectedRepo,
     startFromResetHint: isProjectGroupTarget ? null : startFromResetHint,
-    forkPushWarning: isProjectGroupTarget ? null : forkPushWarning,
     note,
     onNoteChange: setNote,
     setupConfig: isProjectGroupTarget ? null : setupConfig,

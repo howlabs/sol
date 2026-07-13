@@ -1,3 +1,5 @@
+import { buildAttributionPromptFragment } from '../../../shared/orca-attribution'
+
 export type PreambleParams = {
   taskId: string
   // Why: completion and heartbeat payloads attribute activity to a specific
@@ -9,6 +11,7 @@ export type PreambleParams = {
   taskSpec: string
   coordinatorHandle: string
   devMode?: boolean
+  enableGitHubAttribution?: boolean
   // Why: populated by the coordinator's dispatch pre-flight (§3.1) only
   // when the target worktree is behind its tracking remote. When absent
   // or when `behind === 0`, the preamble emits no drift section. Callers
@@ -127,7 +130,10 @@ ${postDoneInstructions}`
   const drift =
     params.baseDrift && params.baseDrift.behind > 0 ? buildDriftSection(params.baseDrift) : ''
 
-  return `${header}${drift}
+  const attribution =
+    params.enableGitHubAttribution === true ? `\n\n${buildAttributionPromptFragment()}` : ''
+
+  return `${header}${drift}${attribution}
 
 === TASK ===
 ${params.taskSpec}`
