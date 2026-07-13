@@ -1457,13 +1457,6 @@ function formatContextDetails(candidate: WorkspaceCleanupCandidate): string | nu
       }`
     )
   }
-  if (candidate.localContext.diffCommentCount > 0) {
-    parts.push(
-      `${candidate.localContext.diffCommentCount} diff note${
-        candidate.localContext.diffCommentCount === 1 ? '' : 's'
-      }`
-    )
-  }
   if (candidate.localContext.retainedDoneAgentCount > 0) {
     parts.push(
       `${candidate.localContext.retainedDoneAgentCount} completed agent${
@@ -1651,7 +1644,6 @@ function getContextPillLabel(candidate: WorkspaceCleanupCandidate): string | nul
     candidate.localContext.terminalTabCount +
     candidate.localContext.cleanEditorTabCount +
     candidate.localContext.browserTabCount +
-    candidate.localContext.diffCommentCount +
     candidate.localContext.retainedDoneAgentCount
   return `${count} context`
 }

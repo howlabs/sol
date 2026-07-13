@@ -67,7 +67,6 @@ describe('feature interactions', () => {
       'ports',
       'quick-commands',
       'resource-manager',
-      'review-notes',
       'ssh',
       'terminal-pane-split',
       'terminal-panes',

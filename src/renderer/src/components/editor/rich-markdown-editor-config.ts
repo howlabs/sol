@@ -28,7 +28,6 @@ import {
 } from './rich-markdown-image-context'
 import { getRichMarkdownSpellcheckAttribute } from './rich-markdown-spellcheck'
 import type { MutableRefObject, Dispatch, SetStateAction } from 'react'
-import type { DiffComment } from '../../../../shared/types'
 
 export type EditorConfigParams = {
   content: string
@@ -61,13 +60,8 @@ export type EditorConfigParams = {
   serializeTimerRef: MutableRefObject<number | null>
   isInitializingRef: MutableRefObject<boolean>
   isApplyingProgrammaticUpdateRef: MutableRefObject<boolean>
-  markdownCommentsRef: MutableRefObject<DiffComment[]>
-  markdownSourceLineOffsetRef: MutableRefObject<number>
   flushPendingSerialization: () => void
   openSearchRef: MutableRefObject<() => void>
-  syncAnnotationTarget: (editor: Editor) => void
-  clearAnnotationTarget: () => void
-  scrollRichMarkdownReviewNoteCardIntoView: (commentId: string) => void
   setIsEditingLink: Dispatch<SetStateAction<boolean>>
   setLinkBubble: Dispatch<SetStateAction<LinkBubbleState | null>>
   setSelectedCommandIndex: Dispatch<SetStateAction<number>>
@@ -108,13 +102,8 @@ export function createRichMarkdownEditorConfig(params: EditorConfigParams): UseE
     serializeTimerRef,
     isInitializingRef,
     isApplyingProgrammaticUpdateRef,
-    markdownCommentsRef,
-    markdownSourceLineOffsetRef,
     flushPendingSerialization,
     openSearchRef,
-    syncAnnotationTarget,
-    clearAnnotationTarget,
-    scrollRichMarkdownReviewNoteCardIntoView,
     setIsEditingLink,
     setLinkBubble,
     setSelectedCommandIndex,
@@ -186,13 +175,10 @@ export function createRichMarkdownEditorConfig(params: EditorConfigParams): UseE
           event,
           filePath,
           isMac,
-          markdownCommentsRef,
-          markdownSourceLineOffsetRef,
           onOpenDocLinkRef,
           pos,
           rootRef,
           runtimeEnvironmentId,
-          scrollRichMarkdownReviewNoteCardIntoView,
           settings,
           view,
           worktreeId,
@@ -205,7 +191,6 @@ export function createRichMarkdownEditorConfig(params: EditorConfigParams): UseE
     },
     onBlur: () => {
       window.api.ui.setMarkdownEditorFocused(false)
-      clearAnnotationTarget()
     },
     onCreate: ({ editor: nextEditor }) => {
       // Why: normalizeEmptyListItems (not normalizeSoftBreaks) so hard-wrapped
@@ -257,7 +242,6 @@ export function createRichMarkdownEditorConfig(params: EditorConfigParams): UseE
     onSelectionUpdate: ({ editor: nextEditor }) => {
       syncSlashMenu(nextEditor, rootRef.current, setSlashMenu)
       syncDocLinkMenu(nextEditor, rootRef.current, setDocLinkMenu)
-      syncAnnotationTarget(nextEditor)
       setIsEditingLink(false)
       if (nextEditor.isActive('link')) {
         const attrs = nextEditor.getAttributes('link')

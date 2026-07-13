@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Editor } from '@tiptap/react'
-import type { DiffComment, MarkdownDocument } from '../../../../shared/types'
+import type { MarkdownDocument } from '../../../../shared/types'
 import { useAppStore } from '@/store'
 import { useLocalImagePick } from './useLocalImagePick'
 import { useRichMarkdownSearch } from './useRichMarkdownSearch'
@@ -16,8 +16,6 @@ import { RichMarkdownEditorSurface } from './RichMarkdownEditorSurface'
 import { useRichMarkdownEditorInstance } from './useRichMarkdownEditorInstance'
 import { useRichMarkdownMenuController } from './useRichMarkdownMenuController'
 import { useRichMarkdownProgrammaticSync } from './useRichMarkdownProgrammaticSync'
-import { useRichMarkdownReviewController } from './useRichMarkdownReviewController'
-import { useRichMarkdownReviewEditorEffects } from './useRichMarkdownReviewEditorEffects'
 import {
   isRichMarkdownContextCommandTarget,
   runRichMarkdownContextCommand
@@ -38,10 +36,6 @@ type RichMarkdownEditorProps = {
   markdownDocuments?: MarkdownDocument[]
   showTableOfContents?: boolean
   onCloseTableOfContents?: () => void
-  markdownAnnotationsEnabled?: boolean
-  markdownAnnotationFilePath?: string
-  markdownSourceLineOffset?: number
-  markdownReviewContent?: string
   // Why: front-matter is stripped from the rich editor's content but we still
   // want it visible to the user. It renders between the toolbar and the editor
   // surface so the formatting toolbar stays at the top of the pane.
@@ -66,10 +60,6 @@ export default function RichMarkdownEditor({
   markdownDocuments,
   showTableOfContents = false,
   onCloseTableOfContents,
-  markdownAnnotationsEnabled = false,
-  markdownAnnotationFilePath,
-  markdownSourceLineOffset = 0,
-  markdownReviewContent = content,
   headerSlot
 }: RichMarkdownEditorProps): React.JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null)
@@ -77,19 +67,6 @@ export default function RichMarkdownEditor({
   const richMarkdownSpellcheckEnabled = settings?.richMarkdownSpellcheckEnabled ?? true
   const editorFontZoomLevel = useAppStore((s) => s.editorFontZoomLevel)
   const activateMarkdownLink = useAppStore((s) => s.activateMarkdownLink)
-  const addDiffComment = useAppStore((s) => s.addDiffComment)
-  const deleteDiffComment = useAppStore((s) => s.deleteDiffComment)
-  const updateDiffComment = useAppStore((s) => s.updateDiffComment)
-  const clearDeliveredDiffComments = useAppStore((s) => s.clearDeliveredDiffComments)
-  const allDiffComments = useAppStore((s): DiffComment[] | undefined => {
-    for (const list of Object.values(s.worktreesByRepo)) {
-      const worktree = list.find((candidate) => candidate.id === worktreeId)
-      if (worktree) {
-        return worktree.diffComments
-      }
-    }
-    return undefined
-  })
   const worktreeRoot = useAppStore((s) => {
     for (const list of Object.values(s.worktreesByRepo)) {
       const wt = list.find((w) => w.id === worktreeId)
@@ -127,21 +104,6 @@ export default function RichMarkdownEditor({
   const [isEditingLink, setIsEditingLink] = useState(false)
   const isEditingLinkRef = useRef(false)
   const typedEmptyOrderedListMarkerRef = useRef(false)
-  const review = useRichMarkdownReviewController({
-    addDiffComment,
-    allDiffComments,
-    content,
-    editorRef,
-    filePath,
-    markdownAnnotationFilePath,
-    markdownAnnotationsEnabled,
-    markdownReviewContent,
-    markdownSourceLineOffset,
-    rootRef,
-    scrollContainerRef,
-    worktreeId,
-    worktreeRoot
-  })
   // Why: building the table of contents runs a full-document remark parse on
   // every content change. The result is only used while the panel is open
   // (closed by default), so gate the parse on visibility; including
@@ -189,21 +151,14 @@ export default function RichMarkdownEditor({
     return registerPendingEditorFlush(fileId, flushPendingSerialization)
   }, [fileId, flushPendingSerialization])
 
-  const { clearTransientReviewState } = review
-  const setRootElement = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (node === null) {
-        // Why: these transient editor resources are owned by this root; clearing
-        // them at detach keeps unmount cleanup out of passive Effects.
-        clearTransientReviewState()
-        cancelAutoFocusRef.current?.()
-        cancelAutoFocusRef.current = null
-        window.api.ui.setMarkdownEditorFocused(false)
-      }
-      rootRef.current = node
-    },
-    [clearTransientReviewState]
-  )
+  const setRootElement = useCallback((node: HTMLDivElement | null) => {
+    if (node === null) {
+      cancelAutoFocusRef.current?.()
+      cancelAutoFocusRef.current = null
+      window.api.ui.setMarkdownEditorFocused(false)
+    }
+    rootRef.current = node
+  }, [])
 
   const editor = useRichMarkdownEditorInstance({
     content,
@@ -236,13 +191,8 @@ export default function RichMarkdownEditor({
     serializeTimerRef,
     isInitializingRef,
     isApplyingProgrammaticUpdateRef,
-    markdownCommentsRef: review.markdownCommentsRef,
-    markdownSourceLineOffsetRef: review.markdownSourceLineOffsetRef,
     flushPendingSerialization,
     openSearchRef,
-    syncAnnotationTarget: review.syncAnnotationTarget,
-    clearAnnotationTarget: review.clearAnnotationTarget,
-    scrollRichMarkdownReviewNoteCardIntoView: review.scrollRichMarkdownReviewNoteCardIntoView,
     setIsEditingLink,
     setLinkBubble,
     setSelectedCommandIndex: menu.setSelectedCommandIndex,
@@ -263,16 +213,6 @@ export default function RichMarkdownEditor({
   useEditorScrollRestore(scrollContainerRef, scrollCacheKey, editor)
 
   useModifierHeldClass(rootRef, isMac)
-
-  useRichMarkdownReviewEditorEffects({
-    canAnnotateRichMarkdown: review.canAnnotateRichMarkdown,
-    content,
-    editor,
-    markdownComments: review.markdownComments,
-    markdownSourceLineOffset,
-    scrollContainerRef,
-    syncAnnotationTarget: review.syncAnnotationTarget
-  })
 
   useRichMarkdownProgrammaticSync({
     content,
@@ -349,19 +289,6 @@ export default function RichMarkdownEditor({
       rootRef={setRootElement}
       scrollContainerRef={scrollContainerRef}
       headerSlot={headerSlot}
-      reviewRailExpanded={review.reviewRailExpanded}
-      reviewRailVisible={review.reviewRailVisible}
-      notePositions={review.notePositions}
-      activeReviewCommentId={review.activeReviewCommentId}
-      attentionReviewCommentId={review.attentionReviewCommentId}
-      copiedReviewNoteId={review.copiedReviewNoteId}
-      markdownReviewContent={markdownReviewContent}
-      worktreeId={worktreeId}
-      filePath={filePath}
-      markdownCommentsCount={review.markdownComments.length}
-      reviewRailOpen={review.reviewRailOpen}
-      reviewNotesCopied={review.reviewNotesCopied}
-      unsentMarkdownReviewScope={review.unsentMarkdownReviewScope}
       linkBubble={linkBubble}
       isEditingLink={isEditingLink}
       slashMenu={menu.slashMenu}
@@ -372,9 +299,6 @@ export default function RichMarkdownEditor({
       docLinkRows={menu.docLinkRows}
       docLinkTotalMatches={menu.docLinkTotalMatches}
       selectedDocLinkIndex={menu.selectedDocLinkIndex}
-      annotationTarget={review.annotationTarget}
-      annotationPopover={review.annotationPopover}
-      markdownSourceLineOffset={markdownSourceLineOffset}
       tableOfContentsItems={tableOfContentsItems}
       showTableOfContents={showTableOfContents}
       searchState={searchState}
@@ -390,22 +314,6 @@ export default function RichMarkdownEditor({
       onImagePick={handleLocalImagePick}
       onEmojiPick={menu.openEmojiMenu}
       onCloseEmojiMenu={() => menu.setEmojiMenu(null)}
-      onOpenAnnotationPopover={review.openAnnotationPopover}
-      onCancelAnnotationPopover={() => {
-        review.setAnnotationPopover(null)
-        review.clearAnnotationHighlight()
-      }}
-      onSubmitAnnotation={review.submitAnnotation}
-      onCopyReviewNotes={() => void review.handleCopyMarkdownReviewNotes()}
-      onCopyReviewNote={(note) => void review.handleCopyMarkdownReviewNote(note)}
-      onToggleReviewRail={() => review.setReviewRailOpen((open) => !open)}
-      onReviewNotesDelivered={(notes) => void clearDeliveredDiffComments(worktreeId, notes)}
-      onReviewNoteSourceClick={review.scrollRichMarkdownReviewNoteSourceIntoView}
-      onDeleteReviewComment={(commentId) => void deleteDiffComment(worktreeId, commentId)}
-      onSubmitReviewCommentEdit={(commentId, body) =>
-        updateDiffComment(worktreeId, commentId, body)
-      }
-      onReviewNoteContentResize={review.syncNotePositions}
       onNavigateTableOfContentsItem={navigateToTableOfContentsItem}
       onCloseTableOfContents={onCloseTableOfContents}
     />

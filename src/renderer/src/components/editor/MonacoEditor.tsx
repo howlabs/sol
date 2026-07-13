@@ -33,23 +33,8 @@ import {
   type MarkdownDocLinkDecorationController
 } from './monaco-markdown-doc-link-decorations'
 import { buildGitConflictDecorations, hasGitConflictMarkers } from './monaco-conflict-decorations'
-import { findWorktreeById } from '@/store/slices/worktree-helpers'
-import type { DiffComment } from '../../../../shared/types'
-import { isMarkdownComment } from '@/lib/diff-comment-compat'
-import { formatMarkdownReviewNotes, type MarkdownReviewNote } from '@/lib/markdown-review-notes'
-import { useDiffCommentDecorator } from '../diff-comments/useDiffCommentDecorator'
-import { DiffCommentPopover } from '../diff-comments/DiffCommentPopover'
-import {
-  getDiffCommentPopoverLeft,
-  getDiffCommentPopoverTop
-} from '../diff-comments/diff-comment-popover-position'
 import { isLinuxUserAgent } from '../terminal-pane/pane-helpers'
 import { installEditorSaveShortcut } from './editor-shortcuts'
-import { Plus } from '@/lib/icons'
-import {
-  getMonacoMarkdownSelectionAnnotationTarget,
-  type MonacoMarkdownSelectionAnnotationTarget
-} from './monaco-markdown-selection-annotation'
 import { translate } from '@/i18n/i18n'
 import { handleMonacoLargeTextPaste } from './monaco-large-text-paste'
 import {
@@ -72,14 +57,9 @@ type MonacoEditorProps = {
   revealMatchLength?: number
   markdownDocuments?: MarkdownDocument[]
   worktreeId?: string
-  markdownAnnotationsEnabled?: boolean
   conflictDecorationsEnabled?: boolean
   readOnly?: boolean
   autoHeight?: boolean
-}
-
-type MarkdownCommentPopoverState = Omit<MonacoMarkdownSelectionAnnotationTarget, 'selectedText'> & {
-  selectedText?: string
 }
 
 export default function MonacoEditor({
@@ -96,7 +76,6 @@ export default function MonacoEditor({
   revealMatchLength,
   markdownDocuments,
   worktreeId,
-  markdownAnnotationsEnabled = false,
   conflictDecorationsEnabled = false,
   readOnly = false,
   autoHeight = false
@@ -134,14 +113,6 @@ export default function MonacoEditor({
   const editorFontZoomLevel = useAppStore((s) => s.editorFontZoomLevel)
   const setPendingEditorReveal = useAppStore((s) => s.setPendingEditorReveal)
   const setEditorCursorLine = useAppStore((s) => s.setEditorCursorLine)
-  const addDiffComment = useAppStore((s) => s.addDiffComment)
-  const deleteDiffComment = useAppStore((s) => s.deleteDiffComment)
-  const updateDiffComment = useAppStore((s) => s.updateDiffComment)
-  const scrollToDiffCommentId = useAppStore((s) => s.scrollToDiffCommentId)
-  const setScrollToDiffCommentId = useAppStore((s) => s.setScrollToDiffCommentId)
-  const allDiffComments = useAppStore((s): DiffComment[] | undefined =>
-    worktreeId ? findWorktreeById(s.worktreesByRepo, worktreeId)?.diffComments : undefined
-  )
   const editorFontSize = computeEditorFontSize(
     settings?.terminalFontSize ?? 13,
     editorFontZoomLevel
@@ -173,19 +144,11 @@ export default function MonacoEditor({
   const contentRef = useRef(content)
   contentRef.current = content
   const lastSyncedContentRef = useRef<string>(content)
-  const markdownComments = useMemo(
-    () =>
-      (allDiffComments ?? []).filter((c) => c.filePath === relativePath && isMarkdownComment(c)),
-    [allDiffComments, relativePath]
-  )
 
   // Gutter context menu state
   const [gutterMenuOpen, setGutterMenuOpen] = useState(false)
   const [gutterMenuPoint, setGutterMenuPoint] = useState({ x: 0, y: 0 })
   const [gutterMenuLine, setGutterMenuLine] = useState(1)
-  const [commentPopover, setCommentPopover] = useState<MarkdownCommentPopoverState | null>(null)
-  const [selectionAnnotationTarget, setSelectionAnnotationTarget] =
-    useState<MonacoMarkdownSelectionAnnotationTarget | null>(null)
   const isDark =
     settings?.theme === 'dark' ||
     (settings?.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -205,49 +168,6 @@ export default function MonacoEditor({
       clearMarkdownDocCompletionDocuments(modelKey)
     }
   }, [language, markdownDocuments])
-
-  const shouldShowMarkdownAnnotations =
-    markdownAnnotationsEnabled && language === 'markdown' && Boolean(worktreeId)
-
-  const pendingScrollForThisEditor = useMemo(() => {
-    if (!shouldShowMarkdownAnnotations || !scrollToDiffCommentId) {
-      return null
-    }
-    return markdownComments.some((c) => c.id === scrollToDiffCommentId)
-      ? scrollToDiffCommentId
-      : null
-  }, [markdownComments, scrollToDiffCommentId, shouldShowMarkdownAnnotations])
-  const formatMarkdownCommentPrompt = useCallback(
-    (comment: DiffComment) => formatMarkdownReviewNotes([comment as MarkdownReviewNote], content),
-    [content]
-  )
-
-  useDiffCommentDecorator({
-    editor: shouldShowMarkdownAnnotations ? mountedEditor : null,
-    filePath: relativePath,
-    worktreeId: worktreeId ?? '',
-    comments: shouldShowMarkdownAnnotations ? markdownComments : [],
-    onAddCommentClick: ({ lineNumber, startLine, top }) => {
-      setSelectionAnnotationTarget(null)
-      setCommentPopover({
-        lineNumber,
-        startLine,
-        top,
-        left: mountedEditor
-          ? (getDiffCommentPopoverLeft(mountedEditor, editorContainerRef.current) ?? undefined)
-          : undefined
-      })
-    },
-    onDeleteComment: (id) => {
-      if (worktreeId) {
-        void deleteDiffComment(worktreeId, id)
-      }
-    },
-    onUpdateComment: worktreeId ? (id, body) => updateDiffComment(worktreeId, id, body) : undefined,
-    formatCommentPrompt: formatMarkdownCommentPrompt,
-    pendingScrollCommentId: pendingScrollForThisEditor,
-    onPendingScrollConsumed: () => setScrollToDiffCommentId(null)
-  })
 
   const clearTransientRevealHighlight = useCallback(() => {
     if (revealHighlightTimerRef.current !== null) {
@@ -507,7 +427,6 @@ export default function MonacoEditor({
         conflictDecorationsRef.current = null
         editorRef.current = null
         setMountedEditor(null)
-        setCommentPopover(null)
       })
 
       // If there's a pending reveal at mount time, execute it now
@@ -558,75 +477,6 @@ export default function MonacoEditor({
       worktreeId
     ]
   )
-
-  useEffect(() => {
-    if (!mountedEditor || !commentPopover) {
-      return
-    }
-    const update = (): void => {
-      const top = getDiffCommentPopoverTop(mountedEditor, commentPopover.lineNumber, undefined)
-      const left = getDiffCommentPopoverLeft(mountedEditor, editorContainerRef.current)
-      setCommentPopover((prev) =>
-        prev ? { ...prev, top: top ?? prev.top, left: left == null ? prev.left : left } : prev
-      )
-    }
-    const scrollSub = mountedEditor.onDidScrollChange(update)
-    const contentSub = mountedEditor.onDidContentSizeChange(update)
-    const layoutSub = mountedEditor.onDidLayoutChange(update)
-    return () => {
-      scrollSub.dispose()
-      contentSub.dispose()
-      layoutSub.dispose()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- match DiffViewer: don't resubscribe on top updates.
-  }, [mountedEditor, commentPopover?.lineNumber])
-
-  useEffect(() => {
-    if (!mountedEditor || !shouldShowMarkdownAnnotations || commentPopover) {
-      setSelectionAnnotationTarget(null)
-      return
-    }
-    const update = (): void => {
-      const left = getDiffCommentPopoverLeft(mountedEditor, editorContainerRef.current)
-      setSelectionAnnotationTarget(
-        getMonacoMarkdownSelectionAnnotationTarget(
-          mountedEditor,
-          mountedEditor.getSelection(),
-          left ?? undefined
-        )
-      )
-    }
-    update()
-    const selectionSub = mountedEditor.onDidChangeCursorSelection(update)
-    const scrollSub = mountedEditor.onDidScrollChange(update)
-    const layoutSub = mountedEditor.onDidLayoutChange(update)
-    return () => {
-      selectionSub.dispose()
-      scrollSub.dispose()
-      layoutSub.dispose()
-    }
-  }, [commentPopover, mountedEditor, shouldShowMarkdownAnnotations])
-
-  const handleSubmitMarkdownComment = async (body: string): Promise<void> => {
-    if (!commentPopover || !worktreeId) {
-      return
-    }
-    const result = await addDiffComment({
-      worktreeId,
-      filePath: relativePath,
-      source: 'markdown',
-      startLine: commentPopover.startLine,
-      lineNumber: commentPopover.lineNumber,
-      selectedText: commentPopover.selectedText,
-      body,
-      side: 'modified'
-    })
-    if (result) {
-      setCommentPopover(null)
-    } else {
-      console.error('Failed to add markdown comment — draft preserved')
-    }
-  }
 
   const handleChange = useCallback(
     (value: string | undefined) => {
@@ -778,48 +628,6 @@ export default function MonacoEditor({
       className={autoHeight ? 'relative' : 'relative h-full'}
       style={renderedEditorHeight === null ? undefined : { height: renderedEditorHeight }}
     >
-      {commentPopover && shouldShowMarkdownAnnotations && (
-        <DiffCommentPopover
-          key={commentPopover.lineNumber}
-          lineNumber={commentPopover.lineNumber}
-          startLine={commentPopover.startLine}
-          top={commentPopover.top}
-          left={commentPopover.left}
-          onCancel={() => setCommentPopover(null)}
-          onSubmit={handleSubmitMarkdownComment}
-        />
-      )}
-      {selectionAnnotationTarget && shouldShowMarkdownAnnotations && !commentPopover ? (
-        <button
-          type="button"
-          className="orca-diff-comment-add-btn"
-          style={{
-            display: 'flex',
-            top: Math.max(4, selectionAnnotationTarget.top - 22),
-            left: selectionAnnotationTarget.left ?? 4
-          }}
-          title={translate(
-            'auto.components.editor.MonacoEditor.68cb83f4a7',
-            'Add note on selected text'
-          )}
-          aria-label={translate(
-            'auto.components.editor.MonacoEditor.68cb83f4a7',
-            'Add note on selected text'
-          )}
-          onMouseDown={(event) => {
-            event.preventDefault()
-            event.stopPropagation()
-          }}
-          onClick={(event) => {
-            event.preventDefault()
-            event.stopPropagation()
-            setCommentPopover(selectionAnnotationTarget)
-            setSelectionAnnotationTarget(null)
-          }}
-        >
-          <Plus className="size-3" />
-        </button>
-      ) : null}
       <Editor
         height={renderedEditorHeight === null ? '100%' : `${renderedEditorHeight}px`}
         language={language}

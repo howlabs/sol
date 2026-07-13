@@ -148,7 +148,6 @@ describe('GitHubItemDialog source host boundaries', () => {
 
     expect(helperSection).toContain('getGitHubSourceRuntimeHost(args.sourceContext)')
     expect(helperSection).toContain("'github.addIssueComment'")
-    expect(helperSection).toContain("'github.addPRReviewComment'")
     expect(helperSection).toContain("'github.addPRReviewCommentReply'")
     expect(helperSection).toContain('repo: getGitHubRuntimeRepoId(args.sourceContext, args.repoId)')
     expect(helperSection).toContain('sourceContext: args.sourceContext')

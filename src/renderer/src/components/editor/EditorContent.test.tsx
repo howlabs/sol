@@ -9,7 +9,7 @@ vi.mock('@/lib/lazy-with-retry', () => ({
   lazyWithRetry: () => () => null
 }))
 
-import { EditorContent, getMarkdownSourceLineOffset } from './EditorContent'
+import { EditorContent } from './EditorContent'
 
 function createOpenFile(overrides: Partial<OpenFile> = {}): OpenFile {
   return {
@@ -29,21 +29,6 @@ afterEach(() => {
 })
 
 describe('EditorContent', () => {
-  it('maps rich-editor annotation lines after front matter to source lines', () => {
-    expect(getMarkdownSourceLineOffset('---\ntitle: x\n---\n')).toBe(3)
-    expect(getMarkdownSourceLineOffset('+++\ntitle = "x"\n+++\n')).toBe(3)
-    expect(getMarkdownSourceLineOffset('---\r\ntitle: x\r\n---\r\n')).toBe(3)
-    expect(getMarkdownSourceLineOffset('---\rtitle: x\n---\r\n')).toBe(3)
-  })
-
-  it('counts newline-heavy front matter offsets without regex match', () => {
-    const matchSpy = vi.spyOn(String.prototype, 'match')
-    const frontMatterRaw = `---\n${'title: x\n'.repeat(12_000)}---\n`
-
-    expect(getMarkdownSourceLineOffset(frontMatterRaw)).toBe(12_002)
-    expect(matchSpy).not.toHaveBeenCalled()
-  })
-
   it('surfaces file load errors before notebook content is parsed', () => {
     const activeFile = createOpenFile()
     const html = renderToStaticMarkup(

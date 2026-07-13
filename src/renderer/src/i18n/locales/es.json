@@ -28,7 +28,8 @@
         "minimaxToggleDescription": "Muestra el uso de la suscripción de MiniMax para el espacio de trabajo activo.",
         "sshToggleDescription": "Muestra hosts SSH configurados y hosts remotos de Sol cuando haya alguno disponible.",
         "resourceUsageToggleDescription": "Muestra el Administrador de recursos. Haz clic para ver CPU, memoria, sesiones, controles del servicio en segundo plano y análisis de disco de los espacios de trabajo.",
-        "portsToggleDescription": "Muestra los puertos activos de los espacios de trabajo. Haz clic para ver los puertos de cada espacio de trabajo y los puertos externos."
+        "portsToggleDescription": "Muestra los puertos activos de los espacios de trabajo. Haz clic para ver los puertos de cada espacio de trabajo y los puertos externos.",
+        "grokToggleDescription": "Show Grok subscription credit usage when signed in via Grok CLI."
       }
     }
   },
@@ -978,7 +979,8 @@
         "0d0ace8861": "Dar estrella en GitHub",
         "ec43b38ba7": "Con estrella en GitHub",
         "157bb5ecbb": "Abrir GitHub",
-        "preflightDismiss": "Descartar"
+        "preflightDismiss": "Descartar",
+        "shortcutsLabel": "Shortcuts"
       },
       "LinearIssueMarkdownDescriptionEditor": {
         "d9c47069ef": "Markdown",
@@ -2915,7 +2917,9 @@
             "f077f586db": "No volver a preguntar",
             "c0e972d726": "Cancelar",
             "06741a2f3d": "Abrir detalles de uso de MiniMax",
-            "3bbf140864": "Uso de MiniMax"
+            "3bbf140864": "Uso de MiniMax",
+            "grokUsageAria": "Open Grok usage details",
+            "grokUsageMenu": "Grok Usage"
           },
           "StatusBarUsageEmptyCta": {
             "828c764a79": "Conectar una cuenta",
@@ -3263,7 +3267,11 @@
           "b2cf4310ce": "Resumen",
           "908c470587": "codex",
           "eb6a066185": "claude",
-          "eee19cfade": "resumen"
+          "eee19cfade": "resumen",
+          "grokTab": "Grok",
+          "orcaActivityTitle": "Orca activity",
+          "orcaActivityDescription": "Agents spawned, time worked, and pull requests created in this Orca install.",
+          "usageAnalyticsDescription": "Combined overview or per-provider token logs from local agent sessions."
         },
         "UsageOverviewPane": {
           "22ed1b7669": "sesiones",
@@ -3315,7 +3323,9 @@
             "0e2a0b6431": "uso",
             "372debfac0": "estadísticas",
             "26bb901fcd": "Estadísticas de Sol más analíticas de uso combinadas de Claude, Codex y OpenCode: tokens, caché, modelos y sesiones.",
-            "cb2430ae6a": "Estadísticas y uso"
+            "cb2430ae6a": "Estadísticas y uso",
+            "a1b2c3d4e5": "grok",
+            "b2c3d4e5f6": "xai"
           }
         },
         "usage": {
@@ -3365,6 +3375,17 @@
           "faf3444859": "Entrada",
           "a8b7487ff7": "Salida",
           "cfe2282ffa": "Desconocido"
+        },
+        "GrokUsagePane": {
+          "g8h9i0j1k2": "Grok usage",
+          "b2d3e4f5c6": "Weekly subscription credits from Grok CLI OAuth (~/.grok/auth.json). Same source as the status bar.",
+          "c3e4f5a6b7": "Set up in Accounts",
+          "h9i0j1k2l3": " • {{value0}}",
+          "i0j1k2l3m4": "Refresh Grok usage",
+          "d4f5a6b7c8": "Refresh",
+          "e5a6b7c8d9": "Weekly credits used",
+          "f6b7c8d9e0": "Billing period reset",
+          "a7b8c9d0e1": "Grok account settings"
         }
       },
       "sparse": {
@@ -3536,7 +3557,8 @@
           "d13757911c": "Agregar un proyecto",
           "d301db1c9a": "Escaneando repositorios. Haz clic para detener.",
           "69ea7f8dc4": "Detener escaneo",
-          "9906cae183": "Detener escaneo"
+          "9906cae183": "Detener escaneo",
+          "addAnother": "Open another project on this machine or host."
         },
         "AddRepoStepIndicator": {
           "3bb655c117": "Atrás"
@@ -4094,7 +4116,8 @@
                   "sshCreateUnavailable": "Aún no disponible para hosts SSH",
                   "sshBrowseTitle": "Abrir proyecto en host SSH",
                   "sshBrowseDescription": "Repositorio Git o carpeta existente en este host SSH",
-                  "runtimeBrowseDescription": "Repositorio Git o carpeta existente en este host"
+                  "runtimeBrowseDescription": "Repositorio Git o carpeta existente en este host",
+                  "browseLocalShort": "Open a local Git repo or project folder"
                 }
               }
             }
@@ -4575,7 +4598,12 @@
           "435df0ee51": "En Encabezados de solicitud, copia el valor del encabezado Cookie.",
           "7492fb3bba": "Pégalo aquí y haz clic en Guardar.",
           "9fec52de4b": "Cómo copiar la cookie",
-          "4e32e030b2": "Se almacena localmente. Sol solo la envía a platform.minimax.io para actualizar el uso."
+          "4e32e030b2": "Se almacena localmente. Sol solo la envía a platform.minimax.io para actualizar el uso.",
+          "minimaxSettingsSaved": "MiniMax settings saved.",
+          "editCredentials": "Edit",
+          "configureCredentials": "Set up",
+          "opencodeSaved": "OpenCode Go settings saved.",
+          "minimaxCookieLeaveBlank": "Leave blank to keep current cookie"
         },
         "AdvancedPane": {
           "40b29e0bf3": "Reiniciar",
@@ -4658,7 +4686,14 @@
           "3f1bdf3cb4": "El texto de entorno es demasiado grande para analizarlo de forma segura.",
           "codexSessionSource": "Codex home to import from",
           "codexSessionSourceInfo": "About importing Codex history",
-          "codexSessionSourceTooltip": "Sol runs Codex in an isolated home. Point this at your existing Codex home to import that session history. Empty uses ~/.codex."
+          "codexSessionSourceTooltip": "Sol runs Codex in an isolated home. Point this at your existing Codex home to import that session history. Empty uses ~/.codex.",
+          "catalogTitle": "On this machine",
+          "catalogDescriptionShort": "Turn agents on or off. Use + to set command, args, or environment.",
+          "morePreferences": "Session preferences",
+          "morePreferencesDescription": "Runtime, hooks, tab titles, keep-alive, and cache timer.",
+          "hidePreferences": "Hide session preferences",
+          "showPreferences": "Show session preferences",
+          "agentPermissionsDescriptionShort": "Yolo reduces prompts. Manual keeps checks. Per-agent launch args still win."
         },
         "AppIconSelector": {
           "d5a112dc9b": "Icono siguiente",
@@ -4914,7 +4949,14 @@
           "14444243ba": "¿Eliminar `{{value0}}` de PATH?",
           "5d432fe44d": "instalado",
           "8a9b784c60": "desactualizado",
-          "d363e5929b": "Comprobando registro de CLI..."
+          "d363e5929b": "Comprobando registro de CLI...",
+          "revealFinder": "Show in Finder",
+          "revealExplorer": "Show in Explorer",
+          "revealFileManager": "Show in File Manager",
+          "installDarwin": "Register `orca` in /usr/local/bin.",
+          "installLinux": "Register `orca-ide` in ~/.local/bin.",
+          "installWin32": "Register `orca` in your user PATH.",
+          "installUnsupported": "CLI registration is not yet available on this platform."
         },
         "CliSkillRuntimeSetup": {
           "04325573f8": "WSL",
@@ -5258,7 +5300,9 @@
           "compareAgainstUpstreamTitle": "Base de comparación predeterminada",
           "compareAgainstUpstreamDescription": "Elige qué base usa Control de código fuente de forma predeterminada para las comparaciones de cambios confirmados. El upstream de la rama sigue automáticamente la rama actual y recurre a la rama predeterminada del repositorio cuando no hay upstream. Aun así, puedes cambiar la base de comparación por worktree desde el panel Git de ese worktree. Los objetivos de Pull Request y rebase no cambian.",
           "compareBaseRepositoryDefault": "Predeterminada del repositorio",
-          "compareBaseBranchUpstream": "Upstream de la rama"
+          "compareBaseBranchUpstream": "Upstream de la rama",
+          "apiBudgetSubsectionTitle": "API budgets",
+          "apiBudgetSubsectionDescription": "Live rate-limit headers from your GitHub and GitLab CLIs."
         },
         "HiddenExperimentalGroup": {
           "d0f914a528": "Alternar marcador de posición",
@@ -5345,7 +5389,11 @@
           "3ba07f933b": "Conecta issue trackers que Sol puede usar para explorar tareas e iniciar espacios de trabajo con contexto vinculado.",
           "70e885705b": "Proveedores de tareas",
           "1683acbac4": "Conecta los hosts de código que Sol puede usar para pull requests, merge requests, checks y estado de revisión.",
-          "298c65ecac": "Proveedores de revisión"
+          "298c65ecac": "Proveedores de revisión",
+          "codeHosts": "Code hosts",
+          "codeHostsDescription": "CLI or token auth for pull requests and checks.",
+          "issueTrackers": "Issue trackers",
+          "issueTrackersDescription": "Link work items from Linear and Jira."
         },
         "KagiSessionLinkForm": {
           "92f0b4e472": "Borrar",
@@ -5496,7 +5544,9 @@
           "274af61bc0": "sistema",
           "6e6df3a09a": "Elegir archivo personalizado",
           "76e02467b8": "Cambiar archivo personalizado",
-          "d3756cf5bc": "desactivado"
+          "d3756cf5bc": "desactivado",
+          "testDescription": "Preview the current sound and system notification delivery.",
+          "testAction": "Send test"
         },
         "OpenAiTranscriptionKeyDialog": {
           "fa83512e48": "Guardar clave",
@@ -6289,7 +6339,13 @@
           "dd67a1b6e1": "Muestra GitLab en el selector de fuentes de Tareas y en los accesos directos de la barra lateral.",
           "7c5d7fdc20": "GitLab",
           "1db47236cd": "Muestra GitHub en el selector de fuentes de Tareas y en los accesos directos de la barra lateral.",
-          "e14063e727": "GitHub"
+          "e14063e727": "GitHub",
+          "githubDescriptionShort": "Issues and pull requests in Tasks and sidebar shortcuts.",
+          "gitlabDescriptionShort": "Issues and merge requests in Tasks and sidebar shortcuts.",
+          "linearDescriptionShort": "Linear issues in Tasks and sidebar shortcuts.",
+          "jiraDescriptionShort": "Jira issues in Tasks and sidebar shortcuts.",
+          "intro": "Turn providers on for the Tasks page and sidebar. Keep at least one on.",
+          "lastProviderHint": "At least one provider must stay on."
         },
         "TerminalAppearanceSection": {
           "a14a427ae4": "Grosor de la línea divisoria del panel.",
@@ -6632,7 +6688,9 @@
             "b84a5b0c8a": "Elija si las cuentas de proveedor se inspeccionan y agregan en este dispositivo o en WSL.",
             "d09fb5ca92": "Ubicación de cuentas",
             "733f9e2a93": "Uso de MiniMax",
-            "f8374c3151": "Pega tu cookie de sesión de platform.minimax.io para obtener límites de uso locales."
+            "f8374c3151": "Pega tu cookie de sesión de platform.minimax.io para obtener límites de uso locales.",
+            "a1b2c3d4e5": "Grok Usage",
+            "b2c3d4e5f6": "Weekly credit usage from Grok CLI OAuth (~/.grok/auth.json)."
           }
         },
         "advanced": {
@@ -6846,7 +6904,9 @@
               "detailed": "detallado"
             },
             "9a115966d3": "Minimizar a la bandeja al cerrar",
-            "4d5b9427b5": "Cuando está activado, cerrar la ventana mantiene Sol en ejecución en la bandeja del sistema en lugar de salir."
+            "4d5b9427b5": "Cuando está activado, cerrar la ventana mantiene Sol en ejecución en la bandeja del sistema en lugar de salir.",
+            "f8e2a1c4b6": "Grok Usage",
+            "e7d1b0f3a5": "Show Grok weekly credit usage from Grok CLI OAuth."
           }
         },
         "auto": {
@@ -8179,7 +8239,11 @@
                   "6f30fc4216": "El estado de la CLI de GitHub aún no está disponible en este runtime.",
                   "6b2cfb52b4": "gh",
                   "b4d900e7f1": "Pull requests, issues y checks mediante la",
-                  "account_scope_prefix": "Alcance de la cuenta"
+                  "account_scope_prefix": "Alcance de la cuenta",
+                  "statusConnected": "Connected",
+                  "statusUnavailable": "Unavailable",
+                  "statusCliMissing": "CLI missing",
+                  "statusSignInRequired": "Sign in required"
                 }
               }
             }
@@ -8209,7 +8273,11 @@
                 "fe9231215b": "Comprobando el acceso a Linear antes de mostrar las acciones de configuración.",
                 "e1f5e6424c": "Conexión completada para {{value0}} workspace{{value1}}",
                 "disconnect_all": "Desconectar todo",
-                "account_scope_prefix": "Alcance de la cuenta"
+                "account_scope_prefix": "Alcance de la cuenta",
+                "linearKeyHintShort": "One API key per workspace on the active runtime.",
+                "linearAccessHintShort": "Paste a Linear Personal API key from Linear → Settings → API.",
+                "statusConnected": "Connected",
+                "statusNotConnected": "Not connected"
               }
             }
           }
@@ -8250,7 +8318,13 @@
                   "63a7f47392": "ORCA_BITBUCKET_EMAIL",
                   "24ac1c69dc": "El estado de Bitbucket aún no está disponible en este runtime.",
                   "a924e8dcd1": "Pull requests y estados de build mediante tokens de la API de Bitbucket Cloud.",
-                  "0fa5629dad": "Pull requests y estados de build"
+                  "0fa5629dad": "Pull requests y estados de build",
+                  "statusConnected": "Connected",
+                  "statusConfigured": "Configured",
+                  "statusUnavailable": "Unavailable",
+                  "statusNotConfigured": "Not configured",
+                  "statusOptionalSetup": "Optional setup",
+                  "statusAuthFailed": "Auth failed"
                 }
               }
             }
@@ -8511,6 +8585,21 @@
           "reviewFirst": "Revisar primero",
           "singular": "Guardar a nivel global no cambiará 1 repositorio con su propia receta.",
           "tooltipTitle": "Anulaciones de repositorio"
+        },
+        "GrokAccountsSection": {
+          "a1b2c3d4e5": "Grok (xAI)",
+          "f6e5d4c3b2": "Shows weekly credit usage from your Grok CLI sign-in (session file ~/.grok/auth.json).",
+          "0d8e77bc40": "Grok CLI docs",
+          "ad47a33f72": "Loading…",
+          "b2c3d4e5f6": "Signed in",
+          "c3d4e5f6a7": "Signed in. Sol only reads that file on disk — run grok login again if usage fails.",
+          "d4e5f6a7b8": "Session expired — run grok login in a terminal to refresh.",
+          "e5f6a7b8c9": "Not signed in to Grok CLI",
+          "f6a7b8c9d0": "In a terminal, run grok login, then click Refresh usage here.",
+          "3325d996cb": "Refresh usage",
+          "a8f3e2c1b4": "Weekly credits",
+          "b7e2d9f0a3": "Same weekly credit % as the grok /usage screen in the terminal.",
+          "c6d1a8f4e2": "Resets {{when}}"
         }
       },
       "right": {
@@ -9211,7 +9300,8 @@
             "fc3095d2ed": "explorador",
             "aiVaultSessionHistory": "Agents",
             "folderWorkspaces": "Worktrees adjuntos",
-            "parentPrChecks": "Checks de PR"
+            "parentPrChecks": "Checks de PR",
+            "agentChanges": "Changes"
           },
           "right": {
             "panel": {
@@ -11704,7 +11794,9 @@
           "a21f6c33ad": "Origen de automatización actualizado.",
           "53f06f0ad5": "Reintentar origen",
           "pendingAutomationMissing": "La automatización ya no está disponible.",
-          "pendingAutomationRunMissing": "El historial de ejecuciones ya no está disponible."
+          "pendingAutomationRunMissing": "El historial de ejecuciones ya no está disponible.",
+          "refreshLabel": "Refresh",
+          "emptyListHint": "Pick a template or create a blank automation."
         },
         "CreateFromPicker": {
           "f061f49e3f": "Buscar ramas del repo...",
@@ -11831,6 +11923,39 @@
         "AgentSettingsDialog": {
           "50cdb57c03": "Administre agents de IA, establezca un valor predeterminado y personalice comandos.",
           "fc0268e4ed": "Agents"
+        },
+        "changes": {
+          "openIdeFailed": "Could not open file in external editor.",
+          "discardTitle": "Discard file changes?",
+          "discardDescription": "This restores or removes “{path}” in the worktree. This cannot be undone from Sol.",
+          "discardConfirm": "Discard",
+          "discardDone": "Discarded {path}",
+          "discardFailed": "Could not discard changes.",
+          "askAgentSent": "Sent to active agent",
+          "askAgentClipboard": "Copied review prompt to clipboard (no active agent ready).",
+          "title": "Changes",
+          "summary": "{files} files · +{additions} −{deletions}",
+          "summaryIdle": "Worktree local changes",
+          "refresh": "Refresh",
+          "noWorktree": "Select a worktree to review changes.",
+          "retry": "Retry",
+          "loading": "Loading changes…",
+          "empty": "No local changes",
+          "openIde": "Open in IDE",
+          "discard": "Discard",
+          "askAgent": "Ask agent",
+          "fileList": {
+            "binary": "bin"
+          },
+          "hunkList": {
+            "selectFile": "Select a file to review",
+            "binaryFile": "Binary file",
+            "binaryHint": "Text diff is unavailable. Open in your external editor to inspect.",
+            "tooLarge": "Diff too large",
+            "tooLargeHint": "Open in your external editor for the full review.",
+            "loading": "Loading diff…",
+            "noChanges": "No textual changes to display"
+          }
         }
       },
       "activity": {

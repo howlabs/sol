@@ -8,17 +8,9 @@ import { RichMarkdownDocLinkMenu } from './RichMarkdownDocLinkMenu'
 import { RichMarkdownEmojiMenu } from './RichMarkdownEmojiMenu'
 import { RichMarkdownLinkBubble, type LinkBubbleState } from './RichMarkdownLinkBubble'
 import { MarkdownTableOfContentsPanel } from './MarkdownTableOfContentsPanel'
-import { RichMarkdownAnnotationOverlay } from './RichMarkdownAnnotationOverlay'
-import { RichMarkdownReviewNoteLayer } from './RichMarkdownReviewNoteLayer'
-import { RichMarkdownReviewRailActions } from './RichMarkdownReviewRailActions'
 import type { DocLinkMenuRow, DocLinkMenuState } from './rich-markdown-commands'
 import type { SlashCommand, SlashMenuState } from './rich-markdown-slash-commands'
 import type { MarkdownTocItem } from './markdown-table-of-contents'
-import type { NotesSendMenuScope } from './NotesSendMenu'
-import type { MarkdownReviewNote } from '@/lib/markdown-review-notes'
-import type { RichMarkdownAnnotationTarget } from './rich-markdown-review-annotations'
-import type { RichMarkdownReviewNotePosition } from './rich-markdown-review-note-layout'
-import type { DiffComment } from '../../../../shared/types'
 
 function shouldFocusEmptyEditorFromSurfaceClick(
   event: React.MouseEvent<HTMLDivElement>,
@@ -40,19 +32,6 @@ type RichMarkdownEditorSurfaceProps = {
   rootRef: (node: HTMLDivElement | null) => void
   scrollContainerRef: React.RefObject<HTMLDivElement | null>
   headerSlot?: React.ReactNode
-  reviewRailExpanded: boolean
-  reviewRailVisible: boolean
-  notePositions: RichMarkdownReviewNotePosition[]
-  activeReviewCommentId: string | null
-  attentionReviewCommentId: string | null
-  copiedReviewNoteId: string | null
-  markdownReviewContent: string
-  worktreeId: string
-  filePath: string
-  markdownCommentsCount: number
-  reviewRailOpen: boolean
-  reviewNotesCopied: boolean
-  unsentMarkdownReviewScope: NotesSendMenuScope<MarkdownReviewNote>[]
   linkBubble: LinkBubbleState | null
   isEditingLink: boolean
   slashMenu: SlashMenuState | null
@@ -63,9 +42,6 @@ type RichMarkdownEditorSurfaceProps = {
   docLinkRows: DocLinkMenuRow[]
   docLinkTotalMatches: number
   selectedDocLinkIndex: number
-  annotationTarget: RichMarkdownAnnotationTarget | null
-  annotationPopover: RichMarkdownAnnotationTarget | null
-  markdownSourceLineOffset: number
   tableOfContentsItems: MarkdownTocItem[]
   showTableOfContents: boolean
   searchState: {
@@ -101,17 +77,6 @@ type RichMarkdownEditorSurfaceProps = {
   onImagePick: () => void
   onEmojiPick: (menu: SlashMenuState) => void
   onCloseEmojiMenu: () => void
-  onOpenAnnotationPopover: () => void
-  onCancelAnnotationPopover: () => void
-  onSubmitAnnotation: (body: string) => Promise<void>
-  onCopyReviewNotes: () => void
-  onCopyReviewNote: (note: MarkdownReviewNote) => void
-  onToggleReviewRail: () => void
-  onReviewNotesDelivered: (notes: readonly MarkdownReviewNote[]) => void
-  onReviewNoteSourceClick: (comment: DiffComment) => void
-  onDeleteReviewComment: (commentId: string) => void
-  onSubmitReviewCommentEdit: (commentId: string, body: string) => Promise<boolean>
-  onReviewNoteContentResize: () => void
   onNavigateTableOfContentsItem: (id: string) => void
   onCloseTableOfContents?: () => void
 }
@@ -122,19 +87,6 @@ export function RichMarkdownEditorSurface({
   rootRef,
   scrollContainerRef,
   headerSlot,
-  reviewRailExpanded,
-  reviewRailVisible,
-  notePositions,
-  activeReviewCommentId,
-  attentionReviewCommentId,
-  copiedReviewNoteId,
-  markdownReviewContent,
-  worktreeId,
-  filePath,
-  markdownCommentsCount,
-  reviewRailOpen,
-  reviewNotesCopied,
-  unsentMarkdownReviewScope,
   linkBubble,
   isEditingLink,
   slashMenu,
@@ -145,9 +97,6 @@ export function RichMarkdownEditorSurface({
   docLinkRows,
   docLinkTotalMatches,
   selectedDocLinkIndex,
-  annotationTarget,
-  annotationPopover,
-  markdownSourceLineOffset,
   tableOfContentsItems,
   showTableOfContents,
   searchState,
@@ -157,17 +106,6 @@ export function RichMarkdownEditorSurface({
   onImagePick,
   onEmojiPick,
   onCloseEmojiMenu,
-  onOpenAnnotationPopover,
-  onCancelAnnotationPopover,
-  onSubmitAnnotation,
-  onCopyReviewNotes,
-  onCopyReviewNote,
-  onToggleReviewRail,
-  onReviewNotesDelivered,
-  onReviewNoteSourceClick,
-  onDeleteReviewComment,
-  onSubmitReviewCommentEdit,
-  onReviewNoteContentResize,
   onNavigateTableOfContentsItem,
   onCloseTableOfContents
 }: RichMarkdownEditorSurfaceProps): React.JSX.Element {
@@ -182,9 +120,7 @@ export function RichMarkdownEditorSurface({
       ) : null}
       <div
         ref={rootRef}
-        className={`rich-markdown-editor-shell ${
-          reviewRailExpanded ? 'has-rich-markdown-review-notes' : ''
-        }`.trim()}
+        className="rich-markdown-editor-shell"
         style={{ '--editor-font-zoom-level': editorFontZoomLevel } as React.CSSProperties}
       >
         <RichMarkdownToolbar
@@ -208,23 +144,6 @@ export function RichMarkdownEditorSurface({
             }}
           >
             <EditorContent editor={editor} />
-            {reviewRailVisible && notePositions.length > 0 ? (
-              <RichMarkdownReviewNoteLayer
-                positions={notePositions}
-                activeCommentId={activeReviewCommentId}
-                attentionCommentId={attentionReviewCommentId}
-                copiedCommentId={copiedReviewNoteId}
-                markdownReviewContent={markdownReviewContent}
-                worktreeId={worktreeId}
-                filePath={filePath}
-                onCopyNote={onCopyReviewNote}
-                onScrollSourceIntoView={onReviewNoteSourceClick}
-                onDeleteComment={onDeleteReviewComment}
-                onSubmitEdit={onSubmitReviewCommentEdit}
-                onContentResize={onReviewNoteContentResize}
-                onDelivered={onReviewNotesDelivered}
-              />
-            ) : null}
           </div>
           <RichMarkdownSearchBar
             activeMatchIndex={searchState.activeMatchIndex}
@@ -283,27 +202,6 @@ export function RichMarkdownEditorSurface({
             rows={docLinkRows}
             totalMatches={docLinkTotalMatches}
             selectedIndex={selectedDocLinkIndex}
-          />
-        ) : null}
-        <RichMarkdownAnnotationOverlay
-          target={annotationTarget}
-          popover={annotationPopover}
-          markdownSourceLineOffset={markdownSourceLineOffset}
-          onOpenPopover={onOpenAnnotationPopover}
-          onCancelPopover={onCancelAnnotationPopover}
-          onSubmit={onSubmitAnnotation}
-        />
-        {markdownCommentsCount > 0 ? (
-          <RichMarkdownReviewRailActions
-            worktreeId={worktreeId}
-            filePath={filePath}
-            noteCount={markdownCommentsCount}
-            railOpen={reviewRailOpen}
-            notesCopied={reviewNotesCopied}
-            unsentScope={unsentMarkdownReviewScope}
-            onToggleRail={onToggleReviewRail}
-            onCopyNotes={onCopyReviewNotes}
-            onDelivered={onReviewNotesDelivered}
           />
         ) : null}
       </div>

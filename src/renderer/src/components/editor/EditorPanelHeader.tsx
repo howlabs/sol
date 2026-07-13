@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { Columns2, Eye, FileText, ListTree, Rows2 } from '@/lib/icons'
 import { useAppStore } from '@/store'
 import type { OpenFile } from '@/store/slices/editor'
@@ -9,7 +8,6 @@ import EditorViewToggle, {
 } from './EditorViewToggle'
 import type { EditorToggleValue } from './EditorViewToggle'
 import type { EditorHeaderOpenFileState } from './editor-header'
-import { DiffNotesSendMenu } from './DiffNotesSendMenu'
 import { EditorPanelMarkdownActionsMenu } from './EditorPanelMarkdownActionsMenu'
 import { translate } from '@/i18n/i18n'
 import { EditorPanelHeaderPath } from './EditorPanelHeaderPath'
@@ -81,14 +79,8 @@ export function EditorPanelHeader({
   onToggleMarkdownFrontmatter,
   onExportMarkdownToPdf
 }: EditorPanelHeaderProps): React.JSX.Element {
-  const diffComments = useAppStore((s) => s.getDiffComments(activeFile.worktreeId))
-  const activeGroupId = useAppStore((s) => s.activeGroupIdByWorktree[activeFile.worktreeId])
   const diffWordWrap = useAppStore((s) => s.settings?.diffWordWrap === true)
   const updateSettings = useAppStore((s) => s.updateSettings)
-  const fileDiffComments = useMemo(
-    () => diffComments.filter((comment) => comment.filePath === activeFile.relativePath),
-    [activeFile.relativePath, diffComments]
-  )
 
   return (
     <div className="editor-header">
@@ -135,19 +127,6 @@ export function EditorPanelHeader({
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
-      )}
-      {isSingleDiff && fileDiffComments.length > 0 && (
-        <DiffNotesSendMenu
-          worktreeId={activeFile.worktreeId}
-          groupId={activeGroupId ?? activeFile.worktreeId}
-          comments={diffComments}
-          filePath={activeFile.relativePath}
-          showFileScope
-          triggerLabel="AI notes"
-          triggerCount={fileDiffComments.length}
-          triggerClassName="h-6 shrink-0 gap-1 rounded-full border border-border/70 bg-muted/40 px-2 text-[11px] font-medium leading-none text-foreground/80 hover:bg-accent hover:text-foreground"
-          iconClassName="size-3"
-        />
       )}
       {canOpenPreviewToSide && (
         <TooltipProvider delayDuration={300}>

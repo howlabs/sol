@@ -19,13 +19,7 @@ const storeState = {
   openFile: vi.fn(),
   activateMarkdownLink: vi.fn(),
   openMarkdownPreview: vi.fn(),
-  setMarkdownViewMode: vi.fn(),
   markdownFrontmatterVisible: {},
-  setPendingEditorReveal: vi.fn(),
-  addDiffComment: vi.fn(),
-  deleteDiffComment: vi.fn(),
-  updateDiffComment: vi.fn(),
-  clearDeliveredDiffComments: vi.fn(),
   keybindings: {},
   worktreesByRepo: {},
   openFiles: [],
@@ -55,8 +49,6 @@ vi.mock('./MermaidBlock', () => ({ default: () => null }))
 vi.mock('./CodeBlockCopyButton', () => ({
   default: ({ children }: { children: React.ReactNode }) => children
 }))
-vi.mock('../diff-comments/DiffCommentCard', () => ({ DiffCommentCard: () => null }))
-vi.mock('./NotesSendMenu', () => ({ NotesSendMenu: () => null }))
 // Render the items the gate produced so the test can read the outline from the DOM.
 vi.mock('./MarkdownTableOfContentsPanel', () => ({
   MarkdownTableOfContentsPanel: ({ items }: { items: MarkdownTocItem[] }) => (

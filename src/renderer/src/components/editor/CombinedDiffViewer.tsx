@@ -20,8 +20,6 @@ import { getConnectionId, getConnectionIdForFile } from '@/lib/connection-contex
 import { findWorktreeById } from '@/store/slices/worktree-helpers'
 import { writeRuntimeFile } from '@/runtime/runtime-file-client'
 import { settingsForRuntimeOwner } from '@/runtime/runtime-rpc-client'
-import { formatDiffComments } from '@/lib/diff-comments-format'
-import { getDiffCommentLineLabel } from '@/lib/diff-comment-compat'
 import {
   getRuntimeGitBranchDiff,
   getRuntimeGitCommitDiff,
@@ -29,27 +27,11 @@ import {
 } from '@/runtime/runtime-git-client'
 import '@/lib/monaco-setup'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { OpenFile } from '@/store/slices/editor'
-import type {
-  DiffComment,
-  GitBranchChangeEntry,
-  GitDiffResult,
-  GitStatusEntry
-} from '../../../../shared/types'
-import { Check, Copy, MessageSquare, PanelLeftOpen, Sparkles, Trash2, WrapText } from '@/lib/icons'
-import { toast } from 'sonner'
+import type { GitBranchChangeEntry, GitDiffResult, GitStatusEntry } from '../../../../shared/types'
+import { PanelLeftOpen, WrapText } from '@/lib/icons'
 import { DiffSectionItem } from './DiffSectionItem'
-import { DiffNotesSendMenu } from './DiffNotesSendMenu'
 import {
   CombinedDiffFileTree,
   createCombinedDiffSectionIndexMap,
@@ -230,47 +212,15 @@ export default function CombinedDiffViewer({
   const openConflictReview = useAppStore((s) => s.openConflictReview)
   const openBranchAllDiffs = useAppStore((s) => s.openBranchAllDiffs)
   const updateSettings = useAppStore((s) => s.updateSettings)
-  const clearDiffComments = useAppStore((s) => s.clearDiffComments)
-  const diffCommentsForWorktree = useAppStore((s) => s.getDiffComments(file.worktreeId))
-  const activeGroupId = useAppStore((s) => s.activeGroupIdByWorktree[file.worktreeId])
   const isDark =
     settings?.theme === 'dark' ||
     (settings?.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-
-  const diffCommentCount = diffCommentsForWorktree.length
-  const diffCommentsPrompt = React.useMemo(
-    () => formatDiffComments(diffCommentsForWorktree),
-    [diffCommentsForWorktree]
-  )
-  const previewDiffComments = React.useMemo(
-    () =>
-      [...diffCommentsForWorktree]
-        .sort((a, b) => a.filePath.localeCompare(b.filePath) || a.lineNumber - b.lineNumber)
-        .slice(0, 4),
-    [diffCommentsForWorktree]
-  )
 
   const [sections, setSections] = useState<DiffSection[]>([])
   const [sideBySide, setSideBySide] = useState(() =>
     getInitialCombinedDiffSideBySide(settings?.diffDefaultView)
   )
   const [sectionHeights, setSectionHeights] = useState<Record<number, number>>({})
-  const [clearNotesDialogOpen, setClearNotesDialogOpen] = useState(false)
-  const [isClearingNotes, setIsClearingNotes] = useState(false)
-  const clearNotesDialogVisible = clearNotesDialogOpen && (diffCommentCount > 0 || isClearingNotes)
-  if (clearNotesDialogOpen && !clearNotesDialogVisible) {
-    // Why: notes may be cleared outside this dialog; keep the modal closed in
-    // the same render instead of showing an empty confirmation for one frame.
-    setClearNotesDialogOpen(false)
-  }
-  const [notesCopied, setNotesCopied] = useState(false)
-  const mountedRef = useRef(true)
-  // Why: copy feedback is created by the copy action, so the same handler owns
-  // its reset timer instead of repairing copied state after render.
-  const notesCopiedResetTimerRef = useRef<number | null>(null)
-  // Why: clipboard IPC can resolve after the combined diff unmounts; skip
-  // copied feedback instead of starting a reset timer on a stale viewer.
-  const notesCopyMountedRef = useRef(false)
   const [fileTreeCollapsed, setFileTreeCollapsedState] = useState(() =>
     getInitialCombinedDiffFileTreeCollapsed(settings?.combinedDiffFileTreeVisibleByDefault)
   )
@@ -337,13 +287,6 @@ export default function CombinedDiffViewer({
     []
   )
 
-  const clearNotesCopiedResetTimer = useCallback((): void => {
-    if (notesCopiedResetTimerRef.current !== null) {
-      window.clearTimeout(notesCopiedResetTimerRef.current)
-      notesCopiedResetTimerRef.current = null
-    }
-  }, [])
-
   const cleanupActiveScrollbarDrag = useCallback((): void => {
     activeScrollbarDragCleanupRef.current?.()
   }, [])
@@ -351,23 +294,17 @@ export default function CombinedDiffViewer({
   const setScrollContainerRef = useCallback(
     (node: HTMLDivElement | null) => {
       scrollContainerRef.current = node
-      notesCopyMountedRef.current = node !== null
       if (node === null) {
-        // Why: copied feedback is tied to the combined-diff surface lifetime;
-        // the root ref unmount is the same boundary that disables stale feedback.
-        clearNotesCopiedResetTimer()
         cleanupActiveScrollbarDrag()
         return
       }
       window.requestAnimationFrame(updateCombinedDiffScrollbar)
     },
-    [cleanupActiveScrollbarDrag, clearNotesCopiedResetTimer, updateCombinedDiffScrollbar]
+    [cleanupActiveScrollbarDrag, updateCombinedDiffScrollbar]
   )
 
   useEffect(() => {
-    mountedRef.current = true
     return () => {
-      mountedRef.current = false
       cleanupActiveScrollbarDrag()
     }
   }, [cleanupActiveScrollbarDrag])
@@ -1500,54 +1437,6 @@ export default function CombinedDiffViewer({
     [cleanupActiveScrollbarDrag, markDirectScrollInput, updateCombinedDiffScrollbar]
   )
 
-  const handleCopyNotes = useCallback(async (): Promise<void> => {
-    if (diffCommentCount === 0) {
-      return
-    }
-    try {
-      await window.api.ui.writeClipboardText(diffCommentsPrompt)
-      if (!notesCopyMountedRef.current) {
-        return
-      }
-      clearNotesCopiedResetTimer()
-      setNotesCopied(true)
-      notesCopiedResetTimerRef.current = window.setTimeout(() => {
-        setNotesCopied(false)
-        notesCopiedResetTimerRef.current = null
-      }, 1500)
-    } catch {
-      // Why: clipboard writes can fail while the app is not focused; this
-      // mirrors the sidebar notes action and keeps the popover non-blocking.
-    }
-  }, [clearNotesCopiedResetTimer, diffCommentCount, diffCommentsPrompt])
-
-  const handleConfirmClearNotes = useCallback(async (): Promise<void> => {
-    if (diffCommentCount === 0 || isClearingNotes) {
-      return
-    }
-    setIsClearingNotes(true)
-    try {
-      const ok = await clearDiffComments(file.worktreeId)
-      if (!mountedRef.current) {
-        return
-      }
-      if (ok) {
-        setClearNotesDialogOpen(false)
-      } else {
-        toast.error(
-          translate(
-            'auto.components.editor.CombinedDiffViewer.45cf23b418',
-            'Failed to clear notes.'
-          )
-        )
-      }
-    } finally {
-      if (mountedRef.current) {
-        setIsClearingNotes(false)
-      }
-    }
-  }, [clearDiffComments, diffCommentCount, file.worktreeId, isClearingNotes])
-
   const commitBody = getCombinedDiffCommitMessageBody(
     commitCompare?.message,
     commitCompare?.subject
@@ -1693,382 +1582,183 @@ export default function CombinedDiffViewer({
   const allSectionsCollapsed = sections.every((section) => section.collapsed)
 
   return (
-    <>
-      <div className="flex flex-col flex-1 min-h-0">
-        <div className="flex items-center justify-between gap-3 px-3 py-1.5 border-b border-border bg-background/50 shrink-0">
-          <div className="flex min-w-0 items-center gap-2">
-            {fileTreeCollapsed && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-xs"
-                    aria-label={translate(
-                      'auto.components.editor.CombinedDiffViewer.b6c3b84476',
-                      'Show file tree'
-                    )}
-                    onClick={() => setFileTreeCollapsed(false)}
-                  >
-                    <PanelLeftOpen className="size-3.5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" sideOffset={6}>
-                  {translate(
+    <div className="flex flex-col flex-1 min-h-0">
+      <div className="flex items-center justify-between gap-3 px-3 py-1.5 border-b border-border bg-background/50 shrink-0">
+        <div className="flex min-w-0 items-center gap-2">
+          {fileTreeCollapsed && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  aria-label={translate(
                     'auto.components.editor.CombinedDiffViewer.b6c3b84476',
                     'Show file tree'
                   )}
-                </TooltipContent>
-              </Tooltip>
-            )}
-            <span className="truncate text-xs text-muted-foreground">
-              {sections.length}{' '}
-              {translate('auto.components.editor.CombinedDiffViewer.7e7ca60816', 'changed files')}
-              {(isAllMode || isBranchMode) && branchCompare
+                  onClick={() => setFileTreeCollapsed(false)}
+                >
+                  <PanelLeftOpen className="size-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={6}>
+                {translate(
+                  'auto.components.editor.CombinedDiffViewer.b6c3b84476',
+                  'Show file tree'
+                )}
+              </TooltipContent>
+            </Tooltip>
+          )}
+          <span className="truncate text-xs text-muted-foreground">
+            {sections.length}{' '}
+            {translate('auto.components.editor.CombinedDiffViewer.7e7ca60816', 'changed files')}
+            {(isAllMode || isBranchMode) && branchCompare
+              ? translate(
+                  'auto.components.editor.CombinedDiffViewer.6094135eec',
+                  ' vs {{value0}}',
+                  { value0: branchCompare.baseRef }
+                )
+              : ''}
+            {isCommitMode && commitCompare
+              ? translate(
+                  'auto.components.editor.CombinedDiffViewer.724a13568d',
+                  ' in {{value0}}',
+                  { value0: commitCompare.compareRef }
+                )
+              : ''}
+          </span>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {file.combinedAlternate && (
+            <button
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              onClick={openAlternateDiff}
+            >
+              {file.combinedAlternate.source === 'combined-branch'
                 ? translate(
-                    'auto.components.editor.CombinedDiffViewer.6094135eec',
-                    ' vs {{value0}}',
-                    { value0: branchCompare.baseRef }
+                    'auto.components.editor.CombinedDiffViewer.3d909843bb',
+                    'Open Branch Diff'
                   )
-                : ''}
-              {isCommitMode && commitCompare
-                ? translate(
-                    'auto.components.editor.CombinedDiffViewer.724a13568d',
-                    ' in {{value0}}',
-                    { value0: commitCompare.compareRef }
-                  )
-                : ''}
-            </span>
-            {diffCommentCount > 0 && (
-              <div className="ml-1 flex shrink-0 items-center overflow-hidden rounded-full border border-border/70 bg-muted/40">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      className="inline-flex h-6 items-center gap-1 pl-2 pr-1.5 text-[11px] font-medium leading-none text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
-                      aria-label={translate(
-                        'auto.components.editor.CombinedDiffViewer.8f68ad9ca9',
-                        'Show {{value0}} AI {{value1}}',
-                        {
-                          value0: diffCommentCount,
-                          value1: diffCommentCount === 1 ? 'note' : 'notes'
-                        }
-                      )}
-                    >
-                      <Sparkles className="size-3 text-violet-500 dark:text-violet-400" />
-                      <span>
-                        {translate(
-                          'auto.components.editor.CombinedDiffViewer.bb84b4c374',
-                          'AI notes'
-                        )}
-                      </span>
-                      <span className="rounded-full bg-background/80 px-1 text-[10px] tabular-nums text-muted-foreground">
-                        {diffCommentCount}
-                      </span>
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent align="start" side="bottom" sideOffset={6} className="w-80 p-0">
-                    <DiffNotesPreviewPopover
-                      comments={previewDiffComments}
-                      totalCount={diffCommentCount}
-                      copied={notesCopied}
-                      onCopy={() => void handleCopyNotes()}
-                      onClear={() => setClearNotesDialogOpen(true)}
+                : translate(
+                    'auto.components.editor.CombinedDiffViewer.982d14bfa5',
+                    'Open All Changes'
+                  )}
+            </button>
+          )}
+          <button
+            className="w-20 text-left text-xs text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => setAllSectionsCollapsed(!allSectionsCollapsed)}
+          >
+            {allSectionsCollapsed
+              ? translate('auto.components.editor.CombinedDiffViewer.19c45cfdc0', 'Expand All')
+              : translate('auto.components.editor.CombinedDiffViewer.ea08dae15b', 'Collapse All')}
+          </button>
+          <button
+            className="w-24 px-2 py-0.5 text-center text-xs rounded border border-border text-muted-foreground hover:text-foreground transition-colors"
+            onClick={toggleSideBySide}
+          >
+            {sideBySide
+              ? translate('auto.components.editor.CombinedDiffViewer.f786fd54e1', 'Inline')
+              : translate('auto.components.editor.CombinedDiffViewer.ec5053c7f5', 'Side by Side')}
+          </button>
+          <button
+            className={`inline-flex h-6 items-center gap-1 rounded border border-border px-2 text-xs transition-colors hover:text-foreground ${
+              settings?.diffWordWrap === true
+                ? 'bg-accent text-foreground'
+                : 'text-muted-foreground'
+            }`}
+            onClick={toggleDiffWordWrap}
+            aria-pressed={settings?.diffWordWrap === true}
+          >
+            <WrapText className="size-3.5" />
+            {settings?.diffWordWrap === true
+              ? translate('auto.components.editor.CombinedDiffViewer.a4420ca1f7', 'Wrap On')
+              : translate('auto.components.editor.CombinedDiffViewer.dde325ddfe', 'Wrap Off')}
+          </button>
+        </div>
+      </div>
+
+      {commitHeader}
+      <div className="flex min-h-0 flex-1">
+        <CombinedDiffFileTree
+          mode={treeMode}
+          worktreePath={file.filePath}
+          entries={entries}
+          sectionIndexByKey={sectionIndexByKey}
+          activeSectionKey={activeTreeSectionKey}
+          viewedSectionKeys={viewedSectionKeys}
+          collapsed={fileTreeCollapsed}
+          onCollapsedChange={setFileTreeCollapsed}
+          onNavigate={handleTreeNavigate}
+        />
+        <div className="relative min-w-0 flex-1">
+          <div
+            ref={setScrollContainerRef}
+            className="combined-diff-scroll-container h-full overflow-auto pr-5 scrollbar-editor"
+            onWheel={markDirectScrollInput}
+            onTouchMove={markDirectScrollInput}
+          >
+            {skippedConflictNotice}
+            <div className="relative w-full" style={{ height: `${combinedDiffTotalSize}px` }}>
+              {virtualizer.getVirtualItems().map((virtualItem) => {
+                const section = sections[virtualItem.index]
+                if (!section) {
+                  return null
+                }
+
+                return (
+                  <div
+                    key={virtualItem.key}
+                    data-index={virtualItem.index}
+                    data-combined-diff-section-row
+                    data-combined-diff-section-key={section.key}
+                    ref={virtualizer.measureElement}
+                    className="absolute left-0 top-0 w-full"
+                    // Why: `top` preserves sticky file headers inside each row;
+                    // transform-based virtualization creates a containing block
+                    // that makes long-section headers feel jumpy while scrolling.
+                    style={{ top: `${virtualItem.start}px` }}
+                  >
+                    <DiffSectionItem
+                      section={section}
+                      index={virtualItem.index}
+                      isBranchMode={isBranchMode}
+                      sideBySide={sideBySide}
+                      isDark={isDark}
+                      settings={settings}
+                      sectionHeight={sectionHeights[virtualItem.index]}
+                      worktreeId={file.worktreeId}
+                      loadSection={loadSection}
+                      retrySection={retrySection}
+                      toggleSection={toggleSection}
+                      openSection={openSection}
+                      openSectionTitle={
+                        isAllMode || isBranchMode || isCommitMode ? 'Open diff' : 'Open in editor'
+                      }
+                      setSectionHeights={setSectionHeights}
+                      setSections={setSections}
+                      modifiedEditorsRef={modifiedEditorsRef}
+                      handleSectionSaveRef={handleSectionSaveRef}
                     />
-                  </PopoverContent>
-                </Popover>
-                <DiffNotesSendMenu
-                  worktreeId={file.worktreeId}
-                  groupId={activeGroupId ?? file.worktreeId}
-                  comments={diffCommentsForWorktree}
-                  actionLabel="Send"
-                  triggerClassName="h-6 gap-1 rounded-none border-l border-border/70 px-2 text-[11px] font-medium leading-none text-foreground/80 hover:bg-accent hover:text-foreground"
-                  iconClassName="size-3"
-                />
-              </div>
-            )}
+                  </div>
+                )
+              })}
+            </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            {file.combinedAlternate && (
-              <button
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                onClick={openAlternateDiff}
-              >
-                {file.combinedAlternate.source === 'combined-branch'
-                  ? translate(
-                      'auto.components.editor.CombinedDiffViewer.3d909843bb',
-                      'Open Branch Diff'
-                    )
-                  : translate(
-                      'auto.components.editor.CombinedDiffViewer.982d14bfa5',
-                      'Open All Changes'
-                    )}
-              </button>
-            )}
-            <button
-              className="w-20 text-left text-xs text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setAllSectionsCollapsed(!allSectionsCollapsed)}
-            >
-              {allSectionsCollapsed
-                ? translate('auto.components.editor.CombinedDiffViewer.19c45cfdc0', 'Expand All')
-                : translate('auto.components.editor.CombinedDiffViewer.ea08dae15b', 'Collapse All')}
-            </button>
-            <button
-              className="w-24 px-2 py-0.5 text-center text-xs rounded border border-border text-muted-foreground hover:text-foreground transition-colors"
-              onClick={toggleSideBySide}
-            >
-              {sideBySide
-                ? translate('auto.components.editor.CombinedDiffViewer.f786fd54e1', 'Inline')
-                : translate('auto.components.editor.CombinedDiffViewer.ec5053c7f5', 'Side by Side')}
-            </button>
-            <button
-              className={`inline-flex h-6 items-center gap-1 rounded border border-border px-2 text-xs transition-colors hover:text-foreground ${
-                settings?.diffWordWrap === true
-                  ? 'bg-accent text-foreground'
-                  : 'text-muted-foreground'
-              }`}
-              onClick={toggleDiffWordWrap}
-              aria-pressed={settings?.diffWordWrap === true}
-            >
-              <WrapText className="size-3.5" />
-              {settings?.diffWordWrap === true
-                ? translate('auto.components.editor.CombinedDiffViewer.a4420ca1f7', 'Wrap On')
-                : translate('auto.components.editor.CombinedDiffViewer.dde325ddfe', 'Wrap Off')}
-            </button>
-          </div>
-        </div>
-
-        {commitHeader}
-        <div className="flex min-h-0 flex-1">
-          <CombinedDiffFileTree
-            mode={treeMode}
-            worktreePath={file.filePath}
-            entries={entries}
-            sectionIndexByKey={sectionIndexByKey}
-            activeSectionKey={activeTreeSectionKey}
-            viewedSectionKeys={viewedSectionKeys}
-            collapsed={fileTreeCollapsed}
-            onCollapsedChange={setFileTreeCollapsed}
-            onNavigate={handleTreeNavigate}
-          />
-          <div className="relative min-w-0 flex-1">
+          {scrollThumb.visible && (
             <div
-              ref={setScrollContainerRef}
-              className="combined-diff-scroll-container h-full overflow-auto pr-5 scrollbar-editor"
-              onWheel={markDirectScrollInput}
-              onTouchMove={markDirectScrollInput}
+              aria-hidden="true"
+              className="absolute inset-y-1 right-1 z-20 w-4 cursor-default rounded bg-muted/15 pl-1"
+              onPointerDown={handleCombinedDiffScrollbarPointerDown}
             >
-              {skippedConflictNotice}
-              <div className="relative w-full" style={{ height: `${combinedDiffTotalSize}px` }}>
-                {virtualizer.getVirtualItems().map((virtualItem) => {
-                  const section = sections[virtualItem.index]
-                  if (!section) {
-                    return null
-                  }
-
-                  return (
-                    <div
-                      key={virtualItem.key}
-                      data-index={virtualItem.index}
-                      data-combined-diff-section-row
-                      data-combined-diff-section-key={section.key}
-                      ref={virtualizer.measureElement}
-                      className="absolute left-0 top-0 w-full"
-                      // Why: `top` preserves sticky file headers inside each row;
-                      // transform-based virtualization creates a containing block
-                      // that makes long-section headers feel jumpy while scrolling.
-                      style={{ top: `${virtualItem.start}px` }}
-                    >
-                      <DiffSectionItem
-                        section={section}
-                        index={virtualItem.index}
-                        isBranchMode={isBranchMode}
-                        sideBySide={sideBySide}
-                        isDark={isDark}
-                        settings={settings}
-                        sectionHeight={sectionHeights[virtualItem.index]}
-                        worktreeId={file.worktreeId}
-                        loadSection={loadSection}
-                        retrySection={retrySection}
-                        toggleSection={toggleSection}
-                        openSection={openSection}
-                        openSectionTitle={
-                          isAllMode || isBranchMode || isCommitMode ? 'Open diff' : 'Open in editor'
-                        }
-                        setSectionHeights={setSectionHeights}
-                        setSections={setSections}
-                        modifiedEditorsRef={modifiedEditorsRef}
-                        handleSectionSaveRef={handleSectionSaveRef}
-                        renderHeaderTrailingContent={(section) => {
-                          const fileNotes = diffCommentsForWorktree.filter(
-                            (comment) => comment.filePath === section.path
-                          )
-                          return fileNotes.length > 0 ? (
-                            <DiffNotesSendMenu
-                              worktreeId={file.worktreeId}
-                              groupId={activeGroupId ?? file.worktreeId}
-                              comments={diffCommentsForWorktree}
-                              filePath={section.path}
-                              showFileScope
-                              triggerClassName="p-0.5 can-hover:opacity-0 group-hover:opacity-100"
-                            />
-                          ) : null
-                        }}
-                      />
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-            {scrollThumb.visible && (
               <div
-                aria-hidden="true"
-                className="absolute inset-y-1 right-1 z-20 w-4 cursor-default rounded bg-muted/15 pl-1"
-                onPointerDown={handleCombinedDiffScrollbarPointerDown}
-              >
-                <div
-                  data-combined-diff-scrollbar-thumb
-                  className="absolute left-1 right-0 rounded bg-muted-foreground/30"
-                  style={{ top: scrollThumb.top, height: scrollThumb.height }}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      <Dialog
-        open={clearNotesDialogVisible}
-        onOpenChange={(open) => {
-          if (!open && !isClearingNotes) {
-            setClearNotesDialogOpen(false)
-          } else if (open) {
-            setClearNotesDialogOpen(true)
-          }
-        }}
-      >
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-sm">
-              {translate('auto.components.editor.CombinedDiffViewer.948a5fd6c8', 'Clear Notes')}
-            </DialogTitle>
-            <DialogDescription className="text-xs">
-              {translate('auto.components.editor.CombinedDiffViewer.84898c548d', 'Clear')}
-              {diffCommentCount}{' '}
-              {diffCommentCount === 1
-                ? translate('auto.components.editor.CombinedDiffViewer.8ab3248fd8', 'note')
-                : translate('auto.components.editor.CombinedDiffViewer.0fb870a0fe', 'notes')}{' '}
-              {translate(
-                'auto.components.editor.CombinedDiffViewer.80a286d8f5',
-                'from this worktree?'
-              )}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setClearNotesDialogOpen(false)}
-              disabled={isClearingNotes}
-            >
-              {translate('auto.components.editor.CombinedDiffViewer.0f806a2ab1', 'Cancel')}
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => void handleConfirmClearNotes()}
-              disabled={isClearingNotes || diffCommentCount === 0}
-            >
-              <Trash2 className="size-4" />
-              {translate('auto.components.editor.CombinedDiffViewer.948a5fd6c8', 'Clear Notes')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  )
-}
-
-function DiffNotesPreviewPopover({
-  comments,
-  totalCount,
-  copied,
-  onCopy,
-  onClear
-}: {
-  comments: DiffComment[]
-  totalCount: number
-  copied: boolean
-  onCopy: () => void
-  onClear: () => void
-}): React.JSX.Element {
-  const remainingCount = Math.max(0, totalCount - comments.length)
-
-  return (
-    <div className="text-xs">
-      <div className="flex items-center justify-between gap-2 border-b border-border/60 px-3 py-2">
-        <div className="flex min-w-0 items-center gap-1.5 font-medium text-foreground">
-          <MessageSquare className="size-3.5 shrink-0 text-muted-foreground" />
-          <span>
-            {translate('auto.components.editor.CombinedDiffViewer.bb84b4c374', 'AI notes')}
-          </span>
-          <span className="text-[11px] font-normal tabular-nums text-muted-foreground">
-            {totalCount}
-          </span>
-        </div>
-        <div className="flex shrink-0 items-center gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="xs"
-            className="h-6 text-muted-foreground hover:text-foreground"
-            onClick={onCopy}
-            disabled={totalCount === 0}
-          >
-            {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
-            {translate('auto.components.editor.CombinedDiffViewer.88b70d0ef5', 'Copy')}
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="xs"
-            className="h-6 text-muted-foreground hover:text-destructive"
-            onClick={onClear}
-            disabled={totalCount === 0}
-          >
-            <Trash2 className="size-3" />
-            {translate('auto.components.editor.CombinedDiffViewer.84898c548d', 'Clear')}
-          </Button>
-        </div>
-      </div>
-      <div className="max-h-72 overflow-y-auto p-2 scrollbar-sleek">
-        {comments.map((comment) => (
-          <div key={comment.id} className="rounded-md px-2 py-1.5 hover:bg-accent/50">
-            <div className="flex items-center gap-1.5 text-[11px] leading-none text-muted-foreground">
-              <span className="min-w-0 flex-1 truncate font-mono">{comment.filePath}</span>
-              {comment.sentAt ? (
-                <span className="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] leading-none">
-                  {translate('auto.components.editor.CombinedDiffViewer.1da745c551', 'Sent')}
-                </span>
-              ) : null}
-              <span className="shrink-0 tabular-nums">
-                {getDiffCommentLineLabel(comment, true)}
-              </span>
+                data-combined-diff-scrollbar-thumb
+                className="absolute left-1 right-0 rounded bg-muted-foreground/30"
+                style={{ top: scrollThumb.top, height: scrollThumb.height }}
+              />
             </div>
-            <div className="mt-1 max-h-10 overflow-hidden whitespace-pre-wrap break-words text-[12px] leading-snug text-foreground">
-              {comment.body}
-            </div>
-          </div>
-        ))}
-        {remainingCount > 0 && (
-          <div className="px-2 py-1 text-[11px] text-muted-foreground">
-            {remainingCount}{' '}
-            {translate('auto.components.editor.CombinedDiffViewer.e3b9a6ce02', 'more')}
-            {remainingCount === 1
-              ? translate('auto.components.editor.CombinedDiffViewer.8ab3248fd8', 'note')
-              : translate('auto.components.editor.CombinedDiffViewer.0fb870a0fe', 'notes')}{' '}
-            {translate('auto.components.editor.CombinedDiffViewer.35cc27aeb2', 'in Source Control')}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )

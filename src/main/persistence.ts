@@ -809,7 +809,9 @@ function normalizeRightSidebarTab(tab: unknown): PersistedState['ui']['rightSide
     tab === 'search' ||
     tab === 'vault' ||
     tab === 'workspaces' ||
+    tab === 'pr-checks' ||
     tab === 'source-control' ||
+    tab === 'agent-changes' ||
     tab === 'checks' ||
     tab === 'ports'
   ) {

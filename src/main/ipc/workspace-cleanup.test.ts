@@ -1,13 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ipcMain } from 'electron'
 import type { Store } from '../persistence'
-import type {
-  DiffComment,
-  GitStatusResult,
-  GitWorktreeInfo,
-  Repo,
-  WorktreeMeta
-} from '../../shared/types'
+import type { GitStatusResult, GitWorktreeInfo, Repo, WorktreeMeta } from '../../shared/types'
 import type { WorkspaceCleanupScanProgress } from '../../shared/workspace-cleanup'
 
 const {
@@ -95,7 +89,6 @@ function buildWorktreeIds(repoId: string, count: number): string[] {
 function makeStore(
   options: {
     baseRef?: string
-    diffComments?: DiffComment[]
     lastActivityAt?: number
     linkedIssue?: number | null
     repos?: Repo[]
@@ -108,8 +101,7 @@ function makeStore(
       linkedPR: null,
       linkedIssue: options.linkedIssue ?? null,
       lastActivityAt: options.lastActivityAt ?? NOW - 40 * 24 * 60 * 60 * 1000,
-      baseRef,
-      diffComments: options.diffComments
+      baseRef
     }),
     getAllWorktreeMeta: () => ({}),
     getGitHubCache: () => ({
@@ -510,62 +502,6 @@ describe('workspace cleanup scan', () => {
         clean: true,
         upstreamAhead: null
       }
-    })
-  })
-
-  it('keeps diff notes as context instead of blocking inactive cleanup', async () => {
-    const result = await scanWorkspaceCleanup(
-      makeStore({
-        baseRef: undefined,
-        diffComments: [
-          {
-            id: 'comment-1',
-            worktreeId: 'repo-1::/repo-feature',
-            filePath: 'src/file.ts',
-            lineNumber: 12,
-            body: 'Follow up before deleting',
-            createdAt: NOW - 1_000,
-            side: 'modified'
-          }
-        ]
-      })
-    )
-
-    expect(result.candidates[0]).toMatchObject({
-      tier: 'ready',
-      selectedByDefault: true,
-      reasons: ['idle-clean'],
-      localContext: {
-        diffCommentCount: 1,
-        newestDiffCommentAt: NOW - 1_000
-      }
-    })
-  })
-
-  it('summarizes large diff-note lists without hitting argument limits', async () => {
-    const diffComments = Array.from(
-      { length: 150_000 },
-      (_, index): DiffComment => ({
-        id: `comment-${index}`,
-        worktreeId: 'repo-1::/repo-feature',
-        filePath: 'src/file.ts',
-        lineNumber: 12,
-        body: 'Follow up before deleting',
-        createdAt: NOW - index,
-        side: 'modified'
-      })
-    )
-
-    const result = await scanWorkspaceCleanup(
-      makeStore({
-        baseRef: undefined,
-        diffComments
-      })
-    )
-
-    expect(result.candidates[0]?.localContext).toMatchObject({
-      diffCommentCount: 150_000,
-      newestDiffCommentAt: NOW
     })
   })
 

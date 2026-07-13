@@ -5042,17 +5042,6 @@ describe('registerWorktreeHandlers', () => {
         sortOrder: 7,
         lastActivityAt: 42,
         workspaceStatus: 'blocked',
-        diffComments: [
-          {
-            id: 'comment-1',
-            worktreeId: 'repo-ssh::/remote/feature-wt',
-            filePath: 'src/app.ts',
-            lineNumber: 10,
-            body: 'check this',
-            createdAt: 1,
-            updatedAt: 1
-          }
-        ],
         sparseDirectories: ['packages/web'],
         sparseBaseRef: 'origin/main',
         sparsePresetId: 'preset-1'
@@ -5084,13 +5073,7 @@ describe('registerWorktreeHandlers', () => {
         workspaceStatus: 'blocked',
         sparseDirectories: ['packages/web'],
         sparseBaseRef: 'origin/main',
-        sparsePresetId: 'preset-1',
-        diffComments: [
-          expect.objectContaining({
-            id: 'comment-1',
-            filePath: 'src/app.ts'
-          })
-        ]
+        sparsePresetId: 'preset-1'
       })
     ])
     expect(store.getWorktreeMeta).not.toHaveBeenCalled()

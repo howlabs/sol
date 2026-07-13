@@ -352,7 +352,6 @@ describe('mergeWorktree', () => {
       sortOrder: 5,
       lastActivityAt: 1000,
       workspaceStatus: 'in-review',
-      diffComments: [],
       priorWorktreeIds: ['repo1::/workspaces/old-feature'],
       automationProvenance: {
         kind: 'created-by-automation' as const,
@@ -399,7 +398,6 @@ describe('mergeWorktree', () => {
       sortOrder: 5,
       lastActivityAt: 1000,
       workspaceStatus: 'in-review',
-      diffComments: [],
       priorWorktreeIds: ['repo1::/workspaces/old-feature'],
       automationProvenance: {
         kind: 'created-by-automation',

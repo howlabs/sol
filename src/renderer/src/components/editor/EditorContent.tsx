@@ -46,28 +46,6 @@ const MermaidViewer = lazy(() => import('./MermaidViewer'))
 const CsvViewer = lazy(() => import('./CsvViewer'))
 const IpynbViewer = lazy(() => import('./IpynbViewer'))
 
-export function getMarkdownSourceLineOffset(frontMatterRaw: string): number {
-  let offset = 0
-
-  for (let index = 0; index < frontMatterRaw.length; index++) {
-    const code = frontMatterRaw.charCodeAt(index)
-
-    if (code === 13) {
-      offset++
-      if (frontMatterRaw.charCodeAt(index + 1) === 10) {
-        index++
-      }
-      continue
-    }
-
-    if (code === 10) {
-      offset++
-    }
-  }
-
-  return offset
-}
-
 type FileContent = {
   content: string
   isBinary: boolean
@@ -133,7 +111,6 @@ export function EditorContent({
   showMarkdownTableOfContents = false,
   showMarkdownFrontmatter = false,
   onCloseMarkdownTableOfContents = noopCloseMarkdownTableOfContents,
-  markdownAnnotationsEnabled = true,
   pendingEditorReveal,
   handleContentChange,
   handleContentChangeForFile,
@@ -160,7 +137,6 @@ export function EditorContent({
   showMarkdownTableOfContents?: boolean
   showMarkdownFrontmatter?: boolean
   onCloseMarkdownTableOfContents?: () => void
-  markdownAnnotationsEnabled?: boolean
   pendingEditorReveal: PendingEditorReveal | null
   handleContentChange: (content: string) => void
   handleContentChangeForFile: (file: OpenFile, content: string) => void
@@ -320,7 +296,6 @@ export function EditorContent({
       onContentChange={handleContentChange}
       onSave={isMarkdown ? md.mdSave : handleSave}
       worktreeId={activeFile.worktreeId}
-      markdownAnnotationsEnabled={markdownAnnotationsEnabled && isMarkdown}
       conflictDecorationsEnabled={activeFile.conflict?.conflictStatus === 'unresolved'}
       revealLine={
         matchesPendingEditorReveal(pendingEditorReveal, activeFile)
@@ -413,10 +388,6 @@ export function EditorContent({
                 markdownDocuments={md.markdownDocuments}
                 showTableOfContents={showMarkdownTableOfContents}
                 onCloseTableOfContents={onCloseMarkdownTableOfContents}
-                markdownAnnotationsEnabled={markdownAnnotationsEnabled}
-                markdownAnnotationFilePath={activeFile.relativePath}
-                markdownSourceLineOffset={fm ? getMarkdownSourceLineOffset(fm.raw) : 0}
-                markdownReviewContent={currentContent}
                 // Why: render the front-matter banner below the editor toolbar
                 // (inside the editor shell) so formatting controls remain at
                 // the top of the pane — the banner is read-only context, not
@@ -455,7 +426,6 @@ export function EditorContent({
               scrollCacheKey={`${editorViewStateKey}:preview`}
               showTableOfContents={showMarkdownTableOfContents}
               onCloseTableOfContents={onCloseMarkdownTableOfContents}
-              markdownAnnotationsEnabled={markdownAnnotationsEnabled}
               {...md.previewProps}
             />
           </div>
@@ -562,7 +532,6 @@ export function EditorContent({
             }
             onSave={readOnly ? () => {} : (content) => handleSaveForFile(contentFile, content)}
             worktreeId={contentFile.worktreeId}
-            markdownAnnotationsEnabled={false}
             conflictDecorationsEnabled={contentFile.conflict?.conflictStatus === 'unresolved'}
             readOnly={readOnly}
             autoHeight={autoHeight}
@@ -734,7 +703,6 @@ export function EditorContent({
           initialAnchor={activeFile.markdownPreviewAnchor ?? null}
           showTableOfContents={showMarkdownTableOfContents}
           onCloseTableOfContents={onCloseMarkdownTableOfContents}
-          markdownAnnotationsEnabled={markdownAnnotationsEnabled}
           {...md.previewProps}
         />
       </div>
@@ -937,7 +905,6 @@ export function EditorContent({
             scrollCacheKey={`${diffViewStateKey}:preview`}
             showTableOfContents={showMarkdownTableOfContents}
             onCloseTableOfContents={onCloseMarkdownTableOfContents}
-            markdownAnnotationsEnabled={markdownAnnotationsEnabled}
             {...md.previewProps}
           />
         </div>

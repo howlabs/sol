@@ -272,7 +272,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review this',
       label: 'All unsent notes',
       launchSource: 'notes_send'
@@ -308,7 +308,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review this',
       label: 'All unsent notes',
       launchSource: 'notes_send'
@@ -380,7 +380,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review this',
       label: 'All unsent notes',
       launchSource: 'notes_send',
@@ -412,7 +412,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review this',
       label: 'All unsent notes',
       launchSource: 'notes_send',
@@ -467,7 +467,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review this',
       label: 'All unsent notes',
       launchSource: 'notes_send',
@@ -479,7 +479,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review this again',
       label: 'All unsent notes',
       launchSource: 'notes_send'
@@ -510,7 +510,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review this',
       label: 'All unsent notes',
       launchSource: 'notes_send',
@@ -522,7 +522,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review this again',
       label: 'All unsent notes',
       launchSource: 'notes_send'
@@ -552,7 +552,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review this',
       label: 'This file',
       launchSource: 'notes_send'
@@ -563,7 +563,7 @@ describe('createUISlice agent send target mode', () => {
     store.getState().openAgentSendPopoverTargetMode({
       id: 'send-1',
       worktreeId,
-      source: 'diff-notes',
+      source: 'browser-annotations',
       prompt: 'Review everything',
       label: 'All unsent notes',
       launchSource: 'notes_send'

@@ -50,7 +50,6 @@ type EditorPanelShellProps = {
   onCloseMarkdownTableOfContents: () => void
   onCloseRenameDialog: () => void
   onRenameConfirm: (newRelPath: string) => Promise<void>
-  markdownAnnotationsEnabled: boolean
 }
 
 export function EditorPanelShell({
@@ -89,8 +88,7 @@ export function EditorPanelShell({
   onReloadContent,
   onCloseMarkdownTableOfContents,
   onCloseRenameDialog,
-  onRenameConfirm,
-  markdownAnnotationsEnabled
+  onRenameConfirm
 }: EditorPanelShellProps): JSX.Element {
   return (
     <div ref={panelRef} className="flex flex-col flex-1 min-w-0 min-h-0">
@@ -156,7 +154,6 @@ export function EditorPanelShell({
           showMarkdownTableOfContents={showMarkdownTableOfContents}
           showMarkdownFrontmatter={markdownFrontmatterVisible}
           onCloseMarkdownTableOfContents={onCloseMarkdownTableOfContents}
-          markdownAnnotationsEnabled={markdownAnnotationsEnabled}
         />
       </Suspense>
       <UntitledFileRenameDialog

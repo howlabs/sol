@@ -3,19 +3,9 @@ import { DiffEditor, type DiffOnMount } from '@monaco-editor/react'
 import type { editor } from 'monaco-editor'
 import { useAppStore } from '@/store'
 import { diffViewStateCache, setWithLRU } from '@/lib/scroll-cache'
-import { monaco } from '@/lib/monaco-setup'
 import { computeDiffEditorFontSize } from '@/lib/editor-font-zoom'
 import { useContextualCopySetup } from './useContextualCopySetup'
-import { findWorktreeById } from '@/store/slices/worktree-helpers'
-import { useDiffCommentDecorator } from '../diff-comments/useDiffCommentDecorator'
-import { DiffCommentPopover } from '../diff-comments/DiffCommentPopover'
-import {
-  getDiffCommentPopoverLeft,
-  getDiffCommentPopoverTop
-} from '../diff-comments/diff-comment-popover-position'
 import { applyDiffEditorLineNumberOptions } from './diff-editor-line-number-options'
-import type { DiffComment } from '../../../../shared/types'
-import { isDiffComment } from '@/lib/diff-comment-compat'
 import { installEditorSaveShortcut } from './editor-shortcuts'
 import { diffEditorScrollbarOptions } from './diff-editor-scrollbar-options'
 import { LargeDiffFallback } from './LargeDiffFallback'
@@ -36,11 +26,6 @@ export default function DiffViewer({
   relativePath,
   sideBySide,
   editable,
-  worktreeId,
-  onAddLineComment,
-  commentableLineNumbers,
-  addLineCommentLabel,
-  addLineCommentPlaceholder,
   onContentChange,
   onSave,
   largeDiffRenderLimit,
@@ -48,21 +33,6 @@ export default function DiffViewer({
 }: DiffViewerProps): React.JSX.Element {
   const settings = useAppStore((s) => s.settings)
   const editorFontZoomLevel = useAppStore((s) => s.editorFontZoomLevel)
-  const addDiffComment = useAppStore((s) => s.addDiffComment)
-  const deleteDiffComment = useAppStore((s) => s.deleteDiffComment)
-  const updateDiffComment = useAppStore((s) => s.updateDiffComment)
-  const scrollToDiffCommentId = useAppStore((s) => s.scrollToDiffCommentId)
-  const setScrollToDiffCommentId = useAppStore((s) => s.setScrollToDiffCommentId)
-  // Why: subscribe to the raw comments array on the worktree so selector
-  // identity only changes when diffComments actually changes on this worktree.
-  // Filtering by relativePath happens in a memo below.
-  const allDiffComments = useAppStore((s): DiffComment[] | undefined =>
-    worktreeId ? findWorktreeById(s.worktreesByRepo, worktreeId)?.diffComments : undefined
-  )
-  const diffComments = useMemo(
-    () => (allDiffComments ?? []).filter((c) => c.filePath === relativePath && isDiffComment(c)),
-    [allDiffComments, relativePath]
-  )
   const diffEditorFontSize = computeDiffEditorFontSize(
     settings?.terminalFontSize ?? 13,
     editorFontZoomLevel
@@ -75,100 +45,16 @@ export default function DiffViewer({
   const diffBodyRef = useRef<HTMLDivElement | null>(null)
   const lineNumberOptionsSubRef = useRef<{ dispose: () => void } | null>(null)
   const [modifiedEditor, setModifiedEditor] = useState<editor.ICodeEditor | null>(null)
-  const [popover, setPopover] = useState<{
-    lineNumber: number
-    startLine?: number
-    top: number
-    left?: number
-    lineHeight: number
-  } | null>(null)
 
   const renderLimit = useMemo(
     () => largeDiffRenderLimit ?? getLargeDiffRenderLimit({ originalContent, modifiedContent }),
     [largeDiffRenderLimit, originalContent, modifiedContent]
   )
-  const hasLineCommentAction = Boolean(worktreeId || onAddLineComment)
 
-  // Why: only forward the pending scroll id when this viewer owns the matching
-  // comment (worktree+path). Otherwise unrelated viewers would also try to
-  // scroll and ack the request first, racing the intended viewer.
-  const pendingScrollForThisViewer = useMemo(() => {
-    if (!worktreeId || !scrollToDiffCommentId) {
-      return null
-    }
-    return diffComments.some((c) => c.id === scrollToDiffCommentId) ? scrollToDiffCommentId : null
-  }, [scrollToDiffCommentId, diffComments, worktreeId])
-
-  // Why: gate the decorator on having a comment target. Local diffs persist
-  // notes to worktree metadata; GitHub PR diffs post line comments remotely.
-  // updateDiffComment is only wired for local diffs (worktreeId present).
-  useDiffCommentDecorator({
-    editor: hasLineCommentAction ? modifiedEditor : null,
-    filePath: relativePath,
-    worktreeId: worktreeId ?? '',
-    comments: worktreeId ? diffComments : [],
-    commentableLineNumbers,
-    addButtonLabel: addLineCommentLabel,
-    onAddCommentClick: ({ lineNumber, startLine, top }) =>
-      setPopover({
-        lineNumber,
-        startLine,
-        top,
-        left: modifiedEditor
-          ? (getDiffCommentPopoverLeft(modifiedEditor, diffBodyRef.current) ?? undefined)
-          : undefined,
-        lineHeight: modifiedEditor?.getOption(monaco.editor.EditorOption.lineHeight) ?? 0
-      }),
-    onDeleteComment: (id) => {
-      if (worktreeId) {
-        void deleteDiffComment(worktreeId, id)
-      }
-    },
-    onUpdateComment: worktreeId ? (id, body) => updateDiffComment(worktreeId, id, body) : undefined,
-    pendingScrollCommentId: pendingScrollForThisViewer,
-    onPendingScrollConsumed: () => setScrollToDiffCommentId(null)
-  })
-
-  useEffect(() => {
-    if (!modifiedEditor || !popover) {
-      return
-    }
-    const update = (): void => {
-      const lineHeight = modifiedEditor.getOption(monaco.editor.EditorOption.lineHeight)
-      const top = getDiffCommentPopoverTop(modifiedEditor, popover.lineNumber, lineHeight)
-      if (top == null) {
-        setPopover(null)
-        return
-      }
-      const left = getDiffCommentPopoverLeft(modifiedEditor, diffBodyRef.current)
-      setPopover((prev) =>
-        prev ? { ...prev, top, left: left == null ? prev.left : left, lineHeight } : prev
-      )
-    }
-    const scrollSub = modifiedEditor.onDidScrollChange(update)
-    const contentSub = modifiedEditor.onDidContentSizeChange(update)
-    const layoutSub = modifiedEditor.onDidLayoutChange(update)
-    return () => {
-      scrollSub.dispose()
-      contentSub.dispose()
-      layoutSub.dispose()
-    }
-    // Why: depend on popover.lineNumber (not the whole popover object) so the
-    // effect doesn't re-subscribe on every top update it dispatches.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modifiedEditor, popover?.lineNumber])
-
-  // Why: on a fresh open (no cached view state, no pending scroll-to-note),
-  // center the first diff change in the viewport. We do this from a dedicated
-  // effect — not from handleMount — so it sequences AFTER the comment
-  // decorator inserts its view zones. If we scrolled during handleMount, late
-  // zone insertion would shift content downward and the user would land on a
-  // note further down the file instead of the first change.
-  //
-  // `getTopForLineNumber(line, /* includeViewZones */ true)` accounts for any
-  // zones already in the layout, so the math survives whatever the decorator
-  // added in this render pass. The didScroll guard makes this strictly
-  // one-shot per mount.
+  // Why: on a fresh open (no cached view state), center the first diff change
+  // in the viewport. We do this from a dedicated effect — not from handleMount
+  // — so it runs after Monaco finishes laying out. The didScroll guard makes
+  // this strictly one-shot per mount.
   const didAutoScrollFirstDiffRef = useRef(false)
   const didAutoScrollModelKeyRef = useRef(modelKey)
   useEffect(() => {
@@ -186,15 +72,6 @@ export default function DiffViewer({
       return
     }
     if (diffViewStateCache.get(modelKey)) {
-      return
-    }
-    if (pendingScrollForThisViewer) {
-      // Why: the decorator owns this scroll for this mount, so permanently
-      // yield by setting the one-shot flag. Otherwise, when the decorator
-      // ack's and `pendingScrollForThisViewer` flips back to null, this
-      // effect would re-run with empty cache + un-set flag and overwrite
-      // the comment scroll with a jump to the first diff.
-      didAutoScrollFirstDiffRef.current = true
       return
     }
     let rafId: number | null = null
@@ -237,54 +114,16 @@ export default function DiffViewer({
         cancelAnimationFrame(rafId)
       }
     }
-  }, [modifiedEditor, modelKey, pendingScrollForThisViewer])
+  }, [modifiedEditor, modelKey])
 
   const handleEnterLargeDiffFallback = useCallback(() => {
     // Why: when a tab transitions to the safety fallback, stale Monaco refs
-    // must not keep comment decorators or save handlers talking to disposed UI.
+    // must not keep save handlers talking to disposed UI.
     lineNumberOptionsSubRef.current?.dispose()
     lineNumberOptionsSubRef.current = null
     diffEditorRef.current = null
     setModifiedEditor(null)
-    setPopover(null)
   }, [])
-
-  const handleSubmitComment = async (body: string): Promise<void> => {
-    if (!popover) {
-      return
-    }
-    if (onAddLineComment) {
-      const ok = await onAddLineComment({
-        lineNumber: popover.lineNumber,
-        startLine: popover.startLine,
-        body
-      })
-      if (ok) {
-        setPopover(null)
-      }
-      return
-    }
-    if (!worktreeId) {
-      return
-    }
-    // Why: await persistence before closing — if addDiffComment resolves null
-    // (store rolled back after IPC failure), keep the popover open so the user
-    // can retry instead of silently losing their draft.
-    const result = await addDiffComment({
-      worktreeId,
-      filePath: relativePath,
-      source: 'diff',
-      startLine: popover.startLine,
-      lineNumber: popover.lineNumber,
-      body,
-      side: 'modified'
-    })
-    if (result) {
-      setPopover(null)
-    } else {
-      console.error('Failed to add diff comment — draft preserved')
-    }
-  }
 
   // Keep refs to latest callbacks so the mounted editor always calls current versions
   const onSaveRef = useRef(onSave)
@@ -324,10 +163,6 @@ export default function DiffViewer({
       if (savedViewState) {
         requestAnimationFrame(() => diffEditor.restoreViewState(savedViewState))
       }
-      // Auto-scroll to first diff is handled in a separate useEffect below so
-      // it can sequence after the comment-decorator inserts its view zones —
-      // otherwise late zones shift content downward and the user lands away
-      // from the first change (e.g. on a note further down the file).
 
       if (editable) {
         const cleanupSaveShortcut = installEditorSaveShortcut(
@@ -353,14 +188,13 @@ export default function DiffViewer({
         diffEditor.focus()
       }
 
-      // Why: clear modifiedEditor on dispose so decorator effects (scroll-to-note,
-      // popover position) don't invoke methods on a disposed Monaco editor.
+      // Why: clear modifiedEditor on dispose so effects don't invoke methods
+      // on a disposed Monaco editor.
       diffEditor.onDidDispose(() => {
         lineNumberOptionsSubRef.current?.dispose()
         lineNumberOptionsSubRef.current = null
         diffEditorRef.current = null
         setModifiedEditor(null)
-        setPopover(null)
       })
     },
     [editable, setupCopy, modelKey, filePath, sideBySide]
@@ -397,21 +231,6 @@ export default function DiffViewer({
   return (
     <div className="flex flex-col flex-1 min-h-0">
       <div ref={diffBodyRef} className="flex-1 min-h-0 relative">
-        {popover && hasLineCommentAction && !renderLimit.limited && (
-          <DiffCommentPopover
-            key={popover.lineNumber}
-            lineNumber={popover.lineNumber}
-            startLine={popover.startLine}
-            top={popover.top}
-            left={popover.left}
-            lineHeight={popover.lineHeight}
-            placeholder={addLineCommentPlaceholder}
-            submitLabel={addLineCommentLabel}
-            submittingLabel="Posting…"
-            onCancel={() => setPopover(null)}
-            onSubmit={handleSubmitComment}
-          />
-        )}
         {renderLimit.limited ? (
           <LargeDiffFallback
             filePath={relativePath}

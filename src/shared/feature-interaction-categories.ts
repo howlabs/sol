@@ -55,7 +55,6 @@ export const FEATURE_INTERACTION_CATEGORY_BY_ID = {
   ports: 'resource_management',
   'quick-commands': 'launcher',
   'resource-manager': 'resource_management',
-  'review-notes': 'review',
   ssh: 'setup',
   'terminal-pane-split': 'terminal',
   'terminal-panes': 'terminal',

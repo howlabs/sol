@@ -178,7 +178,6 @@ export const WORKTREE_METHODS: RpcMethod[] = [
         baseRef: params.baseRef,
         workspaceStatus: params.workspaceStatus,
         pushTarget: params.pushTarget,
-        diffComments: params.diffComments,
         mobileDiffReview: params.mobileDiffReview,
         lineage:
           params.parentWorktree || params.noParent === true

@@ -28,7 +28,8 @@
         "minimaxToggleDescription": "显示当前工作区的 MiniMax 订阅使用情况。",
         "sshToggleDescription": "当有可用的 SSH 和远程 Sol 主机时显示它们。",
         "resourceUsageToggleDescription": "显示资源管理器。点击可查看 CPU、内存、会话、守护进程控制和工作区磁盘扫描。",
-        "portsToggleDescription": "显示实时工作区端口。单击它可获取工作区范围的端口和外部侦听器。"
+        "portsToggleDescription": "显示实时工作区端口。单击它可获取工作区范围的端口和外部侦听器。",
+        "grokToggleDescription": "Show Grok subscription credit usage when signed in via Grok CLI."
       }
     }
   },
@@ -978,7 +979,8 @@
         "0d0ace8861": "在 GitHub 上加星标",
         "ec43b38ba7": "已在 GitHub 上加星标",
         "157bb5ecbb": "打开 GitHub",
-        "preflightDismiss": "关闭"
+        "preflightDismiss": "关闭",
+        "shortcutsLabel": "Shortcuts"
       },
       "LinearIssueMarkdownDescriptionEditor": {
         "d9c47069ef": "Markdown",
@@ -2915,7 +2917,9 @@
             "f077f586db": "不再询问",
             "c0e972d726": "取消",
             "06741a2f3d": "打开 MiniMax 使用量详情",
-            "3bbf140864": "MiniMax 使用量"
+            "3bbf140864": "MiniMax 使用量",
+            "grokUsageAria": "Open Grok usage details",
+            "grokUsageMenu": "Grok Usage"
           },
           "StatusBarUsageEmptyCta": {
             "828c764a79": "连接账户",
@@ -3263,7 +3267,11 @@
           "b2cf4310ce": "概览",
           "908c470587": "codex",
           "eb6a066185": "claude",
-          "eee19cfade": "概览"
+          "eee19cfade": "概览",
+          "grokTab": "Grok",
+          "orcaActivityTitle": "Orca activity",
+          "orcaActivityDescription": "Agents spawned, time worked, and pull requests created in this Orca install.",
+          "usageAnalyticsDescription": "Combined overview or per-provider token logs from local agent sessions."
         },
         "UsageOverviewPane": {
           "22ed1b7669": "会话",
@@ -3315,7 +3323,9 @@
             "0e2a0b6431": "用法",
             "372debfac0": "统计数据",
             "26bb901fcd": "Sol 统计数据以及 Claude、Codex 和 OpenCode 的综合使用分析、Token、缓存、模型和会话。",
-            "cb2430ae6a": "统计和使用情况"
+            "cb2430ae6a": "统计和使用情况",
+            "a1b2c3d4e5": "grok",
+            "b2c3d4e5f6": "xai"
           }
         },
         "usage": {
@@ -3365,6 +3375,17 @@
           "faf3444859": "输入",
           "a8b7487ff7": "输出",
           "cfe2282ffa": "未知"
+        },
+        "GrokUsagePane": {
+          "g8h9i0j1k2": "Grok usage",
+          "b2d3e4f5c6": "Weekly subscription credits from Grok CLI OAuth (~/.grok/auth.json). Same source as the status bar.",
+          "c3e4f5a6b7": "Set up in Accounts",
+          "h9i0j1k2l3": " • {{value0}}",
+          "i0j1k2l3m4": "Refresh Grok usage",
+          "d4f5a6b7c8": "Refresh",
+          "e5a6b7c8d9": "Weekly credits used",
+          "f6b7c8d9e0": "Billing period reset",
+          "a7b8c9d0e1": "Grok account settings"
         }
       },
       "sparse": {
@@ -3517,7 +3538,8 @@
           "d301db1c9a": "扫描存储库。单击停止。",
           "69ea7f8dc4": "停止扫描",
           "9906cae183": "停止扫描",
-          "87596c1446": "其他添加方式"
+          "87596c1446": "其他添加方式",
+          "addAnother": "Open another project on this machine or host."
         },
         "AddRepoStepIndicator": {
           "3bb655c117": "返回"
@@ -4075,7 +4097,8 @@
                   "sshCreateUnavailable": "SSH 主机暂不可用",
                   "sshBrowseTitle": "在 SSH 主机上打开项目",
                   "sshBrowseDescription": "此 SSH 主机上的现有 Git 仓库或文件夹",
-                  "runtimeBrowseDescription": "此主机上的现有 Git 仓库或文件夹"
+                  "runtimeBrowseDescription": "此主机上的现有 Git 仓库或文件夹",
+                  "browseLocalShort": "Open a local Git repo or project folder"
                 }
               }
             }
@@ -4560,7 +4583,12 @@
           "435df0ee51": "在请求头中，复制 Cookie 的值。",
           "7492fb3bba": "在此粘贴并点击保存。",
           "9fec52de4b": "如何复制 Cookie",
-          "4e32e030b2": "存储在本地。Sol 仅将其发送到 platform.minimax.io 以刷新使用量。"
+          "4e32e030b2": "存储在本地。Sol 仅将其发送到 platform.minimax.io 以刷新使用量。",
+          "minimaxSettingsSaved": "MiniMax settings saved.",
+          "editCredentials": "Edit",
+          "configureCredentials": "Set up",
+          "opencodeSaved": "OpenCode Go settings saved.",
+          "minimaxCookieLeaveBlank": "Leave blank to keep current cookie"
         },
         "AdvancedPane": {
           "40b29e0bf3": "重新启动",
@@ -4643,7 +4671,14 @@
           "3f1bdf3cb4": "环境文本过长，无法安全解析。",
           "codexSessionSource": "Codex home to import from",
           "codexSessionSourceInfo": "About importing Codex history",
-          "codexSessionSourceTooltip": "Sol runs Codex in an isolated home. Point this at your existing Codex home to import that session history. Empty uses ~/.codex."
+          "codexSessionSourceTooltip": "Sol runs Codex in an isolated home. Point this at your existing Codex home to import that session history. Empty uses ~/.codex.",
+          "catalogTitle": "On this machine",
+          "catalogDescriptionShort": "Turn agents on or off. Use + to set command, args, or environment.",
+          "morePreferences": "Session preferences",
+          "morePreferencesDescription": "Runtime, hooks, tab titles, keep-alive, and cache timer.",
+          "hidePreferences": "Hide session preferences",
+          "showPreferences": "Show session preferences",
+          "agentPermissionsDescriptionShort": "Yolo reduces prompts. Manual keeps checks. Per-agent launch args still win."
         },
         "AppIconSelector": {
           "d5a112dc9b": "下一个图标",
@@ -4899,7 +4934,14 @@
           "14444243ba": "从路径中删除`{{value0}}`？",
           "5d432fe44d": "已安装",
           "8a9b784c60": "陈旧",
-          "d363e5929b": "正在检查 CLI 注册..."
+          "d363e5929b": "正在检查 CLI 注册...",
+          "revealFinder": "Show in Finder",
+          "revealExplorer": "Show in Explorer",
+          "revealFileManager": "Show in File Manager",
+          "installDarwin": "Register `orca` in /usr/local/bin.",
+          "installLinux": "Register `orca-ide` in ~/.local/bin.",
+          "installWin32": "Register `orca` in your user PATH.",
+          "installUnsupported": "CLI registration is not yet available on this platform."
         },
         "CliSkillRuntimeSetup": {
           "04325573f8": "WSL",
@@ -5243,7 +5285,9 @@
           "compareAgainstUpstreamTitle": "默认对比基准",
           "compareAgainstUpstreamDescription": "选择源代码管理在比较已提交变更时默认使用的基准。分支上游会自动跟随当前分支；如果没有上游，则回退到仓库默认分支。你仍然可以在对应 worktree 的 Git 面板中按 worktree 更改对比基准。Pull Request 和变基目标不会改变。",
           "compareBaseRepositoryDefault": "仓库默认",
-          "compareBaseBranchUpstream": "分支上游"
+          "compareBaseBranchUpstream": "分支上游",
+          "apiBudgetSubsectionTitle": "API budgets",
+          "apiBudgetSubsectionDescription": "Live rate-limit headers from your GitHub and GitLab CLIs."
         },
         "HiddenExperimentalGroup": {
           "d0f914a528": "占位符切换",
@@ -5330,7 +5374,11 @@
           "3ba07f933b": "连接 Sol 可用于浏览任务并启动带链接上下文工作区的议题追踪器。",
           "70e885705b": "任务提供商",
           "1683acbac4": "连接 Sol 可用于 pull request、merge request、检查和评审状态的源代码主机。",
-          "298c65ecac": "评审提供商"
+          "298c65ecac": "评审提供商",
+          "codeHosts": "Code hosts",
+          "codeHostsDescription": "CLI or token auth for pull requests and checks.",
+          "issueTrackers": "Issue trackers",
+          "issueTrackersDescription": "Link work items from Linear and Jira."
         },
         "KagiSessionLinkForm": {
           "92f0b4e472": "清除",
@@ -5481,7 +5529,9 @@
           "274af61bc0": "系统",
           "6e6df3a09a": "选择自定义文件",
           "76e02467b8": "更改自定义文件",
-          "d3756cf5bc": "已禁用"
+          "d3756cf5bc": "已禁用",
+          "testDescription": "Preview the current sound and system notification delivery.",
+          "testAction": "Send test"
         },
         "OpenAiTranscriptionKeyDialog": {
           "fa83512e48": "保存密钥",
@@ -6274,7 +6324,13 @@
           "dd67a1b6e1": "在任务源选择器和侧边栏快捷键中显示 GitLab。",
           "7c5d7fdc20": "GitLab",
           "1db47236cd": "在任务源选择器和侧边栏快捷键中显示 GitHub。",
-          "e14063e727": "GitHub"
+          "e14063e727": "GitHub",
+          "githubDescriptionShort": "Issues and pull requests in Tasks and sidebar shortcuts.",
+          "gitlabDescriptionShort": "Issues and merge requests in Tasks and sidebar shortcuts.",
+          "linearDescriptionShort": "Linear issues in Tasks and sidebar shortcuts.",
+          "jiraDescriptionShort": "Jira issues in Tasks and sidebar shortcuts.",
+          "intro": "Turn providers on for the Tasks page and sidebar. Keep at least one on.",
+          "lastProviderHint": "At least one provider must stay on."
         },
         "TerminalAppearanceSection": {
           "a14a427ae4": "窗格分隔线的厚度。",
@@ -6617,7 +6673,9 @@
             "b84a5b0c8a": "选择是否在此设备上或 WSL 中检查和添加提供商账户。",
             "d09fb5ca92": "账户位置",
             "733f9e2a93": "MiniMax 使用量",
-            "f8374c3151": "粘贴 platform.minimax.io 会话 Cookie 以在本地获取速率限制。"
+            "f8374c3151": "粘贴 platform.minimax.io 会话 Cookie 以在本地获取速率限制。",
+            "a1b2c3d4e5": "Grok Usage",
+            "b2c3d4e5f6": "Weekly credit usage from Grok CLI OAuth (~/.grok/auth.json)."
           }
         },
         "advanced": {
@@ -6831,7 +6889,9 @@
               "detailed": "详细"
             },
             "9a115966d3": "关闭时最小化到托盘",
-            "4d5b9427b5": "启用后，关闭窗口会让 Sol 继续在系统托盘中运行，而不是退出。"
+            "4d5b9427b5": "启用后，关闭窗口会让 Sol 继续在系统托盘中运行，而不是退出。",
+            "f8e2a1c4b6": "Grok Usage",
+            "e7d1b0f3a5": "Show Grok weekly credit usage from Grok CLI OAuth."
           }
         },
         "auto": {
@@ -8179,7 +8239,11 @@
                   "6f30fc4216": "此运行时暂不支持 GitHub CLI 状态。",
                   "6b2cfb52b4": "gh",
                   "b4d900e7f1": "通过",
-                  "account_scope_prefix": "账户范围"
+                  "account_scope_prefix": "账户范围",
+                  "statusConnected": "Connected",
+                  "statusUnavailable": "Unavailable",
+                  "statusCliMissing": "CLI missing",
+                  "statusSignInRequired": "Sign in required"
                 }
               }
             }
@@ -8209,7 +8273,11 @@
                 "fe9231215b": "在显示设置操作前正在检查 Linear 访问权限。",
                 "e1f5e6424c": "{{value0}} 个工作区{{value1}} 已连接",
                 "disconnect_all": "断开连接",
-                "account_scope_prefix": "账户范围"
+                "account_scope_prefix": "账户范围",
+                "linearKeyHintShort": "One API key per workspace on the active runtime.",
+                "linearAccessHintShort": "Paste a Linear Personal API key from Linear → Settings → API.",
+                "statusConnected": "Connected",
+                "statusNotConnected": "Not connected"
               }
             }
           }
@@ -8250,7 +8318,13 @@
                   "63a7f47392": "ORCA_BITBUCKET_EMAIL",
                   "24ac1c69dc": "此运行时暂不支持 Bitbucket 状态。",
                   "a924e8dcd1": "通过 Bitbucket Cloud API token 获取 pull request 和构建状态。",
-                  "0fa5629dad": "pull request 和构建状态"
+                  "0fa5629dad": "pull request 和构建状态",
+                  "statusConnected": "Connected",
+                  "statusConfigured": "Configured",
+                  "statusUnavailable": "Unavailable",
+                  "statusNotConfigured": "Not configured",
+                  "statusOptionalSetup": "Optional setup",
+                  "statusAuthFailed": "Auth failed"
                 }
               }
             }
@@ -8511,6 +8585,21 @@
           "reviewFirst": "Review first",
           "singular": "Global saves won't change 1 repository with its own recipe.",
           "tooltipTitle": "Repository overrides"
+        },
+        "GrokAccountsSection": {
+          "a1b2c3d4e5": "Grok (xAI)",
+          "f6e5d4c3b2": "Shows weekly credit usage from your Grok CLI sign-in (session file ~/.grok/auth.json).",
+          "0d8e77bc40": "Grok CLI docs",
+          "ad47a33f72": "Loading…",
+          "b2c3d4e5f6": "Signed in",
+          "c3d4e5f6a7": "Signed in. Sol only reads that file on disk — run grok login again if usage fails.",
+          "d4e5f6a7b8": "Session expired — run grok login in a terminal to refresh.",
+          "e5f6a7b8c9": "Not signed in to Grok CLI",
+          "f6a7b8c9d0": "In a terminal, run grok login, then click Refresh usage here.",
+          "3325d996cb": "Refresh usage",
+          "a8f3e2c1b4": "Weekly credits",
+          "b7e2d9f0a3": "Same weekly credit % as the grok /usage screen in the terminal.",
+          "c6d1a8f4e2": "Resets {{when}}"
         }
       },
       "right": {
@@ -9211,7 +9300,8 @@
             "fc3095d2ed": "资源管理器",
             "aiVaultSessionHistory": "Agents",
             "folderWorkspaces": "已附加的工作树",
-            "parentPrChecks": "PR 检查"
+            "parentPrChecks": "PR 检查",
+            "agentChanges": "Changes"
           },
           "right": {
             "panel": {
@@ -11704,7 +11794,9 @@
           "a21f6c33ad": "自动化来源已刷新。",
           "53f06f0ad5": "重试来源",
           "pendingAutomationMissing": "自动化已不可用。",
-          "pendingAutomationRunMissing": "运行历史已不可用。"
+          "pendingAutomationRunMissing": "运行历史已不可用。",
+          "refreshLabel": "Refresh",
+          "emptyListHint": "Pick a template or create a blank automation."
         },
         "CreateFromPicker": {
           "f061f49e3f": "搜索 repo 分支...",
@@ -11831,6 +11923,39 @@
         "AgentSettingsDialog": {
           "50cdb57c03": "管理 AI agents、设置默认值并自定义命令。",
           "fc0268e4ed": "Agents"
+        },
+        "changes": {
+          "openIdeFailed": "Could not open file in external editor.",
+          "discardTitle": "Discard file changes?",
+          "discardDescription": "This restores or removes “{path}” in the worktree. This cannot be undone from Sol.",
+          "discardConfirm": "Discard",
+          "discardDone": "Discarded {path}",
+          "discardFailed": "Could not discard changes.",
+          "askAgentSent": "Sent to active agent",
+          "askAgentClipboard": "Copied review prompt to clipboard (no active agent ready).",
+          "title": "Changes",
+          "summary": "{files} files · +{additions} −{deletions}",
+          "summaryIdle": "Worktree local changes",
+          "refresh": "Refresh",
+          "noWorktree": "Select a worktree to review changes.",
+          "retry": "Retry",
+          "loading": "Loading changes…",
+          "empty": "No local changes",
+          "openIde": "Open in IDE",
+          "discard": "Discard",
+          "askAgent": "Ask agent",
+          "fileList": {
+            "binary": "bin"
+          },
+          "hunkList": {
+            "selectFile": "Select a file to review",
+            "binaryFile": "Binary file",
+            "binaryHint": "Text diff is unavailable. Open in your external editor to inspect.",
+            "tooLarge": "Diff too large",
+            "tooLargeHint": "Open in your external editor for the full review.",
+            "loading": "Loading diff…",
+            "noChanges": "No textual changes to display"
+          }
         }
       },
       "activity": {

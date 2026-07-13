@@ -11,8 +11,6 @@ import {
   resolveMarkdownLinkTarget
 } from './markdown-internal-links'
 import { scrollToAnchorInEditor } from './markdown-anchor-scroll'
-import { getRichMarkdownCommentAtPos } from './rich-markdown-review-annotations'
-import type { DiffComment } from '../../../../shared/types'
 import { translate } from '@/i18n/i18n'
 
 export type ActivateMarkdownLink = (
@@ -33,13 +31,10 @@ type RichMarkdownEditorClickRoutingOptions = {
   event: MouseEvent
   filePath: string
   isMac: boolean
-  markdownCommentsRef: MutableRefObject<DiffComment[]>
-  markdownSourceLineOffsetRef: MutableRefObject<number>
   onOpenDocLinkRef: MutableRefObject<((target: string) => void) | undefined>
   pos: number
   rootRef: MutableRefObject<HTMLDivElement | null>
   runtimeEnvironmentId?: string | null
-  scrollRichMarkdownReviewNoteCardIntoView: (commentId: string) => void
   settings: RichMarkdownRuntimeSettings
   view: EditorView
   worktreeId: string
@@ -52,13 +47,10 @@ export function handleRichMarkdownEditorClick({
   event,
   filePath,
   isMac,
-  markdownCommentsRef,
-  markdownSourceLineOffsetRef,
   onOpenDocLinkRef,
   pos,
   rootRef,
   runtimeEnvironmentId,
-  scrollRichMarkdownReviewNoteCardIntoView,
   settings,
   view,
   worktreeId,
@@ -70,15 +62,6 @@ export function handleRichMarkdownEditorClick({
     return false
   }
   if (!modKey) {
-    const selectedComment = getRichMarkdownCommentAtPos(
-      editor,
-      markdownCommentsRef.current,
-      markdownSourceLineOffsetRef.current,
-      pos
-    )
-    if (selectedComment) {
-      scrollRichMarkdownReviewNoteCardIntoView(selectedComment.id)
-    }
     return false
   }
   const clickedNode = view.state.doc.nodeAt(pos)

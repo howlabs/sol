@@ -149,8 +149,7 @@ function createSettings(overrides: Partial<GlobalSettings> = {}): GlobalSettings
     leftSidebarAppearanceMode: overrides.leftSidebarAppearanceMode ?? 'default',
     appFontFamily,
     agentStatusHooksEnabled,
-    tabAutoGenerateTitle,
-    markdownReviewToolsEnabled: overrides.markdownReviewToolsEnabled ?? true
+    tabAutoGenerateTitle
   }
 }
 

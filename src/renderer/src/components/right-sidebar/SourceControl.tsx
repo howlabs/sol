@@ -15,18 +15,14 @@ import {
   Square,
   Undo2,
   Check,
-  Copy,
   Folder,
   FolderOpen,
   GitFork,
   GitMerge,
   GitPullRequestArrow,
-  MessageSquare,
   Trash,
-  Trash2,
   TriangleAlert,
   CircleCheck,
-  MoreHorizontal,
   type LucideIcon
 } from '@/lib/icons'
 import { useAppStore } from '@/store'
@@ -134,21 +130,11 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
 import { BaseRefPicker } from '@/components/settings/BaseRefPicker'
 import { useConfirmationDialog } from '@/components/confirmation-dialog'
-import { formatDiffComment, formatDiffComments } from '@/lib/diff-comments-format'
-import { getDiffCommentLineLabel, getDiffCommentSource } from '@/lib/diff-comment-compat'
-import { DiffNotesSendMenu } from '@/components/editor/DiffNotesSendMenu'
-import {
-  countPendingDiffCommentsClear,
-  formatPendingDiffCommentsClearDescription,
-  resolvePendingDiffCommentsClear,
-  type PendingDiffCommentsClear
-} from './diff-comments-clear-dialog-state'
 import {
   pickSourceControlLaunchAgent,
   readSourceControlLaunchRecipeAgentId
@@ -189,7 +175,6 @@ import { useGitHistoryCommitActions } from './useGitHistoryCommitActions'
 import { normalizeHostedReviewHeadRef } from '../../../../shared/hosted-review-refs'
 import { shouldForcePushWithLeaseForUpstream } from '../../../../shared/git-upstream-status'
 import type {
-  DiffComment,
   GitBranchChangeEntry,
   GitBranchCompareSummary,
   GitConflictOperation,
@@ -552,72 +537,11 @@ function createDefaultCollapsedSections(): Set<string> {
   return new Set(DEFAULT_COLLAPSED_SECTIONS)
 }
 
-function useCopyFeedbackState<T>(resetValue: T): [T, (value: T) => void] {
-  const [value, setValue] = useState(resetValue)
-  const resetTimerRef = useRef<number | null>(null)
-  const mountedRef = useRef(true)
-
-  const clearResetTimer = useCallback(() => {
-    if (resetTimerRef.current !== null) {
-      window.clearTimeout(resetTimerRef.current)
-      resetTimerRef.current = null
-    }
-  }, [])
-
-  // Why: copy feedback timers are event-owned, but still need unmount cleanup
-  // so delayed clipboard/timer work cannot update a destroyed component.
-  useEffect(() => {
-    mountedRef.current = true
-    return () => {
-      mountedRef.current = false
-      clearResetTimer()
-    }
-  }, [clearResetTimer])
-
-  const showFeedback = useCallback(
-    (nextValue: T) => {
-      if (!mountedRef.current) {
-        return
-      }
-      clearResetTimer()
-      setValue(nextValue)
-      resetTimerRef.current = window.setTimeout(() => {
-        if (!mountedRef.current) {
-          return
-        }
-        setValue(resetValue)
-        resetTimerRef.current = null
-      }, 1500)
-    },
-    [clearResetTimer, resetValue]
-  )
-
-  return [value, showFeedback]
-}
-
 function cancelSourceControlEditorRevealFrames(frameIds: React.MutableRefObject<number[]>): void {
   for (const frameId of frameIds.current) {
     cancelAnimationFrame(frameId)
   }
   frameIds.current = []
-}
-
-function requestSourceControlEditorRevealFrame(
-  frameIds: React.MutableRefObject<number[]>,
-  callback: FrameRequestCallback
-): void {
-  let completed = false
-  let frameId: number | undefined
-  frameId = requestAnimationFrame((timestamp) => {
-    completed = true
-    if (frameId !== undefined) {
-      frameIds.current = frameIds.current.filter((pendingFrameId) => pendingFrameId !== frameId)
-    }
-    callback(timestamp)
-  })
-  if (!completed) {
-    frameIds.current.push(frameId)
-  }
 }
 
 // Why: the pure state-machine logic now lives in
@@ -884,8 +808,6 @@ function SourceControlInner(): React.JSX.Element {
   const openDiff = useAppStore((s) => s.openDiff)
   const openFile = useAppStore((s) => s.openFile)
   const setEditorViewMode = useAppStore((s) => s.setEditorViewMode)
-  const setMarkdownViewMode = useAppStore((s) => s.setMarkdownViewMode)
-  const setPendingEditorReveal = useAppStore((s) => s.setPendingEditorReveal)
   const openConflictFile = useAppStore((s) => s.openConflictFile)
   const openConflictReview = useAppStore((s) => s.openConflictReview)
   const openBranchDiff = useAppStore((s) => s.openBranchDiff)
@@ -894,38 +816,8 @@ function SourceControlInner(): React.JSX.Element {
   const activeGroupIdByWorktree = useAppStore((s) => s.activeGroupIdByWorktree)
   const openAllDiffs = useAppStore((s) => s.openAllDiffs)
   const openBranchAllDiffs = useAppStore((s) => s.openBranchAllDiffs)
-  const deleteDiffComment = useAppStore((s) => s.deleteDiffComment)
-  const clearDiffComments = useAppStore((s) => s.clearDiffComments)
-  const clearDiffCommentsForFile = useAppStore((s) => s.clearDiffCommentsForFile)
-  const setScrollToDiffCommentId = useAppStore((s) => s.setScrollToDiffCommentId)
   const setRightSidebarOpen = useAppStore((s) => s.setRightSidebarOpen)
   const setRightSidebarTab = useAppStore((s) => s.setRightSidebarTab)
-  // Why: pass activeWorktreeId directly (even when null/undefined) so the
-  // slice's getDiffComments returns its stable EMPTY_COMMENTS sentinel. An
-  // inline `[]` fallback would allocate a new array each store update, break
-  // Zustand's Object.is equality, and cause this component plus the
-  // diffCommentCountByPath memo to churn on every unrelated store change.
-  const diffCommentsForActive = useAppStore((s) => s.getDiffComments(activeWorktreeId))
-  const diffCommentCount = diffCommentsForActive.length
-  // Why: per-file counts are fed into each UncommittedEntryRow so a comment
-  // badge can appear next to the status letter. Compute once per render so
-  // rows don't each re-filter the full list.
-  const diffCommentCountByPath = useMemo(() => {
-    const map = new Map<string, number>()
-    for (const c of diffCommentsForActive) {
-      map.set(c.filePath, (map.get(c.filePath) ?? 0) + 1)
-    }
-    return map
-  }, [diffCommentsForActive])
-  const diffCommentsPrompt = useMemo(
-    () => formatDiffComments(diffCommentsForActive),
-    [diffCommentsForActive]
-  )
-  const [diffCommentsExpanded, setDiffCommentsExpanded] = useState(false)
-  const [diffCommentsCopied, showDiffCommentsCopied] = useCopyFeedbackState(false)
-  const [pendingDiffCommentsClear, setPendingDiffCommentsClear] =
-    useState<PendingDiffCommentsClear | null>(null)
-  const [isClearingDiffComments, setIsClearingDiffComments] = useState(false)
   const setSourceControlRoot = useCallback((node: HTMLDivElement | null) => {
     // Why: markdown-note reveal frames target the Source Control surface; cancel
     // them when that surface unmounts instead of from a passive Effect.
@@ -934,81 +826,6 @@ function SourceControlInner(): React.JSX.Element {
     }
     sourceControlRef.current = node
   }, [])
-
-  const handleCopyDiffComments = useCallback(async (): Promise<void> => {
-    if (diffCommentsForActive.length === 0) {
-      return
-    }
-    try {
-      await window.api.ui.writeClipboardText(diffCommentsPrompt)
-      showDiffCommentsCopied(true)
-    } catch {
-      // Why: swallow — clipboard write can fail when the window isn't focused.
-      // No dedicated error surface is warranted for a best-effort copy action.
-    }
-  }, [diffCommentsForActive, diffCommentsPrompt, showDiffCommentsCopied])
-
-  const pendingDiffCommentsClearCount = useMemo(() => {
-    return countPendingDiffCommentsClear(
-      pendingDiffCommentsClear,
-      activeWorktreeId,
-      diffCommentsForActive
-    )
-  }, [activeWorktreeId, diffCommentsForActive, pendingDiffCommentsClear])
-
-  const resolvedPendingDiffCommentsClear = resolvePendingDiffCommentsClear({
-    activeWorktreeId,
-    isClearing: isClearingDiffComments,
-    pending: pendingDiffCommentsClear,
-    pendingCount: pendingDiffCommentsClearCount
-  })
-  if (resolvedPendingDiffCommentsClear !== pendingDiffCommentsClear) {
-    // Why: the confirmation is purely local UI state; clear impossible
-    // confirmations before children observe a stale open dialog.
-    setPendingDiffCommentsClear(resolvedPendingDiffCommentsClear)
-  }
-
-  const pendingDiffCommentsClearDescription = formatPendingDiffCommentsClearDescription(
-    resolvedPendingDiffCommentsClear,
-    pendingDiffCommentsClearCount
-  )
-
-  const handleConfirmDiffCommentsClear = useCallback(async (): Promise<void> => {
-    const pending = resolvedPendingDiffCommentsClear
-    if (!pending || isClearingDiffComments || pending.worktreeId !== activeWorktreeId) {
-      return
-    }
-    if (pendingDiffCommentsClearCount === 0) {
-      setPendingDiffCommentsClear(null)
-      return
-    }
-    setIsClearingDiffComments(true)
-    try {
-      const ok =
-        pending.kind === 'all'
-          ? await clearDiffComments(pending.worktreeId)
-          : await clearDiffCommentsForFile(pending.worktreeId, pending.filePath)
-      if (ok) {
-        setPendingDiffCommentsClear(null)
-      } else {
-        toast.error(
-          translate(
-            'auto.components.right.sidebar.SourceControl.eae7a1da5f',
-            'Failed to clear notes.'
-          )
-        )
-      }
-    } finally {
-      setIsClearingDiffComments(false)
-    }
-  }, [
-    activeWorktreeId,
-    clearDiffComments,
-    clearDiffCommentsForFile,
-    isClearingDiffComments,
-    resolvedPendingDiffCommentsClear,
-    pendingDiffCommentsClearCount
-  ])
 
   const [filterExpanded, setFilterExpanded] = useState(false)
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
@@ -2050,8 +1867,6 @@ function SourceControlInner(): React.JSX.Element {
     setCollapsedTreeDirs(new Set())
     setBaseRefDialogOpen(false)
     setPendingDiscard(null)
-    setPendingDiffCommentsClear(null)
-    setIsClearingDiffComments(false)
     // Why: do NOT reset defaultBaseRef here. It is repo-scoped, not
     // worktree-scoped, and is resolved by the effect above on activeRepo
     // change. Resetting it to a hard-coded 'origin/main' on every worktree
@@ -5111,111 +4926,6 @@ function SourceControlInner(): React.JSX.Element {
       resolveSplitTargetGroupId
     })
 
-  // Why: a note's filePath is the same relative path used by GitStatusEntry /
-  // GitBranchChangeEntry, so we can route the click to whichever diff surface
-  // currently owns that file. Prefer the `unstaged` entry when a path is also
-  // staged — diff comments are authored against the working-tree (unstaged)
-  // diff card. Fall back to the branch compare, and finally just open the
-  // file as a normal editor tab so the user still gets navigation when
-  // neither side has the path anymore. When `commentId` is supplied and the
-  // route lands on a diff surface, also stamp scrollToDiffCommentId so the
-  // diff decorator scrolls that note into view; we clear any prior request
-  // first, so the editor-tab fallback then leaves the global null and a
-  // future DiffViewer mount can't accidentally consume a stale id.
-  const handleOpenComment = useCallback(
-    (comment: DiffComment) => {
-      if (!activeWorktreeId || !worktreePath) {
-        return
-      }
-      const filePath = comment.filePath
-      const commentId = comment.id
-      // Defensively clear any dangling prior scroll request before routing
-      // this click; only the diff branches below will re-stamp it.
-      cancelSourceControlEditorRevealFrames(pendingCommentEditorRevealFrameIdsRef)
-      setScrollToDiffCommentId(null)
-      if (getDiffCommentSource(comment) === 'markdown') {
-        const absPath = joinPath(worktreePath, filePath)
-        const language = detectLanguage(filePath)
-        setEditorViewMode(absPath, 'edit')
-        setMarkdownViewMode(absPath, 'source')
-        openFile({
-          filePath: absPath,
-          relativePath: filePath,
-          worktreeId: activeWorktreeId,
-          language,
-          mode: 'edit'
-        })
-        setPendingEditorReveal(null)
-        requestSourceControlEditorRevealFrame(pendingCommentEditorRevealFrameIdsRef, () => {
-          requestSourceControlEditorRevealFrame(pendingCommentEditorRevealFrameIdsRef, () => {
-            setPendingEditorReveal({
-              filePath: absPath,
-              line: comment.lineNumber,
-              column: 1,
-              matchLength: 0
-            })
-            setScrollToDiffCommentId(commentId)
-          })
-        })
-        return
-      }
-      const matches = entries.filter((e) => e.path === filePath)
-      const uncommitted =
-        matches.find((e) => e.area === 'unstaged') ??
-        matches.find((e) => e.area === 'untracked') ??
-        matches[0]
-      if (uncommitted) {
-        handleOpenDiff(uncommitted)
-        if (commentId) {
-          setScrollToDiffCommentId(commentId)
-        }
-        return
-      }
-      const branchEntry = branchEntries.find((e) => e.path === filePath)
-      if (branchEntry && branchSummary?.status === 'ready') {
-        openCommittedDiff(branchEntry)
-        if (commentId) {
-          setScrollToDiffCommentId(commentId)
-        }
-        return
-      }
-      // Why: fall through to a normal editor tab when neither the working-tree
-      // nor branch-compare diff has the file (e.g. the change has since been
-      // committed and merged, but the note still references the file). Force
-      // the editor tab into 'changes' mode and stamp scrollToDiffCommentId so
-      // the DiffViewer that EditorContent renders in changes mode picks up
-      // the scroll request — same surface the user can flip into manually
-      // via the editor's Edit/Changes toggle.
-      const absPath = joinPath(worktreePath, filePath)
-      const language = detectLanguage(filePath)
-      openFile({
-        filePath: absPath,
-        relativePath: filePath,
-        worktreeId: activeWorktreeId,
-        language,
-        mode: 'edit'
-      })
-      if (commentId) {
-        setEditorViewMode(absPath, 'changes')
-        setScrollToDiffCommentId(commentId)
-      }
-    },
-    [
-      activeWorktreeId,
-      branchEntries,
-      branchSummary,
-      entries,
-      handleOpenDiff,
-      openCommittedDiff,
-      openFile,
-      setEditorViewMode,
-      setScrollToDiffCommentId,
-      setMarkdownViewMode,
-      setPendingEditorReveal,
-      worktreePath
-    ]
-  )
-
   const handleStage = useCallback(
     async (filePath: string) => {
       if (!worktreePath) {
@@ -5550,8 +5260,6 @@ function SourceControlInner(): React.JSX.Element {
           onChangeBaseRef={() => setBaseRefDialogOpen(true)}
           onRefreshBranchCompare={() => void refreshBranchCompare()}
           branchCompareRefreshDisabled={!branchSummary || branchSummary.status === 'loading'}
-          diffCommentCount={diffCommentCount}
-          onExpandNotes={() => setDiffCommentsExpanded(true)}
           branchSummary={branchSummary}
           compareBaseRef={compareBaseRef}
           upstreamStatus={remoteStatus}
@@ -5561,149 +5269,6 @@ function SourceControlInner(): React.JSX.Element {
         {detachedHeadDisplay && (
           <div className="border-b border-border px-3 py-2">
             <DetachedHeadBadge display={detachedHeadDisplay} side="bottom" />
-          </div>
-        )}
-
-        {/* Why: Diff-comments live on the worktree and apply across every diff
-            view the user opens. The header row expands inline to show per-file
-            comment previews plus a Copy-all action so the user can hand the
-            set off to whichever tool they want without leaving the sidebar.
-            Hidden when count is 0: notes are created from the diff view, so
-            an empty Notes shelf in the sidebar is pure chrome — it adds a
-            border, a row of space, and an expand control that only reveals
-            a redirect hint. */}
-        {activeWorktreeId && worktreePath && diffCommentCount > 0 && (
-          <div className="border-b border-border">
-            <div className="flex items-center gap-1 pl-3 pr-2 py-1.5">
-              <button
-                type="button"
-                className="flex min-w-0 flex-1 items-center gap-1.5 text-left text-xs text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setDiffCommentsExpanded((prev) => !prev)}
-                aria-expanded={diffCommentsExpanded}
-                title={
-                  diffCommentsExpanded
-                    ? translate(
-                        'auto.components.right.sidebar.SourceControl.d13edef890',
-                        'Collapse notes'
-                      )
-                    : translate(
-                        'auto.components.right.sidebar.SourceControl.72f2bea3f4',
-                        'Expand notes'
-                      )
-                }
-              >
-                <ChevronDown
-                  className={cn(
-                    'size-3 shrink-0 transition-transform',
-                    !diffCommentsExpanded && '-rotate-90'
-                  )}
-                />
-                <MessageSquare className="size-3.5 shrink-0" />
-                <span>
-                  {translate('auto.components.right.sidebar.SourceControl.cc474e0b8c', 'Notes')}
-                </span>
-                {diffCommentCount > 0 && (
-                  <span className="text-[11px] leading-none text-muted-foreground tabular-nums">
-                    {diffCommentCount}
-                  </span>
-                )}
-              </button>
-              <div className="ml-1 flex shrink-0 items-center gap-1.5">
-                <DiffNotesSendMenu
-                  worktreeId={activeWorktreeId}
-                  groupId={activeGroupId ?? activeWorktreeId}
-                  comments={diffCommentsForActive}
-                  triggerClassName="size-6"
-                />
-                {diffCommentCount > 0 && (
-                  <TooltipProvider delayDuration={400}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          type="button"
-                          className="inline-flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                          onClick={() => void handleCopyDiffComments()}
-                          aria-label={translate(
-                            'auto.components.right.sidebar.SourceControl.3baf6c77b4',
-                            'Copy all notes to clipboard'
-                          )}
-                        >
-                          {diffCommentsCopied ? (
-                            <Check className="size-3.5" />
-                          ) : (
-                            <Copy className="size-3.5" />
-                          )}
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" sideOffset={6}>
-                        {translate(
-                          'auto.components.right.sidebar.SourceControl.eae2d051af',
-                          'Copy all notes'
-                        )}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-                <DropdownMenu>
-                  <TooltipProvider delayDuration={400}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            type="button"
-                            className="inline-flex size-6 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                            aria-label={translate(
-                              'auto.components.right.sidebar.SourceControl.2fe2a67580',
-                              'More note actions'
-                            )}
-                          >
-                            <MoreHorizontal className="size-3.5" />
-                          </button>
-                        </DropdownMenuTrigger>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" sideOffset={6}>
-                        {translate(
-                          'auto.components.right.sidebar.SourceControl.2fe2a67580',
-                          'More note actions'
-                        )}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <DropdownMenuContent align="end" className="min-w-[180px]">
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      disabled={diffCommentCount === 0}
-                      onSelect={() => {
-                        if (!activeWorktreeId || diffCommentCount === 0) {
-                          return
-                        }
-                        setPendingDiffCommentsClear({ kind: 'all', worktreeId: activeWorktreeId })
-                      }}
-                    >
-                      <Trash2 className="size-3.5" />
-                      {translate(
-                        'auto.components.right.sidebar.SourceControl.1406954883',
-                        'Clear all notes...'
-                      )}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-            {diffCommentsExpanded && (
-              <DiffCommentsInlineList
-                comments={diffCommentsForActive}
-                onDelete={(id) => void deleteDiffComment(activeWorktreeId, id)}
-                onOpen={(comment) => handleOpenComment(comment)}
-                onClearFile={(filePath) =>
-                  setPendingDiffCommentsClear({
-                    kind: 'file',
-                    worktreeId: activeWorktreeId,
-                    filePath
-                  })
-                }
-              />
-            )}
           </div>
         )}
 
@@ -6102,7 +5667,6 @@ function SourceControlInner(): React.JSX.Element {
                                 onStage={handleStage}
                                 onUnstage={handleUnstage}
                                 onDiscard={requestDiscardEntry}
-                                commentCount={diffCommentCountByPath.get(node.entry.path) ?? 0}
                                 showPathHint={false}
                                 submoduleExpansion={submoduleExpansion}
                               />
@@ -6147,7 +5711,6 @@ function SourceControlInner(): React.JSX.Element {
                                 onStage={handleStage}
                                 onUnstage={handleUnstage}
                                 onDiscard={requestDiscardEntry}
-                                commentCount={diffCommentCountByPath.get(entry.path) ?? 0}
                                 submoduleExpansion={submoduleExpansion}
                               />
                             )
@@ -6224,7 +5787,6 @@ function SourceControlInner(): React.JSX.Element {
                           onRevealInExplorer={revealInExplorer}
                           connectionId={activeConnectionId}
                           onOpen={(event) => openCommittedDiff(node.entry, event)}
-                          commentCount={diffCommentCountByPath.get(node.entry.path) ?? 0}
                           showPathHint={false}
                         />
                       )
@@ -6238,7 +5800,6 @@ function SourceControlInner(): React.JSX.Element {
                         onRevealInExplorer={revealInExplorer}
                         connectionId={activeConnectionId}
                         onOpen={(event) => openCommittedDiff(entry, event)}
-                        commentCount={diffCommentCountByPath.get(entry.path) ?? 0}
                       />
                     )))}
             </div>
@@ -6275,45 +5836,6 @@ function SourceControlInner(): React.JSX.Element {
           />
         )}
       </div>
-
-      <Dialog
-        open={resolvedPendingDiffCommentsClear !== null}
-        onOpenChange={(open) => {
-          if (!open && !isClearingDiffComments) {
-            setPendingDiffCommentsClear(null)
-          }
-        }}
-      >
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-sm">
-              {translate('auto.components.right.sidebar.SourceControl.574d2f4413', 'Clear Notes')}
-            </DialogTitle>
-            <DialogDescription className="text-xs">
-              {pendingDiffCommentsClearDescription}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setPendingDiffCommentsClear(null)}
-              disabled={isClearingDiffComments}
-            >
-              {translate('auto.components.right.sidebar.SourceControl.05bb8f4a48', 'Cancel')}
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => void handleConfirmDiffCommentsClear()}
-              disabled={isClearingDiffComments || pendingDiffCommentsClearCount === 0}
-            >
-              <Trash2 className="size-4" />
-              {translate('auto.components.right.sidebar.SourceControl.574d2f4413', 'Clear Notes')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <SourceControlDiscardDialog
         pendingDiscard={pendingDiscard}
@@ -7259,24 +6781,6 @@ function SectionHeader({
   )
 }
 
-function getLocalizedDiffCommentLineLabel(
-  comment: Pick<DiffComment, 'lineNumber' | 'startLine'>
-): string {
-  if (comment.startLine !== undefined && comment.startLine !== comment.lineNumber) {
-    return translate(
-      'auto.components.right.sidebar.SourceControl.d97ef8f221',
-      'lines {{value0}}-{{value1}}',
-      {
-        value0: comment.startLine,
-        value1: comment.lineNumber
-      }
-    )
-  }
-  return translate('auto.components.right.sidebar.SourceControl.6f8bfa0eb9', 'line {{value0}}', {
-    value0: comment.lineNumber
-  })
-}
-
 function getLocalizedConflictKindLabel(kind: NonNullable<GitStatusEntry['conflictKind']>): string {
   switch (kind) {
     case 'both_modified':
@@ -7294,185 +6798,6 @@ function getLocalizedConflictKindLabel(kind: NonNullable<GitStatusEntry['conflic
     case 'both_deleted':
       return translate('auto.components.right.sidebar.SourceControl.5b176fa431', 'both deleted')
   }
-}
-
-function DiffCommentsInlineList({
-  comments,
-  onDelete,
-  onClearFile,
-  onOpen
-}: {
-  comments: DiffComment[]
-  onDelete: (commentId: string) => void
-  onClearFile: (filePath: string) => void
-  // Why: clicking the note row navigates the user to that file's diff (or
-  // editor as a fallback) and, when a `commentId` is supplied, scrolls the
-  // diff to that specific note via the scrollToDiffCommentId UI slice.
-  onOpen: (comment: DiffComment) => void
-}): React.JSX.Element {
-  // Why: group by filePath so the inline list mirrors the structure in the
-  // Notes tab — a compact section per file with line-number prefixes.
-  const groups = useMemo(() => {
-    const map = new Map<string, DiffComment[]>()
-    for (const c of comments) {
-      const list = map.get(c.filePath) ?? []
-      list.push(c)
-      map.set(c.filePath, list)
-    }
-    for (const list of map.values()) {
-      list.sort((a, b) => a.lineNumber - b.lineNumber)
-    }
-    return Array.from(map.entries())
-  }, [comments])
-
-  const [copiedId, showCopiedId] = useCopyFeedbackState<string | null>(null)
-
-  const handleCopyOne = useCallback(
-    async (c: DiffComment): Promise<void> => {
-      try {
-        await window.api.ui.writeClipboardText(formatDiffComment(c))
-        showCopiedId(c.id)
-      } catch {
-        // Why: swallow — clipboard write can fail when the window isn't focused.
-      }
-    },
-    [showCopiedId]
-  )
-
-  if (comments.length === 0) {
-    return (
-      <div className="px-6 py-2 text-[11px] text-muted-foreground">
-        {translate(
-          'auto.components.right.sidebar.SourceControl.ac8cbe3bf5',
-          'Hover over a line in the diff view and click the + to add a note.'
-        )}
-      </div>
-    )
-  }
-
-  return (
-    <div className="bg-muted/20">
-      {groups.map(([filePath, list]) => (
-        <div key={filePath} className="px-3 py-1.5">
-          <div className="group/file flex items-center gap-1">
-            <button
-              type="button"
-              className="block min-w-0 flex-1 truncate text-left text-[10px] font-medium text-muted-foreground hover:text-foreground"
-              onClick={() => {
-                const first = list[0]
-                if (first) {
-                  onOpen(first)
-                }
-              }}
-              title={translate(
-                'auto.components.right.sidebar.SourceControl.0d963bf982',
-                'Open {{value0}}',
-                { value0: filePath }
-              )}
-            >
-              {filePath}
-            </button>
-            <button
-              type="button"
-              className="shrink-0 rounded p-0.5 text-muted-foreground can-hover:opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 group-hover/file:opacity-100"
-              onClick={() => onClearFile(filePath)}
-              title={translate(
-                'auto.components.right.sidebar.SourceControl.59654650d3',
-                'Clear notes for {{value0}}',
-                { value0: filePath }
-              )}
-              aria-label={translate(
-                'auto.components.right.sidebar.SourceControl.59654650d3',
-                'Clear notes for {{value0}}',
-                { value0: filePath }
-              )}
-            >
-              <Trash2 className="size-3" />
-            </button>
-          </div>
-          <ul className="mt-1 space-y-1">
-            {list.map((c) => (
-              <li
-                key={c.id}
-                className="group flex items-center gap-1.5 rounded px-1 py-0.5 hover:bg-accent/40"
-              >
-                <button
-                  type="button"
-                  // Why: a single inner button is the click/keyboard target so
-                  // the row's action buttons (copy/delete) can stay as
-                  // siblings without nesting interactive elements — that
-                  // pattern violates ARIA's no-interactive-descendants rule
-                  // for buttons and lets bubbled key events from the children
-                  // fire the row's open handler.
-                  className="flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 rounded text-left"
-                  onClick={() => onOpen(c)}
-                  title={translate(
-                    'auto.components.right.sidebar.SourceControl.0b5b8c234c',
-                    'Open {{value0}} ({{value1}})',
-                    { value0: c.filePath, value1: getLocalizedDiffCommentLineLabel(c) }
-                  )}
-                  aria-label={translate(
-                    'auto.components.right.sidebar.SourceControl.3eb9b2805e',
-                    'Open note on {{value0}}',
-                    { value0: getLocalizedDiffCommentLineLabel(c) }
-                  )}
-                >
-                  <span className="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] leading-none tabular-nums text-muted-foreground">
-                    {getDiffCommentLineLabel(c, true)}
-                  </span>
-                  <span className="shrink-0 rounded bg-muted/70 px-1 py-0.5 text-[10px] leading-none text-muted-foreground">
-                    {getDiffCommentSource(c) === 'markdown'
-                      ? translate('auto.components.right.sidebar.SourceControl.94c42b252e', 'MD')
-                      : translate('auto.components.right.sidebar.SourceControl.c56ba7fa06', 'Diff')}
-                  </span>
-                  {c.sentAt ? (
-                    <span className="shrink-0 rounded bg-muted/70 px-1 py-0.5 text-[10px] leading-none text-muted-foreground">
-                      {translate('auto.components.right.sidebar.SourceControl.655633c08a', 'Sent')}
-                    </span>
-                  ) : null}
-                  <span className="block min-w-0 flex-1 whitespace-pre-wrap break-words text-[11px] leading-snug text-foreground">
-                    {c.body}
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  className="shrink-0 rounded p-0.5 text-muted-foreground can-hover:opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100 group-hover:opacity-100"
-                  onClick={() => void handleCopyOne(c)}
-                  title={translate(
-                    'auto.components.right.sidebar.SourceControl.1623bf4e19',
-                    'Copy note'
-                  )}
-                  aria-label={translate(
-                    'auto.components.right.sidebar.SourceControl.c085946bda',
-                    'Copy note on line {{value0}}',
-                    { value0: c.lineNumber }
-                  )}
-                >
-                  {copiedId === c.id ? <Check className="size-3" /> : <Copy className="size-3" />}
-                </button>
-                <button
-                  type="button"
-                  className="shrink-0 rounded p-0.5 text-muted-foreground can-hover:opacity-0 transition-opacity hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
-                  onClick={() => onDelete(c.id)}
-                  title={translate(
-                    'auto.components.right.sidebar.SourceControl.b656381c18',
-                    'Delete note'
-                  )}
-                  aria-label={translate(
-                    'auto.components.right.sidebar.SourceControl.c321542ee2',
-                    'Delete note on line {{value0}}',
-                    { value0: c.lineNumber }
-                  )}
-                >
-                  <Trash className="size-3" />
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
-  )
 }
 
 export function ConflictSummaryCard({
@@ -7862,7 +7187,6 @@ const UncommittedEntryRow = React.memo(function UncommittedEntryRow({
   onStage,
   onUnstage,
   onDiscard,
-  commentCount,
   showPathHint = true,
   submoduleExpansion
 }: {
@@ -7881,7 +7205,6 @@ const UncommittedEntryRow = React.memo(function UncommittedEntryRow({
   onStage: (filePath: string) => Promise<void>
   onUnstage: (filePath: string) => Promise<void>
   onDiscard: (entry: GitStatusEntry) => void
-  commentCount: number
   showPathHint?: boolean
   // When set, the row is a dirty submodule: clicking toggles lazy expansion of
   // its inner changes instead of opening a (uninformative) gitlink diff.
@@ -8006,22 +7329,6 @@ const UncommittedEntryRow = React.memo(function UncommittedEntryRow({
             </div>
           )}
         </div>
-        {commentCount > 0 && (
-          // Why: show a small note marker on any row that has diff notes
-          // so the user can tell at a glance which files have review notes
-          // attached, without opening the Notes tab.
-          <span
-            className="flex shrink-0 items-center gap-0.5 text-[10px] text-muted-foreground"
-            title={translate(
-              'auto.components.right.sidebar.SourceControl.657e0c90ad',
-              '{{value0}} note{{value1}}',
-              { value0: commentCount, value1: commentCount === 1 ? '' : 's' }
-            )}
-          >
-            <MessageSquare className="size-3" />
-            <span className="tabular-nums">{commentCount}</span>
-          </span>
-        )}
         {entry.conflictStatus ? (
           <ConflictBadge entry={entry} />
         ) : (
@@ -8151,7 +7458,6 @@ function BranchEntryRow({
   onRevealInExplorer,
   connectionId,
   onOpen,
-  commentCount,
   showPathHint = true
 }: {
   entry: GitBranchChangeEntry
@@ -8161,7 +7467,6 @@ function BranchEntryRow({
   onRevealInExplorer: (worktreeId: string, absolutePath: string) => void
   connectionId?: string | null
   onOpen: (event?: SourceControlRowOpenEvent) => void
-  commentCount: number
   showPathHint?: boolean
 }): React.JSX.Element {
   const FileIcon = getFileTypeIcon(entry.path)
@@ -8198,19 +7503,6 @@ function BranchEntryRow({
             <span className="ml-1.5 text-[11px] text-muted-foreground">{dirPath}</span>
           )}
         </span>
-        {commentCount > 0 && (
-          <span
-            className="flex shrink-0 items-center gap-0.5 text-[10px] text-muted-foreground"
-            title={translate(
-              'auto.components.right.sidebar.SourceControl.657e0c90ad',
-              '{{value0}} note{{value1}}',
-              { value0: commentCount, value1: commentCount === 1 ? '' : 's' }
-            )}
-          >
-            <MessageSquare className="size-3" />
-            <span className="tabular-nums">{commentCount}</span>
-          </span>
-        )}
         <DiffLineCounts added={entry.added} removed={entry.removed} />
         <span
           className="w-4 shrink-0 text-center text-[10px] font-bold"

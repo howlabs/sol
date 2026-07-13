@@ -56,7 +56,7 @@ export function NotesSendMenu<TNote>({
   modeIdParts,
   scopes,
   defaultScopeId,
-  source = 'diff-notes',
+  source = 'browser-annotations',
   targetModeLabel,
   triggerClassName,
   triggerLabel,

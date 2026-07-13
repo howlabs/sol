@@ -73,7 +73,6 @@ import { cn } from '@/lib/utils'
 import { setWithLRU } from '@/lib/scroll-cache'
 import { isScreenSubmitShortcut } from '@/lib/screen-submit-shortcut'
 import { DiffSectionItem } from '@/components/editor/DiffSectionItem'
-import type { DecoratedDiffComment } from '@/components/diff-comments/useDiffCommentDecorator'
 import {
   CombinedDiffFileTree,
   createCombinedDiffSectionIndexMap,
@@ -1871,61 +1870,6 @@ function addIssueCommentForRepo(args: {
   })
 }
 
-function addPRReviewCommentForRepo(args: {
-  repoId?: string
-  repoPath: string
-  sourceContext?: TaskSourceContext | null
-  prNumber: number
-  commitId: string
-  path: string
-  line: number
-  startLine?: number
-  body: string
-}): Promise<Awaited<ReturnType<typeof window.api.gh.addPRReviewComment>>> {
-  const runtimeHost = getGitHubSourceRuntimeHost(args.sourceContext)
-  if (runtimeHost) {
-    return callRuntimeRpc<Awaited<ReturnType<typeof window.api.gh.addPRReviewComment>>>(
-      { kind: 'environment', environmentId: runtimeHost.environmentId },
-      'github.addPRReviewComment',
-      {
-        repo: getGitHubRuntimeRepoId(args.sourceContext, args.repoId),
-        prNumber: args.prNumber,
-        commitId: args.commitId,
-        path: args.path,
-        line: args.line,
-        startLine: args.startLine,
-        body: args.body
-      },
-      { timeoutMs: 30_000 }
-    ).then((result) => {
-      if (result.ok) {
-        notifyWorkItemDetailsMutation(
-          {
-            repoPath: args.repoPath,
-            repoId: args.repoId,
-            sourceContext: args.sourceContext,
-            type: 'pr',
-            number: args.prNumber
-          },
-          { local: false }
-        )
-      }
-      return result
-    })
-  }
-  return window.api.gh.addPRReviewComment({
-    repoPath: args.repoPath,
-    repoId: args.repoId,
-    sourceContext: args.sourceContext,
-    prNumber: args.prNumber,
-    commitId: args.commitId,
-    path: args.path,
-    line: args.line,
-    startLine: args.startLine,
-    body: args.body
-  })
-}
-
 function addPRReviewCommentReplyForRepo(args: {
   repoId?: string
   repoPath: string
@@ -2214,7 +2158,6 @@ function getPRFileDiffResult(contents: GitHubPRFileContents): GitDiffResult {
 
 type PRFilesCombinedDiffViewerProps = {
   files: GitHubPRFile[]
-  comments: PRComment[]
   repoPath: string
   repoId: string
   sourceContext?: TaskSourceContext | null
@@ -2223,13 +2166,11 @@ type PRFilesCombinedDiffViewerProps = {
   headSha: string | undefined
   baseSha: string | undefined
   pendingViewedPaths: ReadonlySet<string>
-  onCommentAdded: (comment: PRComment) => void
   onViewedChange: (path: string, viewed: boolean) => Promise<boolean>
 }
 
 function PRFilesCombinedDiffViewer({
   files,
-  comments,
   repoPath,
   repoId,
   sourceContext,
@@ -2238,7 +2179,6 @@ function PRFilesCombinedDiffViewer({
   headSha,
   baseSha,
   pendingViewedPaths,
-  onCommentAdded,
   onViewedChange
 }: PRFilesCombinedDiffViewerProps): React.JSX.Element {
   const settings = useAppStore((s) => s.settings)
@@ -2275,37 +2215,6 @@ function PRFilesCombinedDiffViewer({
     return nextEntries
   }, [diffEntrySignature, files])
   const fileByPath = useMemo(() => new Map(files.map((file) => [file.path, file])), [files])
-  const inlineReviewComments = useMemo<DecoratedDiffComment[]>(
-    () =>
-      comments.flatMap((comment): DecoratedDiffComment[] => {
-        // Why: stale threads keep originalLine for the sidebar, but rendering
-        // that number inline can attach the comment to unrelated current code.
-        if (comment.isOutdated || !comment.path || typeof comment.line !== 'number') {
-          return []
-        }
-        const createdAtMs = new Date(comment.createdAt).getTime()
-        return [
-          {
-            id: `github-pr-comment:${comment.id}`,
-            worktreeId: `github-pr:${repoId}:${prNumber}`,
-            filePath: comment.path,
-            source: 'diff',
-            startLine: comment.startLine,
-            lineNumber: comment.line,
-            body: comment.body,
-            createdAt: Number.isFinite(createdAtMs) ? createdAtMs : Date.now(),
-            side: 'modified',
-            author: comment.author,
-            authorAvatarUrl: comment.authorAvatarUrl,
-            createdAtLabel: formatRelativeTime(comment.createdAt),
-            url: comment.url,
-            canDelete: false,
-            canEdit: false
-          }
-        ]
-      }),
-    [comments, prNumber, repoId]
-  )
   const entrySignature = useMemo(
     () =>
       JSON.stringify({
@@ -2690,55 +2599,6 @@ function PRFilesCombinedDiffViewer({
     void window.api.shell.openUrl(`${prUrl.replace(/\/$/, '')}/files`)
   }, [prUrl])
 
-  const handleAddLineComment = useCallback(
-    async (
-      section: DiffSection,
-      {
-        lineNumber,
-        startLine,
-        body
-      }: {
-        lineNumber: number
-        startLine?: number
-        body: string
-      }
-    ) => {
-      if (!headSha) {
-        toast.error(
-          translate(
-            'auto.components.PullRequestPage.d8c3ba91c4',
-            'Unable to comment without the PR head SHA.'
-          )
-        )
-        return false
-      }
-      const result = await addPRReviewCommentForRepo({
-        repoPath,
-        repoId,
-        sourceContext,
-        prNumber,
-        commitId: headSha,
-        path: section.path,
-        line: lineNumber,
-        startLine,
-        body
-      })
-      if (!result.ok) {
-        toast.error(
-          result.error ||
-            translate('auto.components.PullRequestPage.19628e058d', 'Failed to add review comment.')
-        )
-        return false
-      }
-      onCommentAdded(result.comment)
-      toast.success(
-        translate('auto.components.PullRequestPage.eff839f438', 'Review comment added.')
-      )
-      return true
-    },
-    [headSha, onCommentAdded, prNumber, repoId, repoPath, sourceContext]
-  )
-
   const renderViewedCheckbox = useCallback(
     (section: DiffSection) => {
       const file = fileByPath.get(section.path)
@@ -2850,19 +2710,12 @@ function PRFilesCombinedDiffViewer({
                     settings={settings}
                     sectionHeight={sectionHeights[virtualItem.index]}
                     worktreeId={`github-pr:${repoId}:${prNumber}`}
-                    inlineComments={inlineReviewComments}
                     loadSection={loadSection}
                     retrySection={retrySection}
                     toggleSection={toggleSection}
                     openSection={openFilesOnGitHub}
                     openSectionTitle="Open files on GitHub"
                     renderHeaderTrailingContent={renderViewedCheckbox}
-                    onAddLineComment={handleAddLineComment}
-                    addLineCommentLabel="Comment"
-                    addLineCommentPlaceholder="Add a review comment"
-                    getCommentableLineNumbers={(section) =>
-                      fileByPath.get(section.path)?.reviewCommentLineNumbers
-                    }
                     setSectionHeights={setSectionHeights}
                     setSections={setSections}
                     modifiedEditorsRef={modifiedEditorsRef}
@@ -7326,7 +7179,6 @@ export default function PullRequestPage({
                 ) : (
                   <PRFilesCombinedDiffViewer
                     files={files}
-                    comments={comments}
                     repoPath={repoPath ?? ''}
                     repoId={effectiveRepoId ?? ''}
                     sourceContext={sourceContext}
@@ -7335,7 +7187,6 @@ export default function PullRequestPage({
                     headSha={details?.headSha}
                     baseSha={details?.baseSha}
                     pendingViewedPaths={pendingViewedPaths}
-                    onCommentAdded={appendOptimisticComment}
                     onViewedChange={handlePRFileViewedChange}
                   />
                 )}

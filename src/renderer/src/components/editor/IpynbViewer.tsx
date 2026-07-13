@@ -12,7 +12,6 @@ import React, {
   useState,
   type MutableRefObject
 } from 'react'
-import Editor, { type OnMount } from '@monaco-editor/react'
 import DOMPurify from 'dompurify'
 import Markdown from 'react-markdown'
 import rehypeRaw from 'rehype-raw'
@@ -31,7 +30,6 @@ import {
   Save,
   Trash2
 } from '@/lib/icons'
-import { monaco } from '@/lib/monaco-setup'
 import { computeEditorFontSize } from '@/lib/editor-font-zoom'
 import { getConnectionId } from '@/lib/connection-context'
 import { resolveDocumentTheme } from '@/lib/document-theme'
@@ -51,9 +49,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { ShortcutKeyCombo } from '@/components/ShortcutKeyCombo'
 import { useShortcutKeyDetails, type ShortcutKeyComboDetails } from '@/hooks/useShortcutLabel'
 import { registerPendingEditorFlush } from './editor-pending-flush'
-import { editorShortcutMatches, installEditorSaveShortcut } from './editor-shortcuts'
+import { editorShortcutMatches } from './editor-shortcuts'
 import { getIpynbCodeCellEditorHeight, getIpynbCodeCellPreviewLines } from './ipynb-code-cell-lines'
 import MonacoCodeExcerpt from './MonacoCodeExcerpt'
+import { NotebookCodeEditor } from './NotebookCodeEditor'
 import {
   deleteIpynbCell,
   insertIpynbCell,
@@ -333,39 +332,14 @@ function CodeCell({
   const editorFontZoomLevel = useAppStore((s) => s.editorFontZoomLevel)
   const onDeactivateRef = useRef(onDeactivate)
   const onSaveRequestRef = useRef(onSaveRequest)
-  // Why: Monaco commands/listeners are installed once on mount and need the
-  // latest callbacks without rebuilding the embedded editor.
+  // Why: CodeMirror callbacks are installed once on mount; refs keep the
+  // latest closures without rebuilding the editor.
   onDeactivateRef.current = onDeactivate
   onSaveRequestRef.current = onSaveRequest
   const fontSize = computeEditorFontSize(settings?.terminalFontSize ?? 13, editorFontZoomLevel)
   const editorHeight = getIpynbCodeCellEditorHeight(source, fontSize)
   const isDark = resolveDocumentTheme(settings?.theme ?? 'system')
   const lines = useMemo(() => getIpynbCodeCellPreviewLines(source), [source])
-  const handleMount: OnMount = useCallback((editorInstance, monacoInstance) => {
-    editorInstance.focus()
-    const cleanupSaveShortcut = installEditorSaveShortcut(
-      editorInstance.getContainerDomNode(),
-      () => {
-        void onSaveRequestRef.current()
-      }
-    )
-    const blurSub = editorInstance.onDidBlurEditorWidget(() => {
-      onDeactivateRef.current()
-    })
-    editorInstance.onDidDispose(() => {
-      // Why: the inline source editor owns both the save shortcut and blur
-      // subscription for this Monaco editor instance.
-      cleanupSaveShortcut()
-      blurSub.dispose()
-    })
-    editorInstance.addCommand(monacoInstance.KeyCode.Escape, () => {
-      onDeactivateRef.current()
-    })
-  }, [])
-
-  useEffect(() => {
-    monaco.editor.setTheme(isDark ? 'vs-dark' : 'vs')
-  }, [isDark])
 
   if (!active) {
     return (
@@ -392,29 +366,18 @@ function CodeCell({
   }
 
   return (
-    <div className="bg-editor-surface focus-within:ring-1 focus-within:ring-ring">
-      <Editor
-        height={editorHeight}
-        defaultLanguage={cell.language}
-        language={cell.language}
-        theme={isDark ? 'vs-dark' : 'vs'}
-        value={source}
-        onMount={handleMount}
-        onChange={(value) => onChange(value ?? '')}
-        options={{
-          automaticLayout: true,
-          fontFamily: settings?.terminalFontFamily || 'monospace',
-          fontSize,
-          glyphMargin: false,
-          lineNumbersMinChars: 3,
-          minimap: { enabled: false },
-          overviewRulerLanes: 0,
-          renderLineHighlight: 'none',
-          scrollBeyondLastLine: false,
-          wordWrap: 'off'
-        }}
-      />
-    </div>
+    <NotebookCodeEditor
+      value={source}
+      language={cell.language}
+      fontSize={fontSize}
+      fontFamily={settings?.terminalFontFamily || 'monospace'}
+      isDark={isDark}
+      height={editorHeight}
+      onChange={onChange}
+      onBlur={() => onDeactivateRef.current()}
+      onEscape={() => onDeactivateRef.current()}
+      onSave={() => void onSaveRequestRef.current()}
+    />
   )
 }
 
@@ -748,7 +711,7 @@ export default function IpynbViewer({
         return
       }
       const target = event.target instanceof Element ? event.target : null
-      if (target?.closest('.monaco-editor')) {
+      if (target?.closest('.cm-editor')) {
         return
       }
       setEditingCellKey(null)

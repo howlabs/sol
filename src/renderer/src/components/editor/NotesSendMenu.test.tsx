@@ -308,7 +308,7 @@ describe('NotesSendMenu', () => {
       expect.objectContaining({
         id: buildNotesSendTargetModeId(['markdown-notes', 'wt-1', 'README.md', 'rail']),
         worktreeId: 'wt-1',
-        source: 'diff-notes',
+        source: 'browser-annotations',
         prompt: 'prompt-all',
         label: 'All unsent notes',
         launchSource: 'notes_send'
