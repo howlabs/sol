@@ -2,6 +2,7 @@ import { RefreshCw, Trash2 } from '@/lib/icons'
 import { translate } from '@/i18n/i18n'
 import { cn } from '@/lib/utils'
 import { Button } from '../ui/button'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import type { GrokManagedAccountSummary } from '../../../../shared/types'
 
 export type GrokAccountRowProps = {
@@ -26,7 +27,7 @@ export function GrokAccountRow({
       data-current={active ? 'true' : undefined}
       className={cn(
         'flex items-center gap-2 rounded-lg border p-2.5 transition-colors',
-        active ? 'border-border/60 bg-accent' : 'border-border/40 hover:bg-accent/50'
+        active ? 'border-border/60 bg-accent' : 'border-border/40 hover:bg-accent'
       )}
     >
       <button
@@ -59,15 +60,26 @@ export function GrokAccountRow({
           <RefreshCw className="size-3" />
           {translate('auto.components.settings.GrokAccountsSection.reauthBtn', 'Refresh')}
         </Button>
-        <Button
-          variant="ghost"
-          size="xs"
-          onClick={onRemove}
-          disabled={disabled}
-          className="text-muted-foreground hover:text-destructive"
-        >
-          <Trash2 className="size-3" />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="xs"
+              onClick={onRemove}
+              disabled={disabled}
+              className="text-muted-foreground hover:text-destructive"
+              aria-label={translate(
+                'auto.components.settings.GrokAccountsSection.removeBtn',
+                'Remove account'
+              )}
+            >
+              <Trash2 className="size-3" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={4}>
+            {translate('auto.components.settings.GrokAccountsSection.removeBtn', 'Remove account')}
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   )
